@@ -1,0 +1,99 @@
+{
+	map			"mp_array"
+	loadscreen	"loadscreen_mp_array"
+	longname	"MPUI_ARRAY"
+	loadname	"MPUI_ARRAY_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_cracked"
+	loadscreen	"loadscreen_mp_cracked"
+	longname	"MPUI_CRACKED"
+	loadname	"MPUI_CRACKED_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_crisis"
+	loadscreen	"loadscreen_mp_crisis"
+	longname	"MPUI_CRISIS"
+	loadname	"MPUI_CRISIS_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_firingrange"
+	loadscreen	"loadscreen_mp_firingrange"
+	longname	"MPUI_FIRINGRANGE"
+	loadname	"MPUI_FIRINGRANGE_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_duga"
+	loadscreen	"loadscreen_mp_duga"
+	longname	"MPUI_DUGA"
+	loadname	"MPUI_DUGA_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_hanoi"
+	loadscreen	"loadscreen_mp_hanoi"
+	longname	"MPUI_HANOI"
+	loadname	"MPUI_HANOI_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_cairo"
+	loadscreen	"loadscreen_mp_cairo"
+	longname	"MPUI_CAIRO"
+	loadname	"MPUI_CAIRO_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_havoc"
+	loadscreen	"loadscreen_mp_havoc"
+	longname	"MPUI_HAVOC"
+	loadname	"MPUI_HAVOC_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_cosmodrome"
+	loadscreen	"loadscreen_mp_cosmodrome"
+	longname	"MPUI_COSMODROME"
+	loadname	"MPUI_COSMODROME_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_nuked"
+	loadscreen	"loadscreen_mp_nuked"
+	longname	"MPUI_NUKED"
+	loadname	"MPUI_NUKED_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_radiation"
+	loadscreen	"loadscreen_mp_radiation"
+	longname	"MPUI_RADIATION"
+	loadname	"MPUI_RADIATION_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_mountain"
+	loadscreen	"loadscreen_mp_mountain"
+	longname	"MPUI_MOUNTAIN"
+	loadname	"MPUI_MOUNTAIN_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_villa"
+	loadscreen	"loadscreen_mp_villa"
+	longname	"MPUI_VILLA"
+	loadname	"MPUI_VILLA_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+{
+	map			"mp_russianbase"
+	loadscreen	"loadscreen_mp_russianbase"
+	longname	"MPUI_RUSSIANBASE"
+	loadname	"MPUI_RUSSIANBASE_CAPS"
+	gametype	"dm tdm sd sab dom koth twar war sur ctf vdm vtdm mini"
+}
+

@@ -1,0 +1,24 @@
+{
+	map			"zombie_cosmodrome"
+	loadscreen	"loadscreen_zombie_cosmodrome"
+	longname	"MENU_LEVEL_ZOMBIE_COSMODROME"
+	gametype	"zom"
+}
+{
+	map			"zombie_mountain"
+	loadscreen	"loadscreen_zombie_mountain"
+	longname	"MENU_LEVEL_ZOMBIE_MOUNTAIN"
+	gametype	"zom"
+}
+{
+	map			"so_bloodbath_mp_cairo"
+	loadscreen	"loadscreen_so_bloodbath_mp_cairo"
+	longname	"MENU_LEVEL_SO_BLOODBATH_MP_CAIRO"
+	gametype	"sop"
+}
+{
+	map			"so_thunt_mp_cairo"
+	loadscreen	"loadscreen_so_thunt_mp_cairo"
+	longname	"MENU_LEVEL_SO_THUNT_MP_CAIRO"
+	gametype	"sop"
+}

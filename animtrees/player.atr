@@ -1,0 +1,509 @@
+//////// FROM COD 5
+
+// dog
+knockdown : nonloopsync
+{
+	player_view_dog_knockdown
+}
+knockdown_late : nonloopsync
+{
+	player_view_dog_knockdown_late
+}
+
+player_view_dog_knockdown_saved
+player_view_dog_knockdown_neck_snap
+player_view_dog_knockdown_neck_miss
+
+// banzai
+int_bonzai_attack_player_impact
+int_bonzai_attack_player
+int_bonzai_attack_player_intro
+int_bonzai_attack_player_fail
+int_bonzai_attack_player_success
+
+
+//////// OLD COD 4
+
+// player_view_dog_knockdown
+
+coup_opening_playerview
+
+hunted_opening_player
+hunted_opening_player_idle
+
+sniper_escape_player_getup
+sniper_escape_player_putdown
+sniper_escape_player_rappel
+
+launchfacility_a_player_rappel
+
+//----------------------------------------------------
+// (Prototype) COD7 MODULE PROTOTYPE SPECIFIC ANIMS
+//----------------------------------------------------
+
+//-- KDrew: used for the Module 9, module_9_coop
+int_gasmask
+int_test
+
+// Used for module 12
+module11_int_mantle_wall
+module12_int_mantle_up_wall
+module12_int_landing_high_drop
+module12_int_landing_medium_drop
+module12_int_mantle_wall_fast
+module12_int_dive_slide
+module12_int_slide_base
+module12_int_mantle_window_brake
+module12_int_mantle_window_enter
+module12_int_mantle_window_approach
+
+//-- BJoyal: Added for Door Breach feature
+int_breach_shoulder
+int_breach_slide
+int_breach_lift
+
+//--SHolmes: adding full body door kick test to door_breach script
+ch_wmd_b01_kickbreach_player
+
+//----------------------------------------------------
+// (INCUBATOR) COD7 INCUBATOR SPECIFIC ANIMS
+//----------------------------------------------------
+
+int_incubator_wounded_compress_idle
+int_incubator_wounded_compress_idle_not
+int_incubator_wounded_compress_trans_in
+int_incubator_wounded_compress_trans_out
+
+player_hold_wound
+{
+	int_incubator_wounded_compress_idle_left_hand
+	int_incubator_wounded_compress_idle_right_hand
+	int_incubator_wounded_compress_idle_not_left_hand
+	int_incubator_wounded_compress_idle_not_right_hand
+}
+
+int_blood_wipe
+
+int_incubator_wounded_hold_down_pain_large
+int_incubator_wounded_hold_down_pain_small
+int_incubator_wounded_hold_down_trans_in
+int_incubator_wounded_hold_down_trans_out
+
+// -- Sholmes: inc_ropebridge stuff:
+int_bridge_climbing
+int_bridge_climbing_idle
+ch_incubator_ropebridge_ropebridgeintviewarms
+
+
+//----------------------------------------------------
+// Up a Creek Anims
+//----------------------------------------------------
+
+int_upacreek_b03_mantle_pbr
+int_upacreek_b03_dragged
+int_upacreek_b03_cut_rope_pbr
+int_creek_b02_start_player
+int_upacreek_b03_landing
+ch_creek_b04_traphole_stab_player
+ch_creek_b04_rat_tunnel_intro_C_player
+ch_creek_b02_shelfpush_player
+ch_creek_b02_eating_grabs_gun_player
+int_creek_b02_swimthrugap
+int_sampan_melee
+int_creek_tunnel_crawl
+int_creek_water_bombplant
+int_creek_hammock_melee_guy01
+int_creek_hammock_melee_guy02
+int_creek_tunnel_crawl_and_get_up
+int_creek_tunnel_melee_a
+int_creek_tunnel_melee_b
+int_creek_tunnel_melee_c_and_end 
+int_vc_eating_melee
+
+int_creek_2nd_c4_plant
+
+int_creek_tunnel_cliffhang_idle
+
+viewmodel_swim_breaststroke_a
+viewmodel_swim_breaststroke_b
+viewmodel_swim_breaststroke_c
+viewmodel_swim_backwards_a
+viewmodel_swim_backwards_b
+viewmodel_swim_backwards_c
+viewmodel_swim_tread_water
+viewmodel_swim_to_left
+viewmodel_swim_to_right
+
+//----------------------------------------------------
+// Quagmire
+//----------------------------------------------------
+
+int_quag_b3_copilotdeath_player
+int_quag_b02_standtorestarmongun_player
+int_quag_b02_restarmongunloop_player
+int_quag_b02_resttoaim_player
+int_quag_b05_repeltomacv_player
+int_quag_b02_hueyguntransition_player
+ch_quag_b06_reznovreveal_player
+
+//Into Cover
+
+int_quag_b02_intocovrhuey_plyr
+int_quag_b02_covridlhuey_plyr
+int_quag_b02_outcovrhuey_plyr
+
+//----------------------------------------------------
+// hue_city
+//----------------------------------------------------
+
+
+ch_hue_b02_tankblast_player_explosion
+ch_hue_b02_tankblast_player_ohshit
+ch_hue_b02_commandeerradio_a_player
+ch_hue_b02_jumponboat_player
+int_huecity_aa_building_c4_plant
+ch_hue_b01_reznov_reveal_player
+
+//----------------------------------------------------
+// Flashpoint
+//----------------------------------------------------
+
+//Binoculars
+int_flash_b01_binoculars
+int_flashpoint_c4_plant
+
+
+//----------------------------------------------------
+// In Country
+//----------------------------------------------------
+
+int_incountry_spiketrap_reaction_1
+int_incountry_spiketrap_reaction_2
+int_incountry_b01_slide_player
+ch_incountry_cliff_a
+ch_incountry_cliff_b
+ch_incountry_cliff_c
+ch_incountry_cliff_d
+int_incountry_b08_face_bash_player
+
+// rope climb
+int_incountry_b01_rope_climb
+
+//----------------------------------------------------
+// Vorkuta
+//----------------------------------------------------
+
+//level intro
+ch_vor_b01_intro_player
+ch_vor_b01_intro_player_punch
+ch_vor_b01_intro_player_smash
+
+//player gassed
+ch_vor_b03_gassed_player
+
+//warehouse recovery
+ch_vor_b04_step8_player
+
+//motorycle
+int_vor_b04_jump_to_truck
+int_vor_b04_jump_to_train_leave_gun
+int_vor_b04_jump_to_train_player_loop
+int_vor_b04_jump_to_train_player_trans
+int_vor_b04_jump_to_train_cab_idle
+int_vor_b04_jump_to_train
+
+//slingshot
+int_slingshot_player_pull_start
+int_slingshot_player_pull_finish
+
+slingshot_pulled_idle : loopsync
+{
+	int_slingshot_player_pulled_idle_straight
+	int_slingshot_player_pulled_idle_left
+	int_slingshot_player_pulled_idle_right
+}
+
+int_slingshot_player_release_straight
+int_slingshot_player_release_left
+int_slingshot_player_release_right
+
+//courtyard rope
+ch_vor_b02_harpoon_player
+
+//rolling under door
+ch_vor_b03_player_door_death
+
+// frontend
+int_interrogation_chair_idle_look_at_respirator
+int_interrogation_chair_idle_look_back_respirator
+
+// int_escape
+
+ch_inter_01_mason
+ch_inter_02_mason
+ch_inter_03_mason
+ch_inter_04_mason
+ch_inter_05_mason
+ch_inter_06_mason
+
+ch_int_b01_hudson_unstraps_plyr_player
+ch_int_b01_plyr_punches_hudson_loop_player
+ch_int_b01_plyr_punches_hudson_player
+ch_int_b01_hudson_unstraps_plyr_player_idle
+
+ch_int_b02_corridor_stumble_left
+ch_int_b02_corridor_stumble_right
+ch_int_b02_corridor_stumble_cart
+ch_int_b02_open_double_doors_player
+ch_int_b02_plyr_enter_morgue_player
+
+ch_int_b08_reznov_brainwash_pt1_player
+ch_int_b08_reznov_brainwash_pt2_player
+
+ch_int_b08_hudson_punch_player
+ch_int_b08_i_cleared_you_player
+
+
+
+ch_int_b08_hudson_comm_room_pt1_player
+ch_int_b08_hudson_comm_room_pt2_player
+ch_int_b08_hudson_comm_room_pt3_player
+ch_int_b08_hudson_comm_room_pt4_player
+
+ch_int_b08_hudson_comm_room_player
+ch_int_b08_hudson_comm_room_end_player
+
+ch_int_b09_blackroom_player
+ch_int_b09_rusalka_player
+
+//////////////////
+//POW
+/////////////////
+
+pow
+{
+	int_pow_b04_endfight_enter
+	int_pow_b04_endfight_firstattack
+	int_pow_b04_endfight_gundraw
+	int_pow_b04_endfight_gungrab
+	int_pow_b04_endfight_kickblock
+	int_pow_b04_endfight_block_block
+	int_pow_b04_endfight_block_rest
+	int_pow_b04_endfight_shoot
+	int_pow_b04_morph
+	int_pow_b04_scene_heli_takeoff
+	
+	int_pow_b04_scene_woods_corpse
+	int_pow_b04_scene_cave_mouth
+
+	int_pow_b03_cockpit_climbin
+	int_pow_b03_cockpit_climbin_in
+	int_pow_b03_cockpit_climbin_out
+	
+	int_pow_b01_1a_1
+	int_pow_b01_1a_2
+	int_pow_b01_1a_3
+	
+	int_pow_b01_1a
+	int_pow_b01_1b
+	int_pow_b01_1b2
+	int_pow_b01_1c
+	int_pow_b01_1d
+	
+	int_pow_b02_end_climb
+	//int_pow_b02_end_climbinstruct
+	
+	//player arm flightstick anims
+	int_pow_b03_cockpit_hand_down
+	int_pow_b03_cockpit_hand_firemissile
+	int_pow_b03_cockpit_hand_left
+	int_pow_b03_cockpit_hand_neutral
+	int_pow_b03_cockpit_hand_right
+	int_pow_b03_cockpit_hand_up
+	int_pow_b03_cockpit_handsoff	
+	
+	int_pow_b03_cockpit_takeoff
+	int_pow_b03_cockpit_inandup
+	
+	int_pow_b03_cockpit_exit
+	
+	int_pow_b03_cockpit_crash
+	
+	int_pow_b03_clearing_intro
+	
+	int_pow_b04_cells_rescue_reznov
+}
+
+
+int_fullbody_player_rig_test
+int_viewbody_player_rig_test
+
+//----------------------------------------------------
+// Rebirth
+//----------------------------------------------------
+ch_rebirth_climb_a
+ch_rebirth_climb_b
+ch_rebirth_climb_c
+ch_rebirth_climb_d
+ch_rebirth_b01_open_container_player
+ch_rebirth_b01_elevatordescent_player
+ch_rebirth_b01_open_hatch_in_player
+ch_rebirth_b01_open_hatch_end_player
+ch_rebirth_b01_useknife_player
+ch_rebirth_b02_btrcrash_player
+ch_rebirth_b02_confront_steiner_player
+ch_rebirth_b03_btr_crash_player
+ch_rebirth_b05_officebreakin_player
+ch_rebirth_b05_officebreakin_backAway01_player
+ch_rebirth_b05_officebreakin_backAway02_player
+ch_rebirth_b05_officebreakin_fuseLift_player
+ch_rebirth_b05_officebreakin_mantleOver_player
+ch_rebirth_b05_officebreakin_punchMason_player
+ch_rebirth_b05_officebreakin_windowApproach_player
+ch_rebirth_b05_officebreakin_windowHit01_player
+ch_rebirth_b05_officebreakin_windowHit02_player
+ch_rebirth_b05_officebreakin_windowHit03_player
+//ch_rebirth_b05_officebreakin_success_player
+ch_rebirth_b05_officebreakin_intro_player
+ch_rebirth_b05_officebreakin_idle_at_fuse_player
+//ch_rebirth_b05_officebreakin_fail_player
+ch_rebirth_b05_officebreakin_break_window_player
+int_contextual_melee_ladderpull
+int_contextual_melee_ladderpull_idle
+int_contextual_melee_ladderpull_death
+int_player_gas_death
+
+// BTR Rail
+int_btr60_idle
+
+btr_rail_firing : additive
+{
+	int_btr60_fire_left_hand
+	btr_mg_firing
+	{
+		int_btr60_fire_right_hand_in
+		int_btr60_fire_right_hand_loop
+		int_btr60_fire_right_hand_out
+	}
+}
+
+//----------------------------------------------------
+// Pentagon
+//----------------------------------------------------
+//TEMP, SOON TO BE OBSOLETE
+int_pentagon_limo_player
+int_pentagon_limoride_player
+int_pentagon_limoride_player2
+int_pentagon_limoride_player3
+//END TEMP
+//int_pentagon_playerwalk
+int_pentagon_intro_player
+int_pentagon_tarmack_player
+int_pentagon_limo_player_first
+int_pentagon_limo_player_second
+ch_pentagon_rail_we_are_ready_player
+ch_pentagon_rail_the_vip_player
+ch_pentagon_rail_s_curve_player
+ch_pentagon_rail_heroes_leaders_player
+ch_pentagon_rail_finest_people_player
+ch_pentagon_rail_elevator_player
+ch_pentagon_rail_elevator_loop_player
+ch_pentagon_rail_nerve_center_player
+ch_pentagon_rail_first_time_player
+ch_pentagon_rail_rarely_use_player
+ch_pentagon_rail_jfk_entrance_player
+ch_pentagon_rail_take_care_player
+ch_pentagon_rail_take_care_player_loop
+int_pentagon_player_gunhand_fight
+
+
+//Front end
+int_interrogation_chair_struggle_l
+int_interrogation_chair_struggle_r
+int_interrogation_chair_struggle_l_and_r
+int_interrogation_chair_idle
+int_interrogation_chair_breakout
+
+
+//	43 6F 6C 6C 61 74 65 72 61 6C    44 61 6D 61 67 65 
+// _____       _ _       _                  _    ______                                 
+///  __ \     | | |     | |                | |   |  _  \                                
+//| /  \/ ___ | | | __ _| |_  ___ _ __ __ _| |   | | | |__ _ _ __ ___   __ _  __ _  ___ 
+//| |    / _ \| | |/ _` | __|/ _ \ '__/ _` | |   | | | / _` | '_ ` _ \ / _` |/ _` |/ _ \
+//| \__/\ (_) | | | (_| | |_|  __/ | | (_| | |   | |/ / (_| | | | | | | (_| | (_| |  __/
+// \____/\___/|_|_|\__,_|\__|\___|_|  \__,_|_|   |___/ \__,_|_| |_| |_|\__,_|\__, |\___|
+//                                                                            __/ |     
+//                                                                           |___/      
+ch_col_b04_jump4huey_player
+
+//Kowloon
+int_kowloon_b01_intro_player_glass
+int_kowloon_b01_intro_player_glass_idle
+int_kowloon_b01_intro_player_in
+int_kowloon_b01_intro_player_out
+int_kowloon_b01_intro_player_punch
+int_kowloon_b01_intro_player_punch_idle
+
+int_kowloon_b07_clarkdeath_player
+
+int_kowloon_b04_pipe_slide
+
+int_kowloon_b07_vancrash_player_out
+
+//----------------------------------------------------
+// Underwater Base
+//----------------------------------------------------
+int_base_jump_goggles
+
+int_under_b01_playerheli_crash
+
+ch_uwb_b04_player_dive
+ch_uwb_b04_player_transToSwim
+
+int_uwb_b06_player_knock_out
+
+int_uwb_b08_react_explosion
+int_uwb_b08_finest_agent_player
+int_uwb_b08_drago_fight_player_enter
+int_uwb_b08_drago_fight_player_grab_pause
+int_uwb_b08_drago_fight_player_fail_grab
+int_uwb_b08_drago_fight_player_fall
+int_uwb_b08_drago_fight_player_choke_pause
+int_uwb_b08_drago_fight_player_kill_drago
+
+int_uwb_b09_hero_boat_player
+int_uwb_b09_player_ascends_swimCycle
+
+// Fullahead
+ch_full_b01_hero_of_berlin_player
+ch_full_b01_patrenko_snowcat_idle_player
+ch_full_b01_patrenko_snowcat_player
+ch_full_b02_find_steiner_player
+int_full_b03_found_steiner
+ch_full_b07_zip_line_player
+ch_full_b07_nevski_hits_hard_player
+ch_full_b06_betrayal_shot1_player
+ch_full_b06_betrayal_shot2_player
+ch_full_b06_betrayal_shot3_player
+ch_full_b06_betrayal_shot4_player
+ch_full_b06_betrayal_shot5_player
+ch_full_b06_betrayal_shot6_player
+ch_full_b06_betrayal_tankshot_player
+ch_full_b06_betrayal_shot7_player
+ch_full_b06_nova6_death_player
+int_full_b04_player_door_open_player
+int_full_b07_reznov_arm_explosives
+int_full_b01_its_time
+o_full_interstitial_01_camera
+o_full_interstitial_02_camera
+o_full_interstitial_03_camera
+o_full_interstitial_04_camera
+
+
+// River
+int_river_b03_playerstruggles
+ch_river_b02_hookupropes_player_A
+ch_river_b02_hookupropes_player_B
+int_river_b03_nose_dive_player
+
+
