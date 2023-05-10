@@ -1,0 +1,191 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/overlaybg.inc"
+
+#define WAGER_BET_X_OFFSET 200
+
+#define WAGER_BET_RECT( itemIndex ) ( CHOICE_X( itemIndex ) + WAGER_BET_X_OFFSET ) CHOICE_Y( itemIndex ) CHOICE_SIZE_X CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+
+#define WAGER_DBUTTON_NO_BG_VIS( itemIndex, textArg, visArg, color ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			CHOICE_RECT( itemIndex ) \
+			exp				text( textArg ); \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		color \
+			visible			visArg \
+			decoration \
+		} \
+		
+#define WAGER_BET_DBUTTON_NO_BG_VIS( itemIndex, textArg, visArg, color ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			WAGER_BET_RECT( itemIndex ) \
+			exp				text( textArg ); \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		color \
+			visible			visArg \
+			decoration \
+		} \
+
+#define WAGER_BET( itemIndex, textArg, visArg, color ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			WAGER_BET_RECT( itemIndex ) \
+			exp				text( textArg ); \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		color \
+			visible			visArg \
+			decoration \
+		} \
+		
+#define WAGER_OVERLAY_STATUS_VIS( titleArg, visArg, color ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			22 80 100 100 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			origin			ORIGIN_TITLE \
+			forecolor		color \
+			exp				text( titleArg ) \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textalign		ITEM_ALIGN_TOP_LEFT \
+			textaligny		TITLE_Y_OFFSET \
+			textalignx		TITLE_X_OFFSET \
+			visible			visArg \
+			decoration \
+		}
+		
+#define WAGER_SIDEBET_TIMER( visArg, color ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			22 325 100 100 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			origin			ORIGIN_TITLE \
+			forecolor		color \
+			exp				text( "Betting ends in "+secondsAsCountdown( ( dvarInt( sidebet_endTime ) - getTime() ) ) ) \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textalign		ITEM_ALIGN_TOP_LEFT \
+			textaligny		TITLE_Y_OFFSET \
+			textalignx		TITLE_X_OFFSET \
+			visible			visArg \
+			decoration \
+		}
+		
+#define WAGER_LOCAL_CODPOINTS( textArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			22 350 100 100 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			origin			ORIGIN_TITLE \
+			forecolor		CHOICE_TEXTCOLOR \
+			exp				text( textArg ) \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textalign		ITEM_ALIGN_TOP_LEFT \
+			textaligny		TITLE_Y_OFFSET \
+			textalignx		TITLE_X_OFFSET \
+			visible			1 \
+			decoration \
+		}
+		
+#define WAGER_STATUS_COLOR 1 1 0 1
+#define WAGER_STATUS_ERROR_COLOR 1 0 0 1
+#define WAGER_COL_HEADER_COLOR 1 0.5 0 1
+
+#define WAGER_SUFFICIENT_FUNDS ( GetStatByName( "CODPOINTS" ) >= dvarInt( "scr_wagerSideBet" ) )
+#define WAGER_HAS_BET ( dvarString( sidebet_made ) != "" )
+#define WAGER_CAN_BET ( !WAGER_HAS_BET && WAGER_SUFFICIENT_FUNDS )
+#define WAGER_HAS_BET_ON_1 ( dvarString( sidebet_made ) == dvarString( sidebet_p1 ) )
+#define WAGER_HAS_BET_ON_2 ( dvarString( sidebet_made ) == dvarString( sidebet_p2 ) )
+#define WAGER_HAS_BET_ON_3 ( dvarString( sidebet_made ) == dvarString( sidebet_p3 ) )
+
+{
+	menuDef
+	{
+		name		"sidebet_player"
+		rect		0 0 640 480
+		focuscolor	COLOR_FOCUSED
+		style		WINDOW_STYLE_EMPTY
+		blurWorld	7.0
+		
+		onFocus
+		{
+			setdvar sidebet_made "";
+			setdvar sidebet_p1_bets 0;
+			setdvar sidebet_p2_bets 0;
+			setdvar sidebet_p3_bets 0;
+		}
+		
+		#include "ui_mp/ingamebg.inc"
+
+		// ------------------ TREE TITLE ------------------
+		
+		CHOICE_OVERLAY_TITLE( "SIDE BETS" )
+		CHOICE_OVERLAY_SUB_TITLE( "Will you be the last man standing?" )
+		
+		// Status
+		WAGER_OVERLAY_STATUS_VIS( "Bet is "+dvarInt( scr_wagerSideBet )+" CP. You are still playing, so you may only bet on yourself.", when( WAGER_CAN_BET ), WAGER_STATUS_COLOR )
+		WAGER_OVERLAY_STATUS_VIS( "Bet placed.", when( WAGER_HAS_BET ), WAGER_STATUS_COLOR )
+		
+		// Timer
+		WAGER_SIDEBET_TIMER( 1, WAGER_STATUS_COLOR )
+		
+		// Local CP
+		WAGER_LOCAL_CODPOINTS( "You have "+GetStatByName( "CODPOINTS" )+" "+locString( "@MPUI_CP_ABBREV" ) )
+		
+		// Bet
+		CHOICE_HIGHLIGHT( 2, WAGER_CAN_BET )
+		CHOICE_BUTTON_FOCUS_VIS_NOHI_NOICON( 2, "Place Bet", setdvar sidebet_made player( name ); play CHOICE_FOCUS_SOUND; scriptMenuResponse "sidebet_bet";, ;, ;, when( WAGER_CAN_BET ); )
+		
+		// Column headers
+		WAGER_DBUTTON_NO_BG_VIS( 4, "Final 3", 1, WAGER_COL_HEADER_COLOR )
+		WAGER_BET_DBUTTON_NO_BG_VIS( 4, "Bets", 1, WAGER_COL_HEADER_COLOR )
+		
+		// Players
+		WAGER_DBUTTON_NO_BG_VIS( 5, dvarString( sidebet_p1 )+" - Lives Left: "+dvarString( sidebet_p1_lives ), when( !WAGER_HAS_BET_ON_1 );, CHOICE_TEXTCOLOR )
+		WAGER_DBUTTON_NO_BG_VIS( 5, dvarString( sidebet_p1 )+" - Lives Left: "+dvarString( sidebet_p1_lives ), when( WAGER_HAS_BET_ON_1 );, WAGER_STATUS_COLOR )
+		
+		WAGER_DBUTTON_NO_BG_VIS( 6, dvarString( sidebet_p2 )+" - Lives Left: "+dvarString( sidebet_p2_lives ), when( !WAGER_HAS_BET_ON_2 );, CHOICE_TEXTCOLOR )
+		WAGER_DBUTTON_NO_BG_VIS( 6, dvarString( sidebet_p2 )+" - Lives Left: "+dvarString( sidebet_p2_lives ), when( WAGER_HAS_BET_ON_2 );, WAGER_STATUS_COLOR )
+		
+		WAGER_DBUTTON_NO_BG_VIS( 7, dvarString( sidebet_p3 )+" - Lives Left: "+dvarString( sidebet_p3_lives ), when( !WAGER_HAS_BET_ON_3 );, CHOICE_TEXTCOLOR )
+		WAGER_DBUTTON_NO_BG_VIS( 7, dvarString( sidebet_p3 )+" - Lives Left: "+dvarString( sidebet_p3_lives ), when( WAGER_HAS_BET_ON_3 );, WAGER_STATUS_COLOR )
+		
+		WAGER_DBUTTON_NO_BG_VIS( 9, "Total Pool", 1, CHOICE_TEXTCOLOR )
+		
+		// Bets
+		WAGER_BET( 5, dvarInt( sidebet_p1_bets )+" "+locString( "@MPUI_CP_ABBREV" ), when( !WAGER_HAS_BET_ON_1 );, CHOICE_TEXTCOLOR )
+		WAGER_BET( 5, dvarInt( sidebet_p1_bets )+" "+locString( "@MPUI_CP_ABBREV" ), when( WAGER_HAS_BET_ON_1 );, WAGER_STATUS_COLOR )
+		
+		WAGER_BET( 6, dvarInt( sidebet_p2_bets )+" "+locString( "@MPUI_CP_ABBREV" ), when( !WAGER_HAS_BET_ON_2 );, CHOICE_TEXTCOLOR )
+		WAGER_BET( 6, dvarInt( sidebet_p2_bets )+" "+locString( "@MPUI_CP_ABBREV" ), when( WAGER_HAS_BET_ON_2 );, WAGER_STATUS_COLOR )
+		
+		WAGER_BET( 7, dvarInt( sidebet_p3_bets )+" "+locString( "@MPUI_CP_ABBREV" ), when( !WAGER_HAS_BET_ON_3 );, CHOICE_TEXTCOLOR )
+		WAGER_BET( 7, dvarInt( sidebet_p3_bets )+" "+locString( "@MPUI_CP_ABBREV" ), when( WAGER_HAS_BET_ON_3 );, WAGER_STATUS_COLOR )
+		
+		WAGER_BET( 9, ( dvarInt( sidebet_p1_bets ) + dvarInt( sidebet_p2_bets ) + dvarInt( sidebet_p3_bets ) )+" "+locString( "@MPUI_CP_ABBREV" ), 1, CHOICE_TEXTCOLOR )
+	}
+}

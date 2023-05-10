@@ -1,0 +1,61 @@
+alphaTest
+{
+	default:
+		Always;
+}
+
+blendFunc
+{
+	default:
+		Disable, One, Zero;
+}
+
+separateAlphaBlendFunc
+{
+	default:
+		Disable, One, Zero;
+}
+
+cullFace
+{
+	default:
+		None;
+}
+
+depthTest
+{
+	default:
+		LessEqual;
+}
+
+depthWrite
+{
+	default:
+		Disable;
+}
+
+colorWrite
+{
+	default:
+		Disable, Disable;
+}
+
+polygonOffset
+{
+	default:
+		0;
+}
+
+stencil
+{
+	default:
+		OneSided,
+		Always, Keep, Keep, Invert,
+		Always, Keep, Keep, Invert;
+}
+
+wireframe
+{
+	default:
+		Disable;
+}

@@ -1,0 +1,111 @@
+// Intro to jeep ride
+ch_khe_opening_intro_player
+v_khe_opening_intro_helo
+v_khe_opening_intro_jeep
+
+// Jeep ride
+ch_khe_E1B_driveidle_player
+
+// e1 vignettes
+v_khe_E1B_chinookdropoff_helo
+
+// Body bags
+ch_khe_E1B_bodybags_bod01
+ch_khe_E1B_bodybags_bod02
+ch_khe_E1B_bodybags_bod03
+ch_khe_E1B_bodybags_tarp
+
+// Jeep Crash
+v_khe_E1C_c130crash_jeep01
+//v_khe_E1C_c130crash_jeep01_fail
+v_khe_E1C_c130crash_jeep02
+v_khe_E1C_c130crash_c130
+ch_khe_E1C_c130crash_player
+//ch_khe_E1C_c130crash_player_fail
+ch_khe_E1C_c130crash_jump_player
+
+// E1C
+ch_khe_E1C_c130crash_carryhudson_idle
+ch_khe_E1C_c130crash_carryhudson_walk
+ch_khe_E3_mortarfire_fire_player
+ch_khe_E3_mortarfire_idle_player
+ch_khe_E3_mortarfire_leadin_player
+int_carry_hudson_idle
+int_carry_hudson_walk
+ch_khe_E1C_hudson_ok_player
+ch_khe_e1c_hudson_ok_player_part1
+ch_khe_e1c_hudson_ok_player_part2
+
+//e2 ladder
+p_khe_E2_nva_ladders_ladder01
+p_khe_E2_nva_ladders_ladder02
+
+//e2 apc
+v_khe_E2_turret_fighter_m113
+
+//e2 apc crush
+v_khe_E2_tank_crush_m113
+fxanim_khesanh_apc_fall_01_anim
+fxanim_khesanh_apc_fall_02_anim
+
+//e3 china lake player
+//ch_khe_E3_pickuplauncher_player
+
+// E3 NVA turret
+ch_khe_E3_nvaturretDive_player
+ch_khe_E3_nvaturretDive_choke_player
+ch_khe_E3_nvaturretDive_success_player
+
+// e4
+ch_khe_E3_kickbarrel_player
+ch_khe_E3_kickbarrel_spark_player
+
+//tow anims
+int_tow_mount
+int_tow_dismount
+
+int_jeep_tow_climb_in
+int_jeep_tow_climb_out
+
+//e3 huey crash
+v_khe_e2_hueycrash_huey
+
+//huey bowman
+v_khe_e5_bowman_reveal_loop_huey
+v_khe_e5_bowman_reveal_huey
+ch_khe_e5_bowman_reveal_loop_player
+ch_khe_e5_bowman_reveal_player
+
+//e3 mg
+o_khe_E3_woodsMG_MG
+o_khe_E3_woodsassist_MG
+
+//e3 trapdoor
+o_khe_e3_woods_trap_door_door
+
+//e4 woods jam player
+ch_khe_E4B_woods_gun_jam_player
+
+//woods knife
+o_khe_E4_timetoimprovise_knife
+
+//rubble props
+ch_khe_e4_free_from_rubble_b_start_plank01
+ch_khe_e4_free_from_rubble_b_start_plank02
+ch_khe_e4_free_from_rubble_b_start_plank03
+ch_khe_e4_free_from_rubble_b_start_plank04
+ch_khe_e4_free_from_rubble_b_loop_plank01
+ch_khe_e4_free_from_rubble_b_loop_plank02
+ch_khe_e4_free_from_rubble_b_loop_plank03
+ch_khe_e4_free_from_rubble_b_loop_plank04
+
+
+//rubble with 2 guys
+o_khe_e4_free_from_rubble_a_loop_crate
+o_khe_e4_free_from_rubble_a_loop_plank01
+o_khe_e4_free_from_rubble_a_loop_plank02
+o_khe_e4_free_from_rubble_a_start_crate
+o_khe_e4_free_from_rubble_a_start_plank01
+o_khe_e4_free_from_rubble_a_start_plank02
+
+

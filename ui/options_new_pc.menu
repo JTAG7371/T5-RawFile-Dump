@@ -1,0 +1,134 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui/overlaybg.inc"
+#include "ui/framestyle.inc"
+#include "ui/frame.inc"
+
+{
+	menuDef
+	{
+		name					options_new_pc
+		focuscolor				COLOR_FOCUSED
+		control					MENU_CONTROL_OPENER
+
+		style			WINDOW_STYLE_FILLED
+		soundloop 		""
+		border			0
+
+		onOpen	
+		{
+			LOCAL_CLOSE_ALL_BUT( options_new_pc )
+			setdvar invite_visible "0";
+			setdvar ui_showOnlineOfflineButton "0";
+			setLocalVarBool ui_hideBack 1;
+			setLocalVarBool ui_inOverlay 1;
+			if (IsInGame())
+			{
+				showMenu "pausedbkgnd";
+			}
+			activateBlur;
+		}
+		onEsc	
+		{	
+			setLocalVarBool ui_inOverlay 0;
+			setdvar ui_showOnlineOfflineButton "1";
+			if( menuisopen( blackout_3d_tv ) )
+			{
+				close blackout_3d_tv;
+			}
+			close self;
+
+			if (IsInGame())
+			{
+				open "pausedmenu";
+			}
+		}
+		onClose
+		{
+			setdvar invite_visible "1";
+			setLocalVarBool ui_hideBack 0;
+			if (IsInGame())
+			{
+				hideMenu "pausedbkgnd";
+			}			
+			deactivateBlur;
+			execNow "updategamerprofile";
+		}
+		PC_TAB_SWITCH_ACTIONS( options_new_pc, options_controls_new_pc, options_controls_new_pc )
+		
+		// ------------------  statics ------------------------
+
+		#include "ui_mp/leftside_options.inc"
+
+		#include "ui/safearea.menu"
+	}
+
+menuDef
+	{
+		name					options_controls_new_pc
+		focuscolor				COLOR_FOCUSED
+		control					MENU_CONTROL_OPENER
+		fullscreen		1
+		style			WINDOW_STYLE_FILLED
+		soundloop 		""
+		border			0
+
+		onOpen	
+		{			
+			LOCAL_CLOSE_ALL_BUT( options_controls_new_pc )
+			setdvar invite_visible "0";
+			setdvar ui_showOnlineOfflineButton "0";
+			setLocalVarBool ui_hideBack 1;
+			setLocalVarBool ui_inOverlay 1;
+			if (IsInGame())
+			{
+				showMenu "pausedbkgnd";
+			}
+			else
+			{
+				activateBlur;
+			}
+		}
+		onEsc	
+		{	
+			setLocalVarBool ui_inOverlay 0;
+			setdvar ui_showOnlineOfflineButton "1";
+			if( menuisopen( blackout_3d_tv ) )
+			{
+				close blackout_3d_tv;
+			}
+			close self;
+			
+			if (IsInGame())
+			{
+				open "pausedmenu";
+			}
+		}
+		onClose
+		{
+			setdvar invite_visible "1";
+			setLocalVarBool ui_hideBack 0;			
+			if (IsInGame())
+			{
+				exec "updatevehiclebindings";
+				hideMenu "pausedbkgnd";
+			}
+			else			
+			{
+				deactivateBlur;
+			}
+			execNow "updategamerprofile";
+		}
+		PC_TAB_SWITCH_ACTIONS( options_controls_new_pc, options_new_pc, options_new_pc )
+		
+		// ------------------  statics ------------------------
+
+		#include "ui_mp/leftside_controls.inc"
+
+		#include "ui/safearea.menu"
+	}
+}

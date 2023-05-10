@@ -1,0 +1,9 @@
+// code menu defs
+//
+{
+	loadMenu { "ui/error.menu" }
+	loadMenu { "ui/briefing.menu" }
+	//loadMenu { "ui/victoryscreen.menu" }
+	loadMenu { "ui/connect.menu" }
+	loadMenu { "ui/code_popups.menu" }
+}

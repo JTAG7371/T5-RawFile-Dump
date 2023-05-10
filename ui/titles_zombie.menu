@@ -1,0 +1,347 @@
+#define CHOICE_GROUP			"titles"
+#include "ui/menustyle_zombie.inc"
+
+{
+#define FADE_TIME				500
+
+#define TITLES_TABLE			"mp/zm_titles.csv"
+#define TITLE_IDX_COL			0
+#define TITLE_REF_COL			1
+#define TITLE_DISPLAY_COL		2
+#define TITLE_MEDAL_COL			3
+#define TITLE_DESC_COL			4
+
+#define MEDAL_ORIGIN			100	100
+#define MEDAL_WIDTH				64
+#define MEDAL_HEIGHT			128
+#define MEDAL_SPACE_W			7
+#define MEDAL_SPACE_H			15
+#define MEDAL_OFFSET_X			30
+#define MEDAL_OFFSET_Y			100
+
+#define NUM_MEDALS_ROW			4
+
+#define PREV_BUTTON_X			0
+#define NEXT_BUTTON_X			320
+#define PAGE_BUTTON_Y			400
+
+#define MAX_PAGE				1
+
+#define MAX_MEDALS_PER_PAGE		8
+
+#define TABLE_IDX( idx ) \
+	( idx + ( (dvarInt(ui_titles_page)-1) * MAX_MEDALS_PER_PAGE ) )
+
+#define PAGE_LEFT \
+	execkeyint	BUTTON_LSHLDR \
+	{ \
+		execnow ui_animate titles_zombie PREV Flash 0; \
+		execnow set ui_titles_page (dvarInt(ui_titles_page)-1); \
+		execnow if( dvarInt(ui_titles_page) <= 0 ) \
+			 set ui_titles_page MAX_PAGE; \
+	}
+
+#define PAGE_RIGHT \
+	execkeyint	BUTTON_RSHLDR \
+	{ \
+		execnow ui_animate titles_zombie NEXT Flash 0; \
+		execnow set ui_titles_page (dvarInt(ui_titles_page)+1); \
+		execnow if( dvarInt(ui_titles_page) > MAX_PAGE ) \
+			 set ui_titles_page 1; \
+	}
+	
+#define MEDAL_RECT_X( idx ) \
+	( ( idx - 1 - ( NUM_MEDALS_ROW * int((idx-1)/NUM_MEDALS_ROW) ) ) * ( MEDAL_WIDTH + MEDAL_SPACE_W ) + MEDAL_OFFSET_X )
+	
+#define MEDAL_RECT_Y( idx ) \
+	( int((idx-1)/NUM_MEDALS_ROW) * ( MEDAL_HEIGHT + MEDAL_SPACE_H ) + MEDAL_OFFSET_Y )
+	
+#define MEDAL_RECT( idx ) \
+	MEDAL_RECT_X( idx ) MEDAL_RECT_Y( idx ) MEDAL_WIDTH MEDAL_HEIGHT
+	
+#define MEDAL_ITEM_FOCUS( idx, name ) \
+	if( localVarInt( ui_highlight ) == idx ) \
+	{ \
+		execNow ui_animate titles_zombie name FadeOut FADE_TIME; \
+	}
+	
+#define MEDAL_ACTION( idx, name ) \
+	execNow \
+	ui_animate titles_zombie name Selected (FADE_TIME*1.5); \
+	execNow \
+	if( GET_STAT( idx ) ) \
+		statWriteDDL PlayerStatsList zombie_title (TABLE_IDX(idx));
+		
+#define VALID_STATE \
+	state \
+	{ \
+		name		"Selected" \
+		forecolor	0.5 1 0.5 1 \
+		onEnter \
+		{ \
+			changeState FadeIn FADE_TIME; \
+		} \
+	}
+
+#define INVALID_STATE \
+	state \
+	{ \
+		name		"Selected" \
+		forecolor	1 0.5 0.5 1 \
+		onEnter \
+		{ \
+			changeState FadeIn FADE_TIME; \
+		} \
+	}
+			
+#define PAGE_BUTTON( button, xPos ) \
+	itemDef \
+	{ \
+		name			button \
+		type			ITEM_TYPE_BUTTON \
+		rect			xPos PAGE_BUTTON_Y 0 0 \
+		origin			0 0 \
+		forecolor		1 1 1 0.75 \
+		text			"@PLATFORM_CAC_"button \
+		textfont		CHOICE_TEXTFONT \
+		textscale		TEXTSIZE_SMALL \
+		textalign		ITEM_ALIGN_BOTTOM_LEFT \
+		visible			1 \
+		decoration \
+		state \
+		{ \
+			name		"Flash" \
+			forecolor	1 1 1 1 \
+			onEnter \
+			{ \
+				changeState Default FADE_TIME; \
+			} \
+		} \
+	}
+	
+#define LARGE_MEDAL( idx, color, visArg ) \
+	itemDef \
+	{ \
+		style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_IMAGE \
+		origin			MEDAL_ORIGIN \
+		rect			(MEDAL_OFFSET_X*15) MEDAL_OFFSET_Y (MEDAL_WIDTH*1.5) (MEDAL_HEIGHT*1.5) \
+		exp				material( GET_MEDAL_FULL(idx) ) \
+		forecolor		color 1 \
+		visible			when( visArg ) \
+	}
+	
+#define MEDAL_DESCRIPTION_TITLE( idx, visArg ) \
+	itemDef \
+	{ \
+		style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_TEXT \
+		origin			MEDAL_ORIGIN \
+		rect			(MEDAL_OFFSET_X*17) (MEDAL_OFFSET_Y*3.2) 0 0 \
+		exp				text( GET_DISPLAY_STRING(idx) ) \
+		textAlign		ITEM_ALIGN_CENTER \
+		forecolor		1 1 1 1 \
+		visible			when( visArg ) \
+	} \
+	itemDef \
+	{ \
+		style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_TEXT \
+		origin			MEDAL_ORIGIN \
+		rect			(MEDAL_OFFSET_X*17) (MEDAL_OFFSET_Y*3.2) 0 0 \
+		exp				text( "@MENU_LOCKED" ) \
+		textAlign		ITEM_ALIGN_CENTER \
+		forecolor		1 1 1 1 \
+		visible			when( !visArg ) \
+	}
+	
+#define MEDAL_DESCRIPTION( idx, visArg ) \
+	itemDef \
+	{ \
+		style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_TEXT \
+		origin			MEDAL_ORIGIN \
+		rect			(MEDAL_OFFSET_X*17) (MEDAL_OFFSET_Y*3.5) 0 0 \
+		textScale		TEXTSIZE_SMALL \
+		exp				text( GET_DESC(idx) ) \
+		textAlign		ITEM_ALIGN_CENTER \
+		forecolor		1 1 1 1 \
+		visible			when( visArg ) \
+	}
+
+#define HIGHTLIGHTED_MEDAL \
+	LARGE_MEDAL( localVarInt(ui_highlight), 1 1 1, GET_STAT(localVarInt(ui_highlight)) ) \
+	LARGE_MEDAL( localVarInt(ui_highlight), 0.15 0.15 0.15, !GET_STAT(localVarInt(ui_highlight)) ) \
+	MEDAL_DESCRIPTION_TITLE( localVarInt(ui_highlight), GET_STAT(localVarInt(ui_highlight)) ) \
+	MEDAL_DESCRIPTION( localVarInt(ui_highlight), GET_STAT(localVarInt(ui_highlight)) )
+
+#define MEDAL_ITEM( idx, itemName, texture, color, extraArgs, visArg ) \
+	itemDef \
+	{ \
+		name			itemName \
+		style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_IMAGE \
+		origin			MEDAL_ORIGIN \
+		rect			MEDAL_OFFSET_X MEDAL_OFFSET_Y MEDAL_WIDTH MEDAL_HEIGHT \
+		exp				material( texture ) \
+		exp				rect X( MEDAL_RECT_X( idx ) ) \
+		exp				rect Y( MEDAL_RECT_Y( idx ) ) \
+		exp				rect H( MEDAL_HEIGHT ) \
+		exp				rect W( MEDAL_WIDTH ) \
+		forecolor		color 1 \
+		visible			when( visArg && GET_REF_STRING( idx ) ) \
+		state \
+        { \
+			name          "FadeIn" \
+			forecolor     color 1 \
+			onEnter \
+			{ \
+				MEDAL_ITEM_FOCUS( idx, itemName ); \
+			} \
+        } \
+        state \
+        { \
+			name          "FadeOut" \
+			forecolor     0.6 0.6 0.6 0.6 \
+			onEnter \
+			{ \
+				if( localVarInt( ui_highlight ) == idx ) \
+				{ \
+					execNow ui_animate titles_zombie itemName FadeIn FADE_TIME; \
+				}\
+				else \
+				{ \	
+					execNow ui_animate titles_zombie itemName FullOn FADE_TIME/4; \ 
+				}\
+			} \
+        } \
+        state \
+        { \
+			name          "FullOn" \
+			forecolor     color 1 \
+        } \
+        extraArgs \
+        CHOICE_SCRIPTS_ALL( idx, MEDAL_ACTION(idx, itemName), MEDAL_ITEM_FOCUS(idx, itemName), /*leaveFocusArg*/; ) \
+	}
+	
+#define GET_STAT( idx ) \
+	getDStat( "ZombieTitles", ( TABLE_IDX(idx) ) )
+	
+#define GET_REF_STRING( idx ) \
+	tableLookup( TITLES_TABLE, TITLE_IDX_COL, string(TABLE_IDX(idx)), TITLE_REF_COL )
+	
+#define GET_DISPLAY_STRING( idx ) \
+	"@"+tableLookup( TITLES_TABLE, TITLE_IDX_COL, string(TABLE_IDX(idx)), TITLE_DISPLAY_COL )
+	
+#define GET_MEDAL_FACE( idx ) \
+	tableLookup( TITLES_TABLE, TITLE_IDX_COL, string(TABLE_IDX(idx)), TITLE_MEDAL_COL )"_face"
+	
+#define GET_MEDAL_FULL( idx ) \
+	tableLookup( TITLES_TABLE, TITLE_IDX_COL, string(TABLE_IDX(idx)), TITLE_MEDAL_COL )+"_full"
+	
+#define GET_MEDAL_RIBBON( idx ) \
+	tableLookup( TITLES_TABLE, TITLE_IDX_COL, string(TABLE_IDX(idx)), TITLE_MEDAL_COL )"_ribbon"
+	
+#define GET_DESC( idx ) \
+	"@"+tableLookup( TITLES_TABLE, TITLE_IDX_COL, string(TABLE_IDX(idx)), TITLE_DESC_COL )
+	
+#define TITLE_MEDAL( idx ) \
+	MEDAL_ITEM( idx, "valid"#idx, GET_MEDAL_FULL( idx ), 1 1 1, VALID_STATE, GET_STAT(idx) ) \
+	MEDAL_ITEM( idx, "invalid"#idx, GET_MEDAL_FULL( idx ), 0.15 0.15 0.15, INVALID_STATE, !GET_STAT(idx) )
+	
+#define PAGE_NUMBERS \
+	itemDef \
+	{ \
+		name			page_numbers \
+		style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_TEXT \
+		origin			MEDAL_ORIGIN \
+		rect			((NEXT_BUTTON_X+PREV_BUTTON_X)/2 - 10) PAGE_BUTTON_Y 0 0 \
+		exp				text( "Page: " + dvarString( ui_titles_page ) + "/" + string(MAX_PAGE) ) \
+		textscale		TEXTSIZE_SMALL \
+		forecolor		1 1 1 1 \
+		visible			1 \
+	}
+	
+#define NEXT_UP \
+	if( (localVarInt(ui_highlight) - NUM_MEDALS_ROW) < 1 ) \
+	{ setLocalVarInt ui_select_offset 0; } \
+	else \
+	{ setLocalVarInt ui_select_offset NUM_MEDALS_ROW; }
+	
+		
+#define NEXT_DOWN \
+	if( (localVarInt(ui_highlight) + NUM_MEDALS_ROW) > MAX_MEDALS_PER_PAGE ) \
+	{ setLocalVarInt ui_select_offset 0; } \
+	else \
+	{ setLocalVarInt ui_select_offset NUM_MEDALS_ROW; }
+	
+#define HIGHLIGHT_UP \
+	NEXT_UP \
+	execNow focusItem ( "valid" + string( localVarInt(ui_highlight) - localVarInt(ui_select_offset) ) ); \
+	execNow focusItem ( "invalid" + string( localVarInt(ui_highlight) - localVarInt(ui_select_offset) ) );
+	
+#define HIGHLIGHT_DOWN \
+	NEXT_DOWN \
+	execNow focusItem ( "valid" + string( localVarInt(ui_highlight) + localVarInt(ui_select_offset) ) ); \
+	execNow focusItem ( "invalid" + string( localVarInt(ui_highlight) + localVarInt(ui_select_offset) ) );
+
+	menuDef
+	{
+		name			titles_zombie
+		fullscreen		1
+		soundloop 		MENU_MUSIC
+		PAGE_LEFT
+		PAGE_RIGHT
+		onOpen
+		{
+			setDvar ui_titles_page 1;
+			setLocalVarInt ui_highlight	1;
+			focusFirst;
+		}
+			
+		onEsc
+		{
+			close self;
+		}
+		
+#ifdef INGAME_MENUS
+		// UI3D: background so that the watch is hidden
+		itemDef
+		{
+			style			WINDOW_STYLE_FILLED
+			rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+			backcolor		0 0 0 1
+			visible			1
+			decoration
+		}
+#else
+		// background
+		#include "ui/bg.inc"
+#endif
+
+		MAIN_BG_ZOMBIE
+		
+		execKeyInt DPAD_UP { HIGHLIGHT_UP }
+		execKeyInt APAD_UP { HIGHLIGHT_UP }
+		execKeyInt DPAD_DOWN { HIGHLIGHT_DOWN }
+		execKeyInt APAD_DOWN { HIGHLIGHT_DOWN }
+
+		CHOICE_MENU_TITLE( "@MENU_AWARDS_AND_TITLES" )
+		
+		TITLE_MEDAL( 1 )
+		TITLE_MEDAL( 2 )
+		TITLE_MEDAL( 3 )
+		TITLE_MEDAL( 4 )
+		TITLE_MEDAL( 5 )
+		TITLE_MEDAL( 6 )
+		TITLE_MEDAL( 7 )
+		TITLE_MEDAL( 8 )
+		
+		PAGE_BUTTON( "PREV", PREV_BUTTON_X )
+		PAGE_BUTTON( "NEXT", NEXT_BUTTON_X )
+		PAGE_NUMBERS
+		
+		HIGHTLIGHTED_MEDAL
+	}
+}

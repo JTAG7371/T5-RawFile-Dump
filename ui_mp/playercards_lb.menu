@@ -1,0 +1,420 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+
+#define PLAYER_CARD_HEIGHT_LB NEW_FRAME_DEFAULT_HEIGHT
+#define PLAYER_CARD_WIDTH_LB ( PLAYER_CARD_HEIGHT_LB * FRAME_ASPECT_RATIO )
+#undef	CHOICE_X_START
+#define CHOICE_X_START	 			( -PLAYER_CARD_WIDTH_LB / 2 + 18 )
+#undef	CHOICE_Y_START
+#define CHOICE_Y_START	 			( -PLAYER_CARD_HEIGHT_LB / 2 + NEW_FRAME_BG_Y_OFFSET( PLAYER_CARD_HEIGHT_LB ) )
+
+#include "ui_mp/menustyle.inc"
+#include "ui_mp/overlaybg.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/popup_player_info.inc"
+#include "ui_mp/stats_info.inc"
+
+#ifndef BASE_LB_TYPES_COUNT
+#define BASE_LB_TYPES_COUNT int(tableLookup( "mp/gameTypesTable.csv", 0, "maxnum_gametype", 1 ))
+#endif 
+
+#undef  CHOICE_SIZE_X
+#define CHOICE_SIZE_X			200
+#undef	CHOICE_TEXTSTYLE
+#define	CHOICE_TEXTSTYLE		ITEM_TEXTSTYLE_NORMAL
+#undef CHOICE_TEXTCOLOR 
+#define CHOICE_TEXTCOLOR		NEW_FRAME_COMMON_TEXT_COLOR
+
+#undef	CHOICE_HORIZONTAL_ALIGN 
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_CENTER 
+
+#undef  CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_CENTER
+
+#ifdef XENON
+	#define SELECT_ICON	"ui_button_xenon_3d_a_32x32"
+#endif
+#ifdef PS3
+	#define SELECT_ICON	"ui_button_ps3_x_32x32"
+#endif
+
+#define PLAYER_CARD_LISTBOX_RECT_LB		(CHOICE_X_START-3) (CHOICE_Y_START+NEW_FRAME_BUTTON_HEIGHT+2) (CHOICE_SIZE_X+3) 250 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+
+#undef LIST_X_START				
+#define LIST_X_START					( -PLAYER_CARD_WIDTH_LB / 2 + 15 )
+#undef LIST_Y_START				
+#define LIST_Y_START					( -PLAYER_CARD_HEIGHT_LB / 2 + 15 + NEW_FRAME_BG_Y_OFFSET( PLAYER_CARD_HEIGHT_LB ) )
+#undef LIST_HEIGHT						
+#define LIST_HEIGHT						(PLAYER_CARD_HEIGHT_LB-120)
+#undef LIST_WIDTH						
+#define LIST_WIDTH						(PLAYER_CARD_WIDTH_LB/2-40)
+
+#define CHOICE_TAB_TEXTSIZE				TEXTSIZE_DEFAULT
+#define TAB_1_TEXT						(locString( "@MENU_LEADERBOARDS_CAPS" ))
+#define TAB_2_TEXT						(locString( "@MPUI_PRESTIGE_LEADERBOARDS_CAPS"))
+
+#define TAB_BG_PAD						5
+#define TAB_1_WIDTH						( getTextWidth( TAB_1_TEXT, CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (TAB_BG_PAD*2) )
+#define TAB_2_WIDTH						( getTextWidth( TAB_2_TEXT, CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (TAB_BG_PAD*2) )
+#define TAB_HEIGHT						15
+
+#define PLAYER_CARD_LB_LIST_TAB_1_X		NEW_FRAME_CHOICE_X_START
+#define PLAYER_CARD_LB_LIST_TAB_2_X		( PLAYER_CARD_LB_LIST_TAB_1_X + TAB_1_WIDTH )
+
+#define PLAYER_CARD_LB_LIST_TAB_Y		( ( -PLAYER_CARD_HEIGHT_LB / 2 ) + NEW_FRAME_HEADER_HEIGHT - TAB_HEIGHT )
+
+#define PLAYER_CARD_LB_TAB_1_ACTION					\
+	closeImmediate menu_playercards_lb_prestige;	\
+	openImmediate menu_playercards_lb;
+	
+#define PLAYER_CARD_LB_TAB_2_ACTION								\
+	if( isItemPurchased(getItemIndex("FEATURE_PRESTIGE_LB")) )	\
+	{															\
+		closeImmediate menu_playercards_lb;						\
+		openImmediate menu_playercards_lb_prestige;				\
+	}															\
+	else														\
+	{															\
+		openImmediate prestige_leaderboard_confirmation;		\
+	}
+
+#define PLAYER_CARD_LB_TAB_HEADERS																			\
+		/* highlighted header */																			\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	PLAYER_CARD_LB_LIST_TAB_1_X,										\
+										PLAYER_CARD_LB_LIST_TAB_Y,											\
+										TAB_1_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_1_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_ORANGE_RGB 1, 1, ; )										\
+		/* non highlighted header */																		\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	PLAYER_CARD_LB_LIST_TAB_2_X,										\
+										PLAYER_CARD_LB_LIST_TAB_Y,											\
+										TAB_2_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_2_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_GRAY_TEXT_COLOR, 1, ; )										
+
+#define PLAYER_CARD_LB_TAB_BUTTONS																		\
+		/* Tab 1 */																						\
+		TAB_ACTION_BUTTON_ADV( 			PLAYER_CARD_LB_LIST_TAB_1_X,									\
+										PLAYER_CARD_LB_LIST_TAB_Y,										\
+										TAB_1_WIDTH,													\
+										TAB_HEIGHT,														\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,					\
+										; , 1, ; )														\
+		/* Tab 2 */																						\
+		TAB_ACTION_BUTTON_ADV( 			PLAYER_CARD_LB_LIST_TAB_2_X,									\
+										PLAYER_CARD_LB_LIST_TAB_Y,										\
+										TAB_2_WIDTH,													\
+										TAB_HEIGHT,														\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,					\
+										PLAYER_CARD_LB_TAB_2_ACTION , 1, ; )					
+
+
+#define PLAYER_CARD_PERSTIGE_LB_TAB_HEADERS																	\
+		/* highlighted header */																			\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	PLAYER_CARD_LB_LIST_TAB_1_X,										\
+										PLAYER_CARD_LB_LIST_TAB_Y,											\
+										TAB_1_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_1_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_GRAY_TEXT_COLOR, 1, ; )									\
+		/* highlighted header */																			\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	PLAYER_CARD_LB_LIST_TAB_2_X,										\
+										PLAYER_CARD_LB_LIST_TAB_Y,											\
+										TAB_2_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_2_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_ORANGE_RGB 1, 1, ; )												
+
+#define PLAYER_CARD_PRESTIGE_LB_TAB_BUTTONS																\
+		/* Tab 1 */																						\
+		TAB_ACTION_BUTTON_ADV( 			PLAYER_CARD_LB_LIST_TAB_1_X,									\
+										PLAYER_CARD_LB_LIST_TAB_Y,										\
+										TAB_1_WIDTH,													\
+										TAB_HEIGHT,														\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,					\
+										PLAYER_CARD_LB_TAB_1_ACTION , 1, ; )							\
+		/* Tab 2 */																						\
+		TAB_ACTION_BUTTON_ADV( 			PLAYER_CARD_LB_LIST_TAB_2_X,									\
+										PLAYER_CARD_LB_LIST_TAB_Y,										\
+										TAB_2_WIDTH,													\
+										TAB_HEIGHT,														\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,					\
+										; , 1, ; )					
+
+#define PLAYER_CARD_LB_LIST_TAB_BG( px, pw, selected )														\
+		itemDef																								\
+		{																									\
+			style           WINDOW_STYLE_SHADER_FRAMED														\
+			frame           16 0.2 FRAME_OPEN_BOTTOM														\
+			rect            0 PLAYER_CARD_LB_LIST_TAB_Y 0 TAB_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER	\
+			exp				rect X( px )																	\
+			exp				rect W(	pw )																	\
+			background      "menu_mp_tab_frame_inner"														\
+			forecolor       0.5 0.5 0.5 0.5																	\
+			visible         when( selected )																\
+			decoration																						\
+		}																									\
+		itemDef																										\
+		{																											\
+			style           WINDOW_STYLE_SHADER_FRAMED																\
+			frame           16 0.2 FRAME_OPEN_BOTTOM																\
+			rect            0 PLAYER_CARD_LB_LIST_TAB_Y 0 TAB_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER	\
+			exp				rect X( px )																			\
+			exp				rect W(	pw )																			\
+			background      "menu_mp_tab_frame_inner"																\
+			forecolor       1 1 1 1																					\
+			visible         when( !selected )    																	\
+			decoration																								\
+		}
+
+#define PLAYER_CARD_PRESTIGE_LB_BUTTON_ACTION( currMenu, nextMenu ) \ 
+		if( currMenu == menu_playercards_lb )	\
+		{ \
+			if( isItemPurchased(getItemIndex("FEATURE_PRESTIGE_LB")) ) \
+			{ \
+				closeImmediate menu_playercards_lb; \
+				openImmediate menu_playercards_lb_prestige; \
+			} \
+			else \
+			{ \
+				openImmediate prestige_leaderboard_confirmation; \
+			} \
+		} \
+		else \
+		{ \
+			closeImmediate currMenu; \
+			openImmediate nextMenu; \ 
+		} 
+
+#define CHANGE_MENU_ACTION( currMenu, nextMenu ) \
+		execKeyInt DPAD_LEFT { \
+			PLAYER_CARD_PRESTIGE_LB_BUTTON_ACTION( currMenu, nextMenu ) \
+		} \
+		execKeyInt DPAD_RIGHT { \
+			PLAYER_CARD_PRESTIGE_LB_BUTTON_ACTION( currMenu, nextMenu ) \
+		} \
+		execKeyInt APAD_LEFT { \
+			PLAYER_CARD_PRESTIGE_LB_BUTTON_ACTION( currMenu, nextMenu ) \
+		} \
+		execKeyInt APAD_RIGHT { \
+			PLAYER_CARD_PRESTIGE_LB_BUTTON_ACTION( currMenu, nextMenu ) \
+		}
+
+#undef ON_ESC_ACTION
+#define ON_ESC_ACTION																					\
+		execnow changemenucloseslidedirection menu_playercards_lb MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;	\
+		close self;																						\
+		open menu_playercard_self; 
+
+#define PLAYER_CARD_DROPDOWN_LIST_LB( feederName, feederType, rectArg, currMenu, nextMenu ) \
+		itemDef\
+		{ \
+			name						feederName \
+			type						ITEM_TYPE_LISTBOX \
+			feeder						feederType \
+			rect						PLAYER_CARD_LISTBOX_RECT_LB \
+			origin						0 0 \
+			elementwidth				30 \
+			elementheight				17 \
+			elementtype					LISTBOX_TEXT \
+			textstyle					ITEM_TEXTSTYLE_NORMAL \
+			textfont					UI_FONT_NORMAL \
+			textscale					TEXTSIZE_SMALL \
+			textalignx					19 \
+			forecolor					CHOICE_TEXTCOLOR \
+			focusColor					CHOICE_TEXTCOLOR \
+			disableColor				CHOICE_TEXTCOLOR \
+			noscrollbars \
+			selectIcon					SELECT_ICON \
+			outlineColor				1 1 1 1 \
+			elementHighlightColor		0 0 0 1 \
+			elementBackgroundColor		NEW_FRAME_TRANSPARENCY \
+			modal \
+			noBlinkingHighlight \
+			visible			1 \
+			onfocus  \
+			{ \
+				exec updateListboxPos currMenu;	\
+				play CHOICE_FOCUS_SOUND; \
+			}	\
+			onListboxSelectionChange \
+			{ \
+				play CHOICE_FOCUS_SOUND; \
+				selectionChangeArgs \
+			} \
+			doubleclick \
+			{ \
+				execnow changemenucloseslidedirection currMenu MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT; \
+				close self; \
+				setdvar lb_filter "friends"; \
+				setdvar lb_typeByResetPeriod "weekly"; \
+				execNow set lb_filter_scroll ( dvarInt( lb_filter )); \
+				execNow set lb_typeByResetPeriod_scroll ( dvarInt( lb_typeByResetPeriod ) ); \
+				execNow set lb_type (tableLookup( "mp/gameTypesTable.csv", 0, int(getFeederData("selection")), 5 )); \
+				play uin_navigation_menu_lg_open; \
+				execnow openmenu (getBaseLbMenuName( dvarInt("lb_Type"), "menu_leaderboard_" )); \
+				execnow changemenuopenslidedirection (getBaseLbMenuName( dvarInt("lb_Type"), "menu_leaderboard_" )) MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT; \
+				execNow set leaderBoardLastFetchTime ( milliseconds() ); \		
+				setDvar ui_lobbyLeaderBoard "0"; \
+				execnow "downloadingleaderboard"; \
+			} \
+			CHANGE_MENU_ACTION( currMenu, nextMenu )\
+		}
+
+	menuDef	{
+		name					menu_playercards_lb
+		rect					0 0 640 480
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED 
+		control					MENU_CONTROL_OPENER			
+		priority				MENU_PRI_ONTOP 
+		soundloop 				MENU_MUSIC 
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT
+		closeSlideDirection		MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT
+		popup
+		onOpen
+		{		
+			setdvar lb_prestige 0;
+			execNow "set leaderboard_type 0";	//0 for nomal leaderboards and 1 for prestige leaderboards.
+		}
+		onEsc
+		{
+			ON_ESC_ACTION
+		}
+		onFocus 
+		{  
+			activateBlur;
+		}
+		onClose
+		{
+			deactivateBlur;
+		}
+		PC_TAB_SWITCH_ACTIONS( menu_playercards_lb, menu_playercards_lb_prestige, menu_playercards_lb_prestige )
+
+		NEW_FRAME( PLAYER_CARD_WIDTH_LB, PLAYER_CARD_HEIGHT_LB )
+
+		// Title
+		NEW_FRAME_TITLE( PLAYER_CARD_WIDTH_LB, PLAYER_CARD_HEIGHT_LB, "@MENU_LEADERBOARDS_CAPS", 1 )
+		PLAYER_INFO_VIS( PLAYER_CARD_WIDTH_LB, PLAYER_CARD_HEIGHT_LB, 1 )
+		
+		PLAYER_CARD_LB_LIST_TAB_BG( PLAYER_CARD_LB_LIST_TAB_1_X, TAB_1_WIDTH, 1 ) 
+		PLAYER_CARD_LB_LIST_TAB_BG( PLAYER_CARD_LB_LIST_TAB_2_X, TAB_2_WIDTH, 0 ) 
+		PLAYER_CARD_LB_TAB_HEADERS
+		PLAYER_CARD_LB_TAB_BUTTONS
+
+		// LEADERBOARD LIST 
+		PLAYER_CARD_DROPDOWN_LIST_LB( playercard_leaderboard_list, FEEDER_LEADERBOARD_GAMETYPES, PLAYER_CARD_LISTBOX_RECT_LB, menu_playercards_lb, prestige_leaderboard_confirmation ) 
+
+		/* Leaderboards requirements text */ 
+		PREPROC_TEXT_DRAW_VIS_EX( -20 -100 250 1 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, 
+								"@MPUI_LEADERBOARD_REQUIREMENTS_TEXT", 
+								TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_LEFT, CHOICE_TEXTCOLOR, 1, autowrapped; ) 
+
+		NEW_FRAME_BACK_BUTTON_ACTION( PLAYER_CARD_WIDTH_LB, PLAYER_CARD_HEIGHT_LB, ON_ESC_ACTION )
+		#include "ui/safearea.menu"
+
+}
+
+#undef ON_ESC_ACTION
+#define ON_ESC_ACTION																						\
+	execnow changemenucloseslidedirection menu_playercards_lb_prestige MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;	\
+	close self;																								\
+	open menu_playercard_self; 
+
+	menuDef	
+	{
+		name					menu_playercards_lb_prestige
+		rect					0 0 640 480
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED 
+		control					MENU_CONTROL_OPENER			
+		priority				MENU_PRI_ONTOP 
+		soundloop 				MENU_MUSIC 
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT
+		closeSlideDirection		MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT
+		popup
+		onOpen
+		{	
+			setdvar lb_prestige 1;
+			execNow "set leaderboard_type 1";
+		}
+		onEsc
+		{			
+			ON_ESC_ACTION
+		}
+		onFocus 
+		{  
+			activateBlur;
+		}
+		onClose
+		{
+			deactivateBlur;
+		}
+		PC_TAB_SWITCH_ACTIONS( menu_playercards_lb_prestige, menu_playercards_lb, menu_playercards_lb )
+
+		NEW_FRAME( PLAYER_CARD_WIDTH_LB, PLAYER_CARD_HEIGHT_LB )
+
+		// Title
+		NEW_FRAME_TITLE( PLAYER_CARD_WIDTH_LB, PLAYER_CARD_HEIGHT_LB, "@MPUI_PRESTIGE_LEADERBOARDS_CAPS", 1 )
+		PLAYER_INFO_VIS( PLAYER_CARD_WIDTH_LB, PLAYER_CARD_HEIGHT_LB, 1 )
+		
+		PLAYER_CARD_LB_LIST_TAB_BG( PLAYER_CARD_LB_LIST_TAB_1_X, TAB_1_WIDTH, 0 ) 
+		PLAYER_CARD_LB_LIST_TAB_BG( PLAYER_CARD_LB_LIST_TAB_2_X, TAB_2_WIDTH, 1 ) 
+		PLAYER_CARD_PERSTIGE_LB_TAB_HEADERS
+		PLAYER_CARD_PRESTIGE_LB_TAB_BUTTONS
+
+		// LEADERBOARD LIST 
+		PLAYER_CARD_DROPDOWN_LIST_LB( playercard_leaderboard_list_prestige, FEEDER_LEADERBOARD_GAMETYPES, PLAYER_CARD_LISTBOX_RECT_LB, menu_playercards_lb_prestige, menu_playercards_lb ) 
+
+		/* Leaderboards requirements text */ 
+		PREPROC_TEXT_DRAW_VIS_EX( -20 -100 250 1 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, 
+								"@MPUI_LEADERBOARD_REQUIREMENTS_TEXT", 
+								TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_LEFT, CHOICE_TEXTCOLOR, 1, autowrapped; ) 
+
+		NEW_FRAME_BACK_BUTTON_ACTION( PLAYER_CARD_WIDTH_LB, PLAYER_CARD_HEIGHT_LB, ON_ESC_ACTION )
+		#include "ui/safearea.menu"
+
+}
+
+#include "ui_mp/popupstyle.inc"	
+#include "ui/choices_setup_popmenu.menu"
+	
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		3
+#undef  CHOICE_SIZE_X
+#define CHOICE_SIZE_X			240
+
+// Prestige Leaderboards confirmation popup
+menuDef
+{	
+	SYSTEM_POPUP_SETUP_VIS( "prestige_leaderboard_confirmation", setfocus prestige_leaderboard_confirmation_2;, ;, 1 )
+
+	SYSTEM_POPUP_TITLE_VIS( locString( "MPUI_PRESTIGE_LB_PURCHASE_CONF", getItemCost(getItemIndex("FEATURE_PRESTIGE_LB")) ), 1 )
+
+	#define CHOICE_1_ACTION							\
+			open PrestigeLBPurchaseConfirmation;	\
+			close self;
+
+	#define CHOICE_2_ACTION								\
+			openImmediate menu_playercards_lb_prestige;	\
+			close self;									\
+			closeImmediate menu_playercards_lb;
+
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MPUI_PRESTIGE_LB_CHOICE_1",	CHOICE_1_ACTION,	( !IS_ITEM_LOCKED( FEATURE_PRESTIGE_LB ) && getDStat( "PlayerStatsList", "CODPOINTS" ) >= getItemCost(getItemIndex("FEATURE_PRESTIGE_LB") ) ),	; )
+	FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( 1, "@MPUI_PRESTIGE_LB_CHOICE_1", ;, ;, ( IS_ITEM_LOCKED( FEATURE_PRESTIGE_LB ) || getDStat( "PlayerStatsList", "CODPOINTS" ) < getItemCost(getItemIndex("FEATURE_PRESTIGE_LB") ) ), ; )
+	
+	FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MPUI_PRESTIGE_LB_CHOICE_2",	CHOICE_2_ACTION,	1, name prestige_leaderboard_confirmation_2;										)
+	FRAME_CHOICE_BUTTON_VIS_EX( 3, "@MPUI_PRESTIGE_LB_CANCEL",		close self;,		1, name prestige_leaderboard_confirmation_3	)
+}

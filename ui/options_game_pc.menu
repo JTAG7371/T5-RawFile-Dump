@@ -1,0 +1,144 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#define OPTIONS_STYLE			1
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/framestyle.inc"
+#include "ui/frame.inc"
+
+#undef CHOICE_BUTTON_NAME
+#define CHOICE_BUTTON_NAME		"options_game_"
+#undef MENUDEF_NAME
+#define MENUDEF_NAME			options_game
+
+#undef	OPTIONS_GAME_HEIGHT
+#undef	OPTIONS_GAME_WIDTH
+#define OPTIONS_GAME_HEIGHT		332
+#define OPTIONS_GAME_WIDTH		OPTIONS_GAME_HEIGHT * FRAME_ASPECT_RATIO
+
+{
+	menuDef 
+	{
+		name			options_game
+		fullScreen		0
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		soundloop		""
+
+		onOpen
+		{
+			LOCAL_CLOSE_ALL_BUT( options_game )
+			
+			setLocalVarBool ui_hideBack 1;
+
+			uiScript getLanguage;
+			
+			if (IsInGame())
+			{
+				showMenu "pausedbkgnd";
+			}			
+			else
+			{
+				activateBlur;
+			}
+		}
+		onClose
+		{
+			setLocalVarBool ui_hideBack 0;
+			
+			if (IsInGame())
+			{
+				hideMenu "pausedbkgnd";
+			}			
+			else
+			{
+				deactivateBlur;
+			}
+		}
+		onESC
+		{ 
+			close self;
+			open options_new_pc;
+		}
+		PC_TAB_SWITCH_ACTIONS( options_new_pc, options_controls_new_pc, options_controls_new_pc )
+
+		#include "ui_mp/leftside_options.inc"
+
+#undef	CHOICE_X_START
+#undef	CHOICE_Y_START
+#undef	CHOICE_HORIZONTAL_ALIGN
+#undef	CHOICE_VERTICAL_ALIGN
+#undef	CHOICE_DVAR_EXTRA_WIDTH
+#undef	CHOICE_TEXT_OFFSET_X
+
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_CENTER
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_CENTER
+#define CHOICE_X_START				((-OPTIONS_GAME_WIDTH/2) - 75)
+#define CHOICE_Y_START				((-OPTIONS_GAME_HEIGHT/2) + 32)
+#define CHOICE_DVAR_EXTRA_WIDTH		120
+#define CHOICE_TEXT_OFFSET_X		-10
+
+#undef CHOICE_TEXTSTYLE
+#undef CHOICE_TEXTSIZE
+#define CHOICE_TEXTSTYLE		ITEM_TEXTSTYLE_NORMAL
+#define CHOICE_TEXTSIZE			TEXTSIZE_DEFAULT
+
+#undef	CHOICE_TEXT_COLOR_NO_HL
+#undef	CHOICE_TEXT_COLOR_HL
+#undef	CHOICE_CAPTION_TEXT_COLOR_NO_HL
+#undef	CHOICE_CAPTION_TEXT_COLOR_HL
+
+#define	CHOICE_TEXT_COLOR_NO_HL			CHOICE_TEXTCOLOR
+#define	CHOICE_TEXT_COLOR_HL			1 1 1 1
+#define	CHOICE_CAPTION_TEXT_COLOR_NO_HL	CHOICE_TEXTCOLOR
+#define	CHOICE_CAPTION_TEXT_COLOR_HL	0 0 0 1
+
+		FRAME_CHOICE_SECTION_TITLE( 21, "@PATCH_GAME_CAPS" )
+
+		//COMMMON
+		
+		//SP
+		FRAME_CHOICE_DVARYESNO_VIS( 22, "@MENU_SUBTITLES_CAPS", cg_subtitles, ;, ( !dvarBool(ui_multiplayer) && SHOW_SUBTITLES ) )
+   		FRAME_CHOICE_DVARFLOATLIST_VIS( 23, "@MENU_MATURE_CAPS", ;, { "@MENU_MATURE_UNRESTRICTED_CAPS" 0 "@MENU_MATURE_UNRESTRICTED_CAPS" 1 }, open mature_content_pc_disable_warning, ( dvarString( "cg_mature" ) == "1" && dvarBool(cg_allow_mature) && !IsInGame() && !dvarBool(ui_multiplayer) && SHOW_MATURE ) )
+   		FRAME_CHOICE_DVARFLOATLIST_VIS( 23, "@MENU_MATURE_CAPS", cg_mature, { "@MENU_MATURE_REDUCED_CAPS" 1 "@MENU_MATURE_REDUCED_CAPS" 0 }, setdvar "cg_mature" 1; setdvar cg_blood "1", ( dvarString( "cg_mature" ) == "0" && dvarBool(cg_allow_mature) && !IsInGame() && !dvarBool(ui_multiplayer) && SHOW_MATURE ) )
+		FRAME_CHOICE_DVARFLOATLIST_VIS( 23, "@MENU_ENABLE_CONSOLE_CAPS", monkeytoy, { "@MENU_YES_CAPS" 0 "@MENU_NO_CAPS" 1 }, ;, ( dvar(ui_allowConsole) && ( ( !dvarBool(cg_allow_mature) && !IsInGame() && !dvarBool(ui_multiplayer) ) || ( IsInGame() && !dvarBool(ui_multiplayer) ) ) ) )		
+		FRAME_CHOICE_DVARFLOATLIST_VIS( 24, "@MENU_ENABLE_CONSOLE_CAPS", monkeytoy, { "@MENU_YES_CAPS" 0 "@MENU_NO_CAPS" 1 }, ;, ( dvar(ui_allowConsole) && dvarBool(cg_allow_mature) && !IsInGame() && !dvarBool(ui_multiplayer) ) )
+		//MP
+		FRAME_CHOICE_DVARYESNO_VIS( 22, "@MENU_DRAW_HUD_CAPS", hud_enable, ;, ( dvarBool( ui_multiplayer ) ) )
+		FRAME_CHOICE_DVARFLOATLIST_VIS( 23, "@MENU_ENABLE_CONSOLE_CAPS", monkeytoy, { "@MENU_YES_CAPS" 0 "@MENU_NO_CAPS" 1 }, ;, ( dvar(ui_allowConsole) && dvarBool(ui_multiplayer) ) )
+
+		//CHOICE_DVARFLOATLIST_VIS( 26, "@MENU_LANGUAGE", ui_language, { "@MENU_ENGLISH" 0 "@MENU_FRENCH" 1 "@MENU_GERMAN" 2 "@MENU_ITALIAN" 3 "@MENU_SPANISH" 4 "@MENU_BRITISH" 5 "@MENU_RUSSIAN" 6 "@MENU_POLISH" 7 "@MENU_KOREAN" 8 "@MENU_TAIWANESE" 9 "@MENU_JAPANESE" 10 "@MENU_CHINESE" 11 "@MENU_THAI" 12 }, uiScript verifyLanguage, when( dvarint( developer ) ) )
+		//CHOICE_APPLY_VIS( "@MENU_APPLY_LANGUAGE_CHANGE", open language_restart_popmenu, when ( dvarint( ui_languageChanged ) ) )		
+	}
+	
+#undef	CHOICE_TEXT_COLOR_NO_HL
+#undef	CHOICE_TEXT_COLOR_HL
+#undef	CHOICE_CAPTION_TEXT_COLOR_NO_HL
+#undef	CHOICE_CAPTION_TEXT_COLOR_HL
+
+#define CHOICE_TEXT_COLOR_NO_HL			1 1 1 1
+#define CHOICE_TEXT_COLOR_HL			0 0 0 1
+#define CHOICE_CAPTION_TEXT_COLOR_NO_HL 1 1 1 1
+#define CHOICE_CAPTION_TEXT_COLOR_HL	0 0 0 1
+
+#include "ui_mp/popupstyle.inc"	
+#include "ui/choices_setup_popmenu.menu"
+
+	#define OPEN_MATURE_DISABLE \
+			execondvarstring cg_mature 0 "set cg_mature 1; set cg_blood 1; closemenu mature_content_pc_disable_warning"; 
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( mature_content_pc_disable_warning, setFocus mature_content_pc_disable_warning_2; OPEN_MATURE_DISABLE, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_WARNING_CAPS", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_WARNING_DISABLE_MATURE_CONTENT", 1 )
+
+		#define DISABLE_CONTENT			\
+				close self;				\
+				exec "set cg_blood 0";	\
+				exec "set cg_mature 0";
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	DISABLE_CONTENT,	1, ;										)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self;,		1, name mature_content_pc_disable_warning_2	)
+	}
+}

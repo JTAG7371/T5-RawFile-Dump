@@ -1,0 +1,74 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define OPTIONS_STYLE			1
+#define CHOICE_ACTION_SOUND		"uin_mouse_click_t"
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/framestyle.inc"
+#include "ui/frame.inc"
+
+{
+	menuDef 
+	{
+		name options_control_defaults
+		fullScreen 0				
+		rect 0 0 640 480				// Size and position of the menu
+		focusColor COLOR_FOCUSED			// Menu focus color for text and items
+		soundloop ""
+		onOpen
+		{
+			setLocalVarBool ui_hideBack 1;
+			setdvar ui_finishreset	"0";
+			open reset_controls_popmenu;
+		}
+		onClose
+		{
+			setLocalVarBool ui_hideBack 0;
+		}
+		onESC 
+		{ 
+			close options_control_defaults;		
+		}
+		PC_TAB_SWITCH_ACTIONS( options_controls_new_pc, options_new_pc, options_new_pc )
+		
+		#include "ui_mp/leftside_controls.inc"
+		
+	}
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+#undef CHOICE_TEXTALIGN
+#define CHOICE_TEXTALIGN	ITEM_ALIGN_MIDDLE_LEFT
+#undef CHOICE_TEXT_OFFSET_X
+#define CHOICE_TEXT_OFFSET_X	18
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( reset_controls_popmenu, setFocus reset_controls_popmenu_2, close self; close options_control_defaults;, 1 )
+				
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_SET_DEFAULT_CONTROLS", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@PATCH_RESTORE_CONTROLS", when( !dvarInt( ui_finishreset ) ) )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@PLATFORM_RESTORE_CONTROLS_CONFIRMATION", when( dvarInt( ui_finishreset ) ) )
+
+		
+		#define LOCAL_MP_ACTION					\
+				play CHOICE_FOCUS_SOUND;		\
+				exec "set ui_finishreset 1";	\
+				exec "exec default_mp_controls.cfg" ;
+
+		#define LOCAL_SP_ACTION					\
+				play CHOICE_FOCUS_SOUND;		\
+				exec "set ui_finishreset 1";	\
+				exec "exec default_controls.cfg"; 
+	
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK",	close self; close options_control_defaults;,	( dvarInt( ui_finishreset ) ),											; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_MP_ACTION,								( dvarInt( ui_multiplayer ) == 1 && dvarInt( ui_finishreset ) == 0 ),	; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_SP_ACTION,								( dvarInt( ui_multiplayer ) == 0 && dvarInt( ui_finishreset ) == 0 ),	; )
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self; close options_control_defaults,		( dvarInt( ui_finishreset ) == 0 ),										name reset_controls_popmenu_2 )
+	}
+
+
+}

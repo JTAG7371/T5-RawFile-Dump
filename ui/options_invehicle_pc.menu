@@ -1,0 +1,69 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define OPTIONS_STYLE			1
+#define CHOICE_SEP_1			23
+#define CHOICE_ACTION_SOUND		"uin_mouse_click_t"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/framestyle.inc"
+#include "ui/frame.inc"
+
+#undef CHOICE_BUTTON_NAME
+#define CHOICE_BUTTON_NAME		"options_invehicle_"
+#undef MENUDEF_NAME
+#define MENUDEF_NAME			options_invehicle
+
+{
+	menuDef 
+	{
+		name			options_invehicle
+		fullScreen		0
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		soundloop		""
+		onOpen
+		{
+			close options_look;
+			close options_move;
+			close options_shoot;
+			close options_misc;
+			close options_graphics;
+			close options_sound;
+			close options_game;
+			close options_view;
+			close options_defaults;
+			close options_driverinfo;
+			close options_credits;
+			close options_multi;
+			close options_graphics_defaults;
+			close options_graphics_texture;
+			close options_control_defaults;
+			close options_coop;
+			
+			setLocalVarBool ui_hideBack 1;
+		}
+		onClose
+		{
+			setLocalVarBool ui_hideBack 0;
+		}
+		onESC 
+		{ 
+			close self;		
+		}
+		PC_TAB_SWITCH_ACTIONS( options_controls_new_pc, options_new_pc, options_new_pc )
+
+		#include "ui_mp/leftside_controls.inc"
+		
+		FRAME_CHOICE_SECTION_TITLE( 21, "@MENU_VEHICLE" )
+
+		FRAME_CHOICE_BIND2( 22, "@MENU_GAS", "+gas", ; )
+		FRAME_CHOICE_BIND2( 23, "@MENU_REVERSE", "+reverse", ; )
+#ifndef PC
+		FRAME_CHOICE_BIND2( 24, "@MENU_HANDBREAK", "+handbrake", ; )
+#endif
+		//CHOICE_BACK( "@MENU_BACK", close self )
+
+	}
+}

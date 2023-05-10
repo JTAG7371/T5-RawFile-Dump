@@ -1,0 +1,47 @@
+#Gametypes Table,,,,,,,
+a0,b1,c2,d3,e4,f5,g6,
+maxnum_gametype,8,,,,,,
+total_filesharegametype,12,,,,,,
+#gametype reference,#gametype names,#gametype description,#image,#index,#splitscreen,#basictraining,#gametime names lowercase
+tdm,MPUI_TEAM_DEATHMATCH_CAPS,MENU_KILL_PLAYERS_ON_THE_OPPOSING,playlist_tdm,0,YES,YES,MPUI_TEAM_DEATHMATCH
+dm,MPUI_DEATHMATCH_CAPS,MENU_KILL_EVERYONE_FIRST_PLAYER,playlist_ffa,1,YES,YES,MPUI_DEATHMATCH
+sd,MPUI_SEARCH_AND_DESTROY_CAPS,MENU_TEAMS_TAKE_TURNS_DEFENDING_NO_SPAWN,playlist_search_destroy,2,YES,NO,MPUI_SEARCH_AND_DESTROY_CLASSIC
+dom,MPUI_DOMINATION_CAPS,MENU_CAPTURE_AND_HOLD_THE,playlist_domination,3,YES,NO,MPUI_DOMINATION
+koth,MPUI_HEADQUARTERS_CAPS,MENU_CAPTURE_THE_HEADQUARTERS,playlist_headquarters,4,YES,NO,MPUI_HEADQUARTERS
+dem,MPUI_DEMOLITION_CAPS,MENU_TEAMS_TAKE_TURNS_DEFENDING,playlist_demolition,5,YES,NO,MPUI_DEMOLITION
+ctf,MPUI_CAPTURE_THE_FLAG_CAPS,MENU_CTF_DESC,playlist_ctf,6,YES,NO,MPUI_CAPTURE_THE_FLAG
+sab,MPUI_SABOTAGE_CAPS,MENU_1_BOMB_IN_THE_CENTER,playlist_sabotage,7,YES,NO,MPUI_SABOTAGE
+hlnd,MPUI_HLND_CAPS,MENU_KILL_EVERYONE_FIRST_PLAYER,playlist_sticksnstones,8,YES,NO,MPUI_HLND
+oic,MPUI_OIC_CAPS,MENU_TEAMS_TAKE_TURNS_DEFENDING,playlist_oic,9,YES,NO,MPUI_OIC
+gun,MPUI_GUN_CAPS,MENU_TEAMS_TAKE_TURNS_DEFENDING,playlist_gungame,10,YES,NO,MPUI_GUN
+shrp,MPUI_SHRP_CAPS,MENU_TEAMS_TAKE_TURNS_DEFENDING,playlist_sharpshooter,11,YES,NO,MPUI_SHRP
+,,,,,,,
+,,,,,,,
+maxnum_lbtype,11,,,,,,
+#Leaderboard string names,,,,,,,
+#num,#lb_type ref,#lb gametype names,#gametype names,,#lb index,,
+0,tdm,MPUI_LB_TEAM_DEATHMATCH_CAPS,MPUI_TEAM_DEATHMATCH_CAPS,,0,,
+1,dm,MPUI_LB_FFA_CAPS,MPUI_DEATHMATCH_CAPS,,1,,
+2,sd,MPUI_LB_SEARCH_AND_DESTROY_CAPS,MPUI_SEARCH_AND_DESTROY_CAPS,,5,,
+3,dom,MPUI_LB_DOMINATION_CAPS,MPUI_DOMINATION_CAPS,,3,,
+4,koth,MPUI_LB_HEADQUARTERS_CAPS,MPUI_HEADQUARTERS_CAPS,,6,,
+5,dem,MPUI_LB_DEMOLITION_CAPS,MPUI_DEMOLITION_CAPS,,7,,
+6,ctf,MPUI_LB_CAPTURE_THE_FLAG_CAPS,MPUI_CAPTURE_THE_FLAG_CAPS,,2,,
+7,sab,MPUI_LB_SABOTAGE_CAPS,MPUI_SABOTAGE_CAPS,,4,,
+8,hctdm,MPUI_LB_TEAM_DEATHMATCH_HC_CAPS,MPUI_HCTDM_CAPS,,8,,
+9,hcdm,MPUI_LB_FFA_HC_CAPS,MPUI_HCDM_CAPS,,9,,
+10,hcsd,MPUI_LB_SEARCH_AND_DESTROY_HC_CAPS,MPUI_HCSD_CAPS,,13,,
+,,,,,,,
+,,,,,,,
+#Leaderboard reset period names,,,,,,,
+#lb_typeByResetPeriod ref,#resetperiod names,#index,,,,,
+all_time,MPUI_LB_ALL_TIME_CAPS,0,,,,,
+monthly,MPUI_LB_MONTHLY_CAPS,1,,,,,
+weekly,MPUI_LB_WEEKLY_CAPS,2,,,,,
+,,,,,,,
+,,,,,,,
+#Leaderboard filter names,,,,,,,
+#lb_filter ref,#filter names,#index,,,,,
+none,MPUI_LB_EVERYONE_CAPS,0,,,,,
+friends,MPUI_LB_FRIENDS_ONLY_CAPS,1,,,,,
+lobbymembers,MPUI_LB_PLAYERS_IN_LOBBY_CAPS,2,,,,,

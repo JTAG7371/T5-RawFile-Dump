@@ -1,0 +1,16 @@
+name,file,template,loadspec,secondary,group,vol_min,vol_max,team_vol_mod,dist_min,dist_max,dist_reverb_max,volume_falloff_curve,reverb_falloff_curve,volume_min_falloff_curve,reverb_min_falloff_curve,limit_count,limit_type,entity_limit_count,entity_limit_type,pitch_min,pitch_max,team_pitch_mod,min_priority,max_priority,min_priority_threshold,max_priority_threshold,spatialized,type,loop,randomize_type,probability,start_delay,reverb_send,duck,pan,center_send,envelop_min,envelop_max,envelop_percentage,occlusion_level,occlusion_wet_dry,is_big,distance_lpf,move_type,move_time,real_delay,subtitle,mature,doppler,futz,context_type,context_value,compression,timescale,music,fade_in,fade_out,pc_format,pause,stop_on_death,bus,snapshot
+# Chicken,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+aml_chicken_step,,,,,ambience,85,85,,50,1000,,curve3,curve2,,,8,priority,4,reject,-186,186,,10,25,0.25,1,3d,,,pitch,,,96,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,ambience
+aml_chicken_wing_small,aml\chicken\wing_flap_small,,,,ambience,97,97,,150,1000,,curve3,curve2,,,5,priority,1,reject,-186,186,,10,25,0.25,1,3d,,,pitch,,,96,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,ambience
+aml_chicken_wing_large,aml\chicken\wing_flap_large,,,,ambience,97,97,,150,1000,,curve3,curve2,,,5,priority,1,reject,-186,186,,10,25,0.25,1,3d,,,pitch,,,96,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,ambience
+aml_chicken_cluck,aml\chicken\cluck,,,,ambience,96,98,,150,1000,,curve3,curve2,,,5,priority,1,reject,-186,186,,10,25,0.25,1,3d,,,pitch,,,96,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,ambience
+aml_chicken_death,aml\chicken\death,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Pig,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+aml_pig_oink,aml\pig\snort,,,,ambience,90,94,,50,1000,,curve3,curve2,,,5,priority,1,reject,-186,186,,10,25,0.25,1,3d,,,pitch,,,96,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,ambience
+aml_pig_sit,aml\pig\sit,,,,ambience,88,88,,50,1000,,curve3,curve2,,,5,priority,1,reject,-186,186,,10,25,0.25,1,3d,,,pitch,,,96,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,ambience
+aml_pig_stand,,,,,ambience,85,91,,50,1000,,curve3,curve2,,,5,priority,1,reject,-186,186,,10,25,0.25,1,3d,,,pitch,,,96,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,ambience
+aml_pig_step,aml\pig\step,,,,ambience,87,87,,50,1000,,curve3,curve2,,,8,priority,4,reject,-186,186,,10,25,0.25,1,3d,,,pitch,,,96,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,ambience
+aml_pig_death,aml\pig\death,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+aml_pig_squeal,aml\pig\squeal,,,,ambience,90,93,,50,1000,,curve3,curve2,,,5,priority,1,reject,-186,186,,10,25,0.25,1,3d,,,pitch,,,96,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,ambience
+aml_pig_scratch,aml\pig\scratch,,,,ambience,87,90,,50,1000,,curve3,curve2,,,5,priority,1,reject,-186,186,,10,25,0.25,1,3d,,,pitch,,,96,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,ambience

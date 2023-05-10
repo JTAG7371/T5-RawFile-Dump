@@ -1,0 +1,57 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_SEP_1			3
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+{
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+
+
+	#define LOBBYENDED_CLOSE_ACTION 			\
+			close self;							\
+			if( !menuisopen( menu_xboxlive ) )	\
+			{									\
+				execnow openmenu menu_xboxlive;	\
+			}
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( menu_xboxlive_lobbyended, ;, LOBBYENDED_CLOSE_ACTION, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_NOTICE", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@XBOXLIVE_LOBBYENDED", 1 )
+		
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", LOBBYENDED_CLOSE_ACTION, 1, ; )
+	}
+
+
+	#define PARTYENDED_CLOSE_ACTION 						\
+			close self;										\
+			if( menuisopen( menu_xboxlive_privatelobby ) )  \
+			{												\	
+				close menu_xboxlive_privatelobby;			\
+			}												\
+			if( !menuisopen( menu_xboxlive ) )				\
+			{												\
+				execnow openmenu menu_xboxlive;				\
+			}
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( menu_xboxlive_partyended, ;, PARTYENDED_CLOSE_ACTION, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_NOTICE", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( dvarstring( partyend_reason ), 1 )
+		
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", PARTYENDED_CLOSE_ACTION, 1, ; )
+	}
+}

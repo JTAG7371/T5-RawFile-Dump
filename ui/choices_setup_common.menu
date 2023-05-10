@@ -1,0 +1,2724 @@
+//#define ENABLE_BUTTON_BG		1	// enables button background image
+#define ENABLE_SEPARATOR		1	// enables separator bars
+#define ENABLE_TITLE_BG			1	// enables menu title background graphics
+
+#ifndef CHOICE_SIZE_X
+#define CHOICE_SIZE_X			150
+#endif
+
+#ifndef CHOICE_SIZE_Y
+#define CHOICE_SIZE_Y			17
+#endif
+
+#ifndef CHOICE_SIDEITEM_SIZE_X
+#define CHOICE_SIDEITEM_SIZE_X	64
+#endif
+#ifndef CHOICE_SIDEITEM_SPACING
+#define CHOICE_SIDEITEM_SPACING	16
+#endif
+
+#ifndef CHOICE_GROUP
+#define CHOICE_GROUP ""
+#endif
+
+#ifndef CHOICE_X_START
+#define CHOICE_X_START			58
+#endif
+
+#ifndef CHOICE_X_SPACING
+#define CHOICE_X_SPACING		250
+#endif
+
+#ifndef CHOICE_Y_START
+#define CHOICE_Y_START			82
+#endif
+
+#ifndef CHOICE_Y_SPACING
+#define CHOICE_Y_SPACING		20
+#endif
+
+#ifndef CHOICE_Y_COUNT
+#define CHOICE_Y_COUNT			20
+#endif
+
+#ifndef CHOICE_TEXT_OFFSET_X
+#ifdef SPLITSCREEN_ENABLED
+#define CHOICE_TEXT_OFFSET_X	(22*SPLITSCREEN_MULTIPLIER)
+#else
+#define CHOICE_TEXT_OFFSET_X	22
+#endif
+#endif
+
+#ifndef SECTION_TEXT_OFFSET_X
+#define SECTION_TEXT_OFFSET_X	0
+#endif
+
+#ifndef CHOICE_ACCEPT_ALIGN_X
+#define CHOICE_ACCEPT_ALIGN_X	6
+#endif
+
+#ifndef CHOICE_ACCEPT_ALIGN_Y
+#define CHOICE_ACCEPT_ALIGN_Y	2
+#endif
+
+#ifndef NEW_X_OFFSET			
+#define NEW_X_OFFSET			0
+#endif
+
+#ifndef NEW_Y_OFFSET			
+#define NEW_Y_OFFSET			0
+#endif
+
+#ifndef TITLE_Y_OFFSET
+#define TITLE_Y_OFFSET			0
+#endif
+
+#ifndef TITLE_X_OFFSET
+#define TITLE_X_OFFSET			0
+#endif
+
+#ifndef CHOICE_FOCUS_SOUND
+#define CHOICE_FOCUS_SOUND		"uin_navigation_over"
+#endif
+
+#ifndef CHOICE_ACTION_SOUND
+#define CHOICE_ACTION_SOUND		"uin_navigation_click"
+#endif
+
+#ifndef CHOICE_TEXTSIZE
+#define CHOICE_TEXTSIZE			TEXTSIZE_DEFAULT
+#endif
+
+#ifndef CHOICE_TEXTFONT
+#define CHOICE_TEXTFONT			UI_FONT_NORMAL
+#endif
+
+#ifndef CHOICE_HEADERCOLOR
+#define CHOICE_HEADERCOLOR		1 1 1 1
+#endif
+
+#ifndef CHOICE_TEXTCOLOR
+#define CHOICE_TEXTCOLOR		COLOR_TEXT//1 1 1 1
+#endif
+
+#ifndef CHOICE_TEXTCOLOR_CAPT
+#define CHOICE_TEXTCOLOR_CAPT	CHOICE_TEXTCOLOR
+#endif
+
+#ifndef CHOICE_TEXTSTYLE
+#define CHOICE_TEXTSTYLE		0
+#endif
+
+#ifndef CHOICE_TEXTALIGN
+#define	CHOICE_TEXTALIGN		ITEM_ALIGN_MIDDLE_LEFT
+#endif
+
+#ifndef ALT_HINT_X_OFFSET
+#define ALT_HINT_X_OFFSET		-16
+#endif
+
+#ifndef SECTION_X_OFFSET
+#define SECTION_X_OFFSET		0
+#endif
+
+#ifndef CHOICE_TEXTCOLOR_DISABLED
+#define CHOICE_TEXTCOLOR_DISABLED		0.5 0.5 0.5 0.5
+#endif
+
+#ifndef CHOICE_TEXTCOLOR_SELECTABLE
+#define CHOICE_TEXTCOLOR_SELECTABLE		0.52745 0.56667 0.57451 1
+#endif
+
+#ifndef CHOICE_SEP_WIDTH
+#define CHOICE_SEP_WIDTH		130
+#endif
+
+#ifndef CHOICE_SEP_OFFSET_X
+#define CHOICE_SEP_OFFSET_X		0
+#endif
+
+#ifndef CHOICE_SEP_OFFSET_Y
+#define CHOICE_SEP_OFFSET_Y		0
+#endif
+
+#ifndef CHOICE_DVAR_WIDTH_OFFSET
+#define CHOICE_DVAR_WIDTH_OFFSET 0
+#endif
+
+#ifndef CHOICE_DVAR_TEXTALIGN
+#define CHOICE_DVAR_TEXTALIGN	ITEM_ALIGN_MIDDLE_LEFT //ITEM_ALIGN_MIDDLE_RIGHT
+#endif
+
+#ifndef CHOICE_DVAR_OFFSET_X
+#define CHOICE_DVAR_OFFSET_X	(0 - CHOICE_TEXT_OFFSET_X)
+#endif
+
+#ifndef CHOICE_DVAR_EXTRA_WIDTH
+#define CHOICE_DVAR_EXTRA_WIDTH   0
+#endif
+
+
+#ifndef DVARSLIDER_TEXTALIGN_X
+#define DVARSLIDER_TEXTALIGN_X	100//(0 - CHOICE_TEXT_OFFSET_X)
+#endif
+
+#ifndef CHOICE_SPINNER_DVAR_OFFSET_X
+#define CHOICE_SPINNER_DVAR_OFFSET_X		40
+#endif
+
+#ifndef CHOICE_SPINNER_DVAR_TEXT_OFFSET_X
+#define CHOICE_SPINNER_DVAR_TEXT_OFFSET_X	10
+#endif
+
+#ifndef CHOICE_SPINNER_DVAR_SIZE
+#define CHOICE_SPINNER_DVAR_SIZE			120
+#endif
+
+#ifndef CHOICE_SPINNER_DVAR_X_START
+#define CHOICE_SPINNER_DVAR_X_START( itemIndex )	(CHOICE_X( itemIndex )+CHOICE_SIZE_X+CHOICE_SPINNER_DVAR_OFFSET_X)	
+#endif
+
+#ifndef CHOICE_SPINNER_DVAR_TEXTALIGN
+#define CHOICE_SPINNER_DVAR_TEXTALIGN		ITEM_ALIGN_MIDDLE_LEFT
+#endif
+
+#ifndef CHOICE_SEP_BACKGROUND
+#define	CHOICE_SEP_BACKGROUND	"menu_button_backing"
+#endif
+
+#ifndef HIGHLIGHT_SHADER_ART
+#define HIGHLIGHT_SHADER_ART	"button_highlight_end"
+#endif
+
+#ifndef ALTERNATE_HINT_SHADER
+#define ALTERNATE_HINT_SHADER	"alternate_hint"
+#endif
+
+#ifndef ALTERNATE_HINT_COLOR
+#define ALTERNATE_HINT_COLOR	1 1 1 1 //0.55 0.95 0.55 0.9//0 1 0 0.35//0.75 .75 0.8 1
+#endif
+
+#ifndef HIGHLIGHT_COLOR
+#define HIGHLIGHT_COLOR			0.9 0.95 1 0.5
+#endif
+
+#ifndef HIGHLIGHT_BORDER_COLOR
+#define HIGHLIGHT_BORDER_COLOR	0.8 0.95 1 0.4
+#endif
+
+#ifndef CHOICE_HORIZONTAL_ALIGN
+#define CHOICE_HORIZONTAL_ALIGN HORIZONTAL_ALIGN_DEFAULT
+#endif
+
+#ifndef CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN	VERTICAL_ALIGN_DEFAULT
+#endif
+
+#ifndef HIGHLIGHT_BORDER
+#define HIGHLIGHT_BORDER		WINDOW_BORDER_RAISED
+#endif
+
+#ifndef HIGHLIGHT_SHADER
+#define HIGHLIGHT_SHADER		"menu_button_backing_highlight"
+#endif
+
+#ifndef A_BUTTON_SIZE
+#define A_BUTTON_SIZE			A_BUTTON_SIZE_GLOBAL
+#endif
+
+#ifndef A_BUTTON_OFFSET_X
+#define A_BUTTON_OFFSET_X		0//(0-4)
+#endif
+
+#ifndef	A_BUTTON_FONT
+#define A_BUTTON_FONT			UI_FONT_NORMAL
+#endif
+
+#ifndef A_BUTTON_OFFSET_Y
+#define A_BUTTON_OFFSET_Y		0
+#endif
+
+
+#ifdef PS3
+	#define A_BUTTON_BG_COLOR 	0.25 0.25 0.25 1
+#else
+	#define A_BUTTON_BG_COLOR 	0 0 0 1
+#endif
+
+#define A_BUTTON_TEXTSTYLE		ITEM_TEXTSTYLE_NORMAL
+
+#ifndef A_BUTTON_COLOR
+#define A_BUTTON_COLOR			1 1 1 1
+#endif
+
+#ifndef BUTTON_BG_COLOR
+#define BUTTON_BG_COLOR			.1 .1 .1 .5//0 0 0 0.5
+#endif
+
+#ifndef BUTTON_BG_WIDTH
+#define BUTTON_BG_WIDTH			300
+#endif
+
+#ifndef BUTTON_BG_X_START
+#define BUTTON_BG_X_START		(CHOICE_X_START+CHOICE_SIZE_X-BUTTON_BG_WIDTH-8)
+#endif
+
+#ifndef BUTTON_BG_Y_START
+#define BUTTON_BG_Y_START		0
+#endif
+
+#ifndef LOBBY_STATUS_COLOR
+#define LOBBY_STATUS_COLOR_RGB 1 1 1
+#define LOBBY_STATUS_COLOR_ALPHA 1
+#define LOBBY_STATUS_COLOR LOBBY_STATUS_COLOR_RGB LOBBY_STATUS_COLOR_ALPHA
+#endif
+
+#ifndef NO_BG_DISABLED_COLOR
+#define NO_BG_DISABLED_COLOR_RGB 0 0 0
+#define NO_BG_DISABLED_COLOR_ALPHA 0.45
+#define NO_BG_DISABLED_COLOR NO_BG_DISABLED_COLOR_RGB NO_BG_DISABLED_COLOR_ALPHA
+#endif
+
+#ifndef DARK_GRAY
+#define DARK_GRAY		0.2 0.2 0.2 1
+#endif
+
+#ifndef MEDIUM_GRAY
+#define MEDIUM_GRAY_RGB	0.4 0.4 0.4
+#define MEDIUM_GRAY_ALPHA 1
+#define MEDIUM_GRAY		MEDIUM_GRAY_RGB MEDIUM_GRAY_ALPHA
+#endif
+
+#ifndef LIGHT_GRAY
+#define LIGHT_GRAY		0.8 0.8 0.8 1
+#endif
+
+#ifndef WHITE
+#define WHITE_RGB	1 1 1
+#define WHITE_ALPHA 1
+#define WHITE		WHITE_RGB WHITE_ALPHA
+#endif
+
+#ifndef BLACK
+#define BLACK_RGB	0 0 0
+#define BLACK_ALPHA 1
+#define BLACK		BLACK_RGB BLACK_ALPHA
+#endif
+
+#ifndef CHOICE_ARROW_WIDTH
+#define CHOICE_ARROW_WIDTH 16
+#endif
+
+#ifndef CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA
+#define CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA .8 .8 .8 .25
+#endif
+
+#ifndef CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA
+#define CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA .8 .8 .8 .25
+#endif
+
+#ifndef CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA
+#define CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA 1 1 1 .8
+#endif
+// ------------ splitscreen ----------------
+
+
+// -----------------------------------------
+
+#include "ui/choices_sep_spacing.inc"
+
+#define CHOICE_ROW( itemIndex )		((itemIndex - 1) % CHOICE_Y_COUNT)
+#define CHOICE_COL( itemIndex )		((itemIndex - 1 - ((itemIndex - 1) % CHOICE_Y_COUNT)) / CHOICE_Y_COUNT)
+
+
+#ifdef PC
+#ifndef CHOICE_Y_OFFSET
+	#define CHOICE_Y_OFFSET 0
+#endif
+#else
+	#define CHOICE_Y_OFFSET 0
+#endif
+
+#define CHOICE_X( itemIndex ) 		(CHOICE_X_START + CHOICE_X_SPACING * CHOICE_COL( itemIndex ))
+#define CHOICE_Y( itemIndex ) 		(CHOICE_Y_START + CHOICE_Y_OFFSET + CHOICE_Y_SPACING * CHOICE_ROW( itemIndex ) + CHOICE_SEP_TOTAL_SPACING( itemIndex ))
+#define CHOICE_ORIGIN( itemIndex )	CHOICE_X( itemIndex ) CHOICE_Y( itemIndex )
+#define CHOICE_RECT( itemIndex )	CHOICE_ORIGIN( itemIndex ) CHOICE_SIZE_X CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+
+#define FOOTNOTE_RECT( x, y )			x y 240 60 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+
+// ======================================================================================================================================
+// ======================================================================================================================================
+// ======================================================================================================================================
+
+#define CHOICE_HIGHLIGHT( itemIndex, vis ) \
+	CHOICE_HIGHLIGHT_CUSTOM( itemIndex, HIGHLIGHT_COLOR, HIGHLIGHT_BORDER_COLOR, vis )
+
+#define CHOICE_BUTTON_BG( itemIndex, visArg ) \
+	CHOICE_BUTTON_BG_RAW( itemIndex, "menu_button_backing", BUTTON_BG_COLOR, visArg )
+
+#define CHOICE_BUTTON_BG_RAW( itemIndex, bgimage, foreColorArg, visArg ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X-(CHOICE_SIZE_Y/4)) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			background		bgimage \
+			forecolor		foreColorArg \
+			visible			visArg; \
+			decoration \
+		}
+
+#define CHOICE_BUTTON_BG_SOLID_RECT_EX( rectArg, foreColorArg, visArg, extraArgs )	\
+		itemDef																		\
+		{																			\
+			style			WINDOW_STYLE_SHADER										\
+			rect			rectArg													\
+			background		"white" 												\
+			forecolor		foreColorArg											\
+			visible			visArg;													\
+			decoration																\	
+			extraArgs																\
+		}
+		
+#define CHOICE_HIGHLIGHT_CUSTOM( itemIndex, foreColorArg, borderColorArg, visArg ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			type			ITEM_TYPE_HIGHLIGHT \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X-(CHOICE_SIZE_Y/4)) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			background		"menu_button_backing_highlight" \
+			forecolor		foreColorArg \
+			border			HIGHLIGHT_BORDER \
+			bordersize		2 \
+			bordercolor		borderColorArg \
+			visible			when( MenuHasFocus() && localVarInt( ui_highlight ) == itemIndex && localVarString( ui_choicegroup ) == CHOICE_GROUP && visArg ); \
+			decoration \
+		} \
+		CHOICE_ACCEPT_HINT( itemIndex, visArg )
+
+#define CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( itemIndex, rectArg, colorArg, visArg ) \
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT_EX( itemIndex, rectArg, colorArg, visArg, ; )
+
+#define CHOICE_HIGHLIGHT_SOLID_RECT_EX( itemIndex, rectArg, colorArg, visArg, extraArgs ) \
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT_EX( itemIndex, rectArg, colorArg, visArg, extraArgs ) \
+		CHOICE_ACCEPT_HINT_RECT_EX( itemIndex, rectArg, visArg, extraArgs )
+
+#define CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT_EX( itemIndex, rectArg, colorArg, visArg, extraArgs ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			rectArg \
+			forecolor		colorArg  \
+			background		"white"  \
+			visible			when( localVarInt( ui_highlight ) == itemIndex && localVarString( ui_choicegroup ) == CHOICE_GROUP && visArg )\
+			decoration  \
+			extraArgs \
+		}
+
+// used for custom highlights for itemDefs that are special and can not use itemIndex or complie with the strict alignment of this macro set
+#define CHOICE_HIGHLIGHT_CUSTOM_2( px, py, pw, ph, visArg ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			type			ITEM_TYPE_HIGHLIGHT \
+			rect			(px+(ph/4)) py (-(pw-(ph/4))) ph CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			background		HIGHLIGHT_SHADER \
+			forecolor		BUTTON_BG_COLOR \
+			visible			1 \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			type			ITEM_TYPE_HIGHLIGHT \
+			rect			(px+(ph/4)) py (-(pw-(ph/4))) ph CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			background		HIGHLIGHT_SHADER \
+			forecolor		HIGHLIGHT_COLOR \
+			visible			visArg \
+			decoration \
+		}
+
+#define CHOICE_ACCEPT_HINT_NAMED_RECT_EX_NAME_ARG( nameArg, itemIndex ) name nameArg#itemIndex
+
+#ifdef PC
+#define CHOICE_ACCEPT_HINT_NAMED_RECT_EX( itemIndex, rectArg, nameArg, vis, extraArgs )
+#else // #ifdef PC
+#define CHOICE_ACCEPT_HINT_NAMED_RECT_EX( itemIndex, rectArg, nameArg, vis, extraArgs ) \
+		itemDef \
+		{ \
+			CHOICE_ACCEPT_HINT_NAMED_RECT_EX_NAME_ARG( nameArg, itemIndex ) \
+			type			ITEM_TYPE_TEXT \
+			rect			rectArg \
+			text			"@PLATFORM_UI_SELECTBUTTON" \
+			textfont		A_BUTTON_FONT \
+			textscale		A_BUTTON_SIZE \
+			textstyle		A_BUTTON_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		0\
+			textAlignY		0\
+			forecolor		1 1 1 1 \
+			visible			when( MenuHasFocus() && localVarInt( ui_highlight ) == itemIndex && localVarString( ui_choicegroup ) == CHOICE_GROUP && !localVarBool( ui_choice_hideaccept ) && vis ); \
+			decoration \
+			extraArgs \
+		}
+#endif // #else // #ifdef PC
+
+#if defined( CONSOLE ) && !defined( SPLITSCREEN )
+#define CHOICE_ACCEPT_HINT( itemIndex, vis ) \
+		CHOICE_ACCEPT_HINT_EX( itemIndex, vis, ; ) 
+
+#define CHOICE_ACCEPT_HINT_EX( itemIndex, vis, extraArgs ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			CHOICE_RECT( itemIndex ) \
+			origin			A_BUTTON_OFFSET_X A_BUTTON_OFFSET_Y \
+			text			"@PLATFORM_UI_SELECTBUTTON" \
+			textfont		A_BUTTON_FONT \
+			textscale		A_BUTTON_SIZE \
+			textstyle		A_BUTTON_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		0 \
+			textAlignY		-1 \
+			forecolor		1 1 1 1 \
+			visible			when( MenuHasFocus() && localVarInt( ui_highlight ) == itemIndex && localVarString( ui_choicegroup ) == CHOICE_GROUP && !localVarBool( ui_choice_hideaccept ) && vis ); \
+			decoration \
+			extraArgs \
+		} 
+
+#define CHOICE_ACCEPT_HINT_RECT_EX( itemIndex, rectArg, vis, extraArgs ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			rectArg \
+			origin			A_BUTTON_OFFSET_X A_BUTTON_OFFSET_Y \
+			text			"@PLATFORM_UI_SELECTBUTTON" \
+			textfont		A_BUTTON_FONT \
+			textscale		A_BUTTON_SIZE \
+			textstyle		A_BUTTON_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		0\
+			textAlignY		-1\
+			forecolor		1 1 1 1 \
+			visible			when( MenuHasFocus() && localVarInt( ui_highlight ) == itemIndex && localVarString( ui_choicegroup ) == CHOICE_GROUP && !localVarBool( ui_choice_hideaccept ) && vis ); \
+			decoration \
+			extraArgs \
+		} 
+
+#else // #if defined( CONSOLE ) && !defined( SPLITSCREEN )
+#define CHOICE_ACCEPT_HINT( itemIndex, vis )
+#define CHOICE_ACCEPT_HINT_EX( itemIndex, vis, extraArgs )
+#define CHOICE_ACCEPT_HINT_RECT_EX( itemIndex, rectArg, vis, extraArgs )
+#endif // #else // #if defined( CONSOLE ) && !defined( SPLITSCREEN )
+
+
+#define CHOICE_MENU_TITLE_SS( titleArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			22 5 100 100 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			origin			ORIGIN_TITLE \
+			forecolor		COLOR_TITLE \
+			exp				text( titleArg ) \
+			textalignx		-14 \
+			textfont		UI_FONT_NORMAL \
+			textscale		TEXTSIZE_DEFAULT \
+			textstyle		CHOICE_TEXTSTYLE \
+			textalign		ITEM_ALIGN_TOP_LEFT \
+			visible			1 \
+			decoration \
+		}		
+		
+#define CHOICE_MENU_TITLE_NO_STRIP( titleArg ) \
+		CHOICE_MENU_TITLE_NO_STRIP_VIS( titleArg , 1 ) 
+
+#define CHOICE_MENU_TITLE_NO_STRIP_VIS( titleArg , visArg ) \
+		CHOICE_MENU_TITLE_NO_STRIP_ALIGN_VIS( titleArg, ITEM_ALIGN_TOP_LEFT, visArg )
+
+#define CHOICE_MENU_TITLE_NO_STRIP_ALIGN_VIS( titleArg, alignArg, visArg )															\
+		itemDef																														\
+		{																															\
+			type			ITEM_TYPE_TEXT																							\
+			rect			BUTTON_BG_X_START BUTTON_BG_Y_START BUTTON_BG_WIDTH 30 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP			\
+			origin			ORIGIN_TITLE																							\
+			forecolor		COLOR_TITLE																								\
+			exp				text( titleArg )																						\
+			textfont		UI_FONT_BIG																								\
+			textscale		TEXTSIZE_TITLE																							\
+			textstyle		CHOICE_TEXTSTYLE																						\
+			textalign		alignArg																								\
+			textaligny		TITLE_Y_OFFSET																							\
+			textalignx		TITLE_X_OFFSET																							\
+			visible			when( visArg );																							\
+			decoration																												\
+		}
+
+#define CHOICE_MENU_TITLE_ALIGN_VIS( titleArg, rectAlignArg, textAlignArg, visArg )					\
+		CHOICE_MENU_TITLE_ALIGN_TEXTSCALE_VIS( titleArg, TEXTSIZE_TITLE, rectAlignArg, textAlignArg, visArg )
+		
+
+#define CHOICE_MENU_TITLE_ALIGN_TEXTSCALE_VIS( titleArg, textScaleArg, rectAlignArg, textAlignArg, visArg )	\
+		itemDef																						\
+		{																							\
+			type			ITEM_TYPE_TEXT															\
+			rect			BUTTON_BG_X_START BUTTON_BG_Y_START BUTTON_BG_WIDTH 30 rectAlignArg		\
+			forecolor		COLOR_TITLE																\
+			exp				text( titleArg )														\
+			textfont		UI_FONT_EXTRABIG														\
+			textscale		textScaleArg																	\
+			textstyle		CHOICE_TEXTSTYLE														\
+			textalign		textAlignArg															\
+			visible			when( visArg );															\
+			decoration																				\
+		}
+
+#define CHOICE_MENU_TITLE_CENTER_ALIGN_VIS( titleArg, alignArg, visArg )															\
+		CHOICE_MENU_TITLE_CENTER_TEXTSCALE_ALIGN_VIS( titleArg, TEXTSIZE_TITLE, alignArg, visArg )
+
+#define CHOICE_MENU_TITLE_CENTER_TEXTSCALE_ALIGN_VIS( titleArg, textScaleArg, alignArg, visArg )									\
+		itemDef																														\
+		{																															\
+			type			ITEM_TYPE_TEXT																							\
+			rect			BUTTON_BG_X_START BUTTON_BG_Y_START BUTTON_BG_WIDTH 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP		\
+			origin			ORIGIN_TITLE																							\
+			forecolor		COLOR_TITLE																								\
+			exp				text( titleArg )																						\
+			textfont		UI_FONT_EXTRABIG																						\
+			textscale		textScaleArg																							\
+			textstyle		CHOICE_TEXTSTYLE																						\
+			textalign		alignArg																								\
+			textaligny		TITLE_Y_OFFSET																							\
+			textalignx		TITLE_X_OFFSET																							\
+			visible			when( visArg );																							\
+			decoration																												\
+		}
+
+#define CHOICE_MENU_TITLE( titleArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			22 5 100 100 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			origin			ORIGIN_TITLE \
+			forecolor		COLOR_TITLE \
+			exp				text( titleArg ) \
+			textfont		UI_FONT_NORMAL \
+			textscale		TEXTSIZE_TITLE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textalign		ITEM_ALIGN_TOP_LEFT \
+			textaligny		TITLE_Y_OFFSET \
+			textalignx		TITLE_X_OFFSET \
+			visible			1 \
+			decoration \
+		}
+		
+#define CHOICE_MENU_TITLE_VIS( titleArg, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			BUTTON_BG_X_START 5 (BUTTON_BG_WIDTH-15) 30 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			origin			ORIGIN_TITLE \
+			forecolor		COLOR_TITLE \
+			text			titleArg \
+			textfont		UI_FONT_NORMAL \
+			textscale		TEXTSIZE_TITLE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textalign		ITEM_ALIGN_TOP_LEFT \
+			visible			when( visArg ) \
+			decoration \
+		}
+
+#define CHOICE_OVERLAY_TITLE( titleArg ) \
+		CHOICE_OVERLAY_TITLE_VIS( titleArg, 1 )
+
+#define CHOICE_OVERLAY_TITLE_VIS( titleArg, visArg ) \
+		/* black bar backing */ \
+		/*OVERLAY_TITLE_STRIP*/ \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			22 32 100 100 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			origin			ORIGIN_TITLE \
+			forecolor		COLOR_TITLE \
+			exp				text( titleArg ) \
+			textfont		UI_FONT_NORMAL \
+			textscale		TEXTSIZE_TITLE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textalign		ITEM_ALIGN_TOP_LEFT \
+			textaligny		TITLE_Y_OFFSET \
+			textalignx		TITLE_X_OFFSET \
+			visible			visArg \
+			decoration \
+		}
+
+#define CHOICE_OVERLAY_SUB_TITLE( titleArg ) \
+		CHOICE_OVERLAY_SUB_TITLE_VIS( titleArg, 1 )
+
+#define CHOICE_OVERLAY_SUB_TITLE_VIS( titleArg, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			22 58 100 100 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			origin			ORIGIN_TITLE \
+			forecolor		COLOR_TITLE \
+			exp				text( titleArg ) \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textalign		ITEM_ALIGN_TOP_LEFT \
+			textaligny		TITLE_Y_OFFSET \
+			textalignx		TITLE_X_OFFSET \
+			visible			visArg \
+			decoration \
+		}
+
+#define CHOICE_SECTION_TITLE( itemIndex, titleArg ) \
+		CHOICE_SECTION_TITLE_VIS( itemIndex, titleArg, 1 )	
+
+#define CHOICE_SECTION_TITLE_VIS( itemIndex, titleArg, visArg ) \
+	itemDef \
+	{ \
+		style			WINDOW_STYLE_SHADER \
+		rect			(SECTION_X_OFFSET+0) 7 240 1 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+		origin			CHOICE_ORIGIN( itemIndex ) \
+		background		"menu_button_backing" \
+		forecolor		0.5 0.5 0.5 .3 \
+		visible			visArg \
+		decoration \
+	}	 \
+	itemDef \
+	{ \
+		style			WINDOW_STYLE_SHADER \
+		rect			(SECTION_X_OFFSET+0) 8 240 10 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+		origin			CHOICE_ORIGIN( itemIndex ) \
+		background		"menu_white_line_faded_big" \
+		forecolor		0 0 0 .8 \
+		visible			visArg \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		style			WINDOW_STYLE_SHADER \
+		rect			(SECTION_X_OFFSET+0) 19 240 1 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+		origin			CHOICE_ORIGIN( itemIndex ) \
+		background		"menu_button_backing" \
+		forecolor		0.5 0.5 0.5 .3 \
+		visible			visArg \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		type			ITEM_TYPE_TEXT \
+		rect			(SECTION_X_OFFSET+0) -1 240 24 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+		origin			CHOICE_ORIGIN( itemIndex ) \
+		forecolor		1 1 1 0.8 \
+		exp				text( titleArg );\
+		textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+		textfont		UI_FONT_NORMAL \
+		textscale		TEXTSIZE_DEFAULT \
+		textstyle		CHOICE_TEXTSTYLE \
+		textAlign		ITEM_ALIGN_MIDDLE_CENTER \
+		textAlignX		SECTION_TEXT_OFFSET_X \
+		visible 		visArg \
+		decoration \
+	}
+
+
+#define CHOICE_SEPARATOR( afterItemIndex ) \
+		CHOICE_SEPARATOR_VIS( afterItemIndex, when( ENABLE_SEPARATOR ) )
+		
+#define CHOICE_SEPARATOR_VIS( afterItemIndex, visArg ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			(CHOICE_SEP_OFFSET_X) (CHOICE_Y_SPACING + CHOICE_SEP_SPACING / 2 + CHOICE_SEP_OFFSET_Y ) CHOICE_SEP_WIDTH 1 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			origin			CHOICE_ORIGIN( afterItemIndex ) \
+			background		CHOICE_SEP_BACKGROUND \
+			forecolor		1 1 1 0.7 \
+			visible			visArg \
+			decoration \
+		}
+
+
+//**************************
+// NEW BUTTONS START
+//**************************
+#ifndef CHOICE_TEXT_COLOR_HL
+#define CHOICE_TEXT_COLOR_HL 0 0 0 1
+#endif
+
+#ifndef CHOICE_TEXT_COLOR_NO_HL
+#define CHOICE_TEXT_COLOR_NO_HL 1 1 1 1
+#endif
+
+#ifndef CHOICE_CAPTION_TEXT_COLOR_HL
+#define CHOICE_CAPTION_TEXT_COLOR_HL 0 0 0 1
+#endif
+
+#ifndef CHOICE_CAPTION_TEXT_COLOR_NO_HL
+#define CHOICE_CAPTION_TEXT_COLOR_NO_HL 1 1 1 1
+#endif
+
+#define TEXT_COLOR_HL				CHOICE_TEXT_COLOR_HL
+#define TEXT_COLOR_NO_HL			CHOICE_TEXT_COLOR_NO_HL
+#define CAPTION_TEXT_COLOR_HL		CHOICE_CAPTION_TEXT_COLOR_HL
+#define CAPTION_TEXT_COLOR_NO_HL	CHOICE_CAPTION_TEXT_COLOR_NO_HL
+
+#define BG_HL_COLOR			1 1 1 1
+#define BG_BACKCOLOR		0 0 0 0.3
+
+#define BAR_COLOR			0.38 0.72 0.72 0.4
+
+#define HIGHLIGHT_STATES( colorOnArg, colorOffArg, colorDisableArg )	\
+		state															\
+		{																\
+			name		"highlightOn"									\
+			forecolor	colorOnArg										\
+		}																\
+		state															\
+		{																\
+			name		"highlightOff"									\
+			forecolor	colorOffArg										\
+		}																\
+		state															\
+		{																\
+			name		"disabled"										\
+			forecolor	colorDisableArg									\
+		}
+
+#define HL_ON( menuName, itemName )  \
+		execnow ui_animate menuName itemName highlightOn 0;
+
+#define HL_OFF( menuName, itemName ) \
+		execnow ui_animate menuName itemName highlightOff 0;
+
+#define HL_DISABLE( menuName, itemName ) \
+		execnow ui_animate menuName itemName disabled 0;
+
+
+
+#define TEMP_CHOICE_HIGHLIGHT_SOLID_WIDTH( itemIndex, colorArg, widthArg, visArg )															\
+		itemDef																																\
+		{																																	\
+			style			WINDOW_STYLE_SHADER																								\
+			rect			CHOICE_ORIGIN( itemIndex ) widthArg CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN					\
+			forecolor		colorArg																										\
+			background		"white"																											\
+			visible			when( MenuHasFocus() && localVarInt( ui_highlight ) == itemIndex && localVarString( ui_choicegroup ) == CHOICE_GROUP && visArg )	\
+			decoration																														\
+		}																																	\
+		CHOICE_ACCEPT_HINT( itemIndex, visArg )
+
+#define TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, extraArgs )	\
+		itemDef											\
+		{												\
+			style			WINDOW_STYLE_SHADER			\
+			rect			CHOICE_RECT( itemIndex )	\
+			forecolor		BG_BACKCOLOR				\
+			background		"white"						\
+			visible			when( visArg )				\
+			decoration									\
+			extraArgs											\
+		}
+
+#define TEMP_CHOICE_HIGHLIGHT_SOLID( itemIndex, colorArg, visArg )	\
+		TEMP_CHOICE_HIGHLIGHT_SOLID_WIDTH( itemIndex, colorArg, CHOICE_SIZE_X, visArg )
+
+#define TEMP_CHOICE_HIGHLIGHT_SOLID_EX( itemIndex, colorArg, visArg, extraArgs ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			CHOICE_RECT( itemIndex ) \
+			forecolor		colorArg \
+			background		"white" \
+			visible			when( MenuHasFocus() && localVarInt( ui_highlight ) == itemIndex && localVarString( ui_choicegroup ) == CHOICE_GROUP && visArg ) \
+			decoration \
+			extraArgs \
+		} \
+		CHOICE_ACCEPT_HINT( itemIndex, visArg )
+
+#define TEMP_CHOICE_CUSTOM_HIGHLIGHT_SOLID_WIDTH( itemIndex, colorArg, widthArg, visArg, hlVisArg )											\
+		itemDef																																\
+		{																																	\
+			style			WINDOW_STYLE_SHADER																								\
+			rect			CHOICE_ORIGIN( itemIndex ) widthArg CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN					\
+			forecolor		colorArg																										\
+			background		"white"																											\
+			visible			when( hlVisArg && visArg )																						\
+			decoration																														\
+		}																																	\
+		CHOICE_ACCEPT_HINT( itemIndex, visArg )
+
+#define TEMP_CHOICE_CUSTOM_HIGHLIGHT_SOLID( itemIndex, colorArg, visArg, hlVisArg )	\
+		TEMP_CHOICE_CUSTOM_HIGHLIGHT_SOLID_WIDTH( itemIndex, colorArg, CHOICE_SIZE_X, visArg, hlVisArg )
+
+//**************************
+// FRAME BUTTONS
+//**************************
+#define FRAME_CHOICE_BUTTON( itemIndex, textArg, actionArg )							\
+		TEMP_CHOICE_BUTTON_BG( itemIndex, 1, ; )										\
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, actionArg, ;, ;, 1, ; )
+
+#define FRAME_CHOICE_BUTTON_VIS( itemIndex, textArg, actionArg, visArg )				\
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, ; )									\
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, actionArg, ;, ;, visArg, ; )
+
+#define FRAME_CHOICE_BUTTON_VIS_EX( itemIndex, textArg, actionArg, visArg, extraArgs )	\
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, ; )									\
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, actionArg, ;, ;, visArg, extraArgs )
+
+#define FRAME_CHOICE_BUTTON_VIS_EX2( itemIndex, textArg, actionArg, visArg, extraArgs, fullExtraArgs ) \
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, fullExtraArgs ) \
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_EX2( itemIndex, textArg, actionArg, ;, ;, visArg, extraArgs, fullExtraArgs )
+		
+#define FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )	\
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, ; )																	\
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )
+
+#define FRAME_CHOICE_DBUTTON_DARK_VIS_EX( itemIndex, textArg, onFocusArg, leaveFocusArg, visArg, extraArgs )	\
+		itemDef																											\
+		{																												\
+			type			ITEM_TYPE_BUTTON																			\
+			rect			CHOICE_RECT( itemIndex )																	\
+			exp				text( textArg );																			\
+			textfont		CHOICE_TEXTFONT																				\
+			textscale		CHOICE_TEXTSIZE																				\
+			textstyle		CHOICE_TEXTSTYLE																			\
+			textAlign		CHOICE_TEXTALIGN																			\
+			textAlignX		CHOICE_TEXT_OFFSET_X																		\
+			forecolor		CHOICE_TEXTCOLOR																					\
+			visible			when( visArg );																				\
+			extraArgs																									\
+		}
+		
+#define FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( itemIndex, textArg, onFocusArg, leaveFocusArg, visArg, extraArgs )	\
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, ; )															\
+		TEMP_CHOICE_HIGHLIGHT_SOLID( itemIndex, BG_HL_COLOR, visArg )											\
+		TEMP_CHOICE_BUTTON_ALL( itemIndex, textArg, ;, onFocusArg, leaveFocusArg, MEDIUM_GRAY, visArg, extraArgs )
+
+#define FRAME_CHOICE_DBUTTON_DARK_FOCUS_VIS_EX( itemIndex, textArg, onFocusArg, leaveFocusArg, visArg, extraArgs )	\
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, extraArgs )															\
+		TEMP_CHOICE_HIGHLIGHT_SOLID_EX( itemIndex, BG_HL_COLOR, visArg, extraArgs )										\
+		itemDef																											\
+		{																												\
+			type			ITEM_TYPE_BUTTON																			\
+			rect			CHOICE_RECT( itemIndex )																	\
+			exp				text( textArg );																			\
+			textfont		CHOICE_TEXTFONT																				\
+			textscale		CHOICE_TEXTSIZE																				\
+			textstyle		CHOICE_TEXTSTYLE																			\
+			textAlign		CHOICE_TEXTALIGN																			\
+			textAlignX		CHOICE_TEXT_OFFSET_X																		\
+			forecolor		CHOICE_TEXTCOLOR																			\
+			visible			when( visArg );																				\
+			extraArgs																									\
+		}
+		
+#define FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX2( itemIndex, textArg, onFocusArg, leaveFocusArg, visArg, extraArgs, fullExtraArgs ) \
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, fullExtraArgs ) \
+		TEMP_CHOICE_HIGHLIGHT_SOLID_EX( itemIndex, BG_HL_COLOR, visArg, fullExtraArgs ) \
+		TEMP_CHOICE_BUTTON_ALL( itemIndex, textArg, ;, onFocusArg, leaveFocusArg, MEDIUM_GRAY, visArg, extraArgs fullExtraArgs )
+
+#define FRAME_CHOICE_BUTTON_TWOLINE_VIS( itemIndex, textArg, actionArg, visArg )		\
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, ; )									\
+		TEMP_CHOICE_BUTTON_TWOLINE_FOCUS_VIS_EX( itemIndex, textArg, actionArg, ;, ;, visArg, ; )
+
+#define FRAME_CHOICE_BUTTON_FOCUS_VIS_EX_CUSTOMHL( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, hlVisArg )	\
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, ; )																						\
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_EX_CUSTOMHL( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, hlVisArg )
+		
+#define FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX_CUSTOMHL( itemIndex, textArg, onFocusArg, leaveFocusArg, visArg, extraArgs, hlVisArg )	\
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, ; )																				\
+		TEMP_CHOICE_CUSTOM_HIGHLIGHT_SOLID( itemIndex, BG_HL_COLOR, visArg, hlVisArg )												\
+		TEMP_CHOICE_BUTTON_ALL( itemIndex, textArg, ;, onFocusArg, leaveFocusArg, MEDIUM_GRAY, visArg, extraArgs )
+
+#define FRAME_CHOICE_DVARENUMLIST_VIS( itemIndex, textArg, dvarArg, dvarListArg, actionArg, visArg ) \
+		FRAME_CHOICE_DVARLIST_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_DVARENUM, dvarEnumList dvarListArg, actionArg, visArg )
+
+#define FRAME_CHOICE_DVARSTRINGLIST( itemIndex, textArg, dvarArg, strListArg, actionArg) \
+		FRAME_CHOICE_DVARSTRINGLIST_VIS( itemIndex, textArg, dvarArg, strListArg, actionArg, 1 ) \
+
+#define FRAME_CHOICE_DVARSTRINGLIST_VIS( itemIndex, textArg, dvarArg, strListArg, actionArg, visArg ) \
+		FRAME_CHOICE_DVARLIST_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarStrList strListArg, actionArg, visArg )
+
+#define FRAME_CHOICE_DVARSTRINGLIST_FOCUS_VIS( itemIndex, textArg, dvarArg, strListArg, actionArg, onFocusArg, leaveFocusArg, visArg ) \
+		FRAME_CHOICE_DVARLIST_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarStrList strListArg, actionArg, onFocusArg, leaveFocusArg, visArg, ;, ; )
+
+#define FRAME_CHOICE_DVARSTRINGLIST_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, strListArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs ) \
+		FRAME_CHOICE_DVARLIST_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarStrList strListArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs )
+
+
+#define FRAME_CHOICE_DVARFLOATLIST( itemIndex, textArg, dvarArg, strListArg, actionArg ) \
+		FRAME_CHOICE_DVARFLOATLIST_VIS( itemIndex, textArg, dvarArg, strListArg, actionArg, 1 )
+
+#define FRAME_CHOICE_DVARFLOATLIST_VIS( itemIndex, textArg, dvarArg, strListArg, actionArg, visArg ) \
+		FRAME_CHOICE_DVARLIST_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarFloatList strListArg, actionArg, visArg )
+
+#define FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS( itemIndex, textArg, dvarArg, strListArg, actionArg, onFocusArg, leaveFocusArg, visArg ) \
+		FRAME_CHOICE_DVARLIST_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarFloatList strListArg, actionArg, onFocusArg, leaveFocusArg, visArg, ;, ; )
+
+#define FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, strListArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs ) \
+		FRAME_CHOICE_DVARLIST_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarFloatList strListArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs )
+
+#define FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS_EX2( itemIndex, textArg, dvarArg, strListArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs ) \
+		FRAME_CHOICE_DVARLIST_FOCUS_VIS_EX2( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarFloatList strListArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs )
+
+#define FRAME_CHOICE_DVARLIST_VIS( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, visArg ) \
+		FRAME_CHOICE_DVARLIST_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, ;, ;, visArg, ;, ; )
+
+#define FRAME_CHOICE_DVARLIST_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs ) \
+		FRAME_CHOICE_DVARLIST_ALL( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg,	\
+						HL_ON( MENUDEF_NAME, CHOICE_BUTTON_NAME#itemIndex ); onFocusArg,			\
+						HL_OFF( MENUDEF_NAME, CHOICE_BUTTON_NAME#itemIndex ); leaveFocusArg,		\
+						visArg,	name CHOICE_BUTTON_NAME#itemIndex HIGHLIGHT_STATES( TEXT_COLOR_HL, TEXT_COLOR_NO_HL, MEDIUM_GRAY ) extraArgs, exExtraArgs )
+
+#define FRAME_CHOICE_DVARLIST_FOCUS_VIS_EX2( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs ) \
+		FRAME_CHOICE_DVARLIST_ALL_EX2( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg,	\
+						HL_ON( MENUDEF_NAME, CHOICE_BUTTON_NAME#itemIndex ); onFocusArg,			\
+						HL_OFF( MENUDEF_NAME, CHOICE_BUTTON_NAME#itemIndex ); leaveFocusArg,		\
+						visArg,	name CHOICE_BUTTON_NAME#itemIndex HIGHLIGHT_STATES( TEXT_COLOR_HL, TEXT_COLOR_NO_HL, MEDIUM_GRAY ) extraArgs, exExtraArgs )
+
+#define FRAME_CHOICE_DVARLIST_ALL( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs )	\
+		FRAME_CHOICE_CAPTION_VIS( itemIndex, textArg, visArg, ; )	\
+		itemDef													\
+		{														\
+			type				listTypeArg						\
+			dvar				dvarArg							\
+			listArg												\
+			rect				CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X + CHOICE_DVAR_EXTRA_WIDTH) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign			CHOICE_DVAR_TEXTALIGN			\
+			textalignx			CHOICE_DVAR_OFFSET_X			\
+			textfont			CHOICE_TEXTFONT					\
+			textscale			CHOICE_TEXTSIZE					\
+			textstyle 			CHOICE_TEXTSTYLE				\
+			style				WINDOW_STYLE_FILLED				\
+			forecolor			CHOICE_TEXTCOLOR				\
+			visible				when( visArg );					\
+			extraArgs											\
+			exExtraArgs											\
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg )	\
+		}
+
+#define FRAME_CHOICE_DVARLIST_ALL_EX2( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs )	\
+		FRAME_CHOICE_CAPTION_VIS_EX( itemIndex, textArg, visArg, exExtraArgs )	\
+		itemDef													\
+		{														\
+			type				listTypeArg						\
+			dvar				dvarArg							\
+			listArg												\
+			rect				CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X + CHOICE_DVAR_EXTRA_WIDTH) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign			CHOICE_DVAR_TEXTALIGN			\
+			textalignx			CHOICE_DVAR_OFFSET_X			\
+			textfont			CHOICE_TEXTFONT					\
+			textscale			CHOICE_TEXTSIZE					\
+			textstyle 			CHOICE_TEXTSTYLE				\
+			style				WINDOW_STYLE_FILLED				\
+			forecolor			CHOICE_TEXTCOLOR				\
+			visible				when( visArg );					\
+			extraArgs											\
+			exExtraArgs											\
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg )	\
+		}
+		
+#define FRAME_CHOICE_DVARSTRINGLIST_CENTERED_VIS( nameArg, rectArg, xOffsetArg, dvarArg, strListArg, actionArg, visArg ) \
+		FRAME_CHOICE_DVARLIST_CENTERED_ALL( rectArg, xOffsetArg, dvarArg, dvarStrList strListArg, actionArg,	\
+			HL_ON( MENUDEF_NAME, nameArg ),	HL_OFF( MENUDEF_NAME, nameArg ),		\
+			visArg,	name nameArg HIGHLIGHT_STATES( TEXT_COLOR_HL, TEXT_COLOR_NO_HL, MEDIUM_GRAY ) )
+
+#define FRAME_CHOICE_DVARLIST_CENTERED_ALL( rectArg, xOffsetArg, dvarArg, listArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )	\
+	itemDef													\
+	{														\
+		type				ITEM_TYPE_MULTI					\
+		dvar				dvarArg							\
+		listArg												\
+		rect				rectArg							\
+		textalignx			CHOICE_ARROW_WIDTH				\
+		textalign			CHOICE_DVAR_TEXTALIGN			\
+		exp					rect X( xOffsetArg - ( (getTextWidth( locString( GetCurrentItemMultiText()),CHOICE_TEXTFONT,TEXTSIZE_DEFAULT) ) / 2) - CHOICE_ARROW_WIDTH ) \
+		exp					rect W( getTextWidth( locString( GetCurrentItemMultiText() ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT) + (2 * CHOICE_ARROW_WIDTH) )	\
+		textfont			CHOICE_TEXTFONT					\
+		textscale			TEXTSIZE_DEFAULT				\
+		textstyle 			CHOICE_TEXTSTYLE				\
+		style				WINDOW_STYLE_FILLED				\
+		forecolor			1 1 1 1							\
+		backcolor			1 1 1 0							\
+		border				1								\
+		bordersize			1								\
+		bordercolor			CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA \
+		visible				when( visArg );					\
+		action																		\
+		{																					\
+			play CHOICE_FOCUS_SOUND;														\
+			actionArg;																		\
+		}																					\
+		mouseEnter		{ play CHOICE_FOCUS_SOUND; setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA; } \
+		mouseexit		{ setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA; } \
+		extraArgs											\
+	}
+
+
+#define FRAME_CHOICE_DVARENUMLIST_TWOLINE_VIS( itemIndex, textArg, dvarArg, dvarListArg, actionArg, visArg ) \
+		FRAME_CHOICE_DVARLIST_TWOLINE_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_DVARENUM, dvarEnumList dvarListArg, actionArg, visArg )
+
+#define FRAME_CHOICE_DVARSTRINGLIST_TWOLINE_VIS( itemIndex, textArg, dvarArg, strListArg, actionArg, visArg ) \
+		FRAME_CHOICE_DVARLIST_TWOLINE_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarStrList strListArg, actionArg, visArg )
+
+#define FRAME_CHOICE_DVARFLOATLIST_TWOLINE_VIS( itemIndex, textArg, dvarArg, strListArg, actionArg, visArg ) \
+		FRAME_CHOICE_DVARLIST_TWOLINE_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarFloatList strListArg, actionArg, visArg )
+
+#define FRAME_CHOICE_DVARLIST_TWOLINE_VIS( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, visArg ) \
+		FRAME_CHOICE_DVARLIST_TWOLINE_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, ;, ;, visArg, ;, ; )
+
+#define FRAME_CHOICE_DVARLIST_TWOLINE_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs ) \
+		FRAME_CHOICE_DVARLIST_TWOLINE_ALL( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg,	\
+						HL_ON( MENUDEF_NAME, CHOICE_BUTTON_NAME#itemIndex ); onFocusArg,			\
+						HL_OFF( MENUDEF_NAME, CHOICE_BUTTON_NAME#itemIndex ); leaveFocusArg,		\
+						visArg,	name CHOICE_BUTTON_NAME#itemIndex HIGHLIGHT_STATES( TEXT_COLOR_HL, TEXT_COLOR_NO_HL, MEDIUM_GRAY ) extraArgs, exExtraArgs )
+
+#define FRAME_CHOICE_DVARLIST_TWOLINE_ALL( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExtraArgs ) \
+		FRAME_CHOICE_CAPTION_VIS( itemIndex, textArg, visArg, ; ) \
+		itemDef													\
+		{														\
+			type				listTypeArg						\
+			dvar				dvarArg							\
+			listArg												\
+			rect				CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+CHOICE_DVAR_WIDTH_OFFSET) (CHOICE_SIZE_Y + CHOICE_SIZE_Y) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign			ITEM_ALIGN_TOP_LEFT				\
+			textalignx			10								\
+			textaligny			CHOICE_SIZE_Y					\
+			textfont			CHOICE_TEXTFONT					\
+			textscale			CHOICE_TEXTSIZE					\
+			textstyle 			CHOICE_TEXTSTYLE				\
+			style				WINDOW_STYLE_FILLED				\
+			forecolor			CHOICE_TEXTCOLOR				\
+			visible				when( visArg );					\
+			extraArgs											\
+			exExtraArgs											\
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg )	\
+		}
+
+#define FRAME_DVARSLIDER( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg ) \
+		FRAME_DVARSLIDER_VIS( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg, 1 )
+
+#define FRAME_DVARSLIDER_VIS( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg, visArg ) \
+		FRAME_DVARSLIDER_VIS_EX( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg, ;, ;, visArg, ; )
+
+#define FRAME_DVARSLIDER_FOCUS_VIS( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg, onFocusArg, leaveFocusArg, visArg ) \
+		FRAME_DVARSLIDER_VIS_EX( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg, onFocusArg, leaveFocusArg, visArg, ; )
+
+#define FRAME_DVARSLIDER_VIS_EX( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )	\
+		FRAME_DVARSLIDER_ALL( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg,	\
+						HL_ON( MENUDEF_NAME, CHOICE_BUTTON_NAME#itemIndex ); onFocusArg,			\
+						HL_OFF( MENUDEF_NAME, CHOICE_BUTTON_NAME#itemIndex ); leaveFocusArg,		\
+						visArg, name CHOICE_BUTTON_NAME#itemIndex HIGHLIGHT_STATES( TEXT_COLOR_HL, TEXT_COLOR_NO_HL, MEDIUM_GRAY ), extraArgs )
+
+
+#define FRAME_DVARSLIDER_ALL( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, exExArgs )	\
+		FRAME_CHOICE_CAPTION_VIS( itemIndex, textArg, visArg, ; )					\
+		itemDef																		\
+		{																			\
+			type			ITEM_TYPE_SLIDER										\
+			dvarfloat		dvarArg defaultArg minArg maxArg						\
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X + CHOICE_DVAR_EXTRA_WIDTH) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT									\
+			textalignx		DVARSLIDER_TEXTALIGN_X									\
+			textscale		CHOICE_TEXTSIZE											\
+			textstyle		ITEM_TEXTSTYLE_SHADOWED									\
+			style			WINDOW_STYLE_FILLED										\
+			forecolor		CHOICE_TEXTCOLOR										\
+			visible			when( visArg );											\
+			extraArgs																\
+			exExArgs																\
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg )	\
+		}
+
+
+#define FRAME_CHOICE_CAPTION( itemIndex, textArg ) \
+		FRAME_CHOICE_CAPTION_VIS( itemIndex, textArg, 1, ; )
+
+#define FRAME_CHOICE_CAPTION_COLOR( itemIndex, textArg, colorArg ) \
+		FRAME_CHOICE_CAPTION_COLOR_VIS( itemIndex, textArg, colorArg, colorArg, 1, ; )
+
+#define FRAME_CHOICE_CAPTION_VIS( itemIndex, textArg, visArg, extraArgs ) \
+		FRAME_CHOICE_CAPTION_COLOR_VIS( itemIndex, textArg, CAPTION_TEXT_COLOR_HL, CAPTION_TEXT_COLOR_NO_HL, visArg, extraArgs )
+
+#define FRAME_CHOICE_CAPTION_VIS_EX( itemIndex, textArg, visArg, extraArgs ) \
+		FRAME_CHOICE_CAPTION_COLOR_VIS_EX( itemIndex, textArg, CAPTION_TEXT_COLOR_HL, CAPTION_TEXT_COLOR_NO_HL, visArg, extraArgs )
+		
+#ifdef PC
+#define FRAME_CHOICE_CAPTION_COLOR_VIS_PLATFORM_VISIBILITY localVarString( ui_choicegroup ) == CHOICE_GROUP
+#else //#ifdef PC
+#define FRAME_CHOICE_CAPTION_COLOR_VIS_PLATFORM_VISIBILITY 1
+#endif //#ifdef PC
+
+#define FRAME_CHOICE_CAPTION_COLOR_VIS( itemIndex, textArg, highlightedColorArg, noHighlightedColorArg, visArg, extraArgs )	\
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, ; )							\
+		TEMP_CHOICE_HIGHLIGHT_SOLID( itemIndex, BG_HL_COLOR, visArg )			\
+		itemDef																	\
+		{																		\
+			type			ITEM_TYPE_TEXT										\
+			rect			CHOICE_RECT( itemIndex )							\
+			exp				text( textArg );									\
+			textfont		CHOICE_TEXTFONT										\
+			textscale		CHOICE_TEXTSIZE										\
+			textstyle		CHOICE_TEXTSTYLE									\
+			textAlign		CHOICE_TEXTALIGN									\
+			textAlignX		CHOICE_TEXT_OFFSET_X								\
+			forecolor		noHighlightedColorArg								\
+			visible			when( visArg );										\
+			decoration															\
+			extraArgs															\
+		}																		\
+		itemDef																	\
+		{																		\
+			type			ITEM_TYPE_TEXT										\
+			name			CHOICE_BUTTON_NAME#itemIndex						\
+			rect			CHOICE_RECT( itemIndex )							\
+			exp				text( textArg );									\
+			textfont		CHOICE_TEXTFONT										\
+			textscale		CHOICE_TEXTSIZE										\
+			textstyle		CHOICE_TEXTSTYLE									\
+			textAlign		CHOICE_TEXTALIGN									\
+			textAlignX		CHOICE_TEXT_OFFSET_X								\
+			forecolor		highlightedColorArg									\
+			visible			when( MenuHasFocus() && localVarInt( ui_highlight ) == itemIndex && FRAME_CHOICE_CAPTION_COLOR_VIS_PLATFORM_VISIBILITY && visArg );	\
+			extraArgs															\
+			decoration															\
+		}
+
+#define FRAME_CHOICE_CAPTION_COLOR_VIS_EX( itemIndex, textArg, highlightedColorArg, noHighlightedColorArg, visArg, extraArgs )	\
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, extraArgs )							\
+		TEMP_CHOICE_HIGHLIGHT_SOLID_EX( itemIndex, BG_HL_COLOR, visArg, extraArgs )			\
+		itemDef																	\
+		{																		\
+			type			ITEM_TYPE_TEXT										\
+			rect			CHOICE_RECT( itemIndex )							\
+			exp				text( textArg );									\
+			textfont		CHOICE_TEXTFONT										\
+			textscale		CHOICE_TEXTSIZE										\
+			textstyle		CHOICE_TEXTSTYLE									\
+			textAlign		CHOICE_TEXTALIGN									\
+			textAlignX		CHOICE_TEXT_OFFSET_X								\
+			forecolor		noHighlightedColorArg								\
+			visible			when( visArg );										\
+			decoration															\
+			extraArgs															\
+		}																		\
+		itemDef																	\
+		{																		\
+			type			ITEM_TYPE_TEXT										\
+			name			CHOICE_BUTTON_NAME#itemIndex						\
+			rect			CHOICE_RECT( itemIndex )							\
+			exp				text( textArg );									\
+			textfont		CHOICE_TEXTFONT										\
+			textscale		CHOICE_TEXTSIZE										\
+			textstyle		CHOICE_TEXTSTYLE									\
+			textAlign		CHOICE_TEXTALIGN									\
+			textAlignX		CHOICE_TEXT_OFFSET_X								\
+			forecolor		highlightedColorArg									\
+			visible			when( MenuHasFocus() && localVarInt( ui_highlight ) == itemIndex && FRAME_CHOICE_CAPTION_COLOR_VIS_PLATFORM_VISIBILITY && visArg );	\
+			extraArgs															\
+			decoration															\
+		}
+		
+#define FRAME_CHOICE_SECTION_TITLE( itemIndex, titleArg ) \
+	FRAME_CHOICE_SECTION_TITLE_VIS( itemIndex, titleArg, 1 )	
+
+#define FRAME_CHOICE_SECTION_TITLE_VIS( itemIndex, titleArg, visArg ) \
+	itemDef \
+	{ \
+		type			ITEM_TYPE_TEXT \
+		rect			(CHOICE_X( itemIndex ) + SECTION_X_OFFSET) (CHOICE_Y( itemIndex ) - 1) CHOICE_SIZE_X CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+		forecolor		COLOR_INFO_YELLOW \
+		exp				text( titleArg );\
+		textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+		textfont		UI_FONT_NORMAL \
+		textscale		TEXTSIZE_DEFAULT \
+		textstyle		CHOICE_TEXTSTYLE \
+		textAlign		CHOICE_TEXTALIGN \
+		textAlignX		CHOICE_TEXT_OFFSET_X \
+		visible 		when( visArg ) \
+		decoration \
+	}
+
+
+#define FRAME_CHOICE_SEPARATOR( afterItemIndex ) \
+		FRAME_CHOICE_SEPARATOR_VIS( afterItemIndex, ( ENABLE_SEPARATOR ) )
+		
+#define FRAME_CHOICE_SEPARATOR_VIS( afterItemIndex, visArg ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			(CHOICE_SEP_OFFSET_X) (CHOICE_Y_SPACING + CHOICE_SEP_SPACING / 2 + CHOICE_SEP_OFFSET_Y ) CHOICE_SEP_WIDTH 1 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			origin			CHOICE_ORIGIN( afterItemIndex ) \
+			background		CHOICE_SEP_BACKGROUND \
+			forecolor		1 1 1 0.7 \
+			visible			when( visArg ) \
+			decoration \
+		}
+
+	
+#define FRAME_CHOICE_DVARYESNO( itemIndex, textArg, dvarArg, actionArg ) \
+		FRAME_CHOICE_DVARFLOATLIST_VIS( itemIndex, textArg, dvarArg, { "@MENU_NO_CAPS" 0 "@MENU_YES_CAPS" 1 }, actionArg, 1 )
+
+#define FRAME_CHOICE_DVARYESNO_VIS( itemIndex, textArg, dvarArg, actionArg, visArg ) \
+		FRAME_CHOICE_DVARFLOATLIST_VIS( itemIndex, textArg, dvarArg, { "@MENU_NO_CAPS" 0 "@MENU_YES_CAPS" 1 }, actionArg, visArg )
+		
+#define FRAME_CHOICE_DVARYESNO_FOCUS_VIS_EX2( itemIndex, textArg, dvarArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs) \
+		FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS_EX2( itemIndex, textArg, dvarArg, { "@MENU_NO_CAPS" 0 "@MENU_YES_CAPS" 1 }, actionArg, onFocusArg, leaveFocusArg, visArg, ;, extraArgs )
+															
+#define FRAME_CHOICE_DVARYESNO_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs ) \
+		FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, { "@MENU_NO_CAPS" 0 "@MENU_YES_CAPS" 1 }, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, ; )
+															
+#define FRAME_CHOICE_DVAREDIT_NUMERIC( itemIndex, textArg, dvarArg, max_chars, actionArg ) \
+		FRAME_CHOICE_DVAREDIT_NUMERIC_VIS( itemIndex, textArg, dvarArg, max_chars, actionArg, 1 )
+
+#define FRAME_CHOICE_DVAREDIT_NUMERIC_VIS( itemIndex, textArg, dvarArg, max_chars, actionArg, visArg ) \
+		FRAME_CHOICE_CAPTION_VIS( itemIndex, textArg, visArg, ; ) \
+		itemDef												\
+		{													\
+			type			ITEM_TYPE_NUMERICFIELD			\
+			text			" "								\
+			dvar			dvarArg							\
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X + CHOICE_DVAR_EXTRA_WIDTH) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		CHOICE_DVAR_TEXTALIGN			\
+			textalignx		(CHOICE_DVAR_OFFSET_X-12)		\
+			textfont		CHOICE_TEXTFONT					\
+			textscale		CHOICE_TEXTSIZE					\
+			textstyle 		CHOICE_TEXTSTYLE				\
+			style			WINDOW_STYLE_FILLED				\
+			forecolor		CHOICE_TEXTCOLOR				\
+			visible			when( visArg )					\
+			maxChars		max_chars						\
+			CHOICE_SCRIPTS_ACTION( itemIndex, actionArg )	\
+		}
+		
+#define FRAME_CHOICE_DVAREDIT_NUMERIC_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, max_chars, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs ) \
+		FRAME_CHOICE_CAPTION_VIS( itemIndex, textArg, visArg, ; ) \
+		itemDef												\
+		{													\
+			type			ITEM_TYPE_NUMERICFIELD			\
+			text			" "								\
+			dvar			dvarArg							\
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X + CHOICE_DVAR_EXTRA_WIDTH) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		CHOICE_DVAR_TEXTALIGN			\
+			textalignx		(CHOICE_DVAR_OFFSET_X-12)		\
+			textfont		CHOICE_TEXTFONT					\
+			textscale		CHOICE_TEXTSIZE					\
+			textstyle 		CHOICE_TEXTSTYLE				\
+			style			WINDOW_STYLE_FILLED				\
+			forecolor		CHOICE_TEXTCOLOR				\
+			visible			when( visArg )					\
+			maxChars		max_chars						\
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+			extraArgs										\
+		}
+		
+#define FRAME_CHOICE_DVAREDIT( itemIndex, textArg, dvarArg, actionArg ) \
+		FRAME_CHOICE_DVAREDIT_VIS( itemIndex, textArg, dvarArg, 31, 18, actionArg, 1 )
+
+#define FRAME_CHOICE_DVAREDIT_VIS( itemIndex, textArg, dvarArg, max_chars, max_paintchars, actionArg, visArg ) \
+		FRAME_CHOICE_DVAREDIT_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, max_chars, max_paintchars, actionArg, ;, ;, visArg, ; )
+
+#define FRAME_CHOICE_DVAREDIT_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, max_chars, max_paintchars, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs ) \
+		FRAME_CHOICE_CAPTION_VIS( itemIndex, textArg, visArg, ; ) \
+		itemDef												\
+		{													\
+			type			ITEM_TYPE_EDITFIELD				\
+			text			" "								\
+			dvar			dvarArg							\
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X + CHOICE_DVAR_EXTRA_WIDTH) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		CHOICE_DVAR_TEXTALIGN			\
+			textalignx		(CHOICE_DVAR_OFFSET_X-12)		\
+			textfont		CHOICE_TEXTFONT					\
+			textscale		CHOICE_TEXTSIZE					\
+			textstyle 		CHOICE_TEXTSTYLE				\
+			style			WINDOW_STYLE_FILLED				\
+			forecolor		CHOICE_TEXTCOLOR				\
+			visible			visArg							\
+			maxChars		max_chars						\
+			maxpaintchars	max_paintchars					\
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+			extraArgs										\
+		}
+		
+#define FRAME_CHOICE_BIND( itemIndex, textArg, cmdArg, actionArg ) \
+		FRAME_CHOICE_BIND_VIS( itemIndex, textArg, cmdArg, actionArg, 1, 1 )
+
+#define FRAME_CHOICE_BIND_VIS( itemIndex, textArg, cmdArg, actionArg, visArg, vis ) \
+		FRAME_CHOICE_BIND_VIS_EX( itemIndex, textArg, cmdArg, actionArg, visArg, vis, ; )
+
+#define FRAME_CHOICE_BIND_VIS_EX( itemIndex, textArg, cmdArg, actionArg, visArg, vis, extraArgs ) \
+		FRAME_CHOICE_CAPTION_VIS_EX( itemIndex, textArg, visArg, extraArgs ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_BIND \
+			name			CHOICE_BUTTON_NAME#itemIndex \
+			dvar			cmdArg \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+120) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			textalignx		(CHOICE_SIZE_X+20)/*(-(CHOICE_TEXT_OFFSET_X))*/ \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		CHOICE_TEXTCOLOR \
+			visible			when( visArg ) \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, HL_ON( MENUDEF_NAME, CHOICE_BUTTON_NAME#itemIndex ); show keyBindStatus, HL_OFF( MENUDEF_NAME, CHOICE_BUTTON_NAME#itemIndex ); hide keyBindStatus ) \
+			HIGHLIGHT_STATES( TEXT_COLOR_HL, TEXT_COLOR_NO_HL, MEDIUM_GRAY ) \
+			extraArgs \
+		}
+
+#define FRAME_CHOICE_BIND2( itemIndex, textArg, cmdArg, actionArg ) \
+		FRAME_CHOICE_BIND2_VIS( itemIndex, textArg, cmdArg, actionArg, 1 )
+
+#define FRAME_CHOICE_BIND2_VIS( itemIndex, textArg, cmdArg, actionArg, visArg ) \
+		FRAME_CHOICE_CAPTION_VIS( itemIndex, textArg, visArg, ; ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_BIND2 \
+			dvar			cmdArg \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+120) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			textalignx		(CHOICE_SIZE_X+20)/*(-(CHOICE_TEXT_OFFSET_X))*/ \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		CHOICE_TEXTCOLOR \
+			visible			when( visArg ) \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, show keyBindStatus, hide keyBindStatus ) \
+		}
+		
+		
+#define FRAME_CHOICE_DDVARALTTEXT_VIS( itemIndex, textArg, textArg1, visArg ) \
+		FRAME_CHOICE_BUTTON_VIS( itemIndex, textArg, ;, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			exp				text( textArg ); \
+			rect			CHOICE_RECT( itemIndex ) \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			forecolor		CHOICE_TEXTCOLOR_DISABLED \
+			visible			when( visArg ) \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			exp				text( textArg1 ) \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+CHOICE_DVAR_WIDTH_OFFSET) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textAlign		CHOICE_DVAR_TEXTALIGN \
+			textAlignX		CHOICE_DVAR_OFFSET_X \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			forecolor		CHOICE_TEXTCOLOR_DISABLED \
+			visible			when( visArg ) \
+			decoration \
+		}
+
+#define FRAME_CHOICE_DDVARALTTEXT_TWOLINE_VIS( itemIndex, textArg, textArg1, visArg ) \
+		TEMP_CHOICE_BUTTON_BG( itemIndex, visArg, ; ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			CHOICE_RECT( itemIndex ) \
+			exp				text( textArg ); \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		TEXT_COLOR_NO_HL \
+			visible			when( visArg ); \
+		} \																			
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			exp				text( textArg ); \
+			rect			CHOICE_RECT( itemIndex ) \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			forecolor		CHOICE_TEXTCOLOR_DISABLED \
+			visible			when( visArg ) \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			exp				text( textArg1 ) \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+CHOICE_DVAR_WIDTH_OFFSET) (CHOICE_SIZE_Y+CHOICE_SIZE_Y) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textAlign		ITEM_ALIGN_TOP_LEFT \
+			textAlignX		10 \
+			textAlignY		CHOICE_SIZE_Y \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		ITEM_TEXTSTYLE_SHADOWED \
+			forecolor		CHOICE_TEXTCOLOR_DISABLED \
+			visible			when( visArg ) \
+			decoration \
+		}
+
+//**************************
+// TEMP CHOICE BUTTONS
+//**************************
+#define TEMP_CHOICE_BUTTON_VIS( itemIndex, textArg, actionArg, visArg )	\
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, actionArg, ;, ;, visArg, ; )	
+
+#define TEMP_CHOICE_BUTTON_VIS_DISABLED( itemIndex, textArg, actionArg, visArg )	\
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_EX_DISABLED( itemIndex, textArg, actionArg, ;, ;, visArg, ; )	
+
+#define TEMP_CHOICE_BUTTON_FOCUS_VIS_EX_DISABLED( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )	\
+		TEMP_CHOICE_HIGHLIGHT_SOLID( itemIndex, BG_HL_COLOR, visArg )													\
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_NOHI_EX_DISABLED( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )
+
+#define TEMP_CHOICE_BUTTON_FOCUS_VIS_NOHI_EX_DISABLED( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )		\
+		TEMP_CHOICE_BUTTON_ALL( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, CHOICE_TEXTCOLOR_DISABLED, visArg, extraArgs )	\
+		TEMP_CHOICE_BUTTON_HIGHLIGHT_TEXT( itemIndex, textArg, TEXT_COLOR_HL, visArg )
+
+#define TEMP_CHOICE_BUTTON_FOCUS_VIS( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg )	\
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, ; )	
+
+#define TEMP_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )	\
+		TEMP_CHOICE_HIGHLIGHT_SOLID( itemIndex, BG_HL_COLOR, visArg )													\
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )
+
+#define TEMP_CHOICE_BUTTON_FOCUS_VIS_EX2( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, fullExtraArgs ) \
+		TEMP_CHOICE_HIGHLIGHT_SOLID_EX( itemIndex, BG_HL_COLOR, visArg, fullExtraArgs ) \
+		TEMP_CHOICE_BUTTON_FOCUS_VIS_NOHI_EX2( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, fullExtraArgs )
+		
+#define TEMP_CHOICE_DBUTTON_FOCUS_VIS_EX( itemIndex, textArg, onFocusArg, leaveFocusArg, visArg, extraArgs )				\
+		TEMP_CHOICE_HIGHLIGHT_SOLID( itemIndex, BG_HL_COLOR, visArg )														\
+		TEMP_CHOICE_BUTTON_ALL( itemIndex, textArg, ;, onFocusArg, leaveFocusArg, NO_BG_DISABLED_COLOR, visArg, extraArgs )	\
+		TEMP_CHOICE_BUTTON_HIGHLIGHT_TEXT( itemIndex, textArg, NO_BG_DISABLED_COLOR, visArg  )
+
+#define TEMP_CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )		\
+		TEMP_CHOICE_BUTTON_ALL( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, TEXT_COLOR_NO_HL, visArg, extraArgs )	\
+		TEMP_CHOICE_BUTTON_HIGHLIGHT_TEXT( itemIndex, textArg, TEXT_COLOR_HL, visArg )
+
+#define TEMP_CHOICE_BUTTON_FOCUS_VIS_NOHI_EX2( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, fullExtraArgs ) \
+		TEMP_CHOICE_BUTTON_ALL( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, TEXT_COLOR_NO_HL, visArg, extraArgs fullExtraArgs ) \
+		TEMP_CHOICE_BUTTON_HIGHLIGHT_TEXT_EX( itemIndex, textArg, TEXT_COLOR_HL, visArg, fullExtraArgs )
+
+#define TEMP_CHOICE_BUTTON_ALL( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, colorArg, visArg, extraArgs ) \
+		itemDef																											\
+		{																												\
+			type			ITEM_TYPE_BUTTON																			\
+			rect			CHOICE_RECT( itemIndex )																	\
+			exp				text( textArg );																			\
+			textfont		CHOICE_TEXTFONT																				\
+			textscale		CHOICE_TEXTSIZE																				\
+			textstyle		CHOICE_TEXTSTYLE																			\
+			textAlign		CHOICE_TEXTALIGN																			\
+			textAlignX		CHOICE_TEXT_OFFSET_X																		\
+			forecolor		colorArg																					\
+			visible			when( visArg );																				\
+			extraArgs																									\
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg )										\
+		}																										
+
+#define FRAME_CHOICE_DBUTTON_DARK_LIST_VIS_EX( itemIndex, dvarArg, listTypeArg, listArg, actionArg, visArg, extraArgs )		\
+		itemDef																											\
+		{																												\
+			type			listTypeArg																					\
+			dvar			dvarArg																						\
+			listArg																										\
+			rect			CHOICE_RECT( itemIndex )																	\
+			textfont		CHOICE_TEXTFONT																				\
+			textscale		CHOICE_TEXTSIZE																				\
+			textstyle		CHOICE_TEXTSTYLE																			\
+			textAlign		CHOICE_TEXTALIGN																			\
+			textAlignX		CHOICE_TEXT_OFFSET_X																		\
+			visible			when( visArg );																				\
+			forecolor		CHOICE_TEXTCOLOR																					\
+			extraArgs																									\
+		}																										
+		
+#define TEMP_CHOICE_BUTTON_HIGHLIGHT_TEXT( itemIndex, textArg, focusedColorArg, visArg )						\
+		PREPROC_TEXT_DRAW_VIS(	CHOICE_RECT( itemIndex ), 0 0, textArg,											\
+								CHOICE_TEXTSIZE, CHOICE_TEXT_OFFSET_X, 0, CHOICE_TEXTALIGN, focusedColorArg,	\
+								when( MenuHasFocus() && localVarInt( ui_highlight ) == itemIndex && localVarString( ui_choicegroup ) == CHOICE_GROUP && visArg ); )
+
+#define TEMP_CHOICE_BUTTON_HIGHLIGHT_TEXT_EX( itemIndex, textArg, focusedColorArg, visArg, extraArgs ) \
+		PREPROC_TEXT_DRAW_VIS_EX(	CHOICE_RECT( itemIndex ), 0 0, textArg, \
+									CHOICE_TEXTSIZE, CHOICE_TEXT_OFFSET_X, 0, CHOICE_TEXTALIGN, focusedColorArg, \
+									when( MenuHasFocus() && localVarInt( ui_highlight ) == itemIndex && localVarString( ui_choicegroup ) == CHOICE_GROUP && visArg );, \
+									extraArgs )
+		
+#define TEMP_CHOICE_BUTTON_CUSTOM_HIGHLIGHT_TEXT( itemIndex, textArg, focusedColorArg, visArg, hlVisArg )		\
+		PREPROC_TEXT_DRAW_VIS(	CHOICE_RECT( itemIndex ), 0 0, textArg,											\
+								CHOICE_TEXTSIZE, CHOICE_TEXT_OFFSET_X, 0, CHOICE_TEXTALIGN, focusedColorArg,	\
+								when( hlVisArg && visArg ); )
+
+#define TEMP_CHOICE_BUTTON_TWOLINE_FOCUS_VIS_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )	\
+		TEMP_CHOICE_HIGHLIGHT_SOLID( itemIndex, BG_HL_COLOR, visArg )															\
+		TEMP_CHOICE_BUTTON_TWOLINE_FOCUS_VIS_NOHI_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )
+
+#define TEMP_CHOICE_BUTTON_TWOLINE_FOCUS_VIS_NOHI_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )	\
+		TEMP_CHOICE_BUTTON_TWOLINE_ALL( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, TEXT_COLOR_NO_HL, visArg, extraArgs )		\
+		TEMP_CHOICE_BUTTON_HIGHLIGHT_TEXT( itemIndex, textArg, TEXT_COLOR_HL, visArg )
+
+#define TEMP_CHOICE_BUTTON_TWOLINE_ALL( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, colorArg, visArg, extraArgs ) \
+		itemDef																											\
+		{																												\
+			type			ITEM_TYPE_TEXT																				\
+			rect			CHOICE_RECT( itemIndex )																	\
+			exp				text( textArg );																			\
+			textfont		CHOICE_TEXTFONT																				\
+			textscale		CHOICE_TEXTSIZE																				\
+			textstyle		CHOICE_TEXTSTYLE																			\
+			textAlign		CHOICE_TEXTALIGN																			\
+			textAlignX		CHOICE_TEXT_OFFSET_X																		\
+			forecolor		colorArg																					\
+			visible			when( visArg );																				\
+		}																												\																			
+		itemDef																											\
+		{																												\
+			type			ITEM_TYPE_BUTTON_NO_TEXT																	\
+			rect			CHOICE_ORIGIN( itemIndex ) CHOICE_SIZE_X (CHOICE_SIZE_Y+CHOICE_SIZE_Y) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			visible			when( visArg );																				\
+			extraArgs																									\
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg )										\
+		}		
+
+#define TEMP_CHOICE_BUTTON_FOCUS_VIS_EX_CUSTOMHL( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, hlVisArg )	\
+		TEMP_CHOICE_CUSTOM_HIGHLIGHT_SOLID( itemIndex, BG_HL_COLOR, visArg, hlVisArg )														\
+		TEMP_CHOICE_BUTTON_ALL( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, TEXT_COLOR_NO_HL, visArg, extraArgs )				\
+		TEMP_CHOICE_BUTTON_CUSTOM_HIGHLIGHT_TEXT( itemIndex, textArg, TEXT_COLOR_HL, visArg, hlVisArg )
+		
+//**************************
+// NEW BUTTONS END
+//**************************
+
+#define CHOICE_BUTTON_VIS( itemIndex, textArg, actionArg, visArg ) \
+		CHOICE_BUTTON_BG( itemIndex, visArg ) \
+		CHOICE_HIGHLIGHT( itemIndex, 1 ) \
+		CHOICE_BUTTON_VIS_NOHI( itemIndex, textArg, actionArg, visArg )
+		
+#define CHOICE_BUTTON_VIS_ADV( itemIndex, textArg, actionArg, visArg, vis ) \
+		CHOICE_BUTTON_BG( itemIndex, visArg ) \
+		CHOICE_HIGHLIGHT( itemIndex, vis ) \
+		CHOICE_BUTTON_VIS_NOHI( itemIndex, textArg, actionArg, visArg )
+
+#define CHOICE_BUTTON_VIS_NOHI( itemIndex, textArg, actionArg, visArg ) \
+		CHOICE_BUTTON_FOCUS_VIS_NOHI( itemIndex, textArg, actionArg, ;, ;, visArg )
+
+#define CHOICE_BUTTON_FOCUS( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg ) \
+		CHOICE_BUTTON_FOCUS_VIS( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, 1 )
+
+#define CHOICE_BUTTON_FOCUS_VIS( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg ) \
+		CHOICE_BUTTON_BG( itemIndex, visArg ) \
+		CHOICE_HIGHLIGHT( itemIndex, 1 ) \
+		CHOICE_BUTTON_FOCUS_VIS_NOHI( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg )
+
+#define CHOICE_BUTTON_FOCUS_VIS_NOHI_NOICON( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg ) \
+		CHOICE_BUTTON_FOCUS_VIS_NOHI( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg )
+		
+#define CHOICE_BUTTON_FOCUS_VIS_ADV( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, vis ) \
+		CHOICE_BUTTON_BG( itemIndex, visArg ) \
+		CHOICE_HIGHLIGHT( itemIndex, vis ) \
+		CHOICE_BUTTON_FOCUS_VIS_NOHI( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg )
+
+#define CHOICE_BUTTON_FOCUS_VIS_NOHI( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg ) \
+		CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, ; )
+
+#define CHOICE_BUTTON_EX( itemIndex, textArg, actionArg, extraArgs ) \
+		CHOICE_BUTTON_BG( itemIndex, 1 ) \
+		CHOICE_HIGHLIGHT( itemIndex, 1 ) \
+		CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( itemIndex, textArg, actionArg, ;, ;, 1, extraArgs )
+
+#define CHOICE_BUTTON_VIS_EX( itemIndex, textArg, actionArg, visArg, extraArgs ) \
+		CHOICE_BUTTON_BG( itemIndex, visArg ) \
+		CHOICE_HIGHLIGHT( itemIndex, 1 ) \
+		CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( itemIndex, textArg, actionArg, ;, ;, visArg, extraArgs )
+
+#define CHOICE_BUTTON_RECT_NOHI_EX( itemIndex, rectArg, nameArg, textArg, colorArg, actionArg, visArg, extraArgs ) \
+		CHOICE_BUTTON_RECT_FOCUS_VIS_NOHI_EX( itemIndex, rectArg, nameArg, textArg, colorArg, actionArg, ;, ;, visArg, extraArgs )
+
+#define CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs ) \
+		CHOICE_BUTTON_BG( itemIndex, visArg ) \
+		CHOICE_HIGHLIGHT( itemIndex, 1 ) \
+		CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )
+		
+#define CHOICE_BUTTON_FOCUS_VIS_EX_ADV( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs, vis ) \
+		CHOICE_BUTTON_BG( itemIndex, visArg ) \
+		CHOICE_HIGHLIGHT( itemIndex, vis ) \
+		CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs )
+
+#define CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs ) \
+		CHOICE_BUTTON_FOCUS_COLOR_VIS_NOHI_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, CHOICE_TEXTCOLOR, visArg, extraArgs ) 
+
+#define CHOICE_BUTTON_COLOR_VIS( itemIndex, textArg, colorArg, visArg ) \
+		CHOICE_BUTTON_BG( itemIndex, visArg ) \
+		CHOICE_BUTTON_FOCUS_COLOR_VIS_NOHI_EX( itemIndex, textArg, ;, ;, ;, colorArg, visArg, ; ) 
+
+#define CHOICE_BUTTON_FOCUS_COLOR_VIS_NOHI_EX( itemIndex, textArg, actionArg, onFocusArg, leaveFocusArg, colorArg, visArg, extraArgs ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_BUTTON \
+			rect			CHOICE_RECT( itemIndex ) \
+			exp				text( textArg ); \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		colorArg \
+			visible			visArg \
+			extraArgs \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+		}
+	
+
+#define CHOICE_BUTTON_RECT_FOCUS_VIS_NOHI_EX( itemIndex, rectArg, nameArg, textArg, colorArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_BUTTON \
+			name			nameArg#itemIndex \
+			rect			rectArg \
+			exp				text( textArg ); \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		colorArg \
+			visible			visArg \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+			extraArgs \
+		}
+
+#define CHOICE_BUTTON_TV_VIS_EX( itemIndex, rectArg, nameArg, textArg, colorArg, actionArg, fontArg, textsizeArg, visArg, extraArgs ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_BUTTON \
+			name			nameArg#itemIndex \
+			rect			rectArg \
+			exp				text( textArg ); \
+			textfont		fontArg \
+			textscale		textsizeArg \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		colorArg \
+			visible			visArg \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, ;, ; ) \
+			extraArgs \
+		}
+
+
+#define CHOICE_BUTTON_NT_VIS_NOHI( itemIndex, actionArg, visArg ) \
+		CHOICE_BUTTON_NT_FOCUS_VIS_NOHI( itemIndex, actionArg, ;, ;, visArg )
+
+#define CHOICE_BUTTON_NT_FOCUS_VIS_NOHI( itemIndex, actionArg, onFocusArg, leaveFocusArg, visArg ) \
+		CHOICE_BUTTON_NT_FOCUS_VIS_NOHI_EX( itemIndex, actionArg, onFocusArg, leaveFocusArg, visArg, ; )
+
+#define CHOICE_BUTTON_NT_FOCUS_VIS_NOHI_EX( itemIndex, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_BUTTON_NO_TEXT \
+			rect			CHOICE_RECT( itemIndex ) \
+			forecolor		CHOICE_TEXTCOLOR \
+			visible			visArg \
+			extraArgs \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+		}
+
+#define CHOICE_BUTTON_NT_RECT_FOCUS_VIS_NOHI_EX( itemIndex, rectArg, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_BUTTON_NO_TEXT \
+			rect			rectArg \
+			forecolor		CHOICE_TEXTCOLOR \
+			visible			visArg \
+			extraArgs \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+		}
+
+#define CHOICE_DBUTTON_VIS( itemIndex, textArg, visArg ) \
+		CHOICE_BUTTON_BG( itemIndex, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			CHOICE_RECT( itemIndex ) \
+			exp				text( textArg ); \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		CHOICE_TEXTCOLOR_DISABLED \
+			visible			visArg \
+			decoration \
+		} \
+
+#define GAMEPAD_BUTTON( rectArg, textArg, keyintArg, visArg )	\
+		itemDef													\
+		{														\
+			type			ITEM_TYPE_BUTTON					\
+			rect			rectArg								\
+			text			textArg								\
+			textfont		CHOICE_TEXTFONT						\
+			textscale		TEXTSIZE_DEFAULT					\
+			textalign		ITEM_ALIGN_BOTTOM_LEFT				\
+			execkeyint		keyintArg							\
+			visible			visArg								\
+			decoration											\
+		}
+
+#ifdef CONSOLE
+	#define GAMEPAD_BUTTON_MOUSE( rectArg, actionArg, visArg )
+#else // #ifdef CONSOLE
+	#define GAMEPAD_BUTTON_MOUSE( rectArg, actionArg, visArg )		\
+		itemDef														\
+		{															\
+			type			ITEM_TYPE_BUTTON_NO_TEXT				\
+			rect			rectArg									\
+			visible			visArg									\
+			mouseEnter		{ play CHOICE_FOCUS_SOUND ; }			\
+			action			{ play CHOICE_FOCUS_SOUND ; actionArg }	\
+		}
+#endif // #ifdef CONSOLE
+
+#define CHOICE_DVARENUMLIST( itemIndex, textArg, dvarArg, dvarListArg, actionArg ) \
+		CHOICE_DVARLIST_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_DVARENUM, dvarEnumList dvarListArg, actionArg, 1 )
+
+#define CHOICE_DVARENUMLIST_VIS( itemIndex, textArg, dvarArg, dvarListArg, actionArg, visArg ) \
+		CHOICE_DVARLIST_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_DVARENUM, dvarEnumList dvarListArg, actionArg, visArg )
+
+#define CHOICE_DVARSTRINGLIST( itemIndex, textArg, dvarArg, strListArg, actionArg ) \
+		CHOICE_DVARLIST_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarStrList strListArg, actionArg, 1 )
+
+#define CHOICE_DVARSTRINGLIST_VIS( itemIndex, textArg, dvarArg, strListArg, actionArg, visArg ) \
+		CHOICE_DVARLIST_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarStrList strListArg, actionArg, visArg )
+
+#define CHOICE_DVARFLOATLIST( itemIndex, textArg, dvarArg, strListArg, actionArg ) \
+		CHOICE_DVARLIST_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarFloatList strListArg, actionArg, 1 )
+
+#define CHOICE_DVARFLOATLIST_VIS( itemIndex, textArg, dvarArg, strListArg, actionArg, visArg ) \
+		CHOICE_DVARLIST_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarFloatList strListArg, actionArg, visArg )
+
+#define CHOICE_DVARFLOATLIST_FOCUS_VIS( itemIndex, textArg, dvarArg, strListArg, actionArg, onFocusArg, leaveFocusArg, visArg ) \
+		CHOICE_DVARLIST_FOCUS_VIS( itemIndex, textArg, dvarArg, ITEM_TYPE_MULTI, dvarFloatList strListArg, actionArg, onFocusArg, leaveFocusArg, visArg )
+
+#define CHOICE_DVARLIST_VIS( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, visArg ) \
+		CHOICE_DVARLIST_FOCUS_VIS( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, ;, ;, visArg )
+
+#define CHOICE_DVARLIST_FOCUS_VIS( itemIndex, textArg, dvarArg, listTypeArg, listArg, actionArg, onFocusArg, leaveFocusArg, visArg ) \
+		CHOICE_CAPTION_VIS( itemIndex, textArg, visArg ) \
+		itemDef \
+		{ \
+			type			listTypeArg \
+			dvar			dvarArg \
+			listArg \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+CHOICE_DVAR_WIDTH_OFFSET) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		CHOICE_DVAR_TEXTALIGN \
+			textalignx		CHOICE_DVAR_OFFSET_X \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		CHOICE_TEXTCOLOR \
+			visible			visArg \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+		}
+
+
+#define CHOICE_DDVAR_VIS( itemIndex, textArg, dvarArg, visArg ) \
+		CHOICE_BUTTON_BG_RAW( itemIndex, "menu_button_backing", BUTTON_BG_COLOR, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			exp				text( textArg ); \
+			rect			CHOICE_RECT( itemIndex ) \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			forecolor		CHOICE_TEXTCOLOR_DISABLED \
+			visible			visArg \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			dvar			dvarArg \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+CHOICE_DVAR_WIDTH_OFFSET) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textAlign		CHOICE_DVAR_TEXTALIGN \
+			textAlignX		CHOICE_DVAR_OFFSET_X \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			forecolor		CHOICE_TEXTCOLOR_DISABLED \
+			visible			visArg \
+			decoration \
+		}
+
+
+#define CHOICE_DDVARALTTEXT_VIS( itemIndex, textArg, textArg1, visArg ) \
+		CHOICE_BUTTON_BG_RAW( itemIndex, "menu_button_backing", BUTTON_BG_COLOR, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			exp				text( textArg ); \
+			rect			CHOICE_RECT( itemIndex ) \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			forecolor		CHOICE_TEXTCOLOR_DISABLED \
+			visible			visArg \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			exp				text( textArg1 ) \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+CHOICE_DVAR_WIDTH_OFFSET) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textAlign		CHOICE_DVAR_TEXTALIGN \
+			textAlignX		CHOICE_DVAR_OFFSET_X \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			forecolor		CHOICE_TEXTCOLOR_DISABLED \
+			visible			visArg \
+			decoration \
+		}
+
+#define CHOICE_SPINNER_BUTTON( itemIndex, textArg, dvarArg, listArg, buttonActionArg, spinnerActionArg ) \
+		CHOICE_SPINNER_BUTTON_VIS( itemIndex, textArg, dvarArg, listArg, buttonActionArg, spinnerActionArg, 1 )
+		
+#define CHOICE_SPINNER_BUTTON_VIS( itemIndex, textArg, dvarArg, listArg, buttonActionArg, spinnerActionArg, visArg ) \
+		CHOICE_SPINNER_BUTTON_FOCUS_VIS( itemIndex, textArg, dvarArg, listArg, buttonActionArg, ;, ;, spinnerActionArg, ;, ;, visArg )
+		
+#define CHOICE_SPINNER_BUTTON_FOCUS_VIS( itemIndex, textArg, dvarArg, listArg, buttonActionArg, buttonOnFocusArg, buttonLeaveFocusArg, spinnerActionArg, spinnerOnFocusArg, spinnerLeaveFocusArg, visArg ) \
+		CHOICE_SPINNER_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, listArg, buttonActionArg, buttonOnFocusArg, buttonLeaveFocusArg, ;, spinnerActionArg, spinnerOnFocusArg, spinnerLeaveFocusArg, ;, visArg ) 
+
+#define CHOICE_SPINNER_BUTTON_ACCEPT_VIS_ARG( itemIndex )  visible when( localVarInt( "ui_enablespinner"#itemIndex ) == 1 )
+
+#ifdef PC
+	#define CHOICE_SPINNER_BUTTON_ACCEPT_BUTTON( itemIndex )
+#else // #ifdef PC
+	#define CHOICE_SPINNER_BUTTON_ACCEPT_BUTTON( itemIndex ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			(CHOICE_X( itemIndex )+CHOICE_SIZE_X) CHOICE_Y( itemIndex ) (CHOICE_SPINNER_DVAR_SIZE) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			text			"@PLATFORM_UI_SELECTBUTTON" \
+			textfont		A_BUTTON_FONT \
+			textscale		A_BUTTON_SIZE \
+			textstyle		A_BUTTON_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		0 \
+			textAlignY		-1 \
+			forecolor		1 1 1 1 \
+			CHOICE_SPINNER_BUTTON_ACCEPT_VIS_ARG \
+			decoration \
+		} \
+#endif // #else // #ifdef PC
+
+#define CHOICE_SPINNER_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, dvarArg, listArg, buttonActionArg, buttonOnFocusArg, buttonLeaveFocusArg, buttonExtraArg, spinnerActionArg, spinnerOnFocusArg, spinnerLeaveFocusArg, spinnerExtraArg, visArg ) \
+		CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, textArg, setLocalVarInt ui_enablespinner##itemIndex "1"; setfocus "spinner_dvar_"#itemIndex; setdvar ui_spinnerdvar dvarString( dvarArg ); buttonActionArg;, setLocalVarInt ui_enablespinner##itemIndex "0"; buttonOnFocusArg;, buttonLeaveFocusArg;, visArg, name "spinner_button_"#itemIndex; buttonExtraArg; ) \
+		CHOICE_SPINNER_BUTTON_ACCEPT_BUTTON( itemIndex ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			(CHOICE_SPINNER_DVAR_X_START( itemIndex )-20) (CHOICE_Y( itemIndex )+3) 16 16 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			origin			0 0 \
+			background		"ui_arrow_left" \
+			forecolor		1 1 1 1 \
+			visible			when( localVarInt( "ui_enablespinner"#itemIndex ) == 1 ) \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			type			ITEM_TYPE_HIGHLIGHT \
+			rect			(CHOICE_SPINNER_DVAR_X_START( itemIndex )-18) CHOICE_Y( itemIndex ) (CHOICE_SPINNER_DVAR_SIZE+CHOICE_SPINNER_DVAR_OFFSET_X+10) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			background		"menu_button_backing_highlight" \
+			forecolor		HIGHLIGHT_COLOR \
+			border			HIGHLIGHT_BORDER \
+			bordersize		2 \
+			bordercolor		HIGHLIGHT_BORDER_COLOR \
+			visible			when( localVarInt( "ui_enablespinner"#itemIndex ) == 1 ) \
+			decoration \
+		} \ 
+		itemDef \
+		{ \
+			type			ITEM_TYPE_MULTI \
+			dvar			dvarArg \
+			dvarFloatList	listArg \
+			rect			CHOICE_SPINNER_DVAR_X_START( itemIndex ) CHOICE_Y( itemIndex ) CHOICE_SPINNER_DVAR_SIZE CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		CHOICE_SPINNER_DVAR_TEXTALIGN \
+			textalignx		CHOICE_SPINNER_DVAR_TEXT_OFFSET_X \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		CHOICE_TEXTCOLOR_SELECTABLE \
+			visible			visArg \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_MULTI \
+			dvar			dvarArg \
+			name			"spinner_dvar_"#itemIndex \
+			dvarFloatList	listArg \
+			rect			CHOICE_SPINNER_DVAR_X_START( itemIndex ) CHOICE_Y( itemIndex ) CHOICE_SPINNER_DVAR_SIZE CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		CHOICE_SPINNER_DVAR_TEXTALIGN \
+			textalignx		CHOICE_SPINNER_DVAR_TEXT_OFFSET_X \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		CHOICE_TEXTCOLOR_SELECTABLE \
+			onFocus			{ spinnerOnFocusArg; } \
+			leaveFocus		{ spinnerLeaveFocusArg; } \
+			action			{ spinnerActionArg; } \
+			execkeyint		APAD_DOWN{ ; } \
+			execkeyint		APAD_UP{ ; } \
+			execkeyint		DPAD_DOWN{ ; } \
+			execkeyint		DPAD_UP{ ; } \
+			execkeyint		BUTTON_B { setdvar dvarArg dvarString( "ui_spinnerdvar" ); setfocus "spinner_button_"#itemIndex; } \
+			execkeyint		BUTTON_A { setfocus "spinner_button_"#itemIndex; } \
+			spinnerExtraArg \
+			visible			when( localVarInt( "ui_enablespinner"#itemIndex ) == 1 ) \
+		} \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			(CHOICE_SPINNER_DVAR_X_START( itemIndex )+CHOICE_SPINNER_DVAR_SIZE+10) (CHOICE_Y( itemIndex )+3) 16 16 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			origin			0 0 \
+			background		"ui_arrow_right" \
+			forecolor		1 1 1 1 \
+			visible			when( localVarInt( "ui_enablespinner"#itemIndex ) == 1 ) \
+			decoration \
+		} 
+
+#define CHOICE_NEWICON_VIS( itemIndex, imageArg, visArg ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			(CHOICE_X( itemIndex ) + CHOICE_SIZE_X + NEW_X_OFFSET ) (CHOICE_Y( itemIndex )+1+NEW_Y_OFFSET) (CHOICE_SIZE_Y*2) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			background		imageArg \
+			visible			visArg ; \
+			decoration \
+		}
+
+#define CHOICE_COLLECTIBLEICON_VIS( itemIndex, imageArg, visArg ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			(CHOICE_X( itemIndex ) - CHOICE_SIZE_Y ) CHOICE_Y( itemIndex ) CHOICE_SIZE_Y CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			background		imageArg \
+			visible			visArg ; \
+			decoration \
+		}
+
+#define CHOICE_LOCKEDICON_VIS( itemIndex, imageArg, visArg ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			(CHOICE_X( itemIndex ) + CHOICE_SIZE_X + NEW_X_OFFSET ) (CHOICE_Y( itemIndex )+2+NEW_Y_OFFSET) LOCK_SIZE LOCK_SIZE CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			background		imageArg \
+			visible			visArg ; \
+			decoration \
+		}
+
+#define CHOICE_LEFTITEM_VIS( itemIndex, textArg, colorArg, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			(CHOICE_X( itemIndex ) - CHOICE_SIDEITEM_SIZE_X - CHOICE_SIDEITEM_SPACING) CHOICE_Y( itemIndex ) CHOICE_SIDEITEM_SIZE_X CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			exp				text( textArg ); \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle 		CHOICE_TEXTSTYLE \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		colorArg \
+			visible			visArg ; \
+			decoration \
+		}
+
+
+#define CHOICE_LEFTITEM2_VIS( itemIndex, textArg, colorArg, visArg ) \
+		CHOICE_LEFTITEM2_VIS_EX( itemIndex, textArg, colorArg, visArg, ; )
+
+#define CHOICE_LEFTITEM2_VIS_EX( itemIndex, textArg, colorArg, visArg, extraArgs ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			(CHOICE_X( itemIndex ) - CHOICE_SIDEITEM_SIZE_X - CHOICE_SIDEITEM_SPACING - 45) CHOICE_Y( itemIndex ) CHOICE_SIDEITEM_SIZE_X CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			exp				text( textArg ); \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		colorArg \
+			visible			visArg ; \
+			decoration \
+			extraArgs \
+		}
+
+#define CHOICE_RIGHTITEM_VIS( itemIndex, textArg, colorArg, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			(CHOICE_X( itemIndex ) + CHOICE_SIDEITEM_SIZE_X + CHOICE_SIDEITEM_SPACING) CHOICE_Y( itemIndex ) CHOICE_SIDEITEM_SIZE_X CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			exp				text( textArg ); \
+			textalign		ITEM_ALIGN_MIDDLE_RIGHT \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		colorArg \
+			visible			visArg ; \
+			decoration \
+		}
+#define CHOICE_DVAREDIT_NUMERIC( itemIndex, textArg, dvarArg, max_chars, actionArg ) \
+		CHOICE_DVAREDIT_NUMERIC_VIS( itemIndex, textArg, dvarArg, max_chars, actionArg, 1 )
+
+#define CHOICE_DVAREDIT_NUMERIC_VIS( itemIndex, textArg, dvarArg, max_chars, actionArg, visArg ) \
+		CHOICE_CAPTION( itemIndex, textArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_NUMERICFIELD \
+			text			" " \
+			dvar			dvarArg \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+120) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			textalignx		(CHOICE_SIZE_X+8) /*(-(CHOICE_TEXT_OFFSET_X))*/ \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		ITEM_TEXTSTYLE_SHADOWED \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		CHOICE_TEXTCOLOR \
+			visible			visArg \
+			maxChars		max_chars \
+			CHOICE_SCRIPTS_ACTION( itemIndex, actionArg ) \
+		}
+		
+		
+#define CHOICE_DVAREDIT( itemIndex, textArg, dvarArg, actionArg ) \
+		CHOICE_DVAREDIT_VIS( itemIndex, textArg, dvarArg, 31, 18, actionArg, 1 )
+
+#define CHOICE_DVAREDIT_VIS( itemIndex, textArg, dvarArg, max_chars, max_paintchars, actionArg, visArg ) \
+		CHOICE_CAPTION( itemIndex, textArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_EDITFIELD \
+			text			" " \
+			dvar			dvarArg \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+120) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			textalignx		(CHOICE_SIZE_X+8) /*(-(CHOICE_TEXT_OFFSET_X))*/ \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		ITEM_TEXTSTYLE_SHADOWED \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		CHOICE_TEXTCOLOR \
+			visible			visArg \
+			maxChars		max_chars \
+			maxpaintchars	max_paintchars \
+			CHOICE_SCRIPTS_ACTION( itemIndex, actionArg ) \
+		}
+		
+#define CHOICE_DVARSLIDER( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg ) \
+		CHOICE_DVARSLIDER_VIS( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg, 1 )
+
+#define CHOICE_DVARSLIDER_VIS( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg, visArg ) \
+		CHOICE_DVARSLIDER_VIS_EX( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg, ;, visArg )
+
+#define CHOICE_DVARSLIDER_VIS_EX( itemIndex, textArg, dvarArg, defaultArg, minArg, maxArg, actionArg, extraArg, visArg ) \
+		CHOICE_CAPTION_VIS( itemIndex, textArg, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_SLIDER \
+			dvarfloat		dvarArg defaultArg minArg maxArg \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+120) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			textalignx		(CHOICE_SIZE_X+20) /*(-(CHOICE_TEXT_OFFSET_X))*/ \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		ITEM_TEXTSTYLE_SHADOWED \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		CHOICE_TEXTCOLOR \
+			visible			visArg \
+			extraArg \
+			CHOICE_SCRIPTS_ACTION( itemIndex, actionArg ) \
+		}
+
+
+#define CHOICE_DVARYESNO( itemIndex, textArg, dvarArg, actionArg ) \
+		CHOICE_DVARYESNO_VIS( itemIndex, textArg, dvarArg, actionArg, 1 )
+
+#define CHOICE_DVARYESNO_VIS( itemIndex, textArg, dvarArg, actionArg, visArg ) \
+		CHOICE_CAPTION_VIS( itemIndex, textArg, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_YESNO \
+			dvar			dvarArg \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+120) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			textalignx		(CHOICE_SIZE_X+20)/*(-(CHOICE_TEXT_OFFSET_X))*/ \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		ITEM_TEXTSTYLE_SHADOWED \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		CHOICE_TEXTCOLOR \
+			visible			visArg \
+			CHOICE_SCRIPTS_ACTION( itemIndex, actionArg ) \
+		}
+
+#define CHOICE_BIND( itemIndex, textArg, cmdArg, actionArg ) \
+		CHOICE_BIND_VIS( itemIndex, textArg, cmdArg, actionArg, 1, 1 )
+
+#define CHOICE_BIND_VIS( itemIndex, textArg, cmdArg, actionArg, visArg, vis ) \
+		CHOICE_CAPTION_VIS( itemIndex, textArg, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_BIND \
+			dvar			cmdArg \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+120) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			textalignx		(CHOICE_SIZE_X+20)/*(-(CHOICE_TEXT_OFFSET_X))*/ \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		CHOICE_TEXTCOLOR \
+			visible			visArg \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, show keyBindStatus, hide keyBindStatus ) \
+		}
+
+#define CHOICE_BIND2( itemIndex, textArg, cmdArg, actionArg ) \
+		CHOICE_BIND2_VIS( itemIndex, textArg, cmdArg, actionArg, 1 )
+
+#define CHOICE_BIND2_VIS( itemIndex, textArg, cmdArg, actionArg, visArg ) \
+		CHOICE_CAPTION_VIS( itemIndex, textArg, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_BIND2 \
+			dvar			cmdArg \
+			rect			CHOICE_ORIGIN( itemIndex ) (CHOICE_SIZE_X+120) CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			textalignx		(CHOICE_SIZE_X+20)/*(-(CHOICE_TEXT_OFFSET_X))*/ \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		CHOICE_TEXTCOLOR \
+			visible			visArg \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, show keyBindStatus, hide keyBindStatus ) \
+		}
+
+
+#define CHOICE_CAPTION( itemIndex, textArg ) \
+		CHOICE_CAPTION_VIS( itemIndex, textArg, 1 )
+
+#define CHOICE_CAPTION_COLOR( itemIndex, textArg, colorArg ) \
+		CHOICE_CAPTION_COLOR_VIS( itemIndex, textArg, colorArg, 1 )
+
+#define CHOICE_CAPTION_VIS( itemIndex, textArg, visArg ) \
+		CHOICE_CAPTION_COLOR_VIS( itemIndex, textArg, CHOICE_TEXTCOLOR_CAPT, visArg )
+
+#define CHOICE_CAPTION_COLOR_VIS( itemIndex, textArg, colorArg, visArg ) \
+		CHOICE_BUTTON_BG( itemIndex, visArg ) \
+		CHOICE_HIGHLIGHT( itemIndex, 1 ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			CHOICE_RECT( itemIndex ) \
+			exp				text( textArg ); \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		colorArg \
+			visible			visArg \			
+			decoration \
+		}
+
+
+#define CHOICE_SCRIPTS_ACTION( itemIndex, actionArg ) \
+		CHOICE_SCRIPTS_ALL( itemIndex, actionArg, ;, ; )
+
+#define CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+			onFocus \
+			{ \
+				play CHOICE_FOCUS_SOUND; \
+				setLocalVarInt ui_highlight itemIndex; \
+				setLocalVarString ui_choicegroup CHOICE_GROUP; \				
+				onFocusArg \
+			} \
+			leaveFocus \
+			{ \
+				setLocalVarInt ui_highlight 0; \
+				leaveFocusArg \
+			} \
+			action \
+			{ \
+				play CHOICE_ACTION_SOUND; \
+				actionArg; \
+			}
+
+#define CHOICE_SCRIPTS_ALL_NOSOUND( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+		onFocus \
+		{ \
+			setLocalVarInt ui_highlight itemIndex; \
+			setLocalVarString ui_choicegroup CHOICE_GROUP; \				
+			onFocusArg \
+		} \
+		leaveFocus \
+		{ \
+			setLocalVarInt ui_highlight 0; \
+			leaveFocusArg \
+		} \
+		action \
+		{ \
+			play CHOICE_FOCUS_SOUND; \
+			actionArg; \
+		}
+
+#define CHOICE_APPLY( textArg, actionArg ) \
+		CHOICE_APPLY_VIS( textArg, actionArg, 1 )
+
+#define CHOICE_APPLY_VIS( textArg, actionArg, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_BUTTON \
+			rect			430 422 100 16 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			text			textArg \
+			textfont		UI_FONT_NORMAL \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		ITEM_TEXTSTYLE_SHADOWED \
+			textAlign		ITEM_ALIGN_MIDDLE_CENTER \
+			forecolor		COLOR_FOCUSED \
+			visible			visArg ; \
+			action \
+			{ \
+				play CHOICE_FOCUS_SOUND; \
+				actionArg; \
+			} \
+		}
+
+#define CHOICE_BACK( textArg, actionArg ) \
+		CHOICE_BACK_VIS( textArg, actionArg, 1 )
+
+#define CHOICE_BACK_VIS( textArg, actionArg, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_BUTTON \
+			rect			270 422 100 16 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			text			textArg \
+			textfont		UI_FONT_NORMAL \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		ITEM_TEXTSTYLE_SHADOWED \
+			textAlign		ITEM_ALIGN_MIDDLE_CENTER \
+			forecolor		COLOR_FOCUSED \
+			visible			visArg ; \
+			action \
+			{ \
+				play CHOICE_FOCUS_SOUND; \
+				actionArg; \
+			} \
+		}
+
+
+#define CHOICE_FOOTNOTE( textArg, x, y ) \
+		CHOICE_FOOTNOTE_VIS( textArg, x, y, 1 )
+
+#define CHOICE_FOOTNOTE_VIS( textArg, x, y, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			text 			textArg \
+			rect 			FOOTNOTE_RECT( x, y ) \
+			textfont		CHOICE_TEXTFONT \
+			textscale 		TEXTSIZE_SMALL \
+			textstyle		ITEM_TEXTSTYLE_SHADOWED \
+			textalign 		ITEM_ALIGN_TOP_LEFT \
+			visible 		visArg \
+			decoration \
+		}
+
+
+#define CHOICE_KEYBINDHELP \
+		itemDef \
+		{ \
+			name			keyBindStatus \
+			type			ITEM_TYPE_OWNERDRAW_TEXT \
+			rect			-190 -8 300 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM \
+			ownerdraw		UI_KEYBINDSTATUS \
+			textstyle		ITEM_TEXTSTYLE_SHADOWED \
+			style			WINDOW_STYLE_FILLED \
+			backcolor		0 0 0 0 \
+			forecolor		.9 .9 .9 1 \
+			border			0 \
+			bordercolor		.5 .5 .5 .5 \
+			textscale		TEXTSIZE_SMALL \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			visible			0 \
+			decoration \
+		}
+
+#define COLUMN_TITLE_X		-220
+#define COLUMN_TITLE_Y		-108
+
+#ifdef PC
+#undef LEADERBOARD_TITLE_COLOR
+#define LEADERBOARD_TITLE_COLOR			0 0 0 1
+#else //#ifdef PC
+#undef LEADERBOARD_TITLE_COLOR
+#define LEADERBOARD_TITLE_COLOR			0 0 0 0.8
+#endif //#ifdef PC
+
+#define LEADERBOARD_COL_TITLE( porgin, ptext, palign ) \
+		LEADERBOARD_COL_TITLE_VIS( porgin, ptext, palign, 1 )
+
+#define LEADERBOARD_COL_TITLE_VIS( porgin, ptext, palign, visArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			porgin 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			text			ptext \
+			textscale		TEXTSIZE_SMALL \
+			textfont		UI_FONT_NORMAL \
+			textalign		palign \
+			forecolor		LEADERBOARD_TITLE_COLOR \
+			visible			visArg \
+			decoration \
+		}
+
+#define HINT_TEXT( itemIndex, px, textArg, visArg )	\
+		HINT_TEXT_ALL( itemIndex, px, 0, CHOICE_SIZE_X, textArg, 1 1 1 1, visArg, ; )
+
+#define HINT_TEXT_ALL( itemIndex, px, yOffset, pw, textArg, colorArg, visArg, extraArg )														\
+		HINT_TEXT_ALL_RECT( px, ( CHOICE_Y( itemIndex ) + yOffset ), pw, textArg, colorArg, visArg, extraArg )
+
+#define HINT_TEXT_ALL_RECT( px, py, pw, textArg, colorArg, visArg, extraArg )																	\
+		PREPROC_SHADER_DRAW_VIS_EX( (px-3) ( py + 1 ) 11 11 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN,										\
+									"ui_arrow_right", colorArg,																					\
+									when( visArg && textArg != "" && localVarString( ui_choicegroup ) == CHOICE_GROUP );,						\
+									extraArg )																									\
+		PREPROC_TEXT_DRAW_VIS_EX(	(px+7) ( py ) (pw-11) 36 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0,								\
+									textArg,																									\
+									TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, colorArg,														\
+									when( visArg && textArg != "" && localVarString( ui_choicegroup ) == CHOICE_GROUP );,						\
+									autowrapped; extraArg )
+
+#define HINT_TEXT_ADV_ALL( itemIndex, px, yOffset, pw, textArg, colorArg, visArg, extraArg ) \
+		HINT_TEXT_ADV_ALL_RECT( px, ( CHOICE_Y( itemIndex ) + yOffset ), pw, textArg, colorArg, visArg, extraArg )
+										
+#define HINT_TEXT_ADV_ALL_RECT( px, py, pw, textArg, colorArg, visArg, extraArg )								\
+		PREPROC_SHADER_DRAW_ADV_VIS_EX( (px-3),																	\
+										( py + 1 ),																\
+										11,																		\
+										11,																		\
+										CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN,							\
+										"ui_arrow_right", colorArg,												\
+										when( visArg && textArg != "" && localVarString( ui_choicegroup ) == CHOICE_GROUP );,	\
+										extraArg )																\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	(px+7),																	\
+										( py ),																	\
+										(pw-11),																\
+										36,																		\
+										CHOICE_HORIZONTAL_ALIGN, CHOICE_VERTICAL_ALIGN,							\
+										textArg,																\
+										TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, colorArg,					\
+										when( visArg && textArg != "" && localVarString( ui_choicegroup ) == CHOICE_GROUP );,	\
+										autowrapped; extraArg )
+				
+				
+#define SET_HINT_TEXT( text )		\
+		execNow set ui_hint_text text;	\
+		execNow set ui_show_arrow 1;
+
+#define CLEARUIHINT								\
+		execNow set ui_hint_text "@NULL_EMPTY";	\
+		execNow set ui_show_arrow 0; 
+
+#define FRAME_BG_ON_PARENT_MENU						\
+		itemDef										\
+		{											\
+			name			frame_bg				\
+			style			WINDOW_STYLE_FILLED		\
+			rect			-400 -200 10000 10000	\
+			backcolor		0 0 0 0					\
+			visible			1						\
+			decoration								\
+													\
+			state									\
+			{										\
+				name		on						\
+				backcolor	0 0 0 0.7				\
+			}										\
+		}
+
+// Basic white button that has all options available
+#define SIMPLE_CHOICE_BUTTON_ALL( nameArg, rectArg, textArg, textfontArg, textScaleArg, textAlignArg, visArg, actionArg ) \
+	itemDef																					\
+	{																						\
+		name			nameArg																\
+		type			ITEM_TYPE_BUTTON													\
+		rect			rectArg																\
+		exp				rect W( getTextWidth(locString(textArg),textfontArg,textScaleArg)+8 )\
+		origin			0 0																	\
+		text			textArg																\
+		textfont		textfontArg															\
+		textscale		textScaleArg														\
+		textalign		textAlignArg														\
+		visible			visArg																\
+		style			WINDOW_STYLE_FILLED													\
+		forecolor		1 1 1 1																\
+		backcolor		1 1 1 0																\
+		border				1								\
+		bordersize			1								\
+		bordercolor			CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA \
+		action																				\
+		{																					\
+			play CHOICE_FOCUS_SOUND;														\
+			actionArg;																		\
+		}																					\
+		mouseEnter		{ play CHOICE_FOCUS_SOUND; setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA; } \
+		mouseexit		{ setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA; } \
+	}
+		
+#define SIMPLE_CHOICE_BUTTON_SOUND_COLOR_VIS_EX( rectArg, textArg, textAlignArg, foreColorArg, backColorArg, actionArg, visArg, extraArgs )	\
+	itemDef																					\
+	{																						\
+		type			ITEM_TYPE_BUTTON													\
+		rect			rectArg																\
+		exp				rect W( getTextWidth(locString(textArg),CHOICE_TEXTFONT,TEXTSIZE_DEFAULT)+8 )\
+		origin			0 0																	\
+		text			textArg																\
+		textfont		CHOICE_TEXTFONT														\
+		textscale		TEXTSIZE_DEFAULT													\
+		textalign		textAlignArg														\
+		visible			visArg																\
+		style			WINDOW_STYLE_FILLED													\
+		forecolor		foreColorArg														\
+		backcolor		backColorArg														\
+		border				1																\
+		bordersize			1																\
+		bordercolor			CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA						\
+		action																				\
+		{																					\
+			play CHOICE_FOCUS_SOUND;														\
+			actionArg;																		\
+		}																					\
+		mouseEnter		{ play CHOICE_FOCUS_SOUND; setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA; } \
+		mouseexit		{ setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA; } \
+		extraArgs																			\
+	}
+
+// Basic white button that is just clickable and has sound and has a visibility option
+#define SIMPLE_CHOICE_BUTTON_SOUND_VIS_EX( rectArg, textArg, textAlignArg, actionArg, visArg, extraArgs )	\
+	SIMPLE_CHOICE_BUTTON_SOUND_COLOR_VIS_EX( rectArg, textArg, textAlignArg, 1 1 1 1, 1 1 1 0, actionArg, visArg, extraArgs )
+
+#define SIMPLE_CHOICE_BUTTON_SOUND_VIS( rectArg, textArg, textAlignArg, actionArg, visArg ) \
+	SIMPLE_CHOICE_BUTTON_SOUND_VIS_EX( rectArg, textArg, textAlignArg, actionArg, visArg, ; )
+
+// Basic white button that is just clickable and has sound and has a visibility option, and is centered on itself
+#define SIMPLE_CHOICE_BUTTON_SOUND_VIS_CENTERED( rectArg, textArg, textAlignArg, actionArg, visArg )	\
+	SIMPLE_CHOICE_BUTTON_SOUND_VIS_EX( rectArg, textArg, textAlignArg, actionArg, visArg,				\
+		exp	rect X( (-getTextWidth(locString(textArg),CHOICE_TEXTFONT,TEXTSIZE_DEFAULT) ) / 2) )
+		
+#define SIMPLE_CHOICE_BUTTON_SOUND_VIS_CENTERED_BOTTOM( textArg, actionArg, visArg ) \
+	SIMPLE_CHOICE_BUTTON_SOUND_VIS_CENTERED( 0 216 20 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, textArg, ITEM_ALIGN_MIDDLE_CENTER, actionArg, visArg )
+	
+#define SIMPLE_CHOICE_BUTTON_SOUND_VIS_CENTERED_BOTTOM_OFFSET( xOffsetArg, textArg, actionArg, visArg )	\
+	SIMPLE_CHOICE_BUTTON_SOUND_VIS_EX( 0 216 20 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, textArg, ITEM_ALIGN_MIDDLE_CENTER, actionArg, visArg,				\
+		exp	rect X( (xOffsetArg-(getTextWidth(locString(textArg),CHOICE_TEXTFONT,TEXTSIZE_DEFAULT) ) / 2)) )
+
+#define SIMPLE_CHOICE_BUTTON_SOUND_VIS_RIGHT_BOTTOM( textArg, actionArg, visArg ) \
+	SIMPLE_CHOICE_BUTTON_SOUND_VIS_EX( 0 216 20 20 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_CENTER, textArg, ITEM_ALIGN_MIDDLE_CENTER, actionArg, visArg, \
+		exp	rect X( -getTextWidth(locString(textArg),CHOICE_TEXTFONT,TEXTSIZE_DEFAULT)-12 ) )
+
+#define SIMPLE_CHOICE_BUTTON_SOUND_VIS_RIGHT_BOTTOM_PULSE( textArg, actionArg, visArg ) \
+	SIMPLE_CHOICE_BUTTON_SOUND_COLOR_VIS_EX( 0 216 20 20 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_CENTER, textArg, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, 1 1 1 0, actionArg, visArg, \
+		exp	rect X( -getTextWidth(locString(textArg),CHOICE_TEXTFONT,TEXTSIZE_DEFAULT)-12 ) \
+		exp forecolor a( ((sin(milliseconds()/240) + 1) * 0.25 ) + 0.25 ) )
+
+#define SCREEN_BUTTON_PC_LEFT_OFFSET( offsetArg, textArg, actionArg, visArg ) \
+	SIMPLE_CHOICE_BUTTON_SOUND_VIS_EX( 0 216 20 20 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_CENTER, textArg, ITEM_ALIGN_MIDDLE_CENTER, actionArg, visArg, \
+		exp rect X( offsetArg ) )
+
+#define SCREEN_BUTTON_PC_RIGHT_OFFSET( offsetArg, textArg, actionArg, visArg ) \
+	SIMPLE_CHOICE_BUTTON_SOUND_VIS_EX( 0 216 20 20 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_CENTER, textArg, ITEM_ALIGN_MIDDLE_CENTER, actionArg, visArg, \
+		exp rect X( -getTextWidth(locString(textArg),CHOICE_TEXTFONT,TEXTSIZE_DEFAULT)-12 + offsetArg ) )
+
+#define SCREEN_BUTTON_PC_CENTERED( textArg, actionArg, visArg ) \
+	SIMPLE_CHOICE_BUTTON_SOUND_VIS_CENTERED_BOTTOM( textArg, actionArg, visArg )
+
+// Basic white button that is just clickable and has sound
+#define SIMPLE_CHOICE_BUTTON_SOUND( rectArg, textArg, textAlignArg, actionArg )		\
+	SIMPLE_CHOICE_BUTTON_SOUND_VIS( rectArg, textArg, textAlignArg, actionArg, 1 )
+
+// button aligns to the CHOICE_X and CHOICE_Y except allows an X offset and has sound
+#define SIMPLE_CHOICE_RECT_OFFSET_BUTTON_SOUND( itemIndex, xOffset, textArg, textAlignArg, actionArg, visArg, sizeX, sizeY )	\
+	itemDef																														\
+	{																															\
+		type			ITEM_TYPE_BUTTON																						\
+		rect			(CHOICE_X(itemIndex) + CHOICE_SIZE_X + xOffset ) (CHOICE_Y( itemIndex )-1) sizeX sizeY CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN	\
+		exp				rect W( getTextWidth(locString(textArg),CHOICE_TEXTFONT,TEXTSIZE_DEFAULT)+8 )	\
+		origin			0 0																	\
+		text			textArg																\
+		textfont		CHOICE_TEXTFONT														\
+		textscale		TEXTSIZE_DEFAULT													\
+		textalign		textAlignArg														\
+		visible			visArg																\
+		style			WINDOW_STYLE_FILLED													\
+		forecolor		1 1 1 1																\
+		backcolor		1 1 1 0																\
+		border			1																	\
+		bordersize		1																	\
+		bordercolor		CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA							\
+		action																				\
+		{																					\
+			play CHOICE_FOCUS_SOUND;														\
+			actionArg;																		\
+		}																					\
+		mouseEnter		{ play CHOICE_FOCUS_SOUND; setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA; } \
+		mouseexit		{ setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA; } \
+	}
+
+#define SIMPLE_CHOICE_BUTTON_ARROWS_CENTERED( nameArg, px, py, pw, textArg, visArg, leftClickActionArg, rightClickActionArg ) \
+	itemDef																					\
+	{																						\
+		name			nameArg																\
+		type			ITEM_TYPE_BUTTON													\
+		rect			px py pw (CHOICE_ARROW_WIDTH+4) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN	\
+		exp				rect X( px - ( pw / 2) ) \
+		origin			0 0																	\
+		exp				text( textArg )														\
+		textfont		UI_FONT_NORMAL														\
+		textscale		TEXTSIZE_DEFAULT													\
+		textalign		ITEM_ALIGN_MIDDLE_CENTER											\
+		visible			visArg																\
+		style			WINDOW_STYLE_FILLED													\
+		forecolor		1 1 1 1																\
+		backcolor		1 1 1 0																\
+		border				1								\
+		bordersize			1								\
+		bordercolor			CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA \
+		execkeyint		K_MOUSE1																				\
+		{																										\
+			play CHOICE_FOCUS_SOUND;																			\
+			leftClickActionArg;																					\
+		}																										\
+		execkeyint		K_MOUSE2																				\
+		{																										\
+			play CHOICE_FOCUS_SOUND;																			\
+			rightClickActionArg;																				\
+		}																										\
+		mouseEnter													\
+		{															\
+			play CHOICE_FOCUS_SOUND;								\
+			setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA;							\
+			setfocus nameArg										\
+		}															\
+		mouseexit													\
+		{															\
+			setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA;								\
+		}															\
+	} \
+	itemDef \
+	{ \
+		name			nameArg"_LeftArrow" \
+		type			ITEM_TYPE_IMAGE \
+		style			WINDOW_STYLE_SHADER \
+		background		"ui_arrow_left" \
+		rect			px (py+3) CHOICE_ARROW_WIDTH CHOICE_ARROW_WIDTH CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+		exp				rect X( px - ((getTextWidth( locString( textArg ), UI_FONT_NORMAL, TEXTSIZE_DEFAULT)) / 2) - CHOICE_ARROW_WIDTH )	\
+		origin			0 0 \
+		forecolor		1 1 1 1 \
+		backcolor		1 1 1 0	\
+		visible			visArg \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		name			nameArg"_RightArrow" \
+		type			ITEM_TYPE_IMAGE \
+		style			WINDOW_STYLE_SHADER \
+		background		"ui_arrow_right" \
+		rect			px (py+3) CHOICE_ARROW_WIDTH CHOICE_ARROW_WIDTH CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+		exp				rect X( px + ((getTextWidth( locString( textArg ), UI_FONT_NORMAL, TEXTSIZE_DEFAULT)) / 2) )	\
+		forecolor		1 1 1 1 \
+		backcolor		1 1 1 0	\
+		visible			visArg \
+		decoration \
+	}
+	
+#define SIMPLE_CHOICE_BUTTON_ARROWS_CENTERED_PRELOC( nameArg, px, py, pw, textArg, visArg, leftClickActionArg, rightClickActionArg ) \
+	itemDef																					\
+	{																						\
+		name			nameArg																\
+		type			ITEM_TYPE_BUTTON													\
+		rect			px py pw (CHOICE_ARROW_WIDTH+4) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN	\
+		exp				rect X( px - ( pw / 2) ) \
+		origin			0 0																	\
+		exp				text( textArg )														\
+		textfont		UI_FONT_NORMAL														\
+		textscale		TEXTSIZE_DEFAULT													\
+		textalign		ITEM_ALIGN_MIDDLE_CENTER											\
+		visible			visArg																\
+		style			WINDOW_STYLE_FILLED													\
+		forecolor		1 1 1 1																\
+		backcolor		1 1 1 0																\
+		border				1								\
+		bordersize			1								\
+		bordercolor			CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA \
+		execkeyint		K_MOUSE1																				\
+		{																										\
+			play CHOICE_FOCUS_SOUND;																			\
+			leftClickActionArg;																					\
+		}																										\
+		execkeyint		K_MOUSE2																				\
+		{																										\
+			play CHOICE_FOCUS_SOUND;																			\
+			rightClickActionArg;																				\
+		}																										\
+		mouseEnter													\
+		{															\
+			play CHOICE_FOCUS_SOUND;								\
+			setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA;							\
+			setfocus nameArg										\
+		}															\
+		mouseexit													\
+		{															\
+			setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA;								\
+		}															\
+	} \
+	itemDef \
+	{ \
+		name			nameArg"_LeftArrow" \
+		type			ITEM_TYPE_IMAGE \
+		style			WINDOW_STYLE_SHADER \
+		background		"ui_arrow_left" \
+		rect			px (py+3) CHOICE_ARROW_WIDTH CHOICE_ARROW_WIDTH CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+		exp				rect X( px - ((getTextWidth( textArg, UI_FONT_NORMAL, TEXTSIZE_DEFAULT)) / 2) - CHOICE_ARROW_WIDTH )	\
+		origin			0 0 \
+		forecolor		1 1 1 1 \
+		backcolor		1 1 1 0	\
+		visible			visArg \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		name			nameArg"_RightArrow" \
+		type			ITEM_TYPE_IMAGE \
+		style			WINDOW_STYLE_SHADER \
+		background		"ui_arrow_right" \
+		rect			px (py+3) CHOICE_ARROW_WIDTH CHOICE_ARROW_WIDTH CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+		exp				rect X( px + ((getTextWidth( textArg, UI_FONT_NORMAL, TEXTSIZE_DEFAULT)) / 2) )	\
+		forecolor		1 1 1 1 \
+		backcolor		1 1 1 0	\
+		visible			visArg \
+		decoration \
+	}

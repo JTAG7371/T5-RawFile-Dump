@@ -1,0 +1,146 @@
+"fakelight normal":
+ 	sw_gasmask2_rad_tex_normal_matcolor;
+"fakelight view":
+ 	sw_gasmask2_rad_tex_view_matcolor;
+"unlit":
+ 	sw_gasmask2_rad_tex_matcolor;
+"case texture":
+ 	sw_gasmask2_rad_tex_case;
+"shaded wireframe":
+ 	sw_gasmask2_rad_tex_matcolor_wireframe;
+"solid wireframe":
+ 	sw_gasmask2_rad_wireframe;
+
+"build shadowmap depth":
+ 	sw_gasmask2_noalpha_none;
+
+"light spot":
+ 	sw_gasmask2_lightspot;
+"light spot shadow":
+ 	sw_gasmask2_lightspot_shad;
+"light omni":
+	sw_gasmask2_lightomni;
+
+"sunlight preview":
+	sw_gasmask2_sunprev;
+
+"lit":
+"lit charred":
+  	sw_gasmask20_sun;
+"lit sun":
+"lit sun charred":
+	sw_gasmask20_sun;
+"lit sun shadow":
+"lit sun shadow charred":
+ 	sw_gasmask20_sun_shad;
+"lit spot":
+"lit spot charred":
+ 	sw_gasmask20_spot;
+"lit spot shadow":
+"lit spot shadow charred":
+ 	sw_gasmask20_spot_shad;
+"lit omni":
+"lit omni charred":
+ 	sw_gasmask20_omni;
+"lit omni shadow":
+"lit omni shadow charred":
+ 	sw_gasmask20_omni_shad;
+
+"lit nvintz":
+  	sw_gasmask20_sun_nv_intz;
+"lit sun nvintz":
+	sw_gasmask20_sun_nv_intz;
+"lit sun shadow nvintz":
+ 	sw_gasmask20_sun_shad_nv_intz;
+"lit spot nvintz":
+ 	sw_gasmask20_spot_nv_intz;
+"lit spot shadow nvintz":
+ 	sw_gasmask20_spot_shad_nv_intz;
+"lit omni nvintz":
+ 	sw_gasmask20_omni_nv_intz;
+"lit omni shadow nvintz":
+ 	sw_gasmask20_omni_shad_nv_intz;
+
+"lit dlight":
+"lit sun dlight":
+  	sw_gasmask20_sun_dlight;
+"lit sun shadow dlight":
+ 	sw_gasmask20_sun_shad_dlight;
+"lit spot dlight":
+ 	sw_gasmask20_spot_dlight;
+"lit spot shadow dlight":
+ 	sw_gasmask20_spot_shad_dlight;
+"lit omni dlight":
+ 	sw_gasmask20_omni_dlight;
+"lit omni shadow dlight":
+ 	sw_gasmask20_omni_shad_dlight;
+
+"lit glight":
+"lit sun glight":
+  	sw_gasmask20_sun_glight;
+"lit sun shadow glight":
+ 	sw_gasmask20_sun_shad_glight;
+"lit spot glight":
+ 	sw_gasmask20_spot_glight;
+"lit spot shadow glight":
+ 	sw_gasmask20_spot_shad_glight;
+"lit omni glight":
+ 	sw_gasmask20_omni_glight;
+"lit omni shadow glight":
+ 	sw_gasmask20_omni_shad_glight;
+
+"lit dlight glight":
+"lit sun dlight glight":
+  	sw_gasmask20_sun_dlight_glight;
+"lit sun shadow dlight glight":
+ 	sw_gasmask20_sun_shad_dlight_glight;
+"lit spot dlight glight":
+ 	sw_gasmask20_spot_dlight_glight;
+"lit spot shadow dlight glight":
+ 	sw_gasmask20_spot_shad_dlight_glight;
+"lit omni dlight glight":
+ 	sw_gasmask20_omni_dlight_glight;
+"lit omni shadow dlight glight":
+ 	sw_gasmask20_omni_shad_dlight_glight;
+
+"lit dlight nvintz":
+"lit sun dlight nvintz":
+  	sw_gasmask20_sun_dlight_nv_intz;
+"lit sun shadow dlight nvintz":
+ 	sw_gasmask20_sun_shad_dlight_nv_intz;
+"lit spot dlight nvintz":
+ 	sw_gasmask20_spot_dlight_nv_intz;
+"lit spot shadow dlight nvintz":
+ 	sw_gasmask20_spot_shad_dlight_nv_intz;
+"lit omni dlight nvintz":
+ 	sw_gasmask20_omni_dlight_nv_intz;
+"lit omni shadow dlight nvintz":
+ 	sw_gasmask20_omni_shad_dlight_nv_intz;
+
+"lit glight nvintz":
+"lit sun glight nvintz":
+  	sw_gasmask20_sun_glight_nv_intz;
+"lit sun shadow glight nvintz":
+ 	sw_gasmask20_sun_shad_glight_nv_intz;
+"lit spot glight nvintz":
+ 	sw_gasmask20_spot_glight_nv_intz;
+"lit spot shadow glight nvintz":
+ 	sw_gasmask20_spot_shad_glight_nv_intz;
+"lit omni glight nvintz":
+ 	sw_gasmask20_omni_glight_nv_intz;
+"lit omni shadow glight nvintz":
+ 	sw_gasmask20_omni_shad_glight_nv_intz;
+
+"lit dlight glight nvintz":
+"lit sun dlight glight nvintz":
+  	sw_gasmask20_sun_dlight_glight_nv_intz;
+"lit sun shadow dlight glight nvintz":
+ 	sw_gasmask20_sun_shad_dlight_glight_nv_intz;
+"lit spot dlight glight nvintz":
+ 	sw_gasmask20_spot_dlight_glight_nv_intz;
+"lit spot shadow dlight glight nvintz":
+ 	sw_gasmask20_spot_shad_dlight_glight_nv_intz;
+"lit omni dlight glight nvintz":
+ 	sw_gasmask20_omni_dlight_glight_nv_intz;
+"lit omni shadow dlight glight nvintz":
+ 	sw_gasmask20_omni_shad_dlight_glight_nv_intz;

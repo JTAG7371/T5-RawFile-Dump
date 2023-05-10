@@ -1,0 +1,379 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_SEP_1			3
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+
+		menuDef
+		{
+			SYSTEM_POPUP_SETUP_VIS( resume_popmenu, setfocus resume_popmenu_1, close self; close blackout_3d_tv, 1 )
+			SYSTEM_POPUP_TITLE_VIS( "@MENU_RESUMEGAME_Q_CAPS", 1 )
+
+			FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	exec "loadgame_continue"; close self,	1, name resume_popmenu_1 )
+			FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self; close blackout_3d_tv,		1, ; )
+		}
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+
+		menuDef
+		{
+			SYSTEM_POPUP_SETUP_VIS( popmenu_sp_unlock, ;, ;, 1 )
+			SYSTEM_POPUP_TITLE_VIS( "@PLATFORM_SP_UNLOCK_TITLE", 1 )
+			SYSTEM_POPUP_SUBTITLE_VIS( "@PLATFORM_SP_UNLOCK_INFO", 1 )
+			SYSTEM_POPUP_SUBTITLE_VIS( "@PLATFORM_SP_UNLOCK_DESC", 1 exp rect Y( 198 ) )
+			
+			FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self, 1, ; )
+		}
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( error_netconnect_popmenu, ;, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_NOTICE", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@XBOXLIVE_NETCONNECTION", 1 );
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_EXIT", close self, 1, ; )
+	}
+
+
+		menuDef
+		{
+			SYSTEM_POPUP_SETUP_VIS( systemlink_warning_popup, ;, close self; open menu_systemlink_popmenu, 1 )
+			SYSTEM_POPUP_TITLE_VIS( "@MENU_NOTICE", 1 )
+			SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_SYSTEMLINK_WARNING", 1 );
+			
+			FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self; open menu_systemlink_popmenu, 1, ; )
+		}
+
+
+		menuDef
+		{
+			name			systemlink_warning
+			onOpen
+			{
+				uiScript openMenuOnDvar "systemlink_warning_shown" 0 "systemlink_warning_popup";			
+				uiScript openMenuOnDvar "systemlink_warning_shown" 1 "menu_systemlink_popmenu";
+				setdvar systemlink_warning_shown "1";	
+				close self;
+			}
+		}
+
+#ifdef PC
+	#undef	POPUP_BUTTON_COUNT
+	#define	POPUP_BUTTON_COUNT		2	
+			menuDef
+			{
+				SYSTEM_POPUP_SETUP_VIS( multi_popmenu, setFocus multi_popmenu_2, ;, 1 )
+				SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_GAME1", 1 )
+				SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_RANKED", 1 );
+				
+				FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	uiScript startMultiplayer; close self,	1, ;					)
+				FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,								1, name multi_popmenu_2	)
+			}
+#endif //#ifdef PC
+
+#ifdef PS3
+	#undef	POPUP_BUTTON_COUNT
+	#define	POPUP_BUTTON_COUNT		1
+			menuDef
+			{
+				SYSTEM_POPUP_SETUP_VIS( popmenu_autosave_warning_lockout, ;, exec "set ui_show_autosave_warning 0";open main, 1 )
+				control					MENU_CONTROL_PRIMARY
+				SYSTEM_POPUP_TITLE_VIS( "@MENU_NOTICE", 1 )
+				SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_WARNING_AUTOSAVE", 1 );
+				
+				FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self;open main, 1, ; )
+			}
+#endif // PS3
+
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		2
+		menuDef
+		{
+			SYSTEM_POPUP_SETUP_VIS( popmenu_overwrite_warning, setfocus popmenu_overwrite_warning_2, close self; close blackout_3d_tv, 1 )
+			SYSTEM_POPUP_TITLE_VIS( "@MENU_NEWGAME_CAPS", 1 )
+			SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_WARNING_CHECKPOINT_RESET", 1 );
+			
+			FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	open popmenu_difficulty; close self,	1, ;								)
+			FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self; close blackout_3d_tv,		1, name popmenu_overwrite_warning_2	)
+		}
+
+
+		menuDef
+		{
+			SYSTEM_POPUP_SETUP_VIS( popmenu_savedevice_unavailable_warning, setFocus popmenu_savedevice_unavailable_warning_2, close self; close blackout_3d_tv, 1 )
+			SYSTEM_POPUP_TITLE_VIS( "@MENU_WARNING_CAPS", 1 )
+			SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_WARNING_NO_SAVE_DEVICE", 1 );
+			
+			#define SELECT_SAVE_DEVICE					\
+					close self;							\
+					execnow "force_select_save_device";	\
+					close blackout_3d_tv
+
+			#define CONTINUE_NOSAVE					\
+					close self;						\
+					setDvar newgame_difficulty 1;	\
+					open popmenu_difficulty
+
+			FRAME_CHOICE_BUTTON_VIS_EX( 1, "@PLATFORM_SELECT_SAVE_DEVICE_CAPS", SELECT_SAVE_DEVICE,	1, ;												)
+			FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_CONTINUEGAME_NOSAVE_CAPS",	CONTINUE_NOSAVE,	1, name popmenu_savedevice_unavailable_warning_2	)
+		}
+
+		menuDef
+		{
+			SYSTEM_POPUP_SETUP_VIS( popmenu_savedevice_unavailable_warning_mission, setfocus popmenu_savedevice_unavailable_warning_mission_2, close self; close blackout_3d_tv, 1 )
+			SYSTEM_POPUP_TITLE_VIS( "@MENU_WARNING_CAPS", 1 )
+			SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_WARNING_NO_SAVE_DEVICE", 1 );
+
+			#define ACTION_LEVEL_SELECT_YES													\
+					setdvar next_menu_name "levels";										\
+					close popmenu_savedevice_unavailable_warning_mission;					\
+					open blackout_3d_tv;
+
+			FRAME_CHOICE_BUTTON_VIS_EX( 1, "@PLATFORM_SELECT_SAVE_DEVICE_CAPS",	SELECT_SAVE_DEVICE,			1, ;														)
+			FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_CONTINUEGAME_NOSAVE_CAPS",	ACTION_LEVEL_SELECT_YES,	1, name popmenu_savedevice_unavailable_warning_mission_2	)
+		}
+
+
+		menuDef
+		{
+			SYSTEM_POPUP_SETUP_VIS( popup_options_noprofile, setfocus popup_options_noprofile_2, close self; close blackout_3d_tv, 1 )
+			SYSTEM_POPUP_TITLE_VIS( "@MENU_WARNING_CAPS", 1 )
+			SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_PROFILE_WARNING", 1 );
+
+			#define USE_NO_PROFILE						\
+					execnow set next_menu_name options;	\
+					close self;							\
+					open blackout_3d_tv
+
+			#define SIGN_IN_TO_PROFILE		\
+					exec "xsignin 0";		\
+					close self;				\
+					close blackout_3d_tv
+			
+			FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	USE_NO_PROFILE,		1, ;								)
+			FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		SIGN_IN_TO_PROFILE,	1, name popup_options_noprofile_2	)
+		}
+
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+		menuDef
+		{
+			SYSTEM_POPUP_SETUP_VIS( popmenu_content_warning, ;, close self; close blackout_3d_tv, 1 )
+			SYSTEM_POPUP_TITLE_VIS( "@MENU_WARNING_CAPS", 1 )
+			SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_CONTENT_WARNING", 1 );
+			
+			#define LOCAL_ACTION_CONTENT_WARNING \
+					exec openmenu( dvarString( ui_newgame_nextmenu ) ); \
+					close self;
+					//uiScript openMenuOnDvar ui_newgame_nextmenu 1 popmenu_newgame; \
+					//uiScript openMenuOnDvar ui_newgame_nextmenu 2 popmenu_overwrite_warning; \
+					//uiScript openMenuOnDvar ui_newgame_nextmenu 3 noprofilewarning_newgame; \
+					//uiScript openMenuOnDvar ui_newgame_nextmenu 4 popmenu_savedevice_unavailable_warning; \
+
+
+			FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", LOCAL_ACTION_CONTENT_WARNING, 1, ; )
+		}
+
+
+
+	// ======================================================================
+	// ========================== xboxlive popups ===========================
+	// ======================================================================
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( menu_systemlink_lobbyended, ;, close self; close blackout_3d_tv, 1 )
+		
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_NOTICE", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@XBOXLIVE_LOBBYENDED", 1 )
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self; close blackout_3d_tv, 1, ; )
+	}	
+
+
+	#undef	POPUP_BUTTON_COUNT
+#ifdef CONSOLE
+	#define	POPUP_BUTTON_COUNT		3
+#else
+	#define	POPUP_BUTTON_COUNT		2
+#endif
+
+	
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( leavelobbywarning, setfocus leavelobbywarning_3, ;, 1 )
+				
+		SYSTEM_POPUP_TITLE_VIS( "@XBOXLIVE_LEAVELOBBY",			when( !InPrivateParty() || PrivatePartyHost() )									)
+		SYSTEM_POPUP_TITLE_VIS( "@XBOXLIVE_LEAVEPARTYANDLOBBY",	when( InPrivateParty() && !PrivatePartyHost() && PrivatePartyHostInLobby() )	)
+		SYSTEM_POPUP_TITLE_VIS( "@XBOXLIVE_LEAVELOBBY",			when( InPrivateParty() && !PrivatePartyHost() && !PrivatePartyHostInLobby() )	)
+		
+#ifdef CONSOLE
+		#define LOCAL_ACCEPT_LEAVELOBBY				\
+				play CHOICE_FOCUS_SOUND;			\
+				close menu_xboxlive_lobby;			\
+				close menu_xboxlive_privatelobby;	\
+				exec "xstopparty";					\
+				exec "xblive_privatematch 0";		\
+				setdvar invite_visible "1";			\
+				open menu_xboxlive;					\
+				close leavelobbywarning;
+		
+		#define LOCAL_ACCEPT_LEAVELOBBY2			\
+				play CHOICE_FOCUS_SOUND;			\
+				close menu_xboxlive_lobby;			\
+				close menu_xboxlive_privatelobby;	\
+				exec "xstopprivateparty";			\
+				exec "xstopparty";					\
+				exec "xblive_privatematch 0";		\
+				exec "xstartprivateparty";			\
+				setdvar invite_visible "1";			\
+				open menu_xboxlive;					\
+				close leavelobbywarning;
+				
+		#define LOCAL_ACCEPT_LEAVELOBBY3			\
+				play CHOICE_FOCUS_SOUND;			\
+				close menu_xboxlive_lobby;			\
+				close menu_xboxlive_privatelobby;	\
+				exec "xstoppartykeeptogether";		\
+				exec "xblive_privatematch 0";		\
+				setdvar invite_visible "1";			\
+				open menu_xboxlive;					\
+				close leavelobbywarning;
+#else //#ifdef CONSOLE
+		#define LOCAL_ACCEPT_LEAVELOBBY_PC			\
+				play CHOICE_FOCUS_SOUND;			\
+				close menu_xboxlive_lobby;			\
+				close menu_xboxlive_privatelobby;	\
+				exec "xstopparty";					\
+				exec "xblive_privatematch 0";		\
+				setdvar invite_visible "1";			\
+				open menu_xboxlive;					\
+				close leavelobbywarning;
+#endif //#ifdef CONSOLE
+
+
+#ifdef CONSOLE
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MPUI_LEAVE_WITHOUT_PARTY", LOCAL_ACCEPT_LEAVELOBBY,	( (!InPrivateParty() || PrivatePartyHost()) && ( !AloneInPartyIgnoreSplitscreen(MENU_TRUE) ) ),		;	)
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MPUI_LEAVE_WITHOUT_PARTY", LOCAL_ACCEPT_LEAVELOBBY2,	( InPrivateParty() && !PrivatePartyHost() && PrivatePartyHostInLobby() ),	;	)
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MPUI_LEAVE_WITHOUT_PARTY", LOCAL_ACCEPT_LEAVELOBBY,	( InPrivateParty() && !PrivatePartyHost() && !PrivatePartyHostInLobby() ),	;	)
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MPUI_LEAVE_WITH_PARTY",	LOCAL_ACCEPT_LEAVELOBBY3,	( InPrivateParty() && PrivatePartyHost() && PrivatePartyHostInLobby() && ( !AloneInPartyIgnoreSplitscreen(MENU_TRUE) ) ),				;	)
+//		FRAME_CHOICE_BUTTON_VIS_EX( 2, "",							;,							( AloneInPartyIgnoreSplitscreen() || ( !InPrivateParty() ) || ( !PrivatePartyHost() )  || ( !PrivatePartyHostInLobby() ) ),	;	)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MPUI_LEAVE",				LOCAL_ACCEPT_LEAVELOBBY,	( (!InPrivateParty() || PrivatePartyHost()) && ( AloneInPartyIgnoreSplitscreen(MENU_TRUE) ) ),										;	)
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( 2, "@MPUI_LEAVE_WITH_PARTY", ;, ;, ( !AloneInPartyIgnoreSplitscreen(MENU_TRUE) && ( ( !InPrivateParty() ) || ( !PrivatePartyHost() )  || ( !PrivatePartyHostInLobby() ) ) ), ; )
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 3, "@MPUI_CANCEL", close self, 1, name leavelobbywarning_3 )
+#else //#ifdef CONSOLE
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MPUI_LEAVE_WITHOUT_PARTY", LOCAL_ACCEPT_LEAVELOBBY_PC,	( (!InPrivateParty() || PrivatePartyHost()) && ( !AloneInPartyIgnoreSplitscreen(MENU_TRUE) ) ),							;							)
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MPUI_LEAVE",				LOCAL_ACCEPT_LEAVELOBBY_PC,	( (!InPrivateParty() || PrivatePartyHost()) && ( AloneInPartyIgnoreSplitscreen(MENU_TRUE) ) ),										;	)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MPUI_CANCEL", close self, 1, name leavelobbywarning_3 )
+#endif //#ifdef CONSOLE
+	}
+		
+
+	#undef	POPUP_BUTTON_COUNT
+	#define	POPUP_BUTTON_COUNT		2
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( skipmapconfirmation, setfocus skipmapconfirmation_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_VOTESKIPCONFIRM", 1 )
+
+		#define LOCAL_ACCEPT_VETO			\
+				play CHOICE_FOCUS_SOUND;	\
+				exec "xpartyveto 1";		\
+				close skipmapconfirmation;
+				
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_VETO,	1, ;							)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,			1, name skipmapconfirmation_2	)
+	}
+
+	
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( leaveprivatepartywarning, setfocus leaveprivatepartywarning_2, ;, 1 )
+
+		SYSTEM_POPUP_TITLE_VIS( "@XBOXLIVE_DESTROYPARTY",	when( InPrivateParty() && PrivatePartyHost() )	)
+		SYSTEM_POPUP_TITLE_VIS( "@XBOXLIVE_LEAVEPARTY",		when( InPrivateParty() && !PrivatePartyHost() )	)
+
+		#define LOCAL_ACCEPT_LEAVE							\
+				play CHOICE_FOCUS_SOUND;					\
+				exec set next_menu_name "";					\
+				exec "onlinegame 0";						\
+				exec "xstopprivateparty";					\
+				exec "xstopparty";							\
+				execNow "forcedisableallbutprimaryclients";	\
+				close popup_gettingdata;					\
+				close leaveprivatepartywarning;				\
+				close menu_xboxlive;						\
+				close blackout_3d_tv;
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_LEAVE,	1, ;								)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,			1, name leaveprivatepartywarning_2	)
+	}
+	
+
+#ifdef CONSOLE
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( player_popup, ;, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_PLAYER_OPTIONS", 1 )
+
+#ifdef XENON
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@XBOXLIVE_VIEW_PROFILE", close player_popup; showGamerCard, ( dvarBool( party_playervisible ) ), ; )
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( 1, "@XBOXLIVE_VIEW_PROFILE", ;, ;, ( !dvarBool( party_playervisible ) ), ; )
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@XBOXLIVE_KICK", close player_popup; getKickPlayerQuestion, ( !menuisopen( "menu_xboxlive_lobby" ) && dvarBool( party_host ) && !dvarBool( party_iamhost ) ), ; )
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( 2, "@XBOXLIVE_KICK", ;, ;, ( menuisopen( "menu_xboxlive_lobby" ) || !dvarBool( party_host ) || dvarBool( party_iamhost ) ), ; )
+#else //##ifdef XENON
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@XBOXLIVE_KICK", close player_popup; getKickPlayerQuestion, ( !menuisopen( "menu_xboxlive_lobby" ) && dvarBool( party_host ) && !dvarBool( party_iamhost ) ), ; )
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( 1, "@XBOXLIVE_KICK", ;, ;, ( menuisopen( "menu_xboxlive_lobby" ) || !dvarBool( party_host ) || dvarBool( party_iamhost ) ), ; )
+#endif //##ifdef XENON
+	}
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( kickwarning, setfocus kickwarning_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_KICK_PLAYER", 1 )
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	close "kickwarning"; kickplayer;,	1, ;					)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close "kickwarning";,				1, name kickwarning_2	)
+	}
+
+
+#else //##ifdef CONSOLE
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( kickwarning, setfocus kickwarning_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_KICK_PLAYER", 1 )
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	close "kickwarning"; kickplayer;,	1, ;					)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close "kickwarning";,				1, name kickwarning_2	)
+	}
+
+	#undef	POPUP_BUTTON_COUNT
+	#define	POPUP_BUTTON_COUNT		1
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( player_popup, ;, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_PLAYER_OPTIONS", 1 )
+
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@XBOXLIVE_KICK", close player_popup; getKickPlayerQuestion, ( !menuisopen( "menu_xboxlive_lobby" ) && dvarBool( party_host ) && !dvarBool( party_iamhost ) ), ; )
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( 1, "@XBOXLIVE_KICK", ;, ;, ( !dvarBool( party_host ) || menuisopen( "menu_xboxlive_lobby" ) || dvarBool( party_iamhost ) ), ; )
+	}	
+#endif //##ifdef CONSOLE
+

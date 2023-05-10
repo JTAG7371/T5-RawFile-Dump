@@ -1,0 +1,37 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_GROUP			"errors"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+{
+	menuDef 
+	{
+		SYSTEM_POPUP_SETUP_VIS( menu_xboxlive_lobbyended, ;, close menu_xboxlive_lobbyended;, 1 )
+		
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_NOTICE", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@XBOXLIVE_LOBBYENDED", 1 )
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self;, 1, ; )
+	}	
+	
+
+	menuDef 
+	{
+		SYSTEM_POPUP_SETUP_VIS( menu_xboxlive_partyended, ;, close menu_xboxlive_partyended;, 1 )
+		
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_NOTICE", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( dvarstring( partyend_reason ), 1 )
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self;, 1, ; )
+	}	
+}

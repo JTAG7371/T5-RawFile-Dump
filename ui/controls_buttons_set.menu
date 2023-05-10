@@ -1,0 +1,92 @@
+#ifndef BUTTON_VISIBLE
+#define BUTTON_VISIBLE 1
+#endif
+
+//ZOMBIETRON
+#define SET6_TITLE							"@MENU_ZOMBIETRON"
+#define SET6_BUTTONA_TEXT					""
+#define SET6_BUTTONB_TEXT					""
+#define SET6_BUTTONX_TEXT					""
+#define SET6_BUTTONY_TEXT					""
+#define SET6_BUTTONBLACK_TEXT				""
+#define SET6_BUTTONWHITE_TEXT				""
+#define SET6_BUTTONUP_TEXT					""
+#define SET6_BUTTONDOWN_TEXT				""
+#define SET6_BUTTONLEFT_TEXT				""
+#define SET6_BUTTONRIGHT_TEXT				""
+#define SET6_BUTTONLTRIG_TEXT				"@MENU_NUKE"
+#define SET6_BUTTONRTRIG_TEXT				"@MENU_SPEEDBOOST"
+#define SET6_BUTTONSTART_TEXT				""
+#define SET6_BUTTONBACK_TEXT				""
+#define SET6_BUTTONLSTICK_TEXT				""
+#define SET6_BUTTONRSTICK_TEXT				""
+
+#ifndef BUTTON_X_START
+#define BUTTON_X_START						-170
+#endif //#ifndef BUTTON_X_START
+
+#ifndef BUTTON_Y_START
+#define BUTTON_Y_START						85
+#endif //#ifndef BUTTON_X_START
+
+#define BUTTON_ORIGIN						BUTTON_X_START BUTTON_Y_START
+#define BUTTON_TEXTOFFSET_A					320 198
+#define BUTTON_TEXTOFFSET_B					315 153
+#define BUTTON_TEXTOFFSET_X					319 176
+#define BUTTON_TEXTOFFSET_Y					310 128
+#define BUTTON_TEXTOFFSET_BLACK				 52  98
+#define BUTTON_TEXTOFFSET_WHITE				295  98
+#define BUTTON_TEXTOFFSET_UP				 28 180
+#define BUTTON_TEXTOFFSET_DOWN				158 272
+#define BUTTON_TEXTOFFSET_LEFT				 28 180
+#define BUTTON_TEXTOFFSET_RIGHT				 20 198
+#define BUTTON_TEXTOFFSET_LTRIG				 62  78
+#define BUTTON_TEXTOFFSET_RTRIG				288  78
+#define BUTTON_TEXTOFFSET_START				160  63
+#define BUTTON_TEXTOFFSET_BACK				 87  62
+#define BUTTON_TEXTOFFSET_LSTICK			 30 148
+#define BUTTON_TEXTOFFSET_RSTICK			180 254
+
+#define BUTTON_ZT_TEXTOFFSET_LTRIG			112 62
+#define BUTTON_ZT_TEXTOFFSET_RTRIG			182 62
+
+/*
+	itemDef
+	{
+		rect			BUTTON_X_START BUTTON_Y_START 290 290 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+		style 			WINDOW_STYLE_SHADER
+		border 			0
+		background		xenon_controller_top
+		visible 		when(BUTTON_VISIBLE)
+		decoration
+	}
+*/
+
+	itemDef
+	{
+		group			controls_buttons_set6
+		rect 			0 0 290 290
+		origin			BUTTON_ORIGIN
+		visible			0
+		decoration
+	}
+
+#define CONTROLS_BUTTON( groupArg, textArg, orgArg, alignArg ) 												\
+		itemDef																								\
+		{																									\
+			group			groupArg																		\
+			type			ITEM_TYPE_TEXT																	\
+			text			textArg																			\
+			rect			BUTTON_X_START BUTTON_Y_START 0 0 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP	\
+			origin			orgArg																			\
+			textalign		alignArg																		\
+			style			WINDOW_STYLE_EMPTY																\
+			textscale		TEXTSIZE_SMALL																	\
+			textfont		UI_FONT_NORMAL																	\
+			forecolor		1 1 1 1																			\
+			visible			when( BUTTON_VISIBLE )															\
+			decoration																						\
+		}
+	
+	CONTROLS_BUTTON( controls_buttons_set6, SET6_BUTTONLTRIG_TEXT,				BUTTON_ZT_TEXTOFFSET_LTRIG,	ITEM_ALIGN_TOP_RIGHT )
+	CONTROLS_BUTTON( controls_buttons_set6, SET6_BUTTONRTRIG_TEXT,				BUTTON_ZT_TEXTOFFSET_RTRIG,	ITEM_ALIGN_TOP_LEFT )

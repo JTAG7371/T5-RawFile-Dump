@@ -1,0 +1,46 @@
+// DEMO PLAYBACK HUD - MP
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define ONLINEGAME (dvarInt( "onlinegame" ) && !dvarInt( "xblive_privatematch" ) )
+#define ONLINEGAME_OFFSET 10
+#define HUD_ALPHA 0.65
+#define	BOTTOM_RECT_X 0
+#define	BOTTOM_RECT_Y -220
+#define SPEC_HUD_WIDTH 160
+
+#include "ui_mp/menustyle.inc"
+#include "ui_mp/choices_setup_teams.menu"
+#include "ui/choices_setup_popmenu.menu"
+
+{
+	assetGlobalDef
+	{
+		fadeClamp		1					// sets the fadeup alpha
+		fadeCycle		1					// how often fade happens in milliseconds
+		fadeAmount		0.1					// amount to adjust alpha per cycle
+	}
+
+	// Demo Timeline
+	menuDef
+	{
+		name			"demoTimeline"
+		rect			BOTTOM_RECT_X -8 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible 		when( isDemoPlaying() && !ui_active() );
+
+		itemDef
+		{
+			name			"timeline"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			150 20 440 10 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+			forecolor		1 1 1 HUD_ALPHA
+			ownerdraw		CG_DEMO_TIMELINE
+			background		"white" // default material
+			visible			1
+			decoration
+		}
+	}
+
+}

@@ -1,0 +1,120 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_X_START			45
+#define CHOICE_Y_START			72
+
+#define CHOICE_SEP_OFFSET_Y		-2
+#define CHOICE_Y_COUNT			11
+#define CHOICE_GROUP			"levels"
+
+#include "ui_mp/menustyle.inc"
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X			220
+#define CHOICE_X_SPACING		280
+#include "ui/choices_setup_common.menu"
+
+#include "ui/t_levels_test_list.menu"
+{
+	menuDef
+	{
+		name			cod5_levels_test
+#ifdef INGAME_MENUS		
+		fullscreen		0
+		style			WINDOW_STYLE_FILLED
+		backcolor		0 0 0 1
+		forecolor		1 1 1 1
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+#else
+		fullscreen		1
+		rect			0 0 640 480 HORIZONTAL_ALIGN_DEFAULT VERTICAL_ALIGN_DEFAULT
+#endif	
+		focusColor		COLOR_FOCUSED
+		soundloop		""
+
+		onOpen
+		{
+			focusFirst;
+			setdvar ui_levels_choices TOTAL_CHOICES;
+			setdvar test_levels_choices TOTAL_CHOICES;
+			setdvar test_levels_names TEST_MAP_NAMES;
+			setdvar test_levels_bsps TEST_MAP_BSPS;
+			uiScript loadTestMapNames;
+		}
+		onESC 
+		{
+			play CHOICE_FOCUS_SOUND;
+			close self;
+		}
+		
+		execkeyint BUTTON_Y
+		{
+			open blackout_3d_tv;
+			close self;
+		}
+
+		// --------- button ----------
+		itemDef
+		{
+#ifdef CONSOLE
+			type			ITEM_TYPE_TEXT
+			rect			-140 -4 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			decoration
+#endif // #ifdef CONSOLE
+#ifdef PC
+			type			ITEM_TYPE_BUTTON
+			rect			-140 -26 60 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			mouseEnter		{ play CHOICE_FOCUS_SOUND; }
+			action
+			{
+				play			CHOICE_FOCUS_SOUND;
+				close			self;
+				open			levels_game;
+			}
+#endif // #ifdef PC
+			origin			0 0
+			text			"@PLATFORM_PRODUCTION_LEVELS"
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_SMALL
+			textalign		ITEM_ALIGN_BOTTOM_LEFT
+			visible			1
+			
+		}		
+		//#include "ui/bars.menu"
+#ifndef INGAME_MENUS
+		#include "ui/navcontrols.inc"
+#endif // #ifndef INGAME_MENUS
+
+		CHOICE_MENU_TITLE( "TEST LEVELS")
+		itemDef 
+		{
+			name			testmaplist
+			rect			150 70 320 345
+			type			ITEM_TYPE_LISTBOX
+			style			WINDOW_STYLE_FILLED
+			textfont		CHOICE_TEXTFONT
+			textscale		CHOICE_TEXTSIZE
+			textstyle		CHOICE_TEXTSTYLE
+			textAlign		ITEM_ALIGN_LEFT
+			elementwidth	120
+			elementheight	30
+
+			elementtype		LISTBOX_TEXT
+			feeder			FEEDER_TESTMAPS
+			doubleclick		{ uiScript runTestMap; }
+			forecolor		1 1 1 .9
+			focusColor		1 1 1 .9
+			disableColor	1 1 1 .9
+			backcolor		0 0 .05 .4
+			outlinecolor	1 0.97 0.72 0.5
+			visible			1
+			noscrollbars
+#ifdef PC
+			mouseEnter		{  setitemcolor savegamelist bordercolor .7 0 0 1 } 
+			mouseExit		{  setitemcolor savegamelist bordercolor .5 .5 .5 .5 } 
+#endif //#ifdef PC
+		}
+		
+	}
+}

@@ -1,0 +1,3 @@
+#define CHANGECLASS_SPLITSCREEN_MENU_NAME "changeclass_splitscreen_small"
+
+#include "ui_mp/scriptmenus/changeclass_splitscreen_common.inc"

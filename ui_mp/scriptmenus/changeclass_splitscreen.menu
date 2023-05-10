@@ -1,0 +1,4 @@
+#define CHANGECLASS_SPLITSCREEN_MENU_NAME "changeclass_splitscreen"
+#define INCLUDE_CAC_INFO 1
+
+#include "ui_mp/scriptmenus/changeclass_splitscreen_common.inc"

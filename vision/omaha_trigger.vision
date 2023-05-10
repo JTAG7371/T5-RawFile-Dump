@@ -1,0 +1,83 @@
+
+//      "0"
+//Radius0    "7"
+//Radius1    "7"
+//BloomCutoff   "0.99"
+//BloomDesaturation  "0.65"
+//BloomIntensity0  "0.36"
+//BloomIntensity1  "0.36"
+//SkyBleedIntensity0 "0.29"
+//SkyBleedIntensity1 "0.29"
+
+r_filmEnable                  "1"
+
+ 
+
+r_sCurveEnable                "1" 
+
+
+r_filmMidStart             "0.250000" 
+r_filmMidEnd               "0.750000" 
+r_filmDarkFeather          "0.719250" 
+r_filmLightFeather         "0.500000" 
+r_filmColorTemp            "6484.1797 6499.5029 6401.7251" 
+r_filmSaturation           "0.7297 0.3544 0.5052" 
+r_filmDarkTint             "1.3474 1.3579 1.5997" 
+r_filmMidTint              "0.9996 0.9996 0.9996" 
+r_filmLightTint            "0.9996 0.9996 0.9996" 
+r_filmBleach               "0.0000 0.0000 0.0000" 
+r_filmContrast             "1.0000 1.0000 1.0000" 
+
+r_sCurveShoulderStrength        "0.189469" 
+r_sCurveLinearStrength          "0.480625" 
+r_sCurveLinearAngle             "0.024563" 
+r_sCurveToeStrength             "0.001000" 
+r_sCurveToeNumerator            "0.004383" 
+r_sCurveToeDenominator          "0.221779" 
+
+r_bloomTintWeights              "0.0000 0.0000 0.0000 0.0000" 
+r_bloomColorScale               "0.0000 0.0000 0.0000 0.0000" 
+r_bloomTintScale                "0.0000 0.0000 0.0000 1.0000" 
+r_bloomCurveBreakpoint          "0.5017 0.5017 0.5017 0.4000" 
+r_bloomCurveLoGamma             "0.7586 0.7586 0.7586 0.8980" 
+r_bloomCurveHiGamma             "8.5671 8.5671 8.5671 7.2480" 
+r_bloomExpansionControl         "0.5000 0.5000 0.5000 0.5000" 
+r_bloomExpansionWeights         "0.9526 0.9526 0.9526 0.1000" 
+r_bloomExpansionSource          "0.965266" 
+r_bloomBlurRadius               "1.238625" 
+r_bloomPersistence              "0.000000" 
+
+//TweakRadius0              "5.000000" 
+//TweakBloomCutoff          "0.500000" 
+//TweakBloomDesaturation    "0.000000" 
+//TweakBloomIntensity0      "1.000000" 
+//TweakRayExpansion         "0.000000" 
+//TweakRayIntensity         "1.000000" 
+
+
+r_bloomCurveLoBlack             "0.1000 0.1000 0.1000 0.1000" 
+r_bloomCurveLoWhite             "1.0000 1.0000 1.0000 1.0000" 
+r_bloomCurveLoRemapBlack        "0.1000 0.1000 0.1000 0.1000" 
+r_bloomCurveLoRemapWhite        "1.0000 1.0000 1.0000 1.0000" 
+r_bloomCurveHiBlack             "0.1000 0.1000 0.1000 0.1000" 
+r_bloomCurveHiWhite             "1.0000 1.0000 1.0000 1.0000" 
+r_bloomCurveHiRemapBlack        "0.1000 0.1000 0.1000 0.1000" 
+r_bloomCurveHiRemapWhite        "1.0000 1.0000 1.0000 1.0000" 
+r_filmHue                  "0.0000 0.0000 0.0000" 
+
+r_bloomStreakXLevels0           "0.3300 0.3300 0.3300 1.0000" 
+r_bloomStreakXLevels1           "0.0000 1.0000 0.0000 1.0000" 
+r_bloomStreakXInnerTint         "1.0000 1.0000 1.0000" 
+r_bloomStreakXOuterTint         "1.0000 1.0000 1.0000" 
+r_bloomStreakXTintControl       "0.3300 0.3300 0.3300 1.0000" 
+r_bloomStreakXTint              "0.0000 0.0000 0.0000" 
+
+r_bloomStreakYLevels0           "0.3300 0.3300 0.3300 1.0000" 
+r_bloomStreakYLevels1           "0.0000 1.0000 0.0000 1.0000" 
+r_bloomStreakYInnerTint         "1.0000 1.0000 1.0000" 
+r_bloomStreakYOuterTint         "1.0000 1.0000 1.0000" 
+r_bloomStreakYTintControl       "0.3300 0.3300 0.3300 1.0000" 
+r_bloomStreakYTint              "0.0000 0.0000 0.0000" 
+
+
+r_reviveFX_Enable		"0"

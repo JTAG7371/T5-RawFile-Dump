@@ -1,0 +1,289 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/frame.inc"
+
+#define CHOICE_GROUP					"playlist"
+
+#include "ui/framestyle.inc"
+#include "ui/choices_setup_common.menu"
+
+
+#define CATEGORY_NAME_X					0
+#define CATEGORY_NAME_Y					(CHOICE_Y_START - 5)
+#define CATEGORY_NAME_SIZE				CATEGORY_IMAGE_WIDTH 30
+
+#define CATEGORY_NAME_X_SMALL			PLAYLIST_NAME_X
+#define CATEGORY_NAME_Y_SMALL			(PLAYLIST_NAME_Y + 20)
+#define CATEGORY_NAME_SIZE_SMALL		PLAYLIST_NAME_SIZE
+
+#define CATEGORY_IMAGE_X				CATEGORY_NAME_X
+#define CATEGORY_IMAGE_Y				(CHOICE_Y_START-5)
+#define CATEGORY_IMAGE_ASPECT_RATIO		1
+#define CATEGORY_IMAGE_WIDTH			(CATEGORY_IMAGE_HEIGHT * CATEGORY_IMAGE_ASPECT_RATIO)
+#define CATEGORY_IMAGE_HEIGHT			240
+#define CATEGORY_IMAGE_SIZE				CATEGORY_IMAGE_WIDTH CATEGORY_IMAGE_HEIGHT
+
+#define CATEGORY_IMAGE_X_SMALL			(CATEGORY_NAME_X + 185)
+#define CATEGORY_IMAGE_Y_SMALL			(CHOICE_Y_START + 70)
+#define CATEGORY_IMAGE_SIZE_SMALL		60 60
+
+#define CATEGORY_DESC_X					CATEGORY_NAME_X
+#define CATEGORY_DESC_Y					(CATEGORY_IMAGE_Y + CATEGORY_IMAGE_HEIGHT - 20)
+#define CATEGORY_DESC_SIZE				CATEGORY_NAME_SIZE
+
+
+#define PLAYLIST_NAME_X					50
+#define PLAYLIST_NAME_Y					(CHOICE_Y_START + 135)
+#define PLAYLIST_NAME_SIZE				PLAYLIST_IMAGE_WIDTH 30
+
+#define PLAYLIST_IMAGE_X				PLAYLIST_NAME_X
+#define PLAYLIST_IMAGE_Y				(CHOICE_Y_START - 5)
+#define PLAYLIST_IMAGE_ASPECT_RATIO		0.675
+#define PLAYLIST_IMAGE_WIDTH			200
+#define PLAYLIST_IMAGE_HEIGHT			(PLAYLIST_IMAGE_WIDTH * PLAYLIST_IMAGE_ASPECT_RATIO)
+#define PLAYLIST_IMAGE_SIZE				PLAYLIST_IMAGE_WIDTH PLAYLIST_IMAGE_HEIGHT
+
+#define PLAYLIST_DESC_X					PLAYLIST_NAME_X
+#define PLAYLIST_DESC_Y					(CATEGORY_IMAGE_Y + CATEGORY_IMAGE_HEIGHT - 20)
+#define PLAYLIST_DESC_SIZE				PLAYLIST_IMAGE_WIDTH 60
+
+#define CATEGORY_LISTBOX_WIDTH			140
+#define PLAYLIST_LISTBOX_WIDTH			170
+
+
+#undef CHOICE_Y_START
+#define CHOICE_Y_START					-125
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X					200
+
+#undef DEFAULT_SLIDE_IN_SPEED
+#define DEFAULT_SLIDE_IN_SPEED			180
+
+#undef DEFAULT_SLIDE_OUT_SPEED
+#define DEFAULT_SLIDE_OUT_SPEED			180
+
+{
+
+#undef ON_ESC
+	#define ON_ESC							\
+		play uin_navigation_menu_lg_close;	\
+		exec set menu_xboxlive_buttons_visible 1; \
+		close self;
+
+	menuDef
+	{
+		name					findgame_category
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		control					MENU_CONTROL_OPENER		
+
+		onOpen	
+		{
+			play uin_navigation_menu_lg_open;
+			setdvar invite_visible "0"; 
+			setFocus category_list; 
+			execNow "movefeeder top category_list";
+
+			execnow ui_animate menu_xboxlive frame_bg on 100;
+
+#ifdef PC
+			exec set menu_xboxlive_buttons_visible 0;
+#endif //#ifdef PC
+		}
+		onFocus { }
+		onClose
+		{
+			setdvar invite_visible "1";
+			execnow ui_animate menu_xboxlive frame_bg default 20;
+		}
+		onESC	
+		{
+			ON_ESC
+		}
+
+		FRAME_ZOMBIE_DEFAULT
+
+		FRAME_TITLE_DEFAULT( "@MPUI_FIND_MATCH_CAPS", 1 )
+
+		// OwnerDraw UI_CATEGORYICON
+		itemDef 
+		{
+			name			category_icon
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_CATEGORYICON
+			rect			CATEGORY_IMAGE_X CATEGORY_IMAGE_Y CATEGORY_IMAGE_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			visible			when ( dvarBool( category_selected ) == 1 );
+			decoration
+		}
+		// OwnerDraw UI_PLAYLISTICON
+		itemDef 
+		{
+			name			playlist_icon
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_PLAYLISTICON
+			rect			PLAYLIST_IMAGE_X PLAYLIST_IMAGE_Y PLAYLIST_IMAGE_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			visible			when ( dvarBool( category_selected ) == 0 );
+			decoration
+		}
+		itemDef 
+		{
+			name			category_icon
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_CATEGORYICON
+			rect			CATEGORY_IMAGE_X_SMALL CATEGORY_IMAGE_Y_SMALL CATEGORY_IMAGE_SIZE_SMALL HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			visible			when ( dvarBool( category_selected ) == 0 );
+			decoration
+		}
+
+		// OwnerDraw UI_CATEGORYNAME
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			CATEGORY_NAME_X CATEGORY_NAME_Y CATEGORY_NAME_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			forecolor		1 1 1 1
+			ownerdraw		UI_CATEGORYNAME
+			textfont		UI_FONT_EXTRABIG
+			textscale		TEXTSIZE_SUBTITLE
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			textalign		ITEM_ALIGN_MIDDLE_CENTER
+			visible			when ( dvarBool( category_selected ) == 1 );
+			decoration
+		}
+		// OwnerDraw UI_PLAYLISTNAME
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			PLAYLIST_NAME_X PLAYLIST_NAME_Y PLAYLIST_NAME_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			forecolor		COLOR_BODY_TEXT
+			ownerdraw		UI_PLAYLISTNAME
+			textfont		UI_FONT_EXTRABIG
+			textscale		TEXTSIZE_SUBTITLE
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			textalign		ITEM_ALIGN_MIDDLE_CENTER
+			visible			when ( dvarBool( category_selected ) == 0 );
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			CATEGORY_NAME_X_SMALL CATEGORY_NAME_Y_SMALL CATEGORY_NAME_SIZE_SMALL HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			forecolor		1 1 1 1
+			ownerdraw		UI_CATEGORYNAME
+			textfont		CHOICE_TEXTFONT
+			textscale		CHOICE_TEXTSIZE
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			textalign		ITEM_ALIGN_MIDDLE_CENTER
+			visible			when ( dvarBool( category_selected ) == 0 );
+			decoration
+		}
+
+		// OwnerDraw UI_CATEGORYDESCRIPTION
+		itemDef
+		{
+			name			category_description
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			CATEGORY_DESC_X CATEGORY_DESC_Y CATEGORY_DESC_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			textfont		CHOICE_TEXTFONT
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			ownerdraw		UI_CATEGORYDESCRIPTION
+			textalign 		ITEM_ALIGN_TOP_CENTER
+			forecolor		COLOR_BODY_TEXT
+			backcolor		0 0 0 0
+			visible			when ( dvarBool( category_selected ) == 1 );
+			decoration
+			autowrapped
+		}
+		// OwnerDraw UI_PLAYLISTDESCRIPTION
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			PLAYLIST_DESC_X PLAYLIST_DESC_Y PLAYLIST_DESC_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			textfont		CHOICE_TEXTFONT
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			ownerdraw		UI_PLAYLISTDESCRIPTION
+			textalign 		ITEM_ALIGN_TOP_CENTER
+			forecolor		COLOR_BODY_TEXT
+			backcolor		0 0 0 0
+			visible			when ( dvarBool( category_selected ) == 0 );
+			decoration
+			autowrapped
+		}
+		
+#ifdef PC
+		#undef	CHOICE_TEXTSIZE
+		#define	CHOICE_TEXTSIZE				TEXTSIZE_DEFAULT
+#endif //#ifdef PC
+
+		// --------------------- categories and playlists -----------------------
+		itemDef 
+		{
+			name					playlist_list
+			type					ITEM_TYPE_LISTBOX
+			feeder					FEEDER_NEW_PLAYLISTS
+			rect					(CHOICE_X_START+2) (CHOICE_Y_START) PLAYLIST_LISTBOX_WIDTH 288 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			elementwidth			30
+			elementheight			17
+			noscrollbars
+			noBlinkingHighlight
+			textfont				CHOICE_TEXTFONT
+			textscale				CHOICE_TEXTSIZE
+			forecolor				CHOICE_TEXTCOLOR
+			textalignx				12
+			focusColor				COLOR_TITLE
+			disablecolor			NEW_FRAME_GREY_RGB 1
+			textstyle				ITEM_TEXTSTYLE_NORMAL
+			visible					1
+#ifdef PC
+			modal
+#endif //#ifdef PC
+			/*						x		y		w								h		len		horzAlign			vertAlign			*/
+			userarea	3			-1		0		(PLAYLIST_LISTBOX_WIDTH+1)		17		32		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE	/* Background */
+									6		0		PLAYLIST_LISTBOX_WIDTH			17		32		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE 	/* Name */
+									1		0		16  							17		16		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE 	/* A Button */
+			onfocus 				{ play CHOICE_FOCUS_SOUND; execNow "GetPrevPlaylist"; }
+			leaveFocus				{ execNow "SetPrevPlaylist"; }
+			doubleclick
+			{
+				play CHOICE_FOCUS_SOUND;
+				exec "party_timerVisible 0";
+				exec "xstartparty";
+				exec "updategamerprofile";
+				closeimmediate findgame_category;
+				close self;
+				open menu_xboxlive_lobby;
+			}
+			execKeyInt BUTTON_B
+			{
+				setdvar	category_selected "1";
+				setFocus category_list;
+			}
+			onListboxSelectionChange
+			{
+				play CHOICE_FOCUS_SOUND;
+			}
+		}
+		
+
+		// Lock message
+		//PREPROC_TEXT_DRAW_VIS( (-MISSION_SELECT_WIDTH/2+10) (MISSION_SELECT_HEIGHT/2-7) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, GET_UNLOCK_LEVEL_STRING( PERKS_KILLSTREAKS ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, CHOICE_TEXTCOLOR, when( MISSION_SELECT_LOCKED ) )
+#ifdef PC
+		FRAME_BACK_BUTTON_DEFAULT_ACTION( ON_ESC )
+#else //#ifdef PC	
+		FRAME_BACK_BUTTON_DEFAULT
+#endif //#ifdef PC
+		//ZOMBIE_FRAME_OVERLAY_DEFAULT
+		//MISSION_SELELCT_INFO( 1 )//visible argument just in case we want to display all maps even ones that are not selectable yet.
+
+		#include "ui/safearea.menu"
+	}
+

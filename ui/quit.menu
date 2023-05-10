@@ -1,0 +1,33 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/popupstyle.inc"	
+#include "ui/choices_setup_popmenu.menu"
+	
+{
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( quit_popmenu, setFocus quit_popmenu_2;, close self; close blackout_3d_tv, 1 )
+
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_ARE_YOU_SURE_QUIT", 1 )
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	uiScript quit;                  , 1, ;                   )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self; close blackout_3d_tv, 1, name quit_popmenu_2 )
+	}
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( quit_to_mp_popmenu, setFocus quit_to_mp_popmenu_2;, close self; close blackout_3d_tv, 1 )
+
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_SWITCHTOMULTIPLAYER", 1 )
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	setdvar ui_changed_exe 1; uiScript sendMenuNotify "startmp 0"; , 1, ;                   )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self; close blackout_3d_tv, 1, name quit_to_mp_popmenu_2 )
+	}
+}

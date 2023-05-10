@@ -1,0 +1,356 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SEP_OFFSET_Y					-2
+
+#define CHOICE_GROUP						"findgame"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/stats_info.inc"
+#include "ui_mp/overlaybg.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+
+#undef	CHOICE_X_START
+#define CHOICE_X_START						NEW_FRAME_CHOICE_X_START
+#undef	CHOICE_Y_START
+#define CHOICE_Y_START						NEW_FRAME_CHOICE_Y_START
+
+#define CATEGORY_LISTBOX_WIDTH				140
+#define PLAYLIST_LISTBOX_WIDTH				170
+#define COLOR_DISABLE						0.3 0.3 0.3 1
+
+#define FIND_GAME_HEIGHT					NEW_FRAME_DEFAULT_HEIGHT
+#define FIND_GAME_WIDTH						( FIND_GAME_HEIGHT * FRAME_ASPECT_RATIO )
+#define FIND_GAME_RIGHT_COLUMN_X			( FIND_GAME_WIDTH/2 * 0.55 )
+#define FIND_GAME_DESC_WIDTH				200
+#define FIND_GAME_RIGHT_COLUMN_LEFT_X		( FIND_GAME_RIGHT_COLUMN_X-FIND_GAME_DESC_WIDTH/2 )
+#define FIND_GAME_X_START					CHOICE_X_START
+#define FIND_GAME_LIST_Y					(CHOICE_Y_START-4)
+#define FIND_GAME_INFO_Y_START				(FIND_GAME_LIST_Y-2)
+#define FIND_GAME_NAME_HEIGHT				20
+#define FIND_GAME_ICON_Y_START				(FIND_GAME_INFO_Y_START + FIND_GAME_NAME_HEIGHT + 15 )
+#define FIND_GAME_ICON_SIZE					172
+#define FIND_GAME_DESC_Y_START				(FIND_GAME_ICON_Y_START + FIND_GAME_ICON_SIZE + 10 )
+
+#undef	CHOICE_HORIZONTAL_ALIGN 
+#define CHOICE_HORIZONTAL_ALIGN				HORIZONTAL_ALIGN_CENTER 
+#undef  CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN				VERTICAL_ALIGN_CENTER
+
+#undef	DEFAULT_SLIDE_IN_SPEED
+#define DEFAULT_SLIDE_IN_SPEED				180
+
+#undef	DEFAULT_SLIDE_OUT_SPEED
+#define DEFAULT_SLIDE_OUT_SPEED				180
+
+#include "ui_mp/popup_player_info.inc"
+
+#undef	COLOR_BODY_TEXT
+#define COLOR_BODY_TEXT						1 1 1 1
+
+{
+	menuDef	
+	{
+		name					findgame_category
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		control			MENU_CONTROL_OPENER
+		onOpen					
+		{ 
+			play uin_navigation_menu_lg_open;
+			activateBlur; 
+			setdvar invite_visible "0"; 
+			setFocus category_list; 
+			if( dvarBool( xblive_wagermatch ) )
+			{
+				execNow movefeeder (dvarInt(wagerCategory)) category_list;
+			}
+			else
+			{
+				execNow movefeeder (dvarInt(category)) category_list;
+			}
+		}
+		onEsc					
+		{ 
+			deactivateBlur; 
+			play uin_navigation_menu_lg_close;
+			close self; 
+		}
+		onClose					
+		{ 
+			deactivateBlur; 
+			setdvar invite_visible "1";
+		}
+
+		#include "ui/safearea.menu"
+		
+		NEW_FRAME( FIND_GAME_WIDTH, FIND_GAME_HEIGHT )
+		PLAYER_INFO_VIS( FIND_GAME_WIDTH, FIND_GAME_HEIGHT , 1 )
+
+		NEW_FRAME_TITLE( FIND_GAME_WIDTH, FIND_GAME_HEIGHT, "@MPUI_FIND_MATCH_CAPS", 1 )
+		//NEW_FRAME_TITLE( FIND_GAME_WIDTH, FIND_GAME_HEIGHT, "@MPUI_PLAYER_MATCH_PLAYLIST", when( dvarInt( "xblive_wagermatch" ) == 0 && dvarInt( "xblive_clanmatch" ) == 0 ) )
+		//NEW_FRAME_TITLE( FIND_GAME_WIDTH, FIND_GAME_HEIGHT, "@MPUI_WAGER_MATCH", when( dvarInt( "xblive_wagermatch" ) == 1 && dvarInt( "xblive_clanmatch" ) == 0 ) )
+		//NEW_FRAME_TITLE( FIND_GAME_WIDTH, FIND_GAME_HEIGHT, "@MPUI_CLAN_MATCH_PLAYLISTS", when( dvarInt( "xblive_clanmatch" ) == 1 && dvarInt( "xblive_wagermatch" ) == 0 ) )
+		
+		// OwnerDraw UI_PLAYLISTNAME
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			(FIND_GAME_RIGHT_COLUMN_X-110) FIND_GAME_INFO_Y_START 220 FIND_GAME_NAME_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			forecolor		COLOR_BODY_TEXT
+			exp				text( toUpper( getPlaylistName() ) );
+			textfont		UI_FONT_EXTRABIG
+			textscale		TEXTSIZE_SUBTITLE
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			when ( dvarBool( category_selected ) == 0 );
+			decoration
+		}
+		// OwnerDraw UI_CATEGORYNAME
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			(FIND_GAME_RIGHT_COLUMN_X-110) FIND_GAME_INFO_Y_START 220 FIND_GAME_NAME_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			forecolor		COLOR_BODY_TEXT
+			ownerdraw		UI_CATEGORYNAME
+			textfont		UI_FONT_EXTRABIG
+			textscale		TEXTSIZE_SUBTITLE
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			when ( dvarBool( category_selected ) == 1 );
+			decoration
+		}
+
+		// OwnerDraw UI_PLAYLISTICON
+		itemDef 
+		{
+			name			playlist_icon
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_PLAYLISTICON
+			rect			(FIND_GAME_RIGHT_COLUMN_X-86) (FIND_GAME_ICON_Y_START) FIND_GAME_ICON_SIZE FIND_GAME_ICON_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			visible			when ( dvarBool( category_selected ) == 0 );
+			decoration
+		}
+		// OwnerDraw UI_CATEGORYICON
+		itemDef 
+		{
+			name			category_icon
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_CATEGORYICON
+			rect			(FIND_GAME_RIGHT_COLUMN_X-86) (FIND_GAME_ICON_Y_START) FIND_GAME_ICON_SIZE FIND_GAME_ICON_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			visible			when ( dvarBool( category_selected ) == 1 );
+			decoration
+		}
+
+
+		// OwnerDraw UI_PLAYLISTDESCRIPTION
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			FIND_GAME_RIGHT_COLUMN_LEFT_X FIND_GAME_DESC_Y_START FIND_GAME_DESC_WIDTH 70 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			textfont		CHOICE_TEXTFONT
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			ownerdraw		UI_PLAYLISTDESCRIPTION
+			textalign 		ITEM_ALIGN_TOP_CENTER
+			forecolor		COLOR_BODY_TEXT
+			backcolor		0 0 0 0
+			visible			when ( dvarBool( category_selected ) == 0 );
+			decoration
+			autowrapped
+		}
+		// OwnerDraw UI_CATEGORYDESCRIPTION
+		itemDef
+		{
+			name			category_description
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			FIND_GAME_RIGHT_COLUMN_LEFT_X FIND_GAME_DESC_Y_START FIND_GAME_DESC_WIDTH 70 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			textfont		CHOICE_TEXTFONT
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			ownerdraw		UI_CATEGORYDESCRIPTION
+			textalign 		ITEM_ALIGN_TOP_CENTER
+			forecolor		COLOR_BODY_TEXT
+			backcolor		0 0 0 0
+			visible			when ( dvarBool( category_selected ) == 1 );
+			decoration
+			autowrapped
+		}
+		//Non-wager Match
+		//Displays (total number of people in a particular playlist)/(total number of people in a particular catergory).
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			(FIND_GAME_WIDTH/2-10-200) (FIND_GAME_HEIGHT/2-10-14) 200 14 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			exp				text( locString( "@XBOXLIVE_PLAYLISTUSERCOUNT", PlaylistPlayerCount( dvarint(playlist) ), CategoryPlayerCountForPlaylist( dvarint(category) ) ) ) 
+			textalign 		ITEM_ALIGN_BOTTOM_RIGHT
+			textfont		CHOICE_TEXTFONT
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			forecolor		COLOR_BODY_TEXT
+			backcolor		0 0 0 0
+			visible			when ( dvarBool( category_selected ) == 0 && !dvarBool( xblive_wagermatch ) );
+			decoration
+			autowrapped
+		}
+		//Only wager match
+		//Displays (total number of people in a particular playlist)/(total number of people in a particular catergory).
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			(FIND_GAME_WIDTH/2-10-200) (FIND_GAME_HEIGHT/2-10-14) 200 14 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			exp				text( locString( "@XBOXLIVE_PLAYLISTUSERCOUNT", PlaylistPlayerCount( dvarint(playlist) ), CategoryPlayerCountForPlaylist( dvarint(wagerCategory) ) ) ) 
+			textalign 		ITEM_ALIGN_BOTTOM_RIGHT
+			textfont		CHOICE_TEXTFONT
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			forecolor		COLOR_BODY_TEXT
+			backcolor		0 0 0 0
+			visible			when ( dvarBool( category_selected ) == 0 && dvarBool( xblive_wagermatch ) );
+			decoration
+			autowrapped
+		}
+		//Non-wager matches
+		//Displays (total number of people in a particular category)/(total number of people online globally).
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			(FIND_GAME_WIDTH/2-10-200) (FIND_GAME_HEIGHT/2-10-14) 200 14 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			exp				text( locString( "@XBOXLIVE_CATEGORYUSERCOUNT", CategoryPlayerCountForPlaylist( dvarint(category) ), GetPlayersRegisteredOnline() ) ) 
+			textalign 		ITEM_ALIGN_BOTTOM_RIGHT
+			textfont		CHOICE_TEXTFONT
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			forecolor		COLOR_BODY_TEXT
+			backcolor		0 0 0 0
+			visible			when ( dvarBool( category_selected ) == 1 && !dvarBool( xblive_wagermatch ));
+			decoration
+			autowrapped
+		}
+		//Only wager matches
+		//Displays (total number of people in a particular category)/(total number of people online globally).
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			(FIND_GAME_WIDTH/2-10-200) (FIND_GAME_HEIGHT/2-10-14) 200 14 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			exp				text( locString( "@XBOXLIVE_CATEGORYUSERCOUNT", CategoryPlayerCountForPlaylist( dvarint(wagerCategory) ), GetPlayersRegisteredOnline() ) ) 
+			textalign 		ITEM_ALIGN_BOTTOM_RIGHT
+			textfont		CHOICE_TEXTFONT
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			forecolor		COLOR_BODY_TEXT
+			backcolor		0 0 0 0
+			visible			when ( dvarBool( category_selected ) == 1 && dvarBool( xblive_wagermatch ) );
+			decoration
+			autowrapped
+		}
+
+		// --------------------- categories and playlists -----------------------
+		itemDef 
+		{
+			name			category_list
+			type			ITEM_TYPE_LISTBOX
+			feeder			FEEDER_NEW_CATEGORIES
+			rect			(FIND_GAME_X_START) (FIND_GAME_LIST_Y) (CATEGORY_LISTBOX_WIDTH) 400 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			elementwidth	30
+			elementheight	17
+			noscrollbars
+			noBlinkingHighlight
+			textalignx		12
+			textfont		CHOICE_TEXTFONT
+			textscale		CHOICE_TEXTSIZE
+			forecolor		CHOICE_TEXTCOLOR
+			focusColor		COLOR_TITLE
+			disablecolor	NEW_FRAME_GREY_RGB 1
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			visible			1
+			/*					x		y		w								h		len		horzAlign			vertAlign			*/
+			userarea	3		-1		0		(CATEGORY_LISTBOX_WIDTH+1)		17		32		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE	/* Background */
+								6		1		CATEGORY_LISTBOX_WIDTH			17		32		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE 	/* Name */
+								1		0		16  							17		16		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE 	/* A Button */
+			onfocus 
+			{
+				play CHOICE_FOCUS_SOUND;				
+				setdvar	category_selected "1";
+			}
+			doubleclick
+			{
+				setdvar	category_selected "0";
+				setFocus playlist_list;
+				
+				if( dvarBool( xblive_wagermatch ) )
+				{
+					execNow movefeeder (dvarInt(wagerCategoryPlaylist)) playlist_list;
+				}
+				else
+				{
+					execNow movefeeder (dvarInt(categoryPlaylist)) playlist_list;
+				}
+			}
+			onListboxSelectionChange
+			{
+				play CHOICE_FOCUS_SOUND;
+			}
+			dvarTest		category_selected
+			enableDvar		{ "1" }
+		}
+
+		itemDef 
+		{
+			name			playlist_list
+			type			ITEM_TYPE_LISTBOX
+			feeder			FEEDER_NEW_PLAYLISTS
+			rect			(FIND_GAME_X_START+CATEGORY_LISTBOX_WIDTH+2) (FIND_GAME_LIST_Y) PLAYLIST_LISTBOX_WIDTH 308 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			elementwidth	30
+			elementheight	17
+			noscrollbars
+			noBlinkingHighlight
+			textfont		CHOICE_TEXTFONT
+			textscale		CHOICE_TEXTSIZE
+			forecolor		CHOICE_TEXTCOLOR
+			textalignx		12
+			focusColor		COLOR_TITLE
+			disablecolor	NEW_FRAME_GREY_RGB 1
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			visible			when( dvarInt( category_selected ) == 0 );
+			/*					x		y		w								h		len		horzAlign			vertAlign			*/
+			userarea	3		-1		0		(PLAYLIST_LISTBOX_WIDTH+1)		17		32		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE	/* Background */
+								6		1		PLAYLIST_LISTBOX_WIDTH			17		32		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE 	/* Name */
+								1		0		16  							17		16		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE 	/* A Button */
+			onfocus 		{ play CHOICE_FOCUS_SOUND; execNow "GetPrevPlaylist"; }
+			leaveFocus		{ execNow "SetPrevPlaylist"; }
+			doubleclick
+			{
+				play CHOICE_FOCUS_SOUND;
+				exec "party_timerVisible 0";
+				exec "xstartparty";
+				exec "updategamerprofile";
+				exec "commitdvartoprofiles playlist";
+				open menu_xboxlive_lobby;
+				closeimmediate findgame_category;
+				close self;
+			}
+			execKeyInt BUTTON_B
+			{
+				setdvar	category_selected "1";
+				setFocus category_list;
+			}
+			onListboxSelectionChange
+			{
+				play CHOICE_FOCUS_SOUND;
+			}
+			dvarTest		category_selected
+			enableDvar		{ "0" }
+		}
+		
+		NEW_FRAME_BACK_BUTTON( FIND_GAME_WIDTH, FIND_GAME_HEIGHT )
+	}
+}

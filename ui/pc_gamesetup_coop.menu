@@ -1,0 +1,170 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_X_START			30
+#define CHOICE_Y_START			40
+
+#define CHOICE_SEP_1			4
+#define CHOICE_SEP_2			9
+
+#define CHOICE_GROUP			"pc_gamesetup_coop"
+
+#define STYLE_PC	1
+#include "ui_mp/menustyle.inc"
+
+#undef	CHOICE_SIZE_X
+#define CHOICE_SIZE_X			200
+#include "ui/choices_setup_common.menu"
+
+{
+
+	// Coop Settings //
+	menuDef 
+	{
+		name			"pc_gamesetup_coop"
+		fullscreen		1	
+		rect			0 0 640 480
+		soundloop 		MENU_MUSIC
+		focuscolor		COLOR_FOCUSED
+		style			1
+		border			0
+		onEsc  			{ close self; }
+		onOpen 
+		{ 
+			uiScript loadArenas;	
+			exec "party_editingsettings 1"
+		}
+		onClose
+		{
+			exec "party_editingsettings 0"
+			exec "updategamerprofile";			
+			exec "xupdatepartystate";			
+		}
+		
+		//#include "ui/blurredbg.inc"
+		#include "ui/bg.inc"
+		#undef		BACK_ENABLE
+		#define 	BACK_ENABLE		0
+		#include "ui/navcontrols.inc"
+
+		#define LOCAL_GAMERULES_ACTION \
+			uiScript openMenuOnDvar "ui_gametype" zom	"settings_quick_zom"; \
+			uiScript openMenuOnDvar "ui_gametype" vs	"settings_quick_vs"; \
+			uiScript openMenuOnDvar "ui_gametype" so	"settings_quick_so"; 
+	
+		CHOICE_MENU_TITLE( "@MENU_COOP_SERVER_SETUP" )
+		
+		// server settings =========================================
+		CHOICE_DVARLIST_VIS( 		1, "@MENU_GAME_TYPE",	"",				ITEM_TYPE_OD_TEXT_BUTTON,	ownerdraw UI_NETGAMETYPE textaligny 20,	;, 1 )
+		CHOICE_DVAREDIT_VIS( 		2, "@MENU_SERVER_NAME",	"sv_hostname",	20,							20,										;, 1 )
+		CHOICE_DVAREDIT_VIS( 		3, "@MENU_PASSWORD1",	"g_password",	12,							12,										;, 1 )
+		
+		CHOICE_SEPARATOR( CHOICE_SEP_1 )
+		
+		CHOICE_DVAREDIT_NUMERIC( 	4, "@MENU_MAXIMUM_PLAYERS",					"sv_maxclients",	3, ; )
+		CHOICE_DVAREDIT_NUMERIC( 	5, "@MENU_MINIMUM_PING",					"sv_minping",		4, ; )
+		CHOICE_DVAREDIT_NUMERIC( 	6, "@MENU_MAXIMUM_PING",					"sv_maxping",		4, ; )
+		CHOICE_DVARFLOATLIST( 		7, "@MENU_FRIENDLY_FIRE",					"scr_friendlyfire", { "@MENU_DISABLED" 0 "@MENU_ENABLED" 1 "@MENU_REFLECT" 2 "@MENU_SHARED" 3 }, ; )	
+		CHOICE_DVARYESNO( 			8, "@MENU_VOICECHATCOLON",					"sv_voice",			; )
+		CHOICE_DVARYESNO( 			9, "@MPUI_PUNKBUSTERWITHCOLONANDTWOSPACES",	"sv_punkbuster",	; )				
+
+		CHOICE_SEPARATOR( CHOICE_SEP_2 )
+
+		FRAME_CHOICE_BUTTON_VIS_EX(	10, "@MENU_GAME_TYPE_SETTINGS", LOCAL_GAMERULES_ACTION, 1, ; )
+			
+		// map selection ===========================================
+		
+		itemDef 
+		{
+			name			maplist
+			type			ITEM_TYPE_LISTBOX
+			rect			-260 246 200 160 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP //404 271 192 130
+			style			WINDOW_STYLE_FILLED
+			elementwidth 	120
+			elementheight 	22
+			origin			0 0
+			textfont		UI_FONT_NORMAL
+			textscale		CHOICE_TEXTSIZE
+			elementtype		LISTBOX_TEXT
+			feeder			FEEDER_ALLMAPS
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalignx 		6
+			textaligny 		0
+			outlinecolor	1 1 1 0.2
+			forecolor 		CHOICE_TEXTCOLOR
+			focusColor		CHOICE_TEXTCOLOR
+			disableColor	CHOICE_TEXTCOLOR
+			backcolor 		0 0 0 0
+			border			1
+			bordersize		1
+			bordercolor		1 1 1 0.15
+			visible			1
+			columns			1 2 190 25
+			mouseEnter 		{ play CHOICE_FOCUS_SOUND; setitemcolor maplist bordercolor 1 1 1 0.55 }
+			mouseExit 		{ setitemcolor maplist bordercolor 1 1 1 0.15 }
+		}		
+
+		itemDef 
+		{
+			name			mappreview
+			type			ITEM_TYPE_OWNERDRAW
+			style			0
+			ownerdraw		UI_MAPPREVIEW
+			rect			-260 96 200 135 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
+			border			0
+			bordercolor		.5 .5 .5 .5
+			origin			0 0
+			visible			1
+			decoration
+		}
+		
+		// buttons =================================================
+
+		itemDef {
+			name			back
+			type			ITEM_TYPE_BUTTON
+			text			"@MENU_BACK"
+			style			WINDOW_STYLE_FILLED
+			forecolor		TEXTBUTTON_COLOR
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			rect			-250 -26 40 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			textfont		UI_FONT_NORMAL
+			textalign		ITEM_ALIGN_LEFT
+			textscale		TEXTSIZE_SMALL
+			textaligny		18
+			visible			1
+			mouseEnter		{ play CHOICE_FOCUS_SOUND; }
+			action 
+			{
+				play CHOICE_FOCUS_SOUND;
+				exec "xupdatepartyplaylist";
+				close self;
+			}	
+		}    
+
+		itemDef 
+		{
+			name			accept
+			type			ITEM_TYPE_BUTTON
+			text			"@MENU_OK"
+			textfont		UI_FONT_NORMAL
+			style			WINDOW_STYLE_FILLED	
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			rect			220 -26 40 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			textalign		ITEM_ALIGN_LEFT
+			textscale		TEXTSIZE_SMALL
+			textalignx		0
+			textaligny		18
+			forecolor		TEXTBUTTON_COLOR
+			visible			1
+			mouseEnter		{ play CHOICE_FOCUS_SOUND; }
+			action 
+			{
+				play CHOICE_FOCUS_SOUND;
+				uiScript acceptServerSettings;
+				close pc_gamesetup_coop;
+			}	
+		}
+	}
+}
+

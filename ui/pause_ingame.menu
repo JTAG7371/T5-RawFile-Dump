@@ -1,0 +1,212 @@
+#define SPLITSCREEN_ENABLED				1
+#define SPLITSCREEN_MULTIPLIER			2
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/frame.inc"
+
+#define CHOICE_GROUP					"pausemenu"
+
+#include "ui/framestyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#undef  CHOICE_X_START	
+#define CHOICE_X_START					30
+
+#undef  CHOICE_Y_START	
+#define CHOICE_Y_START					50//94//130
+
+#undef CHOICE_HORIZONTAL_ALIGN
+#define CHOICE_HORIZONTAL_ALIGN			HORIZONTAL_ALIGN_LEFT
+
+#undef CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN			VERTICAL_ALIGN_TOP
+
+#undef MEDIUM_GRAY
+#define MEDIUM_GRAY						0.4 0.4 0.4 0.5
+
+#define PAUSESCREEN_MAP_RECT			-150 230 130 120 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP //415 280 130 120 0 0
+#define PAUSESCREEN_ZOMBIE_MAP_RECT		0 60 320 320 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+#define PLATFORM_OFFSET					(-20)
+
+#define PAUSESCREEN_OPTION_SIZE			(BUTTON_BG_WIDTH-15) 30
+
+
+{
+	// Pause menu
+	// Online Splitscreen Pause menu
+	menuDef
+	{
+		name			"pausedmenu_splitscreen"
+		fullScreen		0
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		allowedBinding	"pause"
+
+		onOpen
+		{
+			//exec "Updatedvarsfromprofile";
+#ifdef PS3
+			hide "controls_buttons_set10";
+#else
+			hide "controls_buttons_set6";
+#endif
+			if ( dvarBool(#"zombietron") )
+			{
+#ifdef PS3
+				show "controls_buttons_set10";
+#else
+				show "controls_buttons_set6";
+#endif
+			}
+
+			showMenu "pausedbkgnd"
+			showMenu "zombietron_pausedbkgnd"
+			showMenu "objectiveinfo"
+			showMenu "overheadmap"
+						
+			focusfirst;
+			nosavehide "saveandquit"
+			saveAvailableHide "quit";
+//			profilehide "quitnoprofile"
+		
+		}
+		onClose
+		{
+			hideMenu "pausedbkgnd"
+			hideMenu "zombietron_pausedbkgnd"
+			hideMenu "objectiveinfo"
+			hideMenu "overheadmap"
+		}
+		onEsc
+		{
+			close pausedmenu_splitscreen;
+		}
+
+
+		itemDef
+		{
+			name			"pausedMsg"
+			type			ITEM_TYPE_TEXT
+			text			"@MENU_PAUSED_CAPS"
+			rect			CHOICE_X_START BUTTON_BG_Y_START PAUSESCREEN_OPTION_SIZE HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			forecolor		COLOR_TITLE
+			textscale		TEXTSIZE_TITLE
+			textfont		UI_FONT_EXTRABIG
+			textalign		ITEM_ALIGN_TOP_LEFT
+			visible			when( !dvarbool( systemlink ) && !dvarbool( onlinegame ) )
+			decoration
+		}
+
+#define SETUP_ACTION_ZOMBIEMODE_QUIT \
+			exec "disconnect";
+
+#define SETUP_ACTION_MENU_CONTROLS \
+			open "ingame_controls"; 
+
+#define SETUP_ACTION_MENU_OPTIONS \
+			open "ingameoptions";	\
+			close self;
+
+#define NOT_CUSTOM_MATCH \
+		( !dvarbool( systemlink ) && !dvarbool( xblive_privatematch ) )
+
+//NEW DEFINES
+#define IS_CAMPAIGN				( !dvarbool( zombiemode ) )
+#define IS_ZOMBIES				( dvarbool( zombiemode ) )
+#define IS_ZOMBIES_RESTART		( LOCAL_MATCH && ( ( SPLITSCREEN_HOST && NOT_CUSTOM_MATCH ) || ( dvarBool( sv_running ) && CUSTOM_MATCH && !dvarbool( splitscreen ) ) ) )
+#define IS_NOT_ZOMBIES_RESTART	( ! ( LOCAL_MATCH && ( ( SPLITSCREEN_HOST && NOT_CUSTOM_MATCH ) || ( dvarBool( sv_running ) && CUSTOM_MATCH && !dvarbool( splitscreen ) ) ) ) )
+
+#define LOCAL_MATCH				( !dvarBool( onlinegame ) && !dvarBool( systemlinkparty ) )
+#define SOLO					( !dvarBool( splitscreen ) && !dvarBool( onlinegame ) && !dvarBool( systemlinkparty ) )
+#define NOT_SOLO				( dvarBool(splitscreen) || dvarBool( onlinegame ) || dvarBool( systemlinkparty ) )
+#define CUSTOM_MATCH			( dvarbool( systemlink ) || dvarbool( xblive_privatematch ) )
+#define XBOX_LIVE_PUBLIC		( dvarbool( onlinegame ) && !dvarbool( xblive_privatematch ) )
+#define SPLITSCREEN_HOST		( dvarbool( splitscreen ) && issplitscreenhost() == 1 )
+#define NOT_SPLITSCREEN_HOST	( dvarbool( splitscreen ) && issplitscreenhost() != 1 )
+#define XBOX_LIVE_PRIVATE		( dvarbool( onlinegame ) && dvarbool( xblive_privatematch ) )
+
+#ifdef CONSOLE
+		#define SYSTEMLINKPARTY_LEAVE_QUIT_VIS			( !dvarBool( onlinegame ) && dvarbool( systemlinkparty ) && !dvarbool( sv_running ) )
+#else //#ifdef CONSOLE
+		#define SYSTEMLINKPARTY_LEAVE_QUIT_VIS			( dvarBool( onlinegame ) && dvarbool( systemlinkparty ) && !dvarbool( sv_running ) )
+#endif //#ifdef CONSOLE
+
+#define SETUP_ACTION_ZOMBIE_QUIT							\
+		/*"online_leave_quit"*/								\
+		if(dvarbool( onlinegame ) && !dvarbool( systemlinkparty ) && !dvarbool( sv_running ) && (!InPrivateParty() || PrivatePartyHost() || !PrivatePartyHostInLobby()) )		\
+		{													\
+			if( dvarBool( zombietron ) )					\
+			{												\
+				open "popup_leavegame_coop";				\
+			}												\
+			else											\
+			{												\
+				open "popup_leavegame_coop_splitscreen";	\
+			}												\
+		}													\
+		/*"online_leave_quit"*/								\
+		elseif(dvarbool( onlinegame ) && !dvarbool( systemlinkparty ) && !dvarbool( sv_running ) && (InPrivateParty() && !PrivatePartyHost() && PrivatePartyHostInLobby()) )	\
+		{													\
+			open "popup_leavegameandparty_coop";			\
+		}													\
+		/*"systemlinkparty_leave_quit"*/					\
+		elseif( SYSTEMLINKPARTY_LEAVE_QUIT_VIS )			\
+		{													\
+			if( dvarBool( zombietron ) )					\
+			{												\
+				open "popup_coop_client_quit";				\
+			}												\
+			else											\
+			{												\
+				open "popup_coop_client_quit_splitscreen";	\
+			}												\
+		}													\
+		/*""quit_coop_host""*/								\
+		elseif( dvarbool( sv_running ) &&  ( dvarBool( splitscreen ) || dvarBool( systemlinkparty ) || XBOX_LIVE_PRIVATE ) )													\
+		{													\
+			if( dvarBool( zombietron ) )					\
+			{												\
+				open "popup_coop_host_quit";				\
+			}												\
+			else											\
+			{												\
+				open "popup_coop_host_quit_splitscreen";	\
+			}												\
+		}													\
+		/*"quit_coop_host"*/								\
+		elseif( dvarbool( sv_running ) &&  XBOX_LIVE_PUBLIC && !dvarbool( splitscreen ) && !dvarbool( systemlinkparty ) )														\
+		{													\
+			open "popup_coop_host_quit_clone";				\
+		}													\
+		/*"quit_solo"*/										\
+		elseif( dvarBool( zombiemode ) && dvarbool( sv_running ) && SOLO )																										\
+		{													\
+			open "popup_nosave_quit";						\
+		}
+
+		FRAME_CHOICE_BUTTON_VIS_EX(	1, "@MENU_ZOMBIE_RESUMEGAME_CAPS",
+										close pausedmenu_splitscreen;,
+										( IS_ZOMBIES ), ; )
+
+		FRAME_CHOICE_BUTTON_VIS_EX(	2, "@MENU_SETTINGS_CAPS",
+										SETUP_ACTION_MENU_OPTIONS,
+										( IS_ZOMBIES && dvarBool( ui_allow_controlschange ) ), ; )
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX(	2,
+											"@MENU_SETTINGS_CAPS",
+											CLEARHINT, CLEARHINT,
+											IS_ZOMBIES && !dvarBool( ui_allow_controlschange ), ; )
+
+		FRAME_CHOICE_BUTTON_VIS_EX(	3, "@MENU_RESTART_LEVEL_CAPS",
+										open "popup_restart_warning",
+										IS_ZOMBIES && ( IS_ZOMBIES_RESTART || SOLO ), ; )
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX(	3,
+											"@MENU_RESTART_LEVEL_CAPS",
+											CLEARHINT, CLEARHINT,
+											IS_ZOMBIES && IS_NOT_ZOMBIES_RESTART && NOT_SOLO, ; )
+
+		FRAME_CHOICE_BUTTON_VIS_EX(	4, "@PLATFORM_QUIT_CAPS",
+										SETUP_ACTION_ZOMBIE_QUIT,
+										( IS_ZOMBIES ), ; )
+
+	}

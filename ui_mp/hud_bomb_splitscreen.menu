@@ -1,0 +1,263 @@
+// CONSOLE HUD - MP
+
+#define SPLITSCREEN_ENABLED	1
+
+#include "ui/menudef.h"
+#include "ui/framestyle.inc"
+#include "ui_mp/hud_gametypes.inc"
+
+{
+	menuDef
+	{
+		name			"scorebars2_ss"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible 		1
+		visibilityBits	bits( BIT_BOMB_TIMER !BIT_IN_KILLCAM !BIT_UI_ACTIVE !BIT_DEMO_ALL_GAME_HUD_HIDDEN !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC )
+		
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			(60*SPLITSCREEN_MULTIPLIER) (-112*SPLITSCREEN_MULTIPLIER) (48*SPLITSCREEN_MULTIPLIER) (48*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			origin			(5*SPLITSCREEN_MULTIPLIER) (6*SPLITSCREEN_MULTIPLIER)
+			background		"hud_suitcase_bomb"
+			visible			1
+			forecolor		1 1 1 0.25
+			decoration
+		}
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			(68*SPLITSCREEN_MULTIPLIER) (-71*SPLITSCREEN_MULTIPLIER) 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			origin			(6*SPLITSCREEN_MULTIPLIER) 0
+			exp text		( secondsAsCountdown( timeLeft(), 1 ) );
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		1 0.5 0 1
+			visible 		1
+			decoration 
+		}
+	}
+	
+	menuDef
+	{
+		name			"hud_bomb_timer_a_ss"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible 		1
+		visibilityBits	bits( BIT_BOMB_TIMER_A !BIT_IN_KILLCAM !BIT_UI_ACTIVE !BIT_DEMO_ALL_GAME_HUD_HIDDEN !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC )
+
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			(110*SPLITSCREEN_MULTIPLIER) (25*SPLITSCREEN_MULTIPLIER) 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+			origin			(6*SPLITSCREEN_MULTIPLIER) 0
+			exp text		( "A: "+secondsAsCountdown( (getBombTime(0) - getTime()), 1 ) );
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		1 0.5 0 1
+			visible 		1
+			decoration
+			
+			state
+			{
+				name		"spike_cam_on"
+				rect		(161*SPLITSCREEN_MULTIPLIER) (25*SPLITSCREEN_MULTIPLIER) 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+			}
+		}
+	}
+	
+	menuDef
+	{
+		name			"hud_bomb_timer_b_ss"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible 		1
+		visibilityBits	bits( BIT_BOMB_TIMER_B !BIT_IN_KILLCAM !BIT_UI_ACTIVE !BIT_DEMO_ALL_GAME_HUD_HIDDEN !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC )
+		
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			(110*SPLITSCREEN_MULTIPLIER) (43*SPLITSCREEN_MULTIPLIER) 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+			origin			(6*SPLITSCREEN_MULTIPLIER) 0
+			exp text		( "B: "+secondsAsCountdown( (getBombTime(1) - getTime()), 1 ) );
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		1 0.5 0 1
+			visible 		1
+			decoration
+			
+			state
+			{
+				name		"spike_cam_on"
+				rect		(161*SPLITSCREEN_MULTIPLIER) (43*SPLITSCREEN_MULTIPLIER) 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+			}
+		}
+	}
+
+	
+	#define STATUS_START_X		(84*SPLITSCREEN_MULTIPLIER)
+	#define STATUS_START_Y		(-44*SPLITSCREEN_MULTIPLIER)
+	#define SCORE_COLOR			0.74 0.84 0.86
+	#define STATUS_FONT			UI_FONT_EXTRABIG
+	#define STATUS_TEXT_SCALE	TEXTSIZE_DEFAULT
+	
+	menuDef
+	{
+		name			"scorebar_game_status_demolition_timer_ss"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible 		when ( ( (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_AXIS") ) );
+		visibilityBits	bits( BIT_HUD_VISIBLE HUD_VISIBILITY BIT_BOMB_TIMER !BIT_DEMO_CAMERA_MODE_MOVIECAM !BIT_DEMO_ALL_GAME_HUD_HIDDEN !BIT_IN_KILLCAM !BIT_SPECTATING_CLIENT !BIT_SCOREBOARD_OPEN !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC )
+		
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			STATUS_START_X STATUS_START_Y 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			text			"@MENU_WINNING_CAPS"
+			textfont		STATUS_FONT
+			textscale		STATUS_TEXT_SCALE
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		NEW_FRAME_GREEN_RGB 1
+			visible 		when( team( score ) > otherteam( score ) );
+			decoration 
+		}
+
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			STATUS_START_X STATUS_START_Y 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			text			"@MENU_LOSING_CAPS"
+			textfont		STATUS_FONT
+			textscale		STATUS_TEXT_SCALE
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		NEW_FRAME_RED_RGB 1
+			visible 		when( team( score ) < otherteam( score ) )
+			decoration 
+		}
+
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			STATUS_START_X STATUS_START_Y 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			text			"@MENU_TIED_CAPS"
+			textfont		STATUS_FONT
+			textscale		STATUS_TEXT_SCALE
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		NEW_FRAME_YELLOW_RGB 1
+			visible 		when( team( score ) == otherteam( score ) )
+			decoration 
+		}
+	}
+		
+	menuDef
+	{
+		name			"scorebar_game_status_demolition_timer_a_ss"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible 		when ( ( (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_AXIS") ) );
+		visibilityBits	bits( BIT_HUD_VISIBLE BIT_BOMB_TIMER_B !BIT_DEMO_CAMERA_MODE_MOVIECAM !BIT_DEMO_ALL_GAME_HUD_HIDDEN !BIT_IN_KILLCAM !BIT_SPECTATING_CLIENT HUD_VISIBILITY !BIT_SCOREBOARD_OPEN !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC )
+		
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			STATUS_START_X STATUS_START_Y 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			text			"@MENU_WINNING_CAPS"
+			textfont		STATUS_FONT
+			textscale		STATUS_TEXT_SCALE
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		NEW_FRAME_GREEN_RGB 1
+			visible 		when( team( score ) > otherteam( score ) );
+			decoration 
+		}
+
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			STATUS_START_X STATUS_START_Y 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			text			"@MENU_LOSING_CAPS"
+			textfont		STATUS_FONT
+			textscale		STATUS_TEXT_SCALE
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		NEW_FRAME_RED_RGB 1
+			visible 		when( team( score ) < otherteam( score ) )
+			decoration 
+		}
+
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			STATUS_START_X STATUS_START_Y 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			text			"@MENU_TIED_CAPS"
+			textfont		STATUS_FONT
+			textscale		STATUS_TEXT_SCALE
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		NEW_FRAME_YELLOW_RGB 1
+			visible 		when( team( score ) == otherteam( score ) )
+			decoration 
+		}
+	}
+
+	menuDef
+	{
+		name			"scorebar_game_status_demolition_timer_b_ss"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible 		when ( ( (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_AXIS") ) );
+		visibilityBits	bits( BIT_HUD_VISIBLE HUD_VISIBILITY BIT_BOMB_TIMER_B !BIT_DEMO_CAMERA_MODE_MOVIECAM !BIT_DEMO_ALL_GAME_HUD_HIDDEN !BIT_IN_KILLCAM !BIT_SPECTATING_CLIENT !BIT_SCOREBOARD_OPEN !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC )
+		
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			STATUS_START_X STATUS_START_Y 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			text			"@MENU_WINNING_CAPS"
+			textfont		STATUS_FONT
+			textscale		STATUS_TEXT_SCALE
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		NEW_FRAME_GREEN_RGB 1
+			visible 		when( team( score ) > otherteam( score ) );
+			decoration 
+		}
+
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			STATUS_START_X STATUS_START_Y 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			text			"@MENU_LOSING_CAPS"
+			textfont		STATUS_FONT
+			textscale		STATUS_TEXT_SCALE
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		NEW_FRAME_RED_RGB 1
+			visible 		when( team( score ) < otherteam( score ) )
+			decoration 
+		}
+
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			STATUS_START_X STATUS_START_Y 2 2 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			text			"@MENU_TIED_CAPS"
+			textfont		STATUS_FONT
+			textscale		STATUS_TEXT_SCALE
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		NEW_FRAME_YELLOW_RGB 1
+			visible 		when( team( score ) == otherteam( score ) )
+			decoration 
+		}
+	}
+}

@@ -1,0 +1,2111 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/custom_mode.inc"
+
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/item_animate.inc"
+#include "ui_mp/grid_common.inc"
+#include "ui_mp/item_listbox.inc"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+
+#define CUSTOM_GAME_HEIGHT NEW_FRAME_DEFAULT_HEIGHT
+#define CUSTOM_GAME_WIDTH ( CUSTOM_GAME_HEIGHT * FRAME_ASPECT_RATIO )
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X				245
+
+#undef CHOICE_SIDEITEM_SPACING
+#define CHOICE_SIDEITEM_SPACING -( CHOICE_SIDEITEM_SIZE_X + CHOICE_SIZE_X + 20 )
+
+#undef	NEW_FRAME_BUTTON_NAME
+#define NEW_FRAME_BUTTON_NAME "custom_specialty_editor_"
+
+#undef CHOICE_BUTTON_NAME
+#define CHOICE_BUTTON_NAME "custom_specialty_editor_"
+
+#define LIST_X_START	 			(NEW_FRAME_CHOICE_X_START-3)
+#define LIST_Y_START	 			(NEW_FRAME_CHOICE_Y_START-4)
+#define LIST_HEIGHT					250
+#define LIST_WIDTH					245
+#define	LIST_ELEM_HGT				(17)
+
+#undef CHOICE_X_START
+#undef CHOICE_Y_START
+#define CHOICE_X_START	 			NEW_FRAME_CHOICE_X_START
+#define CHOICE_Y_START	 			LIST_Y_START
+
+#define BUTTONS_X							NEW_FRAME_CHOICE_X_START
+#define PERK_SLOT1_BUTTON_Y					(NEW_FRAME_CHOICE_Y_START-3)
+#define PERK_EDITOR_BUTTON_HEADER_HEIGHT	19
+#define PERK_EDITOR_BUTTONS_WIDTH			245
+#define PERK_EDITOR_BUTTON_HEADER_COLOR		0.69 0.69 0.69 0.75 // TODO: MAP THIS COLOR TO THE ONE PRAVIN IS ADDING
+#define PERK_EDITOR_BUTTON_SPACING			(PERK_EDITOR_BUTTON_HEADER_HEIGHT+NEW_FRAME_BUTTON_HEIGHT+20)
+#define PERK_EDITOR_BUTTONS_FADE_TIME		90
+#define PERK_EDITOR_LIST_ANIM_TIME			90
+#define PERK_EDITOR_LIST_HEIGHT_1			250
+#define PERK_EDITOR_LIST_HEIGHT_2			190
+#define PERK_EDITOR_LIST_HEIGHT_3			140
+#define INTERIM_ANIM_TIME					30
+
+#define PERK_EDITOR_RIGHT_X					10
+#define PERK_EDITOR_HEADER_HEIGHT			15
+#define PERK_EDITOR_DESC_Y					(PERK_SLOT1_BUTTON_Y+PERK_EDITOR_BUTTON_HEADER_HEIGHT+60)
+#define PERK_EDITOR_REWARD_Y				(PERK_EDITOR_DESC_Y+50)
+#define PERK_EDITOR_EXPIRATION_Y			(PERK_EDITOR_REWARD_Y+50)
+#define PERK_EDITOR_PROGRESS_Y				(PERK_EDITOR_EXPIRATION_Y+40)
+
+#define PERK_EDITOR_SLOT_MOVE( numberArg, prevNumber, nextNumber )	\
+		execKeyInt APAD_UP										\
+		{														\
+			setfocus NEW_FRAME_BUTTON_NAME#prevNumber			\
+		}														\
+		execKeyInt DPAD_UP										\
+		{														\
+			setfocus NEW_FRAME_BUTTON_NAME#prevNumber			\
+		}														\
+		execKeyInt APAD_DOWN									\
+		{														\
+			setfocus NEW_FRAME_BUTTON_NAME#nextNumber			\
+		}														\
+		execKeyInt DPAD_DOWN									\
+		{														\
+			setfocus NEW_FRAME_BUTTON_NAME#nextNumber			\
+		}
+		
+#define PERK_ACTION( index ) \
+		execnow "set ui_inside_popup specialties_"#index; \
+		execnow "set selected_loadout_slot specialty"#index; \
+		execnow buildItemListForSlotName (dvarString( selected_loadout_slot ));	\
+		execnow "set list_perks_in_slot "#index; \
+		execNow "movefeeder top perk_list_"#index; \
+		setfocus "perk_list_"#index;
+			
+#define PERK_EDITOR_BUTTON_ACTION( slotNumber ) \
+		PERK_ACTION( slotNumber ) \
+		setdvar list_perks_in_slot slotNumber; \
+		execnow ui_animate custom_specialty_editor anim_controller OpenDropDownList 0;	
+
+#ifdef PC
+	#define UI_HL_TYPE ui_perk_slot_hl
+#else // #ifdef PC
+	#define UI_HL_TYPE ui_highlight
+#endif // #else #ifdef PC
+
+#ifdef PC
+	#define PERK_EDITOR_BUTTON_VISIBLE( slotNumber ) \
+		( dvarInt( list_perks_in_slot ) == 0 || slotNumber <= dvarInt( list_perks_in_slot ) )
+		
+	#define PERK_EDITOR_PLATFORM_BUTTON( slotNumber, navArg, textArg, visArg ) \
+		NEW_FRAME_BUTTON_CUSTOM_HIGHLIGHT( \
+			slotNumber, BUTTONS_X (PERK_SLOT1_BUTTON_Y+PERK_EDITOR_BUTTON_SPACING*(slotNumber-1)+PERK_EDITOR_BUTTON_HEADER_HEIGHT) PERK_EDITOR_BUTTONS_WIDTH NEW_FRAME_BUTTON_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	\
+			locString( textArg, slotNumber ), \
+			PERK_EDITOR_BUTTON_ACTION( slotNumber ), \
+			execNow set ui_hint_desc "@CUSTOM_PERK_SLOT_HINT"; setLocalVarInt ui_perk_slot_hl slotNumber, \
+			CLEAR_CHOICE_DESC, \
+			PERK_EDITOR_BUTTON_VISIBLE( slotNumber ) && visArg, ( localVarInt( ui_perk_slot_hl ) == slotNumber ), navArg, ; )
+#else // #ifdef PC
+	#define PERK_EDITOR_PLATFORM_BUTTON( slotNumber, navArg, textArg, visArg ) \
+		NEW_FRAME_BUTTON( \
+			slotNumber, BUTTONS_X (PERK_SLOT1_BUTTON_Y+PERK_EDITOR_BUTTON_SPACING*(slotNumber-1)+PERK_EDITOR_BUTTON_HEADER_HEIGHT) PERK_EDITOR_BUTTONS_WIDTH NEW_FRAME_BUTTON_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	\
+			locString( textArg, slotNumber ), \
+			PERK_EDITOR_BUTTON_ACTION( slotNumber ), \
+			execNow set ui_hint_desc "@CUSTOM_PERK_SLOT_HINT";, \
+			CLEAR_CHOICE_DESC, \
+			visArg, navArg, ; )
+#endif // #else #ifdef PC
+
+#define PERK_EDITOR_BUTTON_SINGLE( slotNumber, navArg, headerArg, textArg, visArg ) \
+		PREPROC_TEXT_DRAW_VIS_EX( \
+			BUTTONS_X (PERK_SLOT1_BUTTON_Y+PERK_EDITOR_BUTTON_SPACING*(slotNumber-1)) PERK_EDITOR_BUTTONS_WIDTH PERK_EDITOR_BUTTON_HEADER_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, \
+			locString( headerArg, slotNumber ), \
+			TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_LEFT, PERK_EDITOR_BUTTON_HEADER_COLOR, \
+			when( visArg ), \
+			name NEW_FRAME_BUTTON_NAME#slotNumber; NEW_FRAME_TRANSPARENT_STATE( 1 1 1 ) ) \
+		PERK_EDITOR_PLATFORM_BUTTON( slotNumber, navArg, textArg, visArg )
+			
+#define PERK_EDITOR_BUTTON( slotNumber, navArg )																																						\
+		PERK_EDITOR_BUTTON_SINGLE( slotNumber, navArg, "@CUSTOM_PERK_SLOT", "@CUSTOM_PERK_EDIT", !dvarBool( custom_perks_allow_pro ) ) \
+		PERK_EDITOR_BUTTON_SINGLE( slotNumber, navArg, "@CUSTOM_PERK_PRO_SLOT", "@CUSTOM_PERK_PRO_EDIT", dvarBool( custom_perks_allow_pro ) )
+
+#ifdef PC
+	#define PERK_EDITOR_LIST_MODAL modal
+#else // #ifdef PC
+	#define PERK_EDITOR_LIST_MODAL
+#endif // #else #ifdef PC
+
+#define PERK_EDITOR_LISTBOX( numberArg, heightArg ) \
+		itemDef\
+		{ \
+			name						"perk_list_"#numberArg \
+			type						ITEM_TYPE_LISTBOX \
+			feeder						FEEDER_CUSTOM_PERKSINSLOT \
+			rect						BUTTONS_X (PERK_SLOT1_BUTTON_Y+PERK_EDITOR_BUTTON_SPACING*(numberArg-1)+PERK_EDITOR_BUTTON_HEADER_HEIGHT+NEW_FRAME_BUTTON_HEIGHT) PERK_EDITOR_BUTTONS_WIDTH 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			origin						0 0 \
+			elementwidth				30 \
+			elementheight				17 \
+			elementtype					LISTBOX_TEXT \
+			textstyle					ITEM_TEXTSTYLE_NORMAL \
+			textfont					UI_FONT_NORMAL \
+			textscale					TEXTSIZE_DEFAULT \
+			textalignx					12 \
+			forecolor					1 1 1 1 \
+			focusColor					1 1 1 1 \
+			disableColor				1 1 1 1 \
+			PERK_EDITOR_LIST_MODAL \
+			noBlinkingHighlight \
+			noscrollbars \
+			\/*				x					y					w				h					len	horzAlign		vertAlign*/
+			userarea	7	-1					0					(LIST_WIDTH+1)	LIST_ELEM_HGT		32	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE \	/* Background */
+							10					0					LIST_WIDTH		LIST_ELEM_HGT		32	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE \	/* Name */
+							(LIST_WIDTH-18)		2					14				14					0	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE \	/* Custom Icon */
+							(LIST_WIDTH-60)		0					50				LIST_ELEM_HGT		24	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE \	/* Cost */
+							(LIST_WIDTH)		(17/2-LOCK_SIZE/2)	LOCK_SIZE		LOCK_SIZE			24	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE \	/* Lock */
+							(LIST_WIDTH-100)	0					50				LIST_ELEM_HGT		24	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE \	/* Count */
+							1					0					16 				LIST_ELEM_HGT		16	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE \	/* Extra Image */
+			visible		when( dvarInt( list_perks_in_slot ) == numberArg ); \
+			onFocus \
+			{ \
+				setLocalVarInt UI_HL_TYPE -1; \
+				setLocalVarString ui_choicegroup CHOICE_GROUP; \
+			} \
+			leaveFocus \
+			{ \
+			} \
+			onListboxSelectionChange \
+			{ \
+				play CHOICE_FOCUS_SOUND; \
+			} \
+			doubleclick \
+			{ \
+				execNow set ui_choice_desc ""; \
+				execNow openMenu ( "popup_" + GetCurrentItemName() ); \
+			} \
+			execKeyInt BUTTON_B \
+			{ \
+				execnow ui_animate custom_specialty_editor anim_controller CloseDropDownList 0; \
+			} \
+			state \
+			{ \
+				name	Open \
+				rect	BUTTONS_X (PERK_SLOT1_BUTTON_Y+PERK_EDITOR_BUTTON_SPACING*(numberArg-1)+PERK_EDITOR_BUTTON_HEADER_HEIGHT+NEW_FRAME_BUTTON_HEIGHT) PERK_EDITOR_BUTTONS_WIDTH heightArg HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			} \
+		}
+
+#define CHOICE_TAB_TEXTSIZE		TEXTSIZE_DEFAULT
+#define TAB_1_TEXT				(locString( "@CUSTOM_PERKS_TAB_EDIT_BASIC" ))
+#define TAB_2_TEXT				(locString( "@CUSTOM_PERKS_TAB_EDIT_PRO"))
+
+#define TAB_BG_PAD				5
+#define TAB_1_WIDTH				( getTextWidth( TAB_1_TEXT, CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (TAB_BG_PAD*2) )
+#define TAB_2_WIDTH				( getTextWidth( TAB_2_TEXT, CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (TAB_BG_PAD*2) )
+#define TAB_HEIGHT				15
+
+#define PERK_EDITOR_LIST_TAB_1_X	7
+#define PERK_EDITOR_LIST_TAB_2_X	( PERK_EDITOR_LIST_TAB_1_X + TAB_1_WIDTH )
+
+#define PERK_EDITOR_LIST_TAB_Y		( ( -CUSTOM_GAME_HEIGHT / 2 ) + NEW_FRAME_HEADER_HEIGHT - TAB_HEIGHT )
+
+#define PERK_EDITOR_LIST_TAB_BG( px, pw, visArg )																	\
+		itemDef																								\
+		{																									\
+			style           WINDOW_STYLE_SHADER_FRAMED														\
+			frame           16 0.2 FRAME_OPEN_BOTTOM														\
+			rect            0 PERK_EDITOR_LIST_TAB_Y 0 TAB_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER	\
+			exp				rect X( ( -CUSTOM_GAME_WIDTH / 2 + px ) )										\
+			exp				rect W(	pw )																	\
+			background      "menu_mp_tab_frame_inner"														\
+			forecolor       1 1 1 1																			\
+			visible         when( visArg )																	\
+			decoration																						\
+		}
+
+#define PERK_EDITOR_TAB_HEADERS																				\
+		/* highlighted tab background 1 */																	\
+		PERK_EDITOR_LIST_TAB_BG( PERK_EDITOR_LIST_TAB_1_X, TAB_1_WIDTH, !dvarBool( custom_perks_allow_pro ) )\
+		/* highlighted header 1 */																			\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -CUSTOM_GAME_WIDTH / 2 + PERK_EDITOR_LIST_TAB_1_X ),				\
+										PERK_EDITOR_LIST_TAB_Y,												\
+										TAB_1_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_1_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_ORANGE_RGB 1,												\
+										when( !dvarBool( custom_perks_allow_pro ) ), ; )					\
+		/* non highlighted header 1 */																		\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -CUSTOM_GAME_WIDTH / 2 + PERK_EDITOR_LIST_TAB_1_X ),				\
+										PERK_EDITOR_LIST_TAB_Y,												\
+										TAB_1_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_1_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_GRAY_TEXT_COLOR,											\
+										when( dvarBool( custom_perks_allow_pro ) ), ; )						\
+		/* highlighted tab background 2 */																	\
+		PERK_EDITOR_LIST_TAB_BG( PERK_EDITOR_LIST_TAB_2_X, TAB_2_WIDTH, dvarBool( custom_perks_allow_pro ) )\
+		/* highlighted header 2 */																			\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -CUSTOM_GAME_WIDTH / 2 + PERK_EDITOR_LIST_TAB_2_X ),				\
+										PERK_EDITOR_LIST_TAB_Y,												\
+										TAB_2_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_2_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_ORANGE_RGB 1,												\
+										when( dvarBool( custom_perks_allow_pro ) ), ; )						\
+		/* non highlighted header 2 */																		\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -CUSTOM_GAME_WIDTH / 2 + PERK_EDITOR_LIST_TAB_2_X ),				\
+										PERK_EDITOR_LIST_TAB_Y,												\
+										TAB_2_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_2_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_GRAY_TEXT_COLOR,											\
+										when( !dvarBool( custom_perks_allow_pro ) ), ; )
+										
+#ifdef PC
+	#define PERK_EDITOR_TAB_X_ACTION( tab_index )										\
+		setdvar custom_perks_allow_pro tab_index;										\
+		execnow focusitem ( NEW_FRAME_BUTTON_NAME + localVarInt( UI_HL_TYPE ) );		\
+		if( dvarInt( list_perks_in_slot ) != 0 )										\
+		{																				\
+			execnow buildItemListForSlotName ( dvarString( selected_loadout_slot ) );	\
+			execnow focusitem ("perk_list_"+int(dvarInt(list_perks_in_slot)));			\
+		}																				\
+		setdvar ui_custom_perk_has_changed 0;											\
+		
+		
+	#define PERK_EDITOR_TAB_1_ACTION PERK_EDITOR_TAB_X_ACTION( 0 )
+	#define PERK_EDITOR_TAB_2_ACTION PERK_EDITOR_TAB_X_ACTION( 1 )
+	
+	#define PERK_EDITOR_TAB_BUTTONS																\
+		TAB_ACTION_BUTTON_ADV(			( -CUSTOM_GAME_WIDTH / 2 + PERK_EDITOR_LIST_TAB_1_X ),	\
+										PERK_EDITOR_LIST_TAB_Y,									\
+										TAB_1_WIDTH,											\
+										TAB_HEIGHT,												\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,			\
+										PERK_EDITOR_TAB_1_ACTION, 1, ; )						\
+		TAB_ACTION_BUTTON_ADV(			( -CUSTOM_GAME_WIDTH / 2 + PERK_EDITOR_LIST_TAB_2_X ),	\
+										PERK_EDITOR_LIST_TAB_Y,									\
+										TAB_2_WIDTH,											\
+										TAB_HEIGHT,												\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,			\
+										PERK_EDITOR_TAB_2_ACTION, 1, ; )
+#else // #ifdef PC
+	#define PERK_EDITOR_TAB_BUTTONS
+#endif // #else #ifdef PC
+
+#undef PC_TAB_SWITCH_ACTIONS_PREV
+#define PC_TAB_SWITCH_ACTIONS_PREV \
+	PERK_EDITOR_TOGGLE_PRO_PERKS \
+	execnow focusitem ( NEW_FRAME_BUTTON_NAME + localVarInt( UI_HL_TYPE ) );
+#undef PC_TAB_SWITCH_ACTIONS_NEXT
+#define PC_TAB_SWITCH_ACTIONS_NEXT \
+	PERK_EDITOR_TOGGLE_PRO_PERKS \
+	execnow focusitem ( NEW_FRAME_BUTTON_NAME + localVarInt( UI_HL_TYPE ) );
+
+#define PERK_EDITOR_TOGGLE_PRO_PERKS \
+		execNow "toggle custom_perks_allow_pro 0 1"; \
+		if( dvarInt( list_perks_in_slot ) != 0 ) \
+		{ \
+			execnow buildItemListForSlotName (dvarString( selected_loadout_slot )); \
+		} \
+		setdvar ui_custom_perk_has_changed 0;
+
+#define PERK_EDITOR_CHANGE_TABS \
+		execKeyInt DPAD_LEFT { \
+			PERK_EDITOR_TOGGLE_PRO_PERKS \
+			execnow focusitem ( NEW_FRAME_BUTTON_NAME + localVarInt( UI_HL_TYPE ) ); \
+		} \
+		execKeyInt DPAD_RIGHT { \
+			PERK_EDITOR_TOGGLE_PRO_PERKS \
+			execnow focusitem ( NEW_FRAME_BUTTON_NAME + localVarInt( UI_HL_TYPE ) ); \
+		} \
+		execKeyInt APAD_LEFT { \
+			PERK_EDITOR_TOGGLE_PRO_PERKS \
+			execnow focusitem ( NEW_FRAME_BUTTON_NAME + localVarInt( UI_HL_TYPE ) ); \
+		} \
+		execKeyInt APAD_RIGHT { \
+			PERK_EDITOR_TOGGLE_PRO_PERKS \
+			execnow focusitem ( NEW_FRAME_BUTTON_NAME + localVarInt( UI_HL_TYPE ) ); \
+		}
+
+#ifdef PC
+	#define ON_ESC																			\
+		if( dvarInt( list_perks_in_slot ) != 0 )											\
+		{																					\
+			execnow ui_animate custom_specialty_editor anim_controller CloseDropDownList 0;	\
+		}																					\
+		else																				\
+		{																					\
+			close self;																		\
+		}
+#else // #ifdef PC
+	#define ON_ESC close self;
+#endif // #else #ifdef PC
+
+menuDef
+{
+	name					custom_specialty_editor
+	rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+	focuscolor				COLOR_FOCUSED
+	style					WINDOW_STYLE_FILLED
+	soundloop 				MENU_MUSIC
+	onOpen	
+	{
+		setdvar ui_items_no_cost 1;
+		execnow set list_perks_in_slot 0;
+		setdvar ui_custom_perk_has_changed 0;
+#ifdef PC
+		setlocalVarInt ui_perk_slot_hl 1;
+		setdvar ui_choice_noaction 0;
+#endif
+		activateBlur;
+		focusFirst;
+	}
+	onClose	
+	{
+		setdvar ui_items_no_cost 0;
+		deactivateBlur;
+#ifdef PC
+		setdvar ui_choice_noaction 1;
+#endif
+	}
+	onESC	
+	{
+		ON_ESC
+	}
+	onFocus
+	{
+	}
+	PC_TAB_SWITCH_SAME_MENU_ACTIONS
+	
+	NEW_FRAME( CUSTOM_GAME_WIDTH, CUSTOM_GAME_HEIGHT )
+	NEW_FRAME_TITLE( CUSTOM_GAME_WIDTH, CUSTOM_GAME_HEIGHT, "@CUSTOM_SPECIALTY_EDITOR", 1 )
+
+	CUSTOM_MODE_BACKGROUND_WATERMARK
+
+	PERK_EDITOR_TAB_HEADERS
+	PERK_EDITOR_TAB_BUTTONS
+	
+	PERK_EDITOR_CHANGE_TABS
+
+	PERK_EDITOR_BUTTON( 1, PERK_EDITOR_SLOT_MOVE( 1, 3, 2 ) )
+	PERK_EDITOR_LISTBOX( 1, PERK_EDITOR_LIST_HEIGHT_1 )
+	PERK_EDITOR_BUTTON( 2, PERK_EDITOR_SLOT_MOVE( 2, 1, 3 ) )
+	PERK_EDITOR_LISTBOX( 2, PERK_EDITOR_LIST_HEIGHT_2 )
+	PERK_EDITOR_BUTTON( 3, PERK_EDITOR_SLOT_MOVE( 3, 2, 1 ) )
+	PERK_EDITOR_LISTBOX( 3, PERK_EDITOR_LIST_HEIGHT_3 )
+
+	itemDef
+	{
+		name	anim_controller
+		style	WINDOW_STYLE_SHADER
+		rect	0 0 0 0
+		visible 1
+		decoration
+		
+		state
+		{
+			name	OpenDropDownList
+			onEnter
+			{
+				setFocus dummyButton;
+				if ( dvarInt( list_perks_in_slot ) == 1 )
+				{
+					execnow ui_animate custom_specialty_editor NEW_FRAME_BUTTON_NAME"2" Transparent PERK_EDITOR_BUTTONS_FADE_TIME;
+					execnow ui_animate custom_specialty_editor NEW_FRAME_BUTTON_NAME"3" Transparent PERK_EDITOR_BUTTONS_FADE_TIME;
+				}
+				elseif ( dvarInt( list_perks_in_slot ) == 2 )
+				{
+					execnow ui_animate custom_specialty_editor NEW_FRAME_BUTTON_NAME"3" Transparent PERK_EDITOR_BUTTONS_FADE_TIME;
+				}
+				execnow ui_animate custom_specialty_editor anim_controller OpenDropDownList2 (PERK_EDITOR_BUTTONS_FADE_TIME+INTERIM_ANIM_TIME);
+			}
+		}
+		state
+		{
+			name	OpenDropDownList2
+			onEnter
+			{
+				execnow ui_animate custom_specialty_editor ("perk_list_"+int(dvarInt( list_perks_in_slot ))) Open PERK_EDITOR_LIST_ANIM_TIME;
+				execnow ui_animate custom_specialty_editor anim_controller OpenDropDownList3 (PERK_EDITOR_LIST_ANIM_TIME+INTERIM_ANIM_TIME);
+			}
+		}
+		state
+		{
+			name	OpenDropDownList3
+			onEnter
+			{
+				execnow focusitem ("perk_list_"+int(dvarInt( list_perks_in_slot )));
+			}
+		}
+		
+		state
+		{
+			name	CloseDropDownList
+			onEnter
+			{
+				setFocus dummyButton;
+				execnow ui_animate custom_specialty_editor ("perk_list_"+int(dvarInt( list_perks_in_slot ))) Default PERK_EDITOR_LIST_ANIM_TIME;
+				execnow ui_animate custom_specialty_editor anim_controller CloseDropDownList2 (PERK_EDITOR_LIST_ANIM_TIME+INTERIM_ANIM_TIME);
+			}
+		}
+		state
+		{
+			name	CloseDropDownList2
+			onEnter
+			{
+				execnow ui_animate custom_specialty_editor NEW_FRAME_BUTTON_NAME"2" Default PERK_EDITOR_BUTTONS_FADE_TIME;
+				execnow ui_animate custom_specialty_editor NEW_FRAME_BUTTON_NAME"3" Default PERK_EDITOR_BUTTONS_FADE_TIME;
+				execnow ui_animate custom_specialty_editor anim_controller CloseDropDownList3 (PERK_EDITOR_BUTTONS_FADE_TIME+INTERIM_ANIM_TIME);
+			}
+		}
+		state
+		{
+			name	CloseDropDownList3
+			onEnter
+			{
+				execnow focusitem (NEW_FRAME_BUTTON_NAME+int(dvarInt( list_perks_in_slot )));
+				setdvar	list_perks_in_slot 0;
+				setdvar ui_custom_perk_has_changed 0;
+			}
+		}
+	}
+
+	itemDef
+	{
+		name	dummyButton
+		type	ITEM_TYPE_BUTTON_NO_TEXT
+		rect	0 0 0 0
+		visible	1
+	}
+	
+	#define ITEM_INFO_X					80
+	#define ITEM_INFO_NAME_Y			(NEW_FRAME_CHOICE_Y_START-10)
+	#define ITEM_INFO_NAME_H			30
+	#define ITEM_INFO_IMAGE_Y			(ITEM_INFO_NAME_Y+ITEM_INFO_NAME_H)
+	#define ITEM_INFO_IMAGE_SIZE		80
+
+	#define ITEM_INFO_DESC_Y			( ITEM_INFO_IMAGE_Y + ITEM_INFO_IMAGE_SIZE + 20 )
+	#define ITEM_INFO_DESC_W			( ITEM_INFO_IMAGE_SIZE * 2.5 )
+	#define ITEM_INFO_DESC_X			( ITEM_INFO_X + ( ITEM_INFO_IMAGE_SIZE / 2 ) - ( ITEM_INFO_DESC_W / 2 ) )
+
+	#define ITEM_INFO_PERK_IMAGE_SIZE	100
+	#define ITEM_INFO_PERK_IMAGE_X		( ITEM_INFO_X + ( ITEM_INFO_IMAGE_SIZE / 2 ) - ( ITEM_INFO_PERK_IMAGE_SIZE / 2 ) )
+
+	/* item name */
+	PREPROC_TEXT_DRAW_ALL(	ITEM_INFO_X ITEM_INFO_NAME_Y ITEM_INFO_IMAGE_SIZE ITEM_INFO_NAME_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, 
+							toUpper( locString( "@" + GetCurrentItemName() ) ),
+							TEXTSIZE_SUBTITLE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,
+							when( dvarInt( list_perks_in_slot ) ), 
+							name item_info_name_right; )
+	/* item image */
+	PREPROC_SHADER_DRAW_VIS_EX( ITEM_INFO_PERK_IMAGE_X ITEM_INFO_IMAGE_Y ITEM_INFO_PERK_IMAGE_SIZE ITEM_INFO_PERK_IMAGE_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 
+								GetItemImage( GetCurrentItemIndex() ) + "_256", 1 1 1 1,
+								when( ( GetItemImage( GetCurrentItemIndex() ) != "" ) && dvarInt( list_perks_in_slot ) ), 
+								name item_info_icon_right; )
+	/* item desc */
+	PREPROC_TEXT_DRAW_VIS_EX( ITEM_INFO_DESC_X ITEM_INFO_DESC_Y ITEM_INFO_DESC_W 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, 
+							  "@" + GetItemDesc( GetCurrentItemIndex() ), 
+							  TEXTSIZE_SMALL, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, 
+							  when( !IsProItemVersion( GetCurrentItemIndex() ) && dvarInt( list_perks_in_slot ) ), 
+							  autowrapped; name item_info_desc_right; ITEM_STATE( ITEM_INFO_FADEIN_STATE, forecolor 1 1 1 1, ; ) ; )
+	PREPROC_TEXT_DRAW_VIS_EX( ITEM_INFO_DESC_X ITEM_INFO_DESC_Y ITEM_INFO_DESC_W 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, 
+							  locString( "@"+GetItemDesc(GetCurrentItemIndex()-1))+"\n\n"+locString( "@"+GetItemDesc(GetCurrentItemIndex())), 
+							  TEXTSIZE_SMALL, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, 
+							   when( IsProItemVersion( GetCurrentItemIndex() ) && dvarInt( list_perks_in_slot ) ), 
+							  autowrapped;  name item_info_desc_right; ITEM_STATE( ITEM_INFO_FADEIN_STATE, forecolor 1 1 1 1, ; ) ; )
+
+	/* category name */
+	#define CATEGORY_NAME( nameArg, visArg ) \
+		PREPROC_TEXT_DRAW_ALL( ITEM_INFO_X ITEM_INFO_NAME_Y ITEM_INFO_IMAGE_SIZE ITEM_INFO_NAME_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, \
+								  locString( nameArg, localVarInt( UI_HL_TYPE ) ), \
+								  TEXTSIZE_SUBTITLE, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL, \
+								  when( dvarInt( list_perks_in_slot ) == 0 && visArg ), \
+								  name item_info_name_right; )
+	CATEGORY_NAME( "@CUSTOM_PERK_SLOT", !dvarBool( custom_perks_allow_pro ) )
+	CATEGORY_NAME( "@CUSTOM_PERK_PRO_SLOT", dvarBool( custom_perks_allow_pro ) )
+	/* category image */
+	#define CATEGORY_IMAGE( materialArg, visArg ) \
+		PREPROC_SHADER_DRAW_VIS_EX( ITEM_INFO_PERK_IMAGE_X ITEM_INFO_IMAGE_Y ITEM_INFO_PERK_IMAGE_SIZE ITEM_INFO_PERK_IMAGE_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, \
+									materialArg, 1 1 1 1, \
+									when( dvarInt( list_perks_in_slot ) == 0 && visArg ), \
+									name item_info_icon_right; )
+	CATEGORY_IMAGE( "perk_backing_blueshield", localVarInt( UI_HL_TYPE ) == 1 && !dvarBool( custom_perks_allow_pro ) )
+	CATEGORY_IMAGE( "perk_backing_bluestar", localVarInt( UI_HL_TYPE ) == 1 && dvarBool( custom_perks_allow_pro ) )
+	CATEGORY_IMAGE( "perk_backing_orangeshield", localVarInt( UI_HL_TYPE ) == 2 && !dvarBool( custom_perks_allow_pro ) )
+	CATEGORY_IMAGE( "perk_backing_orangestar", localVarInt( UI_HL_TYPE ) == 2 && dvarBool( custom_perks_allow_pro ) )
+	CATEGORY_IMAGE( "perk_backing_greenarrow", localVarInt( UI_HL_TYPE ) == 3 && !dvarBool( custom_perks_allow_pro ) )
+	CATEGORY_IMAGE( "perk_backing_greenstar", localVarInt( UI_HL_TYPE ) == 3 && dvarBool( custom_perks_allow_pro ) )
+	/* category desc */
+	#define CATEGORY_DESC( nameArg, visArg ) \
+		PREPROC_TEXT_DRAW_VIS_EX( ITEM_INFO_DESC_X ITEM_INFO_DESC_Y ITEM_INFO_DESC_W 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, \
+								  nameArg, TEXTSIZE_SMALL, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, \
+								  when( dvarInt( list_perks_in_slot ) == 0 && visArg ), \
+								  autowrapped; \
+								  name item_info_desc_right; \
+								  ITEM_STATE( ITEM_INFO_FADEIN_STATE, forecolor NEW_FRAME_GRAY_TEXT_COLOR, ; ) ; )
+	CATEGORY_DESC( "@CUSTOM_PERK_SLOT_DESC", !dvarBool( custom_perks_allow_pro ) )
+	CATEGORY_DESC( "@CUSTOM_PERK_PRO_SLOT_DESC", dvarBool( custom_perks_allow_pro ) )
+
+	CUSTOM_MODE_CUSTOMIZED_STAR( NEW_FRAME_CHOICE_X_START, ( NEW_FRAME_DEFAULT_HEIGHT/2 ) - 70, dvarBool( ui_custom_perk_has_changed ) )
+
+	CUSTOM_FRAME_HINT( ui_hint_desc )
+	
+#ifdef PC
+		NEW_FRAME_BACK_BUTTON_ACTION( CUSTOM_GAME_WIDTH, CUSTOM_GAME_HEIGHT, ON_ESC )
+		SAVE_TO_FILESHARE_BUTTON_NEW_FRAME_ACTION( CUSTOM_GAME_WIDTH, CUSTOM_GAME_HEIGHT )
+#else //#ifdef PC
+		NEW_FRAME_BACK_BUTTON( CUSTOM_GAME_WIDTH, CUSTOM_GAME_HEIGHT )
+		SAVE_TO_FILESHARE_BUTTON_NEW_FRAME( CUSTOM_GAME_WIDTH, CUSTOM_GAME_HEIGHT )
+#endif // #else #ifdef PC
+	
+	#include "ui/safearea.menu"
+}
+
+#include "ui_mp/popupstyle.inc"
+
+#undef CHOICE1_TEXT
+#undef CHOICE1_DESC
+#undef CHOICE1_DVAR
+#undef CHOICE1_DVARTEXT
+#undef CHOICE1_SHOW
+#undef CHOICE1_STR1
+#undef CHOICE1_STR2
+#undef CHOICE1_STR3
+#undef CHOICE1_STR4
+#undef CHOICE1_STR5
+#undef CHOICE1_STR6
+#undef CHOICE1_STR7
+#undef CHOICE1_STR8
+#undef CHOICE1_STR9
+#undef CHOICE1_STR10
+#undef CHOICE1_STR11
+#undef CHOICE1_STR12
+#undef CHOICE1_VAL1
+#undef CHOICE1_VAL2
+#undef CHOICE1_VAL3
+#undef CHOICE1_VAL4
+#undef CHOICE1_VAL5
+#undef CHOICE1_VAL6
+#undef CHOICE1_VAL7
+#undef CHOICE1_VAL8
+#undef CHOICE1_VAL9
+#undef CHOICE1_VAL10
+#undef CHOICE1_VAL11
+#undef CHOICE1_VAL12
+#undef CHOICE1_EXEC
+#undef CHOICE1_STRLIST
+#undef CHOICE1_NUMVALS
+#undef CHOICE1_POPUP
+#undef CHOICE1_VIS
+
+#undef CHOICE_BUTTON_NAME
+#undef NEW_FRAME_BUTTON_NAME
+
+//***********************************************************************************
+// Lightweight
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_LIGHTWEIGHT"
+#define MENUDEF_NAME popup_PERKS_LIGHTWEIGHT
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_LIGHTWEIGHT_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_MOVE_SPEED"
+#define CHOICE1_DESC		"@CUSTOM_PERK_MOVE_SPEED_DESC"
+#define CHOICE1_DVAR		perk_speedMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"1.05x"
+#define CHOICE1_STR2		"1.07x"
+#define CHOICE1_STR3		"1.1x"
+#define CHOICE1_STR4		"1.15x"
+#define CHOICE1_STR5		"1.2x"
+#define CHOICE1_STR6		"1.25x"
+#define CHOICE1_STR7		"1.5x"
+#define CHOICE1_STR8		"1.75x"
+#define CHOICE1_STR9		"2x"
+#define CHOICE1_STR10		""
+#define CHOICE1_STR11		""
+#define CHOICE1_STR12		""
+#define CHOICE1_VAL1		1.05
+#define CHOICE1_VAL2		1.07
+#define CHOICE1_VAL3		1.1
+#define CHOICE1_VAL4		1.15
+#define CHOICE1_VAL5		1.2
+#define CHOICE1_VAL6		1.25
+#define CHOICE1_VAL7		1.5
+#define CHOICE1_VAL8		1.75
+#define CHOICE1_VAL9		2
+#define CHOICE1_VAL10		0
+#define CHOICE1_VAL11		0
+#define CHOICE1_VAL12		0
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		9
+#define CHOICE1_POPUP		1
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Lightweight Pro
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_LIGHTWEIGHT_PRO"
+#define MENUDEF_NAME popup_PERKS_LIGHTWEIGHT_PRO
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_LIGHTWEIGHT_PRO_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_MOVE_SPEED"
+#define CHOICE1_DESC		"@CUSTOM_PERK_MOVE_SPEED_DESC"
+#define CHOICE1_DVAR		perk_speedMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"1.05x"
+#define CHOICE1_STR2		"1.07x"
+#define CHOICE1_STR3		"1.1x"
+#define CHOICE1_STR4		"1.15x"
+#define CHOICE1_STR5		"1.2x"
+#define CHOICE1_STR6		"1.25x"
+#define CHOICE1_STR7		"1.5x"
+#define CHOICE1_STR8		"1.75x"
+#define CHOICE1_STR9		"2x"
+#define CHOICE1_STR10		""
+#define CHOICE1_STR11		""
+#define CHOICE1_STR12		""
+#define CHOICE1_VAL1		1.05
+#define CHOICE1_VAL2		1.07
+#define CHOICE1_VAL3		1.1
+#define CHOICE1_VAL4		1.15
+#define CHOICE1_VAL5		1.2
+#define CHOICE1_VAL6		1.25
+#define CHOICE1_VAL7		1.5
+#define CHOICE1_VAL8		1.75
+#define CHOICE1_VAL9		2
+#define CHOICE1_VAL10		0
+#define CHOICE1_VAL11		0
+#define CHOICE1_VAL12		0
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		9
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Scavenger
+//***********************************************************************************
+
+//***********************************************************************************
+// Scavenger Pro
+//***********************************************************************************
+
+//***********************************************************************************
+// Ghost
+//***********************************************************************************
+
+//***********************************************************************************
+// Ghost Pro
+//***********************************************************************************
+
+//***********************************************************************************
+// Flak Jacket
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_FLAK_JACKET"
+#define MENUDEF_NAME popup_PERKS_FLAK_JACKET
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_FLAK_JACKET_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_FLAK_JACKET_REDUCTION"
+#define CHOICE1_DESC		"@CUSTOM_PERK_FLAK_JACKET_REDUCTION_DESC"
+#define CHOICE1_DVAR		perk_flakJacket
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"5%"
+#define CHOICE1_STR2		"10%"
+#define CHOICE1_STR3		"15%"
+#define CHOICE1_STR4		"20%"
+#define CHOICE1_STR5		"35%"
+#define CHOICE1_STR6		"40%"
+#define CHOICE1_STR7		"50%"
+#define CHOICE1_STR8		"60%"
+#define CHOICE1_STR9		"65%"
+#define CHOICE1_STR10		"70%"
+#define CHOICE1_STR11		"75%"
+#define CHOICE1_STR12		"80%"
+#define CHOICE1_VAL1		95
+#define CHOICE1_VAL2		90
+#define CHOICE1_VAL3		85
+#define CHOICE1_VAL4		80
+#define CHOICE1_VAL5		75
+#define CHOICE1_VAL6		60
+#define CHOICE1_VAL7		50
+#define CHOICE1_VAL8		40
+#define CHOICE1_VAL9		35
+#define CHOICE1_VAL10		30
+#define CHOICE1_VAL11		25
+#define CHOICE1_VAL12		20
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Flak Jacket Pro
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_FLAK_JACKET_PRO"
+#define MENUDEF_NAME popup_PERKS_FLAK_JACKET_PRO
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_FLAK_JACKET_PRO_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 3
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_FLAK_JACKET_REDUCTION"
+#define CHOICE1_DESC		"@CUSTOM_PERK_FLAK_JACKET_REDUCTION_DESC"
+#define CHOICE1_DVAR		perk_flakJacket
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"5%"
+#define CHOICE1_STR2		"10%"
+#define CHOICE1_STR3		"15%"
+#define CHOICE1_STR4		"20%"
+#define CHOICE1_STR5		"35%"
+#define CHOICE1_STR6		"40%"
+#define CHOICE1_STR7		"50%"
+#define CHOICE1_STR8		"60%"
+#define CHOICE1_STR9		"65%"
+#define CHOICE1_STR10		"70%"
+#define CHOICE1_STR11		"75%"
+#define CHOICE1_STR12		"80%"
+#define CHOICE1_VAL1		95
+#define CHOICE1_VAL2		90
+#define CHOICE1_VAL3		85
+#define CHOICE1_VAL4		80
+#define CHOICE1_VAL5		75
+#define CHOICE1_VAL6		60
+#define CHOICE1_VAL7		50
+#define CHOICE1_VAL8		40
+#define CHOICE1_VAL9		35
+#define CHOICE1_VAL10		30
+#define CHOICE1_VAL11		25
+#define CHOICE1_VAL12		20
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CHOICE2_TEXT		"@CUSTOM_PERK_FIREPROOF_REDUCTION"
+#define CHOICE2_DESC		"@CUSTOM_PERK_FIREPROOF_REDUCTION_DESC"
+#define CHOICE2_DVAR		perk_fireproof
+#define CHOICE2_DVARTEXT	CHOICE2_DVAR"_text"
+#define CHOICE2_SHOW		1
+#define CHOICE2_STR1		"0%"
+#define CHOICE2_STR2		"5%"
+#define CHOICE2_STR3		"10%"
+#define CHOICE2_STR4		"15%"
+#define CHOICE2_STR5		"20%"
+#define CHOICE2_STR6		"25%"
+#define CHOICE2_STR7		"30%"
+#define CHOICE2_STR8		"35%"
+#define CHOICE2_STR9		"40%"
+#define CHOICE2_STR10		"50%"
+#define CHOICE2_STR11		"60%"
+#define CHOICE2_STR12		"70%"
+#define CHOICE2_VAL1		100
+#define CHOICE2_VAL2		95
+#define CHOICE2_VAL3		90
+#define CHOICE2_VAL4		85
+#define CHOICE2_VAL5		80
+#define CHOICE2_VAL6		75
+#define CHOICE2_VAL7		70
+#define CHOICE2_VAL8		65
+#define CHOICE2_VAL9		60
+#define CHOICE2_VAL10		50
+#define CHOICE2_VAL11		40
+#define CHOICE2_VAL12		30
+#define CHOICE2_EXEC		;
+#define CHOICE2_STRLIST		{ CHOICE2_STR1 CHOICE2_VAL1 CHOICE2_STR2 CHOICE2_VAL2 CHOICE2_STR3 CHOICE2_VAL3 CHOICE2_STR4 CHOICE2_VAL4 CHOICE2_STR5 CHOICE2_VAL5 CHOICE2_STR6 CHOICE2_VAL6 CHOICE2_STR7 CHOICE2_VAL7 CHOICE2_STR8 CHOICE2_VAL8 CHOICE2_STR9 CHOICE2_VAL9 CHOICE2_STR10 CHOICE2_VAL10 CHOICE2_STR11 CHOICE2_VAL11 CHOICE2_STR12 CHOICE2_VAL12 }
+#define CHOICE2_NUMVALS		12
+#define CHOICE2_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE2_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR; resetdvar CHOICE2_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Hardline
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_HARDLINE"
+#define MENUDEF_NAME popup_PERKS_HARDLINE
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_HARDLINE_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_KILLSTREAK_REDUCTION"
+#define CHOICE1_DESC		"@CUSTOM_PERK_KILLSTREAK_REDUCTION_DESC"
+#define CHOICE1_DVAR		perk_killstreakReduction
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"@CUSTOM_VALUE_KILLS_1"
+#define CHOICE1_STR2		"@CUSTOM_VALUE_KILLS_2"
+#define CHOICE1_STR3		"@CUSTOM_VALUE_KILLS_3"
+#define CHOICE1_STR4		""
+#define CHOICE1_STR5		""
+#define CHOICE1_STR6		""
+#define CHOICE1_STR7		""
+#define CHOICE1_STR8		""
+#define CHOICE1_STR9		""
+#define CHOICE1_STR10		""
+#define CHOICE1_STR11		""
+#define CHOICE1_STR12		""
+#define CHOICE1_VAL1		1
+#define CHOICE1_VAL2		2
+#define CHOICE1_VAL3		3
+#define CHOICE1_VAL4		0
+#define CHOICE1_VAL5		0
+#define CHOICE1_VAL6		0
+#define CHOICE1_VAL7		0
+#define CHOICE1_VAL8		0
+#define CHOICE1_VAL9		0
+#define CHOICE1_VAL10		0
+#define CHOICE1_VAL11		0
+#define CHOICE1_VAL12		0
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		3
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Hardline Pro
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_HARDLINE_PRO"
+#define MENUDEF_NAME popup_PERKS_HARDLINE_PRO
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_HARDLINE_PRO_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_KILLSTREAK_REDUCTION"
+#define CHOICE1_DESC		"@CUSTOM_PERK_KILLSTREAK_REDUCTION_DESC"
+#define CHOICE1_DVAR		perk_killstreakReduction
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"@CUSTOM_VALUE_KILLS_1"
+#define CHOICE1_STR2		"@CUSTOM_VALUE_KILLS_2"
+#define CHOICE1_STR3		"@CUSTOM_VALUE_KILLS_3"
+#define CHOICE1_STR4		""
+#define CHOICE1_STR5		""
+#define CHOICE1_STR6		""
+#define CHOICE1_STR7		""
+#define CHOICE1_STR8		""
+#define CHOICE1_STR9		""
+#define CHOICE1_STR10		""
+#define CHOICE1_STR11		""
+#define CHOICE1_STR12		""
+#define CHOICE1_VAL1		1
+#define CHOICE1_VAL2		2
+#define CHOICE1_VAL3		3
+#define CHOICE1_VAL4		0
+#define CHOICE1_VAL5		0
+#define CHOICE1_VAL6		0
+#define CHOICE1_VAL7		0
+#define CHOICE1_VAL8		0
+#define CHOICE1_VAL9		0
+#define CHOICE1_VAL10		0
+#define CHOICE1_VAL11		0
+#define CHOICE1_VAL12		0
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		3
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Steady Aim
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_STEADY_AIM"
+#define MENUDEF_NAME popup_PERKS_STEADY_AIM
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_STEADY_AIM_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_WEAPON_SPREAD"
+#define CHOICE1_DESC		"@CUSTOM_PERK_WEAPON_SPREAD_DESC"
+#define CHOICE1_DVAR		perk_weapSpreadMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"5%"
+#define CHOICE1_STR2		"10%"
+#define CHOICE1_STR3		"15%"
+#define CHOICE1_STR4		"20%"
+#define CHOICE1_STR5		"30%"
+#define CHOICE1_STR6		"40%"
+#define CHOICE1_STR7		"50%"
+#define CHOICE1_STR8		"55%"
+#define CHOICE1_STR9		"60%"
+#define CHOICE1_STR10		"65%"
+#define CHOICE1_STR11		"70%"
+#define CHOICE1_STR12		"75%"
+#define CHOICE1_VAL1		0.05
+#define CHOICE1_VAL2		0.1
+#define CHOICE1_VAL3		0.15
+#define CHOICE1_VAL4		0.2
+#define CHOICE1_VAL5		0.3
+#define CHOICE1_VAL6		0.4
+#define CHOICE1_VAL7		0.5
+#define CHOICE1_VAL8		0.55
+#define CHOICE1_VAL9		0.6
+#define CHOICE1_VAL10		0.65
+#define CHOICE1_VAL11		0.7
+#define CHOICE1_VAL12		0.75
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Steady Aim Pro
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_STEADY_AIM_PRO"
+#define MENUDEF_NAME popup_PERKS_STEADY_AIM_PRO
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_STEADY_AIM_PRO_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 4
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_WEAPON_SPREAD"
+#define CHOICE1_DESC		"@CUSTOM_PERK_WEAPON_SPREAD_DESC"
+#define CHOICE1_DVAR		perk_weapSpreadMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"5%"
+#define CHOICE1_STR2		"10%"
+#define CHOICE1_STR3		"15%"
+#define CHOICE1_STR4		"20%"
+#define CHOICE1_STR5		"30%"
+#define CHOICE1_STR6		"40%"
+#define CHOICE1_STR7		"50%"
+#define CHOICE1_STR8		"55%"
+#define CHOICE1_STR9		"60%"
+#define CHOICE1_STR10		"65%"
+#define CHOICE1_STR11		"70%"
+#define CHOICE1_STR12		"75%"
+#define CHOICE1_VAL1		0.05
+#define CHOICE1_VAL2		0.1
+#define CHOICE1_VAL3		0.15
+#define CHOICE1_VAL4		0.2
+#define CHOICE1_VAL5		0.3
+#define CHOICE1_VAL6		0.4
+#define CHOICE1_VAL7		0.5
+#define CHOICE1_VAL8		0.55
+#define CHOICE1_VAL9		0.6
+#define CHOICE1_VAL10		0.65
+#define CHOICE1_VAL11		0.7
+#define CHOICE1_VAL12		0.75
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CHOICE2_TEXT		"@CUSTOM_PERK_SPRINT_RECOVERY"
+#define CHOICE2_DESC		"@CUSTOM_PERK_SPRINT_RECOVERY_DESC"
+#define CHOICE2_DVAR		perk_sprintRecoveryMultiplier
+#define CHOICE2_DVARTEXT	CHOICE2_DVAR"_text"
+#define CHOICE2_SHOW		1
+#define CHOICE2_STR1		"5%"
+#define CHOICE2_STR2		"10%"
+#define CHOICE2_STR3		"15%"
+#define CHOICE2_STR4		"20%"
+#define CHOICE2_STR5		"30%"
+#define CHOICE2_STR6		"40%"
+#define CHOICE2_STR7		"50%"
+#define CHOICE2_STR8		"55%"
+#define CHOICE2_STR9		"60%"
+#define CHOICE2_STR10		"65%"
+#define CHOICE2_STR11		"70%"
+#define CHOICE2_STR12		"75%"
+#define CHOICE2_VAL1		0.05
+#define CHOICE2_VAL2		0.1
+#define CHOICE2_VAL3		0.15
+#define CHOICE2_VAL4		0.2
+#define CHOICE2_VAL5		0.3
+#define CHOICE2_VAL6		0.4
+#define CHOICE2_VAL7		0.5
+#define CHOICE2_VAL8		0.55
+#define CHOICE2_VAL9		0.6
+#define CHOICE2_VAL10		0.65
+#define CHOICE2_VAL11		0.7
+#define CHOICE2_VAL12		0.75
+#define CHOICE2_EXEC		;
+#define CHOICE2_STRLIST		{ CHOICE2_STR1 CHOICE2_VAL1 CHOICE2_STR2 CHOICE2_VAL2 CHOICE2_STR3 CHOICE2_VAL3 CHOICE2_STR4 CHOICE2_VAL4 CHOICE2_STR5 CHOICE2_VAL5 CHOICE2_STR6 CHOICE2_VAL6 CHOICE2_STR7 CHOICE2_VAL7 CHOICE2_STR8 CHOICE2_VAL8 CHOICE2_STR9 CHOICE2_VAL9 CHOICE2_STR10 CHOICE2_VAL10 CHOICE2_STR11 CHOICE2_VAL11 CHOICE2_STR12 CHOICE2_VAL12 }
+#define CHOICE2_NUMVALS		12
+#define CHOICE2_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE2_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CHOICE3_TEXT		"@CUSTOM_PERK_KNIFE_RECOVERY_SPEED"
+#define CHOICE3_DESC		"@CUSTOM_PERK_KNIFE_RECOVERY_SPEED_DESC"
+#define CHOICE3_DVAR		perk_weapMeleeMultiplier
+#define CHOICE3_DVARTEXT	CHOICE3_DVAR"_text"
+#define CHOICE3_SHOW		1
+#define CHOICE3_STR1		"1.25x"
+#define CHOICE3_STR2		"1.5x"
+#define CHOICE3_STR3		"1.75x"
+#define CHOICE3_STR4		"2x"
+#define CHOICE3_STR5		"2.25x"
+#define CHOICE3_STR6		"2.5x"
+#define CHOICE3_STR7		"2.75x"
+#define CHOICE3_STR8		"3x"
+#define CHOICE3_STR9		"3.25x"
+#define CHOICE3_STR10		"3.5x"
+#define CHOICE3_STR11		"3.75x"
+#define CHOICE3_STR12		"4x"
+#define CHOICE3_VAL1		0.8
+#define CHOICE3_VAL2		0.666
+#define CHOICE3_VAL3		0.571
+#define CHOICE3_VAL4		0.5
+#define CHOICE3_VAL5		0.444
+#define CHOICE3_VAL6		0.4
+#define CHOICE3_VAL7		0.364
+#define CHOICE3_VAL8		0.333
+#define CHOICE3_VAL9		0.307
+#define CHOICE3_VAL10		0.286
+#define CHOICE3_VAL11		0.267
+#define CHOICE3_VAL12		0.25
+#define CHOICE3_EXEC		;
+#define CHOICE3_STRLIST		{ CHOICE3_STR1 CHOICE3_VAL1 CHOICE3_STR2 CHOICE3_VAL2 CHOICE3_STR3 CHOICE3_VAL3 CHOICE3_STR4 CHOICE3_VAL4 CHOICE3_STR5 CHOICE3_VAL5 CHOICE3_STR6 CHOICE3_VAL6 CHOICE3_STR7 CHOICE3_VAL7 CHOICE3_STR8 CHOICE3_VAL8 CHOICE3_STR9 CHOICE3_VAL9 CHOICE3_STR10 CHOICE3_VAL10 CHOICE3_STR11 CHOICE3_VAL11 CHOICE3_STR12 CHOICE3_VAL12 }
+#define CHOICE3_NUMVALS		12
+#define CHOICE3_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE3_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR; resetdvar CHOICE2_DVAR; resetdvar CHOICE3_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Scout
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_SCOUT"
+#define MENUDEF_NAME popup_PERKS_SCOUT
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_SCOUT_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_EXTRA_BREATH_TIME"
+#define CHOICE1_DESC		"@CUSTOM_PERK_EXTRA_BREATH_TIME_DESC"
+#define CHOICE1_DVAR		perk_extraBreath
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"@CUSTOM_VALUE_SECONDS_3"
+#define CHOICE1_STR2		"@CUSTOM_VALUE_SECONDS_4"
+#define CHOICE1_STR3		"@CUSTOM_VALUE_SECONDS_5"
+#define CHOICE1_STR4		"@CUSTOM_VALUE_SECONDS_6"
+#define CHOICE1_STR5		"@CUSTOM_VALUE_SECONDS_7"
+#define CHOICE1_STR6		"@CUSTOM_VALUE_SECONDS_8"
+#define CHOICE1_STR7		"@CUSTOM_VALUE_SECONDS_9"
+#define CHOICE1_STR8		"@CUSTOM_VALUE_SECONDS_10"
+#define CHOICE1_STR9		""
+#define CHOICE1_STR10		""
+#define CHOICE1_STR11		""
+#define CHOICE1_STR12		""
+#define CHOICE1_VAL1		3
+#define CHOICE1_VAL2		4
+#define CHOICE1_VAL3		5
+#define CHOICE1_VAL4		6
+#define CHOICE1_VAL5		7
+#define CHOICE1_VAL6		8
+#define CHOICE1_VAL7		9
+#define CHOICE1_VAL8		10
+#define CHOICE1_VAL9		0
+#define CHOICE1_VAL10		0
+#define CHOICE1_VAL11		0
+#define CHOICE1_VAL12		0
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		8
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Scout Pro
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_SCOUT_PRO"
+#define MENUDEF_NAME popup_PERKS_SCOUT_PRO
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_SCOUT_PRO_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 3
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_EXTRA_BREATH_TIME"
+#define CHOICE1_DESC		"@CUSTOM_PERK_EXTRA_BREATH_TIME_DESC"
+#define CHOICE1_DVAR		perk_extraBreath
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"@CUSTOM_VALUE_SECONDS_3"
+#define CHOICE1_STR2		"@CUSTOM_VALUE_SECONDS_4"
+#define CHOICE1_STR3		"@CUSTOM_VALUE_SECONDS_5"
+#define CHOICE1_STR4		"@CUSTOM_VALUE_SECONDS_6"
+#define CHOICE1_STR5		"@CUSTOM_VALUE_SECONDS_7"
+#define CHOICE1_STR6		"@CUSTOM_VALUE_SECONDS_8"
+#define CHOICE1_STR7		"@CUSTOM_VALUE_SECONDS_9"
+#define CHOICE1_STR8		"@CUSTOM_VALUE_SECONDS_10"
+#define CHOICE1_STR9		""
+#define CHOICE1_STR10		""
+#define CHOICE1_STR11		""
+#define CHOICE1_STR12		""
+#define CHOICE1_VAL1		3
+#define CHOICE1_VAL2		4
+#define CHOICE1_VAL3		5
+#define CHOICE1_VAL4		6
+#define CHOICE1_VAL5		7
+#define CHOICE1_VAL6		8
+#define CHOICE1_VAL7		9
+#define CHOICE1_VAL8		10
+#define CHOICE1_VAL9		0
+#define CHOICE1_VAL10		0
+#define CHOICE1_VAL11		0
+#define CHOICE1_VAL12		0
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		8
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CHOICE2_TEXT		"@CUSTOM_PERK_WEAPON_SWITCH_SPEED"
+#define CHOICE2_DESC		"@CUSTOM_PERK_WEAPON_SWITCH_SPEED_DESC"
+#define CHOICE2_DVAR		perk_weapSwitchMultiplier
+#define CHOICE2_DVARTEXT	CHOICE2_DVAR"_text"
+#define CHOICE2_SHOW		1
+#define CHOICE2_STR1		"1.25x"
+#define CHOICE2_STR2		"1.5x"
+#define CHOICE2_STR3		"1.75x"
+#define CHOICE2_STR4		"2x"
+#define CHOICE2_STR5		"2.25x"
+#define CHOICE2_STR6		"2.5x"
+#define CHOICE2_STR7		"2.75x"
+#define CHOICE2_STR8		"3x"
+#define CHOICE2_STR9		"3.25x"
+#define CHOICE2_STR10		"3.5x"
+#define CHOICE2_STR11		"3.75x"
+#define CHOICE2_STR12		"4x"
+#define CHOICE2_VAL1		0.8
+#define CHOICE2_VAL2		0.666
+#define CHOICE2_VAL3		0.571
+#define CHOICE2_VAL4		0.5
+#define CHOICE2_VAL5		0.444
+#define CHOICE2_VAL6		0.4
+#define CHOICE2_VAL7		0.364
+#define CHOICE2_VAL8		0.333
+#define CHOICE2_VAL9		0.307
+#define CHOICE2_VAL10		0.286
+#define CHOICE2_VAL11		0.267
+#define CHOICE2_VAL12		0.25
+#define CHOICE2_EXEC		;
+#define CHOICE2_STRLIST		{ CHOICE2_STR1 CHOICE2_VAL1 CHOICE2_STR2 CHOICE2_VAL2 CHOICE2_STR3 CHOICE2_VAL3 CHOICE2_STR4 CHOICE2_VAL4 CHOICE2_STR5 CHOICE2_VAL5 CHOICE2_STR6 CHOICE2_VAL6 CHOICE2_STR7 CHOICE2_VAL7 CHOICE2_STR8 CHOICE2_VAL8 CHOICE2_STR9 CHOICE2_VAL9 CHOICE2_STR10 CHOICE2_VAL10 CHOICE2_STR11 CHOICE2_VAL11 CHOICE2_STR12 CHOICE2_VAL12 }
+#define CHOICE2_NUMVALS		12
+#define CHOICE2_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE2_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR; resetdvar CHOICE2_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Hardened
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_DEEP_IMPACT"
+#define MENUDEF_NAME popup_PERKS_DEEP_IMPACT
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_DEEP_IMPACT_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_BULLET_PENETRATION"
+#define CHOICE1_DESC		"@CUSTOM_PERK_BULLET_PENETRATION_DESC"
+#define CHOICE1_DVAR		perk_bulletPenetrationMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"1.25x"
+#define CHOICE1_STR2		"1.5x"
+#define CHOICE1_STR3		"1.75x"
+#define CHOICE1_STR4		"2x"
+#define CHOICE1_STR5		"2.25x"
+#define CHOICE1_STR6		"2.5x"
+#define CHOICE1_STR7		"2.75x"
+#define CHOICE1_STR8		"3x"
+#define CHOICE1_STR9		"3.25x"
+#define CHOICE1_STR10		"3.5x"
+#define CHOICE1_STR11		"3.75x"
+#define CHOICE1_STR12		"4x"
+#define CHOICE1_VAL1		1.25
+#define CHOICE1_VAL2		1.5
+#define CHOICE1_VAL3		1.75
+#define CHOICE1_VAL4		2
+#define CHOICE1_VAL5		2.25
+#define CHOICE1_VAL6		2.5
+#define CHOICE1_VAL7		2.75
+#define CHOICE1_VAL8		3
+#define CHOICE1_VAL9		3.25
+#define CHOICE1_VAL10		3.5
+#define CHOICE1_VAL11		3.75
+#define CHOICE1_VAL12		4
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Hardened Pro
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_DEEP_IMPACT_PRO"
+#define MENUDEF_NAME popup_PERKS_DEEP_IMPACT_PRO
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_DEEP_IMPACT_PRO_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 4
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_BULLET_PENETRATION"
+#define CHOICE1_DESC		"@CUSTOM_PERK_BULLET_PENETRATION_DESC"
+#define CHOICE1_DVAR		perk_bulletPenetrationMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"1.25x"
+#define CHOICE1_STR2		"1.5x"
+#define CHOICE1_STR3		"1.75x"
+#define CHOICE1_STR4		"2x"
+#define CHOICE1_STR5		"2.25x"
+#define CHOICE1_STR6		"2.5x"
+#define CHOICE1_STR7		"2.75x"
+#define CHOICE1_STR8		"3x"
+#define CHOICE1_STR9		"3.25x"
+#define CHOICE1_STR10		"3.5x"
+#define CHOICE1_STR11		"3.75x"
+#define CHOICE1_STR12		"4x"
+#define CHOICE1_VAL1		1.25
+#define CHOICE1_VAL2		1.5
+#define CHOICE1_VAL3		1.75
+#define CHOICE1_VAL4		2
+#define CHOICE1_VAL5		2.25
+#define CHOICE1_VAL6		2.5
+#define CHOICE1_VAL7		2.75
+#define CHOICE1_VAL8		3
+#define CHOICE1_VAL9		3.25
+#define CHOICE1_VAL10		3.5
+#define CHOICE1_VAL11		3.75
+#define CHOICE1_VAL12		4
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CHOICE2_TEXT		"@CUSTOM_PERK_ARMOR_PIERCING"
+#define CHOICE2_DESC		"@CUSTOM_PERK_ARMOR_PIERCING_DESC"
+#define CHOICE2_DVAR		perk_armorpiercing
+#define CHOICE2_DVARTEXT	CHOICE2_DVAR"_text"
+#define CHOICE2_SHOW		1
+#define CHOICE2_STR1		"25%"
+#define CHOICE2_STR2		"75%"
+#define CHOICE2_STR3		"125%"
+#define CHOICE2_STR4		"200%"
+#define CHOICE2_STR5		""
+#define CHOICE2_STR6		""
+#define CHOICE2_STR7		""
+#define CHOICE2_STR8		""
+#define CHOICE2_STR9		""
+#define CHOICE2_STR10		""
+#define CHOICE2_STR11		""
+#define CHOICE2_STR12		""
+#define CHOICE2_VAL1		40
+#define CHOICE2_VAL2		150
+#define CHOICE2_VAL3		300
+#define CHOICE2_VAL4		500
+#define CHOICE2_VAL5		0
+#define CHOICE2_VAL6		0
+#define CHOICE2_VAL7		0
+#define CHOICE2_VAL8		0
+#define CHOICE2_VAL9		0
+#define CHOICE2_VAL10		0
+#define CHOICE2_VAL11		0
+#define CHOICE2_VAL12		0
+#define CHOICE2_EXEC		;
+#define CHOICE2_STRLIST		{ CHOICE2_STR1 CHOICE2_VAL1 CHOICE2_STR2 CHOICE2_VAL2 CHOICE2_STR3 CHOICE2_VAL3 CHOICE2_STR4 CHOICE2_VAL4 CHOICE2_STR5 CHOICE2_VAL5 CHOICE2_STR6 CHOICE2_VAL6 CHOICE2_STR7 CHOICE2_VAL7 CHOICE2_STR8 CHOICE2_VAL8 CHOICE2_STR9 CHOICE2_VAL9 CHOICE2_STR10 CHOICE2_VAL10 CHOICE2_STR11 CHOICE2_VAL11 CHOICE2_STR12 CHOICE2_VAL12 }
+#define CHOICE2_NUMVALS		10
+#define CHOICE2_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE2_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CHOICE3_TEXT		"@CUSTOM_PERK_DAMAGE_KICK_REDUCTION"
+#define CHOICE3_DESC		"@CUSTOM_PERK_DAMAGE_KICK_REDUCTION_DESC"
+#define CHOICE3_DVAR		perk_damageKickReduction
+#define CHOICE3_DVARTEXT	CHOICE3_DVAR"_text"
+#define CHOICE3_SHOW		1
+#define CHOICE3_STR1		"10%"
+#define CHOICE3_STR2		"20%"
+#define CHOICE3_STR3		"30%"
+#define CHOICE3_STR4		"40%"
+#define CHOICE3_STR5		"50%"
+#define CHOICE3_STR6		"60%"
+#define CHOICE3_STR7		"70%"
+#define CHOICE3_STR8		"75%"
+#define CHOICE3_STR9		"80%"
+#define CHOICE3_STR10		"85%"
+#define CHOICE3_STR11		"90%"
+#define CHOICE3_STR12		"95%"
+#define CHOICE3_VAL1		0.9
+#define CHOICE3_VAL2		0.8
+#define CHOICE3_VAL3		0.7
+#define CHOICE3_VAL4		0.6
+#define CHOICE3_VAL5		0.5
+#define CHOICE3_VAL6		0.4
+#define CHOICE3_VAL7		0.3
+#define CHOICE3_VAL8		0.25
+#define CHOICE3_VAL9		0.2
+#define CHOICE3_VAL10		0.15
+#define CHOICE3_VAL11		0.1
+#define CHOICE3_VAL12		0.05
+#define CHOICE3_EXEC		;
+#define CHOICE3_STRLIST		{ CHOICE3_STR1 CHOICE3_VAL1 CHOICE3_STR2 CHOICE3_VAL2 CHOICE3_STR3 CHOICE3_VAL3 CHOICE3_STR4 CHOICE3_VAL4 CHOICE3_STR5 CHOICE3_VAL5 CHOICE3_STR6 CHOICE3_VAL6 CHOICE3_STR7 CHOICE3_VAL7 CHOICE3_STR8 CHOICE3_VAL8 CHOICE3_STR9 CHOICE3_VAL9 CHOICE3_STR10 CHOICE3_VAL10 CHOICE3_STR11 CHOICE3_VAL11 CHOICE3_STR12 CHOICE3_VAL12 }
+#define CHOICE3_NUMVALS		12
+#define CHOICE3_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE3_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR; resetdvar CHOICE2_DVAR; resetdvar CHOICE3_DVAR
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Sleight of Hand
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_SLEIGHT_OF_HAND"
+#define MENUDEF_NAME popup_PERKS_SLEIGHT_OF_HAND
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_SLEIGHT_OF_HAND_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_RELOAD_TIME"
+#define CHOICE1_DESC		"@CUSTOM_PERK_RELOAD_TIME_DESC"
+#define CHOICE1_DVAR		perk_weapReloadMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"1.25x"
+#define CHOICE1_STR2		"1.5x"
+#define CHOICE1_STR3		"1.75x"
+#define CHOICE1_STR4		"2x"
+#define CHOICE1_STR5		"2.25x"
+#define CHOICE1_STR6		"2.5x"
+#define CHOICE1_STR7		"2.75x"
+#define CHOICE1_STR8		"3x"
+#define CHOICE1_STR9		"3.25x"
+#define CHOICE1_STR10		"3.5x"
+#define CHOICE1_STR11		"3.75x"
+#define CHOICE1_STR12		"4x"
+#define CHOICE1_VAL1		0.8
+#define CHOICE1_VAL2		0.666
+#define CHOICE1_VAL3		0.571
+#define CHOICE1_VAL4		0.5
+#define CHOICE1_VAL5		0.444
+#define CHOICE1_VAL6		0.4
+#define CHOICE1_VAL7		0.364
+#define CHOICE1_VAL8		0.333
+#define CHOICE1_VAL9		0.307
+#define CHOICE1_VAL10		0.286
+#define CHOICE1_VAL11		0.267
+#define CHOICE1_VAL12		0.25
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Sleight of Hand Pro
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_SLEIGHT_OF_HAND_PRO"
+#define MENUDEF_NAME popup_PERKS_SLEIGHT_OF_HAND_PRO
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_SLEIGHT_OF_HAND_PRO_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 3
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_RELOAD_TIME"
+#define CHOICE1_DESC		"@CUSTOM_PERK_RELOAD_TIME_DESC"
+#define CHOICE1_DVAR		perk_weapReloadMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"1.25x"
+#define CHOICE1_STR2		"1.5x"
+#define CHOICE1_STR3		"1.75x"
+#define CHOICE1_STR4		"2x"
+#define CHOICE1_STR5		"2.25x"
+#define CHOICE1_STR6		"2.5x"
+#define CHOICE1_STR7		"2.75x"
+#define CHOICE1_STR8		"3x"
+#define CHOICE1_STR9		"3.25x"
+#define CHOICE1_STR10		"3.5x"
+#define CHOICE1_STR11		"3.75x"
+#define CHOICE1_STR12		"4x"
+#define CHOICE1_VAL1		0.8
+#define CHOICE1_VAL2		0.666
+#define CHOICE1_VAL3		0.571
+#define CHOICE1_VAL4		0.5
+#define CHOICE1_VAL5		0.444
+#define CHOICE1_VAL6		0.4
+#define CHOICE1_VAL7		0.364
+#define CHOICE1_VAL8		0.333
+#define CHOICE1_VAL9		0.307
+#define CHOICE1_VAL10		0.286
+#define CHOICE1_VAL11		0.267
+#define CHOICE1_VAL12		0.25
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CHOICE2_TEXT		"@CUSTOM_PERK_ADS_SPEED"
+#define CHOICE2_DESC		"@CUSTOM_PERK_ADS_SPEED_DESC"
+#define CHOICE2_DVAR		perk_weapAdsMultiplier
+#define CHOICE2_DVARTEXT	CHOICE2_DVAR"_text"
+#define CHOICE2_SHOW		1
+#define CHOICE2_STR1		"1.25x"
+#define CHOICE2_STR2		"1.5x"
+#define CHOICE2_STR3		"1.75x"
+#define CHOICE2_STR4		"2x"
+#define CHOICE2_STR5		"2.25x"
+#define CHOICE2_STR6		"2.5x"
+#define CHOICE2_STR7		"2.75x"
+#define CHOICE2_STR8		"3x"
+#define CHOICE2_STR9		"3.25x"
+#define CHOICE2_STR10		"3.5x"
+#define CHOICE2_STR11		"3.75x"
+#define CHOICE2_STR12		"4x"
+#define CHOICE2_VAL1		0.8
+#define CHOICE2_VAL2		0.666
+#define CHOICE2_VAL3		0.571
+#define CHOICE2_VAL4		0.5
+#define CHOICE2_VAL5		0.444
+#define CHOICE2_VAL6		0.4
+#define CHOICE2_VAL7		0.364
+#define CHOICE2_VAL8		0.333
+#define CHOICE2_VAL9		0.307
+#define CHOICE2_VAL10		0.286
+#define CHOICE2_VAL11		0.267
+#define CHOICE2_VAL12		0.25
+#define CHOICE2_EXEC		;
+#define CHOICE2_STRLIST		{ CHOICE2_STR1 CHOICE2_VAL1 CHOICE2_STR2 CHOICE2_VAL2 CHOICE2_STR3 CHOICE2_VAL3 CHOICE2_STR4 CHOICE2_VAL4 CHOICE2_STR5 CHOICE2_VAL5 CHOICE2_STR6 CHOICE2_VAL6 CHOICE2_STR7 CHOICE2_VAL7 CHOICE2_STR8 CHOICE2_VAL8 CHOICE2_STR9 CHOICE2_VAL9 CHOICE2_STR10 CHOICE2_VAL10 CHOICE2_STR11 CHOICE2_VAL11 CHOICE2_STR12 CHOICE2_VAL12 }
+#define CHOICE2_NUMVALS		12
+#define CHOICE2_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE2_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR; resetdvar CHOICE2_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Professional
+//***********************************************************************************
+
+//***********************************************************************************
+// Professional Pro
+//***********************************************************************************
+
+//***********************************************************************************
+// Marathon
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_MARATHON"
+#define MENUDEF_NAME popup_PERKS_MARATHON
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_MARATHON_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_SPRINT_MULT"
+#define CHOICE1_DESC		"@CUSTOM_PERK_SPRINT_MULT_DESC"
+#define CHOICE1_DVAR		perk_sprintMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"1.5x"
+#define CHOICE1_STR2		"2x"
+#define CHOICE1_STR3		"2.5x"
+#define CHOICE1_STR4		"3x"
+#define CHOICE1_STR5		"3.5x"
+#define CHOICE1_STR6		"4x"
+#define CHOICE1_STR7		"4.5x"
+#define CHOICE1_STR8		"5x"
+#define CHOICE1_STR9		""
+#define CHOICE1_STR10		""
+#define CHOICE1_STR11		""
+#define CHOICE1_STR12		""
+#define CHOICE1_VAL1		1.5
+#define CHOICE1_VAL2		2
+#define CHOICE1_VAL3		2.5
+#define CHOICE1_VAL4		3
+#define CHOICE1_VAL5		3.5
+#define CHOICE1_VAL6		4
+#define CHOICE1_VAL7		4.5
+#define CHOICE1_VAL8		5
+#define CHOICE1_VAL9		0
+#define CHOICE1_VAL10		0
+#define CHOICE1_VAL11		0
+#define CHOICE1_VAL12		0
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		8
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Marathon Pro
+//***********************************************************************************
+
+//***********************************************************************************
+// Ninja
+//***********************************************************************************
+
+//***********************************************************************************
+// Ninja Pro
+//***********************************************************************************
+
+//***********************************************************************************
+// Second Chance
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_SECOND_CHANCE"
+#define MENUDEF_NAME popup_PERKS_SECOND_CHANCE
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_SECOND_CHANCE_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_BLEEDOUT_TIME"
+#define CHOICE1_DESC		"@CUSTOM_PERK_BLEEDOUT_TIME_DESC"
+#define CHOICE1_DVAR		player_lastStandBleedoutTimeNoRevive
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"@CUSTOM_VALUE_SECONDS_5"
+#define CHOICE1_STR2		"@CUSTOM_VALUE_SECONDS_10"
+#define CHOICE1_STR3		"@CUSTOM_VALUE_SECONDS_15"
+#define CHOICE1_STR4		"@CUSTOM_VALUE_SECONDS_20"
+#define CHOICE1_STR5		"@CUSTOM_VALUE_SECONDS_25"
+#define CHOICE1_STR6		"@CUSTOM_VALUE_SECONDS_30"
+#define CHOICE1_STR7		"@CUSTOM_VALUE_SECONDS_35"
+#define CHOICE1_STR8		"@CUSTOM_VALUE_SECONDS_40"
+#define CHOICE1_STR9		"@CUSTOM_VALUE_SECONDS_45"
+#define CHOICE1_STR10		"@CUSTOM_VALUE_SECONDS_50"
+#define CHOICE1_STR11		"@CUSTOM_VALUE_SECONDS_55"
+#define CHOICE1_STR12		"@CUSTOM_VALUE_SECONDS_60"
+#define CHOICE1_VAL1		5
+#define CHOICE1_VAL2		10
+#define CHOICE1_VAL3		15
+#define CHOICE1_VAL4		20
+#define CHOICE1_VAL5		25
+#define CHOICE1_VAL6		30
+#define CHOICE1_VAL7		35
+#define CHOICE1_VAL8		40
+#define CHOICE1_VAL9		45
+#define CHOICE1_VAL10		50
+#define CHOICE1_VAL11		55
+#define CHOICE1_VAL12		60
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Second Chance Pro
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_SECOND_CHANCE_PRO"
+#define MENUDEF_NAME popup_PERKS_SECOND_CHANCE_PRO
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_SECOND_CHANCE_PRO_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 3
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_BLEEDOUT_TIME"
+#define CHOICE1_DESC		"@CUSTOM_PERK_BLEEDOUT_TIME_DESC"
+#define CHOICE1_DVAR		player_lastStandBleedoutTime
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"@CUSTOM_VALUE_SECONDS_5"
+#define CHOICE1_STR2		"@CUSTOM_VALUE_SECONDS_10"
+#define CHOICE1_STR3		"@CUSTOM_VALUE_SECONDS_15"
+#define CHOICE1_STR4		"@CUSTOM_VALUE_SECONDS_20"
+#define CHOICE1_STR5		"@CUSTOM_VALUE_SECONDS_25"
+#define CHOICE1_STR6		"@CUSTOM_VALUE_SECONDS_30"
+#define CHOICE1_STR7		"@CUSTOM_VALUE_SECONDS_35"
+#define CHOICE1_STR8		"@CUSTOM_VALUE_SECONDS_40"
+#define CHOICE1_STR9		"@CUSTOM_VALUE_SECONDS_45"
+#define CHOICE1_STR10		"@CUSTOM_VALUE_SECONDS_50"
+#define CHOICE1_STR11		"@CUSTOM_VALUE_SECONDS_55"
+#define CHOICE1_STR12		"@CUSTOM_VALUE_SECONDS_60"
+#define CHOICE1_VAL1		5
+#define CHOICE1_VAL2		10
+#define CHOICE1_VAL3		15
+#define CHOICE1_VAL4		20
+#define CHOICE1_VAL5		25
+#define CHOICE1_VAL6		30
+#define CHOICE1_VAL7		35
+#define CHOICE1_VAL8		40
+#define CHOICE1_VAL9		45
+#define CHOICE1_VAL10		50
+#define CHOICE1_VAL11		55
+#define CHOICE1_VAL12		60
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CHOICE2_TEXT		"@CUSTOM_PERK_REVIVE_TIME"
+#define CHOICE2_DESC		"@CUSTOM_PERK_REVIVE_TIME_DESC"
+#define CHOICE2_DVAR		revive_time_taken
+#define CHOICE2_DVARTEXT	CHOICE2_DVAR"_text"
+#define CHOICE2_SHOW		1
+#define CHOICE2_STR1		"@CUSTOM_VALUE_SECONDS_POINT_15"
+#define CHOICE2_STR2		"@CUSTOM_VALUE_SECONDS_POINT_35"
+#define CHOICE2_STR3		"@CUSTOM_VALUE_SECONDS_POINT_5"
+#define CHOICE2_STR4		"@CUSTOM_VALUE_SECONDS_POINT_65"
+#define CHOICE2_STR5		"@CUSTOM_VALUE_SECONDS_POINT_85"
+#define CHOICE2_STR6		"@CUSTOM_VALUE_SECONDS_1"
+#define CHOICE2_STR7		"@CUSTOM_VALUE_SECONDS_1_POINT_15"
+#define CHOICE2_STR8		"@CUSTOM_VALUE_SECONDS_1_POINT_35"
+#define CHOICE2_STR9		"@CUSTOM_VALUE_SECONDS_1_POINT_5"
+#define CHOICE2_STR10		"@CUSTOM_VALUE_SECONDS_1_POINT_65"
+#define CHOICE2_STR11		"@CUSTOM_VALUE_SECONDS_1_POINT_85"
+#define CHOICE2_STR12		"@CUSTOM_VALUE_SECONDS_2"
+#define CHOICE2_VAL1		0.15
+#define CHOICE2_VAL2		0.35
+#define CHOICE2_VAL3		0.5
+#define CHOICE2_VAL4		0.65
+#define CHOICE2_VAL5		0.85
+#define CHOICE2_VAL6		1
+#define CHOICE2_VAL7		1.15
+#define CHOICE2_VAL8		1.35
+#define CHOICE2_VAL9		1.5
+#define CHOICE2_VAL10		1.65
+#define CHOICE2_VAL11		1.85
+#define CHOICE2_VAL12		2
+#define CHOICE2_EXEC		;
+#define CHOICE2_STRLIST		{ CHOICE2_STR1 CHOICE2_VAL1 CHOICE2_STR2 CHOICE2_VAL2 CHOICE2_STR3 CHOICE2_VAL3 CHOICE2_STR4 CHOICE2_VAL4 CHOICE2_STR5 CHOICE2_VAL5 CHOICE2_STR6 CHOICE2_VAL6 CHOICE2_STR7 CHOICE2_VAL7 CHOICE2_STR8 CHOICE2_VAL8 CHOICE2_STR9 CHOICE2_VAL9 CHOICE2_STR10 CHOICE2_VAL10 CHOICE2_STR11 CHOICE2_VAL11 CHOICE2_STR12 CHOICE2_VAL12 }
+#define CHOICE2_NUMVALS		12
+#define CHOICE2_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE2_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR; resetdvar CHOICE1_DVAR; resetdvar CHOICE2_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Hacker
+//***********************************************************************************
+
+//***********************************************************************************
+// Hacker Pro
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_HACKER_PRO"
+#define MENUDEF_NAME popup_PERKS_HACKER_PRO
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_HACKER_PRO_TITLE"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_DISARM_TIME"
+#define CHOICE1_DESC		"@CUSTOM_PERK_DISARM_TIME_DESC"
+#define CHOICE1_DVAR		perk_disarmExplosiveTime
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"@CUSTOM_VALUE_SECONDS_1"
+#define CHOICE1_STR2		"@CUSTOM_VALUE_SECONDS_1_POINT_5"
+#define CHOICE1_STR3		"@CUSTOM_VALUE_SECONDS_2"
+#define CHOICE1_STR4		"@CUSTOM_VALUE_SECONDS_2_POINT_5"
+#define CHOICE1_STR5		"@CUSTOM_VALUE_SECONDS_3"
+#define CHOICE1_STR6		"@CUSTOM_VALUE_SECONDS_3_POINT_5"
+#define CHOICE1_STR7		"@CUSTOM_VALUE_SECONDS_4"
+#define CHOICE1_STR8		"@CUSTOM_VALUE_SECONDS_5"
+#define CHOICE1_STR9		"@CUSTOM_VALUE_SECONDS_6"
+#define CHOICE1_STR10		"@CUSTOM_VALUE_SECONDS_7"
+#define CHOICE1_STR11		"@CUSTOM_VALUE_SECONDS_8"
+#define CHOICE1_STR12		"@CUSTOM_VALUE_SECONDS_10"
+#define CHOICE1_VAL1		1
+#define CHOICE1_VAL2		1.5
+#define CHOICE1_VAL3		2
+#define CHOICE1_VAL4		2.5
+#define CHOICE1_VAL5		3
+#define CHOICE1_VAL6		3.5
+#define CHOICE1_VAL7		4
+#define CHOICE1_VAL8		5
+#define CHOICE1_VAL9		6
+#define CHOICE1_VAL10		7
+#define CHOICE1_VAL11		8
+#define CHOICE1_VAL12		10
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CUSTOM_RESET_TO_DEFAULT	resetdvar CHOICE1_DVAR;
+
+#define CUSTOM_OPTION_POPUP_ON_CLOSE setdvar ui_custom_perk_has_changed 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Tactical Mask
+//***********************************************************************************
+
+//***********************************************************************************
+// Tactical Mask Pro
+//***********************************************************************************
+
+//***********************************************************************************
+// Agile
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_AGILE"
+#define MENUDEF_NAME popup_PERKS_AGILE
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_AGILE_TITLE"
+#define CUSTOM_OPTIONS_POPUP_SUBTITLE "@CUSTOM_PERK_AGILE_DESC"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 3
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_SPRINT_RECOVERY"
+#define CHOICE1_DESC		"@CUSTOM_PERK_SPRINT_RECOVERY_DESC"
+#define CHOICE1_DVAR		perk_sprintRecoveryMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"1.25x"
+#define CHOICE1_STR2		"1.5x"
+#define CHOICE1_STR3		"1.75x"
+#define CHOICE1_STR4		"2x"
+#define CHOICE1_STR5		"2.25x"
+#define CHOICE1_STR6		"2.5x"
+#define CHOICE1_STR7		"2.75x"
+#define CHOICE1_STR8		"3x"
+#define CHOICE1_STR9		"3.25x"
+#define CHOICE1_STR10		"3.5x"
+#define CHOICE1_STR11		"3.75x"
+#define CHOICE1_STR12		"4x"
+#define CHOICE1_VAL1		1.25
+#define CHOICE1_VAL2		1.5
+#define CHOICE1_VAL3		1.75
+#define CHOICE1_VAL4		2
+#define CHOICE1_VAL5		2.25
+#define CHOICE1_VAL6		2.5
+#define CHOICE1_VAL7		2.75
+#define CHOICE1_VAL8		3
+#define CHOICE1_VAL9		3.25
+#define CHOICE1_VAL10		3.5
+#define CHOICE1_VAL11		3.75
+#define CHOICE1_VAL12		4
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CHOICE2_TEXT		"@CUSTOM_PERK_MANTLE_SPEED"
+#define CHOICE2_DESC		"@CUSTOM_PERK_MANTLE_SPEED_DESC"
+#define CHOICE2_DVAR		perk_mantleReduction
+#define CHOICE2_DVARTEXT	CHOICE2_DVAR"_text"
+#define CHOICE2_SHOW		1
+#define CHOICE2_STR1		"1.25x"
+#define CHOICE2_STR2		"1.5x"
+#define CHOICE2_STR3		"1.75x"
+#define CHOICE2_STR4		"2x"
+#define CHOICE2_STR5		"2.25x"
+#define CHOICE2_STR6		"2.5x"
+#define CHOICE2_STR7		"2.75x"
+#define CHOICE2_STR8		"3x"
+#define CHOICE2_STR9		"3.25x"
+#define CHOICE2_STR10		"3.5x"
+#define CHOICE2_STR11		"3.75x"
+#define CHOICE2_STR12		"4x"
+#define CHOICE2_VAL1		0.8
+#define CHOICE2_VAL2		0.666
+#define CHOICE2_VAL3		0.571
+#define CHOICE2_VAL4		0.5
+#define CHOICE2_VAL5		0.444
+#define CHOICE2_VAL6		0.4
+#define CHOICE2_VAL7		0.364
+#define CHOICE2_VAL8		0.333
+#define CHOICE2_VAL9		0.307
+#define CHOICE2_VAL10		0.286
+#define CHOICE2_VAL11		0.267
+#define CHOICE2_VAL12		0.25
+#define CHOICE2_EXEC		;
+#define CHOICE2_STRLIST		{ CHOICE2_STR1 CHOICE2_VAL1 CHOICE2_STR2 CHOICE2_VAL2 CHOICE2_STR3 CHOICE2_VAL3 CHOICE2_STR4 CHOICE2_VAL4 CHOICE2_STR5 CHOICE2_VAL5 CHOICE2_STR6 CHOICE2_VAL6 CHOICE2_STR7 CHOICE2_VAL7 CHOICE2_STR8 CHOICE2_VAL8 CHOICE2_STR9 CHOICE2_VAL9 CHOICE2_STR10 CHOICE2_VAL10 CHOICE2_STR11 CHOICE2_VAL11 CHOICE2_STR12 CHOICE2_VAL12 }
+#define CHOICE2_NUMVALS		12
+#define CHOICE2_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE2_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Double Tap
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_DOUBLE_TAP"
+#define MENUDEF_NAME popup_PERKS_DOUBLE_TAP
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_DOUBLE_TAP_TITLE"
+#define CUSTOM_OPTIONS_POPUP_SUBTITLE "@CUSTOM_PERK_DOUBLE_TAP_DESC"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 2
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_ROF"
+#define CHOICE1_DESC		"@CUSTOM_PERK_ROF_DESC"
+#define CHOICE1_DVAR		perk_weapRateMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"1.25x"
+#define CHOICE1_STR2		"1.33x"
+#define CHOICE1_STR3		"1.5x"
+#define CHOICE1_STR4		"1.66x"
+#define CHOICE1_STR5		"1.75x"
+#define CHOICE1_STR6		"2x"
+#define CHOICE1_STR7		"2.25x"
+#define CHOICE1_STR8		"2.33x"
+#define CHOICE1_STR9		"2.5x"
+#define CHOICE1_STR10		"2.66x"
+#define CHOICE1_STR11		"2.75x"
+#define CHOICE1_STR12		"3x"
+#define CHOICE1_VAL1		0.8
+#define CHOICE1_VAL2		0.75
+#define CHOICE1_VAL3		0.667
+#define CHOICE1_VAL4		0.602
+#define CHOICE1_VAL5		0.571
+#define CHOICE1_VAL6		0.5
+#define CHOICE1_VAL7		0.444
+#define CHOICE1_VAL8		0.429
+#define CHOICE1_VAL9		0.4
+#define CHOICE1_VAL10		0.376
+#define CHOICE1_VAL11		0.364
+#define CHOICE1_VAL12		0.333
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Extra Training
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_EXTRATRAINING"
+#define MENUDEF_NAME popup_PERKS_EXTRATRAINING
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_EXTRATRAINING_TITLE"
+#define CUSTOM_OPTIONS_POPUP_SUBTITLE "@CUSTOM_PERK_EXTRATRAINING_DESC"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 0
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_INTERACT_SPEED"
+#define CHOICE1_DESC		"@CUSTOM_PERK_INTERACT_SPEED_DESC"
+#define CHOICE1_DVAR		perk_interactSpeedMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"1.25x"
+#define CHOICE1_STR2		"1.5x"
+#define CHOICE1_STR3		"1.75x"
+#define CHOICE1_STR4		"2x"
+#define CHOICE1_STR5		"2.25x"
+#define CHOICE1_STR6		"2.5x"
+#define CHOICE1_STR7		"2.75x"
+#define CHOICE1_STR8		"3x"
+#define CHOICE1_STR9		"3.25x"
+#define CHOICE1_STR10		"3.5x"
+#define CHOICE1_STR11		"3.75x"
+#define CHOICE1_STR12		"4x"
+#define CHOICE1_VAL1		1.25
+#define CHOICE1_VAL2		1.5
+#define CHOICE1_VAL3		1.75
+#define CHOICE1_VAL4		2
+#define CHOICE1_VAL5		2.25
+#define CHOICE1_VAL6		2.5
+#define CHOICE1_VAL7		2.75
+#define CHOICE1_VAL8		3
+#define CHOICE1_VAL9		3.25
+#define CHOICE1_VAL10		3.5
+#define CHOICE1_VAL11		3.75
+#define CHOICE1_VAL12		4
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		12
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+//***********************************************************************************
+// Hardened
+//***********************************************************************************
+#define CUSTOM_OPTIONS_POPUP_MENU_NAME "popup_PERKS_STEROIDS"
+#define MENUDEF_NAME popup_PERKS_STEROIDS
+#define CUSTOM_OPTIONS_POPUP_TITLE "@CUSTOM_PERK_STEROIDS_TITLE"
+#define CUSTOM_OPTIONS_POPUP_SUBTITLE "@CUSTOM_PERK_STEROIDS_DESC"
+#define CUSTOM_OPTIONS_POPUP_NUM_ITEMS 5
+
+#define CHOICE1_TEXT		"@CUSTOM_PERK_HEALTH_REGEN_SPEED"
+#define CHOICE1_DESC		"@CUSTOM_PERK_HEALTH_REGEN_SPEED_DESC"
+#define CHOICE1_DVAR		perk_healthRegenMultiplier
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"1.25x"
+#define CHOICE1_STR2		"1.5x"
+#define CHOICE1_STR3		"1.75x"
+#define CHOICE1_STR4		"2x"
+#define CHOICE1_STR5		"2.5x"
+#define CHOICE1_STR6		"3x"
+#define CHOICE1_STR7		"3.5x"
+#define CHOICE1_STR8		"4x"
+#define CHOICE1_STR9		"4.5x"
+#define CHOICE1_STR10		"5x"
+#define CHOICE1_STR11		""
+#define CHOICE1_STR12		""
+#define CHOICE1_VAL1		1.25
+#define CHOICE1_VAL2		1.5
+#define CHOICE1_VAL3		1.75
+#define CHOICE1_VAL4		2
+#define CHOICE1_VAL5		2.5
+#define CHOICE1_VAL6		3
+#define CHOICE1_VAL7		3.5
+#define CHOICE1_VAL8		4
+#define CHOICE1_VAL9		4.5
+#define CHOICE1_VAL10		5
+#define CHOICE1_VAL11		0
+#define CHOICE1_VAL12		0
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_NUMVALS		10
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#define CHOICE3_TEXT		"@CUSTOM_PERK_SHELL_SHOCK_REDUCTION"
+#define CHOICE3_DESC		"@CUSTOM_PERK_SHELL_SHOCK_REDUCTION_DESC"
+#define CHOICE3_DVAR		perk_shellShockReduction
+#define CHOICE3_DVARTEXT	CHOICE3_DVAR"_text"
+#define CHOICE3_SHOW		1
+#define CHOICE3_STR1		"10%"
+#define CHOICE3_STR2		"20%"
+#define CHOICE3_STR3		"30%"
+#define CHOICE3_STR4		"40%"
+#define CHOICE3_STR5		"50%"
+#define CHOICE3_STR6		"60%"
+#define CHOICE3_STR7		"70%"
+#define CHOICE3_STR8		"75%"
+#define CHOICE3_STR9		"80%"
+#define CHOICE3_STR10		"85%"
+#define CHOICE3_STR11		"90%"
+#define CHOICE3_STR12		"95%"
+#define CHOICE3_VAL1		0.9
+#define CHOICE3_VAL2		0.8
+#define CHOICE3_VAL3		0.7
+#define CHOICE3_VAL4		0.6
+#define CHOICE3_VAL5		0.5
+#define CHOICE3_VAL6		0.4
+#define CHOICE3_VAL7		0.3
+#define CHOICE3_VAL8		0.25
+#define CHOICE3_VAL9		0.2
+#define CHOICE3_VAL10		0.15
+#define CHOICE3_VAL11		0.1
+#define CHOICE3_VAL12		0.05
+#define CHOICE3_EXEC		;
+#define CHOICE3_STRLIST		{ CHOICE3_STR1 CHOICE3_VAL1 CHOICE3_STR2 CHOICE3_VAL2 CHOICE3_STR3 CHOICE3_VAL3 CHOICE3_STR4 CHOICE3_VAL4 CHOICE3_STR5 CHOICE3_VAL5 CHOICE3_STR6 CHOICE3_VAL6 CHOICE3_STR7 CHOICE3_VAL7 CHOICE3_STR8 CHOICE3_VAL8 CHOICE3_STR9 CHOICE3_VAL9 CHOICE3_STR10 CHOICE3_VAL10 CHOICE3_STR11 CHOICE3_VAL11 CHOICE3_STR12 CHOICE3_VAL12 }
+#define CHOICE3_NUMVALS		12
+#define CHOICE3_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE3_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+// This modifier is in actual game units that gets subtracted off of the actual fall height,
+// which then is used to determine a damage from 0-100 based on bg_fallDamageMinHeight and bg_fallDamageMaxHeight.
+// This is quite confusing to show the player, so I'm going to be very vague.  Min and max are 128 and 300 currently.
+#define CHOICE4_TEXT		"@CUSTOM_PERK_FALL_DAMAGE"
+#define CHOICE4_DESC		"@CUSTOM_PERK_FALL_DAMAGE_DESC"
+#define CHOICE4_DVAR		perk_fallHeightUnits
+#define CHOICE4_DVARTEXT	CHOICE4_DVAR"_text"
+#define CHOICE4_SHOW		1
+#define CHOICE4_STR1		"Not Very High"
+#define CHOICE4_STR2		"Somewhat Higher"
+#define CHOICE4_STR3		"High"
+#define CHOICE4_STR4		"Very High"
+#define CHOICE4_STR5		"Highest"
+#define CHOICE4_STR6		""
+#define CHOICE4_STR7		""
+#define CHOICE4_STR8		""
+#define CHOICE4_STR9		""
+#define CHOICE4_STR10		""
+#define CHOICE4_STR11		""
+#define CHOICE4_STR12		""
+#define CHOICE4_VAL1		60
+#define CHOICE4_VAL2		90
+#define CHOICE4_VAL3		120
+#define CHOICE4_VAL4		200
+#define CHOICE4_VAL5		300
+#define CHOICE4_VAL6		0
+#define CHOICE4_VAL7		0
+#define CHOICE4_VAL8		0
+#define CHOICE4_VAL9		0
+#define CHOICE4_VAL10		0
+#define CHOICE4_VAL11		0
+#define CHOICE4_VAL12		0
+#define CHOICE4_EXEC		;
+#define CHOICE4_STRLIST		{ CHOICE4_STR1 CHOICE4_VAL1 CHOICE4_STR2 CHOICE4_VAL2 CHOICE4_STR3 CHOICE4_VAL3 CHOICE4_STR4 CHOICE4_VAL4 CHOICE4_STR5 CHOICE4_VAL5 CHOICE4_STR6 CHOICE4_VAL6 CHOICE4_STR7 CHOICE4_VAL7 CHOICE4_STR8 CHOICE4_VAL8 CHOICE4_STR9 CHOICE4_VAL9 CHOICE4_STR10 CHOICE4_VAL10 CHOICE4_STR11 CHOICE4_VAL11 CHOICE4_STR12 CHOICE4_VAL12 }
+#define CHOICE4_NUMVALS		5
+#define CHOICE4_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE4_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+#include "ui_mp/custom_options_popup.inc"
+
+

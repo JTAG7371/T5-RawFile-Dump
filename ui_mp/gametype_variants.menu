@@ -1,0 +1,455 @@
+
+#define CHOICE_X_START			100
+#define CHOICE_Y_START			0
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/choices_setup_popmenu.menu"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+
+#undef	CHOICE_HORIZONTAL_ALIGN
+#define CHOICE_HORIZONTAL_ALIGN HORIZONTAL_ALIGN_LEFT
+#undef	CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN	VERTICAL_ALIGN_TOP
+
+#ifndef CHOICE_TEXTFONT
+#define CHOICE_TEXTFONT			UI_FONT_NORMAL
+#endif
+
+#define BG_COLOR 0.3 0.3 0.3 0.4
+#define BORDER_COLOR 1 1 1 1
+
+#define RULES_DESCRIPTION_TEXT_SCALE 0.35
+
+#define RULES_DESCRIPTION_ROW_Y 130
+#define RULES_DESCRIPTION_ROW_WIDTH 100
+#define RULES_DESCRIPTION_ROW_HEIGHT 30
+
+#define RULES_COLUMN_X_EVENT 70
+#define RULES_COLUMN_X_ACTION		(RULES_COLUMN_X_EVENT + RULES_DESCRIPTION_ROW_WIDTH)
+#define RULES_COLUMN_X_PARAMETER	(RULES_COLUMN_X_ACTION + RULES_DESCRIPTION_ROW_WIDTH)
+#define RULES_COLUMN_X_TARGET		(RULES_COLUMN_X_PARAMETER + RULES_DESCRIPTION_ROW_WIDTH)
+#define RULES_COLUMN_X_CONDITIONAL	(RULES_COLUMN_X_TARGET + RULES_DESCRIPTION_ROW_WIDTH)
+
+#ifdef XENON
+	#define SELECT_ICON	"ui_button_xenon_3d_a_32x32"
+#endif
+#ifdef PS3
+	#define SELECT_ICON	"ui_button_ps3_x_32x32"
+#endif
+
+#define GV_PAGE_TEXT_WIDTH 300
+
+#define GV_PAGE_TEXT( xPos, yPos, displayText, textAlignment, visArg ) \
+	itemDef \
+	{ \
+		type		ITEM_TYPE_TEXT \
+		rect		xPos yPos GV_PAGE_TEXT_WIDTH 30 \
+		exp			text( displayText ) \
+		forecolor	1 1 1 1 \
+		textfont	CHOICE_TEXTFONT \
+		textscale	0.3 \
+		textalign 	textAlignment \
+		textstyle	ITEM_TEXTSTYLE_SHADOWED \
+		visible		visArg \
+		decoration \
+	}
+
+#define GV_IS_RULE_VIS( dvarName ) dvarString( dvarName ) != ""
+
+#define GV_DISPLAY_RULE( xPos, yStartPos, visText ) \
+	GV_PAGE_TEXT( ( xPos - GV_PAGE_TEXT_WIDTH - 10 ), yStartPos, "@CUSTOM_EVENT_COLON", ITEM_ALIGN_RIGHT, when( GV_IS_RULE_VIS( "ui_gv_event" ) && visText ) ) \
+	GV_PAGE_TEXT( xPos, yStartPos, dvarString( "ui_gv_event" ), ITEM_ALIGN_LEFT, when( GV_IS_RULE_VIS( "ui_gv_event" ) && visText ) ) \
+	GV_PAGE_TEXT( ( xPos - GV_PAGE_TEXT_WIDTH - 10 ), ( yStartPos + 20 ), "@CUSTOM_ACTION_COLON", ITEM_ALIGN_RIGHT, when( GV_IS_RULE_VIS( "ui_gv_action" ) && visText ) ) \
+	GV_PAGE_TEXT( xPos, ( yStartPos + 20 ), dvarString( "ui_gv_action" ), ITEM_ALIGN_LEFT, when( GV_IS_RULE_VIS( "ui_gv_action" ) && visText ) ) \
+	GV_PAGE_TEXT( ( xPos - GV_PAGE_TEXT_WIDTH - 10 ), ( yStartPos + 20*2 ), "@CUSTOM_PARAM_COLON", ITEM_ALIGN_RIGHT, when( GV_IS_RULE_VIS( "ui_gv_param" ) && visText ) ) \
+	GV_PAGE_TEXT( xPos, ( yStartPos + 20*2 ), dvarString( "ui_gv_param" ), ITEM_ALIGN_LEFT, when( GV_IS_RULE_VIS( "ui_gv_param" ) && visText ) ) \
+	GV_PAGE_TEXT( ( xPos - GV_PAGE_TEXT_WIDTH - 10 ), ( yStartPos + 20*3 ), "@CUSTOM_TARGET_COLON", ITEM_ALIGN_RIGHT, when( GV_IS_RULE_VIS( "ui_gv_target" ) && visText ) ) \
+	GV_PAGE_TEXT( xPos, ( yStartPos + 20*3 ), dvarString( "ui_gv_target" ), ITEM_ALIGN_LEFT, when( GV_IS_RULE_VIS( "ui_gv_target" ) && visText ) ) \
+	GV_PAGE_TEXT( ( xPos - GV_PAGE_TEXT_WIDTH - 10 ), ( yStartPos + 20*4 ), "@CUSTOM_COND_COLON", ITEM_ALIGN_RIGHT, when( GV_IS_RULE_VIS( "ui_gv_condlhs" ) && visText ) ) \
+	GV_PAGE_TEXT( xPos, ( yStartPos + 20*4 ), dvarString( "ui_gv_condlhs" ) + " " + dvarString( "ui_gv_condop" ) + " " + dvarString( "ui_gv_condrhs" ), ITEM_ALIGN_LEFT, when( GV_IS_RULE_VIS( "ui_gv_condlhs" ) && visText ) )
+
+{
+	menuDef
+	{
+		name			"gametype_variants"
+		fullScreen		1
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		style			WINDOW_STYLE_EMPTY	
+		
+		onOpen
+		{
+			setFocus variant_rules;
+
+			execnow set ui_gv_event_index 0;
+			execnow set ui_gv_action_index 0;
+			execnow set ui_gv_target_index 0;
+			execnow set ui_gv_param_index 0;
+			execnow set ui_gv_condlhs_index 0;
+			execnow set ui_gv_condop_index 0;
+			execnow set ui_gv_condrhs_index 0;
+			execnow set ui_gv_event "";
+			execnow set ui_gv_action "";
+			execnow set ui_gv_target "";
+			execnow set ui_gv_param "";
+			execnow set ui_gv_condlhs "";
+			execnow set ui_gv_condop "";
+			execnow set ui_gv_condrhs "";
+			execnow set ui_gv_iscreatingnew "";
+			execnow set ui_gv_nextpopup "";
+
+			exec "ui_gv_updateselectedrule";
+		}
+		onESC 
+		{
+			play CHOICE_FOCUS_SOUND;
+			close self;
+		}
+
+		#include "ui_mp/overlaybg.inc"
+		OVERLAY_BACKGROUND
+
+		CHOICE_OVERLAY_TITLE( "@CUSTOM_ADVANCED_RULES_EDITOR" )
+
+		// column headers
+		itemDef
+		{
+			type		ITEM_TYPE_TEXT
+			rect		RULES_COLUMN_X_EVENT RULES_DESCRIPTION_ROW_Y RULES_DESCRIPTION_ROW_WIDTH RULES_DESCRIPTION_ROW_HEIGHT
+			text		"@CUSTOM_RULE"
+			forecolor	1 1 1 1
+			textfont	CHOICE_TEXTFONT
+			textscale	RULES_DESCRIPTION_TEXT_SCALE
+			textalign 	ITEM_ALIGN_LEFT
+			textstyle	ITEM_TEXTSTYLE_SHADOWED
+			visible		1
+			decoration
+		}
+		itemDef
+		{
+			type		ITEM_TYPE_TEXT
+			rect		RULES_COLUMN_X_EVENT 180 200 32
+			text		"@CUSTOM_ADVANCED_RULES_NONE"
+			forecolor	1 1 1 1
+			textfont	CHOICE_TEXTFONT
+			textscale	1.0
+			textalign 	ITEM_ALIGN_LEFT
+			textstyle	ITEM_TEXTSTYLE_SHADOWED
+			visible		when( dvarInt( ui_gv_rulecount ) == 0 )
+			decoration
+		}
+		// rule events
+		itemDef
+		{
+			name				variant_rules
+			type				ITEM_TYPE_LISTBOX
+			rect				0 100 185 250 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin				0 0
+			elementwidth		20
+			elementheight		23
+			//					numcols	xpos xwidth textlen alignment
+			columns				1 25 190 64 ITEM_ALIGN_LEFT
+			
+			noscrollbars
+			noBlinkingHighlight
+			textfont			CHOICE_TEXTFONT
+			textscale			CHOICE_TEXTSIZE
+			textalignx			0
+			forecolor			1 1 1 1
+			focusColor			COLOR_TITLE
+			outlinecolor		HIGHLIGHT_COLOR
+			selectIcon			SELECT_ICON
+			disablecolor		COLOR_DISABLED
+			textstyle			ITEM_TEXTSTYLE_NORMAL
+			feeder				FEEDER_VARIANT_RULES_SHORT
+			onListboxSelectionChange
+			{
+				play "uin_navigation_over";
+			}
+			doubleclick
+			{
+				if( dvarInt( ui_gv_rulecount ) > 0 )
+				{
+					setdvar ui_gv_iscreatingnew "0";
+					execnow "ui_gv_updateselectedrule";
+					open "popup_gv_select_event";
+					play CHOICE_FOCUS_SOUND;
+				}
+			}
+			execKeyInt BUTTON_Y
+			{
+				setdvar ui_gv_iscreatingnew "1";
+				setdvar ui_gv_event "";
+				setdvar ui_gv_action "";
+				setdvar ui_gv_target "";
+				setdvar ui_gv_param "";
+				setdvar ui_gv_condlhs "";
+				setdvar ui_gv_condop "";
+				setdvar ui_gv_condrhs "";
+				setdvar ui_gv_event_index 0;
+				setdvar ui_gv_action_index 0;
+				setdvar ui_gv_target_index 0;
+				setdvar ui_gv_param_index 0;
+				setdvar ui_gv_condlhs_index 0;
+				setdvar ui_gv_condop_index 0;
+				setdvar ui_gv_condrhs_index 0;
+				open "popup_gv_select_event";
+			}
+			execKeyInt BUTTON_X
+			{
+				if( dvarInt( ui_gv_rulecount ) > 0 )
+				{
+					execnow "ui_gv_updateselectedrule";
+					open "popup_gv_delete_ask";
+				}
+			}
+			
+			visible				1
+		}
+
+		itemDef
+		{
+			name			add_new
+			type			ITEM_TYPE_BUTTON
+			text			"@CUSTOM_ADV_EDIT_ADD_NEW"
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_SMALL
+			rect			90 -4 0 0 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM
+			visible			1
+		}
+
+		itemDef
+		{
+			name			add_new
+			type			ITEM_TYPE_BUTTON
+			text			"@CUSTOM_ADV_EDIT_DELETE"
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_SMALL
+			rect			180 -4 0 0 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM
+			visible			when( dvarInt( ui_gv_rulecount ) > 0 )
+		}
+
+		GV_DISPLAY_RULE( 300, 200, 1 )
+		
+		#include "ui_mp/navcontrols.inc"
+	}
+
+#define GV_PAGE_HEIGHT NEW_FRAME_DEFAULT_HEIGHT
+#define GV_PAGE_WIDTH ( GV_PAGE_HEIGHT * FRAME_ASPECT_RATIO )
+
+#undef DEFAULT_SLIDE_IN_SPEED
+#define DEFAULT_SLIDE_IN_SPEED 180
+
+#undef DEFAULT_SLIDE_OUT_SPEED
+#define DEFAULT_SLIDE_OUT_SPEED 180
+
+#define GV_PAGE_SETUP( popupName, popupTitle, onOpenCmd, onEscCmd ) \
+	name popupName \
+	rect 0 0 640 480 \
+	focuscolor				COLOR_FOCUSED \
+	style					WINDOW_STYLE_FILLED \
+	soundloop 				MENU_MUSIC \
+	onOpen					{ activateBlur; setdvar invite_visible "0"; setFocus change_gv_var; onOpenCmd } \
+	onEsc					{ deactivateBlur; close self; onEscCmd } \
+	onClose					{ deactivateBlur; setdvar invite_visible "1"; } \
+	NEW_FRAME( GV_PAGE_WIDTH, GV_PAGE_HEIGHT ) \
+	NEW_FRAME_TITLE( GV_PAGE_WIDTH, GV_PAGE_HEIGHT, popupTitle, 1 )
+
+#define GV_PAGE( popupName, popupTitle, dvarToMod, feederId, listSelectText, onOpenCmd, continueCmd, onEscCmd ) \
+	menuDef { \
+		GV_PAGE_SETUP( popupName, popupTitle, onOpenCmd, onEscCmd ) \
+		CHOICE_BUTTON_FOCUS_VIS_EX( 1, listSelectText, setdvar settings_selected "1"; setfocus gv_list;, ;, ;, when( !dvarInt( settings_selected ) ), name change_gv_var ) \
+		CHOICE_BUTTON_COLOR_VIS( 1, listSelectText, COLOR_DISABLED, when( dvarInt( settings_selected ) ) ) \
+		CHOICE_LEFTITEM2_VIS( 1, dvarString( dvarToMod ), CHOICE_TEXTCOLOR, when( !dvarInt( settings_selected ) ) ) \
+		CHOICE_BUTTON_VIS_EX( 3, "@MENU_CONTINUE", continueCmd; close self;, when( !dvarInt( settings_selected ) ), name choice_continue ) \
+		CHOICE_BUTTON_COLOR_VIS( 3, "@MENU_CONTINUE", COLOR_DISABLED, when( dvarInt( settings_selected ) ) ) \
+		CHOICE_BUTTON_VIS_EX( 4, "@MENU_CANCEL", close self; onEscCmd, when( !dvarInt( settings_selected ) ), name choice_cancel ) \
+		CHOICE_BUTTON_COLOR_VIS( 4, "@MENU_CANCEL", COLOR_DISABLED, when( dvarInt( settings_selected ) ) ) \
+		GV_DISPLAY_RULE( 360, 300, !dvarInt( gv_in_list ) ) \
+		itemDef \
+		{ \
+			name						gv_list \
+			type						ITEM_TYPE_LISTBOX \
+			feeder						feederId \
+			rect						(CHOICE_X( 1 ) - CHOICE_SIDEITEM_SIZE_X - CHOICE_SIDEITEM_SPACING - 45) ( CHOICE_Y_START - 5 ) 185 150 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			origin						0 0 \
+			elementwidth				20 \
+			elementheight				23 \
+			noscrollbars \
+			textfont					CHOICE_TEXTFONT \
+			textscale					CHOICE_TEXTSIZE \
+			textalignx					-5 \
+			forecolor					CHOICE_TEXTCOLOR \
+			focusColor					COLOR_TITLE \
+			selectBorder				0.8 0.95 1 0 \
+			outlinecolor				HIGHLIGHT_COLOR \
+			highlightTexture			"menu_button_backing_highlight" \
+			selectIcon					SELECT_ICON \
+			disablecolor				COLOR_DISABLED \
+			textstyle					ITEM_TEXTSTYLE_SHADOWED \
+			visible						when( dvarBool( settings_selected ) ) \
+			columns						1 25 190 64 ITEM_ALIGN_LEFT \
+			onFocus \
+			{ \
+				play CHOICE_FOCUS_SOUND; \
+				execNow set "prev_"dvarToMod"_index" ( dvarInt( dvarToMod"_index" ) ); \
+				setdvar gv_in_list 1; \
+			} \
+			leaveFocus \
+			{ \
+				setdvar gv_in_list 0; \
+			} \
+			onListboxSelectionChange	{ play CHOICE_FOCUS_SOUND; } \
+			doubleclick					{ play CHOICE_FOCUS_SOUND; setdvar settings_selected "0"; setfocus choice_continue; } \
+			execKeyInt BUTTON_B \
+			{ \
+				execNow ui_gv_resetfeeder ( dvarInt( "prev_"dvarToMod"_index" ) ); \
+				setdvar settings_selected "0"; setfocus change_gv_var \
+			} \
+		} \
+		NEW_FRAME_BACK_BUTTON( GV_PAGE_WIDTH, GV_PAGE_HEIGHT ) \
+	}
+
+	#undef CHOICE_Y_START
+	#define CHOICE_Y_START			140
+	#undef CHOICE_SIDEITEM_SIZE_X
+	#define CHOICE_SIDEITEM_SIZE_X	-180
+
+	#define	GO_TO_NEXT_POPUP \
+		execnow "ui_gv_navforward"; \
+		exec openmenu ( dvarString( "ui_gv_nextpopup" ) )
+
+	#define GO_TO_PREV_POPUP \
+		exec "ui_gv_navbackward"
+
+	GV_PAGE( "popup_gv_select_event", "@CUSTOM_SELECT_EVENT", "ui_gv_event", FEEDER_VARIANT_EVENT_LIST, "@CUSTOM_EVENT", execnow "ui_gv_startaddingevent", GO_TO_NEXT_POPUP, execNow "ui_gv_updateselectedrule"; )
+	GV_PAGE( "popup_gv_select_action", "@CUSTOM_SELECT_ACTION", "ui_gv_action", FEEDER_VARIANT_ACTION_LIST, "@CUSTOM_ACTION", execnow "ui_gv_startaddingaction", GO_TO_NEXT_POPUP, GO_TO_PREV_POPUP )
+	GV_PAGE( "popup_gv_select_param", "@CUSTOM_SELECT_PARAM", "ui_gv_param", FEEDER_VARIANT_PARAM_LIST, "@CUSTOM_PARAMETER", execnow "ui_gv_startaddingparam", GO_TO_NEXT_POPUP, GO_TO_PREV_POPUP )
+	GV_PAGE( "popup_gv_select_target", "@CUSTOM_SELECT_TARGET", "ui_gv_target", FEEDER_VARIANT_TARGET_LIST, "@CUSTOM_TARGET", execnow "ui_gv_startaddingtarget", GO_TO_NEXT_POPUP, GO_TO_PREV_POPUP )
+
+	menuDef {
+		GV_PAGE_SETUP( "popup_gv_enter_param", "@CUSTOM_ENTER_PARAMETER", setfocus change_gv_var; execnow "ui_gv_startaddingparam", GO_TO_PREV_POPUP )
+		CHOICE_BUTTON_FOCUS_VIS_EX( 1, "@CUSTOM_PARAMETER", exec ui_keyboard "Enter Param" ui_gv_param 128, ;, ;, 1, name change_gv_var )
+		CHOICE_LEFTITEM2_VIS( 1, dvarString( ui_gv_param ), CHOICE_TEXTCOLOR, 1 )
+		CHOICE_BUTTON_VIS_EX( 3, "@MENU_CONTINUE", GO_TO_NEXT_POPUP; close self;, 1, name choice_continue )
+		CHOICE_BUTTON_VIS_EX( 4, "@MENU_CANCEL", close self; GO_TO_PREV_POPUP, 1, name choice_cancel )
+		GV_DISPLAY_RULE( 360, 300, 1 )
+		NEW_FRAME_BACK_BUTTON( GV_PAGE_WIDTH, GV_PAGE_HEIGHT )
+	}
+
+	menuDef {
+		GV_PAGE_SETUP( "popup_gv_select_cond", "@CUSTOM_SELECT_CONDITIONAL", setfocus change_gv_var; execnow "ui_gv_startaddingcond", GO_TO_PREV_POPUP )
+		CHOICE_BUTTON_FOCUS_VIS_EX( 1, "@CUSTOM_CONDITIONAL", setdvar select_condlhs "1"; setfocus gv_cond_lhs_list;, ;, ;, 1, name change_gv_var )
+		#define SHOULD_DISABLE \
+			dvarInt( select_condlhs ) \
+			|| dvarInt( select_condop ) \
+			|| dvarInt( select_condrhs )
+		CHOICE_BUTTON_VIS_EX( 3, "@MENU_CONTINUE", GO_TO_NEXT_POPUP; close self;, when( !SHOULD_DISABLE ), name choice_continue )
+		CHOICE_BUTTON_COLOR_VIS( 3, "@MENU_CONTINUE", COLOR_DISABLED, when( SHOULD_DISABLE ) )
+		CHOICE_BUTTON_VIS_EX( 4, "@MENU_NONE", setdvar ui_gv_condlhs_index "-1"; setdvar ui_gv_condlhs ""; setdvar ui_gv_condop ""; setdvar ui_gv_condrhs ""; GO_TO_NEXT_POPUP; close self;, when( !SHOULD_DISABLE ), name choice_none )
+		CHOICE_BUTTON_COLOR_VIS( 4, "@MENU_NONE", COLOR_DISABLED, when( SHOULD_DISABLE ) )
+		CHOICE_BUTTON_VIS_EX( 5, "@MENU_CANCEL", close self; GO_TO_PREV_POPUP, when( !SHOULD_DISABLE ), name choice_cancel )
+		CHOICE_BUTTON_COLOR_VIS( 5, "@MENU_CANCEL", COLOR_DISABLED, when( SHOULD_DISABLE ) )
+		#define COND_LIST( listName, feederIndex, dvarName, selectedDvar, xPos, onConfirmCmd, onBackCmd ) \
+			itemDef \
+			{ \
+				name						listName \
+				type						ITEM_TYPE_LISTBOX \
+				feeder						feederIndex \
+				rect						xPos ( CHOICE_Y_START - 5 ) 185 150 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+				origin						0 0 \
+				elementwidth				20 \
+				elementheight				23 \
+				noscrollbars \
+				textfont					CHOICE_TEXTFONT \
+				textscale					CHOICE_TEXTSIZE \
+				textalignx					-5 \
+				forecolor					CHOICE_TEXTCOLOR \
+				focusColor					COLOR_TITLE \
+				selectBorder				0.8 0.95 1 0 \
+				outlinecolor				HIGHLIGHT_COLOR \
+				highlightTexture			"menu_button_backing_highlight" \
+				selectIcon					SELECT_ICON \
+				disablecolor				COLOR_DISABLED \
+				textstyle					ITEM_TEXTSTYLE_SHADOWED \
+				visible						when( dvarBool( selectedDvar ) ) \
+				columns						1 25 190 64 ITEM_ALIGN_LEFT \
+				onfocus \
+				{ \
+					play CHOICE_FOCUS_SOUND; \
+					execNow set "prev_"dvarName"_index" ( dvarInt( dvarName"_index" ) ); \
+					setdvar gv_in_list 1; \
+				} \
+				leaveFocus \
+				{ \
+					setdvar gv_in_list 0; \
+				} \
+				onListboxSelectionChange	{ play CHOICE_FOCUS_SOUND; } \
+				doubleclick					{ play CHOICE_FOCUS_SOUND; setdvar selectedDvar "0"; onConfirmCmd } \
+				execKeyInt BUTTON_B \
+				{ \
+					execNow ui_gv_resetfeeder ( dvarInt( "prev_"dvarName"_index" ) ); \
+					setdvar selectedDvar "0"; onBackCmd \
+				} \
+			}
+		#define FIRST_LIST_X_POS (CHOICE_X( 1 ) - CHOICE_SIDEITEM_SIZE_X - CHOICE_SIDEITEM_SPACING - 45)
+		#define SECOND_LIST_X_POS ( FIRST_LIST_X_POS + 130 )
+		#define THIRD_LIST_X_POS ( SECOND_LIST_X_POS + 170 )
+		#define GV_DVAR_LIST_TEXT( xPos, dvarName, visArg ) \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			xPos CHOICE_Y( 1 ) CHOICE_SIDEITEM_SIZE_X CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+				exp				text( dvarString( dvarName ) ); \
+				textalign		ITEM_ALIGN_MIDDLE_LEFT \
+				textfont		CHOICE_TEXTFONT \
+				textscale		CHOICE_TEXTSIZE \
+				textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+				style			WINDOW_STYLE_FILLED \
+				forecolor		CHOICE_TEXTCOLOR \
+				visible			visArg ; \
+				decoration \
+			}
+		GV_DVAR_LIST_TEXT( FIRST_LIST_X_POS, "ui_gv_condlhs", when( !dvarInt( select_condlhs ) ) )
+		GV_DVAR_LIST_TEXT( SECOND_LIST_X_POS, "ui_gv_condop", when( !dvarInt( select_condop ) ) )
+		GV_DVAR_LIST_TEXT( THIRD_LIST_X_POS, "ui_gv_condrhs", when( !dvarInt( select_condrhs ) ) )
+
+		GV_DISPLAY_RULE( 360, 300, !dvarInt( gv_in_list ) )
+
+		COND_LIST( gv_cond_lhs_list, FEEDER_VARIANT_COND_LHS_LIST, "ui_gv_condlhs", select_condlhs, FIRST_LIST_X_POS, setdvar select_condop "1"; setfocus gv_cond_op_list;, setfocus change_gv_var; )
+		COND_LIST( gv_cond_op_list, FEEDER_VARIANT_COND_OP_LIST, "ui_gv_condop", select_condop, SECOND_LIST_X_POS, setdvar select_condrhs "1"; setfocus gv_cond_rhs_list;, setdvar select_condlhs "1"; setfocus gv_cond_lhs_list; )
+		COND_LIST( gv_cond_lhs_list, FEEDER_VARIANT_COND_RHS_LIST, "ui_gv_condrhs", select_condrhs, THIRD_LIST_X_POS, setfocus choice_continue;, setdvar select_condop "1"; setfocus gv_cond_op_list; )
+
+		NEW_FRAME_BACK_BUTTON( GV_PAGE_WIDTH, GV_PAGE_HEIGHT )
+	}
+
+#define GV_RULE_PAGE( popupName, popupTitle, popupSubtitle, actionButtonText, actionButtonCmd, onCloseCmd ) \
+	menuDef { \
+		GV_PAGE_SETUP( popupName, popupTitle, setfocus choice_cancel, onCloseCmd ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			85 115 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			forecolor		NEW_FRAME_LT_GREY_RGB 1 \
+			exp				text( popupSubtitle ) \
+			textfont		UI_FONT_NORMAL \
+			textscale		TEXTSIZE_TITLE \
+			textstyle		ITEM_TEXTSTYLE_NORMAL \
+			textalign		ITEM_ALIGN_LEFT \
+			visible			1 \
+			decoration \
+		} \
+		GV_DISPLAY_RULE( 140, 200, 1 ) \
+		CHOICE_BUTTON_EX( 7, actionButtonText, close self; actionButtonCmd, name choice_continue ) \
+		CHOICE_BUTTON_EX( 8, "@MENU_CANCEL", close self; onCloseCmd, name choice_cancel ) \
+		NEW_FRAME_BACK_BUTTON( GV_PAGE_WIDTH, GV_PAGE_HEIGHT ) \
+	}
+
+	GV_RULE_PAGE( "popup_gv_add_new", "@CUSTOM_ADD_NEW_RULE", "@CUSTOM_ADD_NEW_RULE_DESC", "@CUSTOM_ADD_NEW", exec "ui_gv_addnewrule", GO_TO_PREV_POPUP )
+	GV_RULE_PAGE( "popup_gv_edit_selected", "@CUSTOM_EDIT_RULE", "@CUSTOM_EDIT_RULE_DESC", "@CUSTOM_EDIT", exec "ui_gv_editselectedrule", GO_TO_PREV_POPUP )
+	GV_RULE_PAGE( "popup_gv_delete_ask", "@CUSTOM_DELETE_RULE", "@CUSTOM_DELETE_RULE_DESC", "@MENU_DELETE", exec "ui_gv_deleteselected";exec "ui_gv_updateselectedrule", ; )
+	
+}

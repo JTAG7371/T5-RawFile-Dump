@@ -1,0 +1,47 @@
+3011,Primary Weapon,@WEAPON_MP5,mp5,11,,weapon_mp5,WEAPON_MP5,attachment_popup_SMG
+2012,Primary Weapon,@WEAPON_UZI,uzi,12,,weapon_uzi,WEAPON_UZI,attachment_popup_SMG
+3021,Primary Weapon,@WEAPON_G36C,aug,21,,weapon_g36c,WEAPON_G36C,attachment_popup_assault
+3022,Primary Weapon,@WEAPON_M16,m16,22,,weapon_m16,WEAPON_M16,attachment_popup_assault
+3023,Primary Weapon,@WEAPON_M14,m14,23,,weapon_m14,WEAPON_M14,attachment_popup_assault
+3025,Primary Weapon,@WEAPON_AK47,ak47,25,,weapon_ak47,WEAPON_AK47,attachment_popup_assault
+3061,Primary Weapon,@WEAPON_DRAGUNOV,dragunov,61,,weapon_dragunov,WEAPON_DRAGUNOV,attachment_popup_rifle
+3071,Primary Weapon,@WEAPON_M1014,tempshotgun,71,,weapon_m1014,WEAPON_M1014,attachment_popup_shotgun
+3082,Primary Weapon,@WEAPON_RPD,templmg,82,,weapon_rpd,WEAPON_RPD,attachment_popup_LMG1
+
+3000,Secondary Weapon,@WEAPON_COLT45,colt45,0,,weapon_colt,WEAPON_COLT45,attachment_popup_pistol
+
+3100,Grenade,@WEAPON_FRAGGRENADE,frag_grenade,100,,weapon_fraggrenade,WEAPON_FRAGGRENADE,
+
+3102,Grenade,@WEAPON_M8_WHITE_SMOKE,smoke_grenade,102,,weapon_m8_white_smoke,WEAPON_M8_WHITE_SMOKE,
+3106,Grenade,@WEAPON_FLASHBANG,flash_grenade,106,,weapon_flashbang,WEAPON_FLASHBANG,
+
+150,Perk,@PERKS_BOMB_SQUAD,specialty_detectexplosive,150,,specialty_detectexplosive,PERKS_ABILITY_TO_SEEK_OUT_ENEMY
+151,Perk,@PERKS_BANDOLIER,specialty_extraammo,151,,specialty_extraammo,PERKS_EXTRA_AMMUNITION_MAGAZINES
+180,Perk,@PERKS_PRIMARY_GRENADES_X_2,specialty_fraggrenade,180,,specialty_fraggrenade,PERKS_2_PRIMARY_GRENADES
+182,Perk,@PERKS_SPECIAL_GRENADES_X_3,specialty_specialgrenade,182,,specialty_specialgrenade,PERKS_3_SPECIAL_GRENADES_NO
+184,Perk,@PERKS_SATCHEL_CHARGE_X_2,satchel_charge_mp,184,,specialty_weapon_satchel_charge,PERKS_REMOTE_DETONATION_EXPLOSIVE
+185,Perk,@PERKS_CLAYMORE_X_2,claymore_mp,185,,specialty_weapon_claymore,PERKS_TRIP_ACTIVATED_EXPLOSIVE
+186,Perk,@PERKS_BAZOOKA_X_2,bazooka_mp,186,,specialty_weapon_bazooka,PERKS_ROCKET_LAUNCHER_WITH
+187,Perk,@PERKS_FLAMETHROWER,m2_flamethrower_mp,187,,specialty_weapon_flamethrower,PERKS_FLAMETHROWER_DESC
+
+152,Perk,@PERKS_UAV_JAMMER,specialty_gpsjammer,152,,specialty_gpsjammer,PERKS_UNDETECTABLE_ON_ENEMY
+153,Perk,@PERKS_SONIC_BOOM,specialty_explosivedamage,153,,specialty_explosivedamage,PERKS_HIGHER_EXPLOSIVE_WEAPON
+154,Perk,@PERKS_FLAK_JACKET,specialty_flakjacket,154,,specialty_flakjacket,PERKS_LESS_DAMAGE_FROM_EXPLOSIVES
+155,Perk,@PERKS_STOPPING_POWER,specialty_bulletdamage,155,,specialty_bulletdamage,PERKS_INCREASED_BULLET_DAMAGE
+156,Perk,@PERKS_DOUBLE_TAP,specialty_rof,156,,specialty_rof,PERKS_INCREASED_RATE_OF_FIRE
+157,Perk,@PERKS_SLEIGHT_OF_HAND,specialty_fastreload,157,,specialty_fastreload,PERKS_FASTER_RELOADING
+158,Perk,@PERKS_OVERKILL,specialty_twoprimaries,158,,specialty_twoprimaries,PERKS_CARRY_TWO_PRIMARY_WEAPONS
+159,Perk,@PERKS_JUGGERNAUT,specialty_armorvest,159,,specialty_armorvest,PERKS_INCREASED_HEALTH
+161,Perk,@PERKS_SHADES,specialty_shades,161,,specialty_shades,PERKS_EYE_SHIELD
+162,Perk,@PERKS_GASMASK,specialty_gas_mask,162,,specialty_gas_mask,PERKS_POISON_SHIELD
+
+160,Perk,@PERKS_TOSSBACK,specialty_pin_back,160,,specialty_pin_back,PERKS_TOSSBACK_DESC
+163,Perk,@PERKS_IRON_LUNGS,specialty_holdbreath,163,,specialty_holdbreath,PERKS_LONGER_BREATH_FOR_STEADIER
+164,Perk,@PERKS_DEAD_SILENCE,specialty_quieter,164,,specialty_quieter,PERKS_MAKE_LESS_SOUND_WHEN
+165,Perk,@PERKS_EXTREME_CONDITIONING,specialty_longersprint,165,,specialty_longersprint,PERKS_SPRINT_FOR_LONGER_DISTANCES
+166,Perk,@PERKS_LAST_STAND,specialty_pistoldeath,166,,specialty_pistoldeath,PERKS_PULL_OUT_YOUR_PISTOL
+167,Perk,@PERKS_MARTYRDOM,specialty_grenadepulldeath,167,,specialty_grenadepulldeath,PERKS_DROP_A_LIVE_GRENADE_WHEN
+168,Perk,@PERKS_DEEP_IMPACT,specialty_bulletpenetration,168,,specialty_bulletpenetration,PERKS_DEEPER_BULLET_PENETRATION
+169,Perk,@PERKS_STEADY_AIM,specialty_bulletaccuracy,169,,specialty_bulletaccuracy,PERKS_INCREASED_HIPFIRE_ACCURACY
+170,Perk,@PERKS_FIREPROOF,specialty_fireproof,170,,specialty_fireproof,PERKS_FIREPROOF_DESC
+171,Perk,@PERKS_RECONNAISSANCE,specialty_reconnaissance,171,,specialty_reconnaissance,PERKS_RECONNAISSANCE_DESC

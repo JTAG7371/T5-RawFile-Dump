@@ -1,0 +1,133 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SIZE_X			150
+
+#define CHOICE_X_START			0
+#define CHOICE_Y_START			34
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+{
+	menuDef
+	{
+		name			main_skilltree
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+#ifndef INGAME_MENUS
+		soundloop 		MENU_MUSIC
+#endif // #ifndef INGAME_MENUS
+		onOpen
+		{
+			HIDEALL_DESC
+			focusFirst;
+			setdvar invite_visible "0";
+		}
+		onEsc
+		{
+			close self;
+		}
+		onClose
+		{
+			exec "updategamerprofile";
+			setdvar invite_visible "1";
+		}
+
+		// ------------------  statics ------------------------
+#ifdef INGAME_MENUS
+		itemDef
+		{
+			style			WINDOW_STYLE_FILLED
+			rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+			backcolor		0 0 0 1
+			visible			1
+			decoration
+		}
+#else
+		#include "ui/overlaybg.inc"
+		OVERLAY_BACKGROUND
+#endif // #ifdef INGAME_MENUS
+
+		#ifdef PC
+			CHOICE_OVERLAY_TITLE( "@MENU_RANK_AND_SKILLS_CAPS" )
+		#else
+			CHOICE_OVERLAY_TITLE( "@MENU_SKILLS_CAPS" )
+		#endif
+
+		
+		#define BUTTON_Y_FILTER		0
+		#define BUTTON_X_GOTOTOP	0
+		#define BUTTON_PGUP			0
+		#define BUTTON_PGDOWN		0
+		#define ALT_PANEL			0
+		#define BUTTON_ACCEPT		1
+		#include "ui/navcontrols.inc"
+
+		#undef COLUMN_TITLE_X
+		#define COLUMN_TITLE_X -250
+		#undef COLUMN_TITLE_Y
+		#define COLUMN_TITLE_Y -119
+	
+		LEADERBOARD_COL_TITLE_VIS( COLUMN_TITLE_X COLUMN_TITLE_Y, "@SKILLS_NAME", ITEM_ALIGN_RIGHT, 1 )
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+70) COLUMN_TITLE_Y, "@SKILLS_PROGRESS", ITEM_ALIGN_LEFT, 1 )
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+230) COLUMN_TITLE_Y, "@SKILLS_COST", ITEM_ALIGN_RIGHT, 1 )
+		
+		// SKILL LIST TEXT
+		itemDef
+		{
+			name						skill_list
+			rect						0 125 280 164
+			type						ITEM_TYPE_LISTBOX
+			elementwidth				18
+			elementheight				18
+			textfont					UI_FONT_NORMAL
+			textscale					TEXTSIZE_SMALL
+			textstyle					ITEM_TEXTSTYLE_SHADOWED
+			feeder						FEEDER_SKILLS
+			forecolor					CHOICE_TEXTCOLOR	
+			focusColor					CHOICE_TEXTCOLOR	
+			disableColor				CHOICE_TEXTCOLOR
+			selectBorder				0.8 0.95 1 0
+			outlinecolor				1 0.97 0.72 0.5
+			highlightTexture			"menu_button_backing_highlight" 
+			backcolor					0 0 0 0.7
+			backgroundItemListbox		"menu_white_line_faded"
+			noscrollbars	
+//			numcols			xpos	xwidth	textlen  alignment
+			columns	5		10		20		0		ITEM_ALIGN_LEFT			
+							30		100		55		ITEM_ALIGN_LEFT			
+							130		100		0		ITEM_ALIGN_LEFT
+							230		30		10		ITEM_ALIGN_RIGHT
+							260		20		55		ITEM_ALIGN_LEFT			
+			elementtype					LISTBOX_IMAGE LISTBOX_TEXT LISTBOX_IMAGE LISTBOX_TEXT LISTBOX_IMAGE
+			visible			1;
+		}
+
+		#define ORIGIN_CLASSNAME_X	300
+		#define ORIGIN_CLASSNAME_Y	140
+		
+		#define ORIGIN_INFOBOX1_X	300
+		#define ORIGIN_INFOBOX1_Y	210
+
+		#define ORIGIN_INFOBOX2_X	300
+		#define ORIGIN_INFOBOX2_Y	240
+
+		#define WIDTH_INFO_BOX		340
+
+		// classname & budget
+		PREPROC_TEXT_DRAW( ORIGIN_CLASSNAME_X ORIGIN_CLASSNAME_Y (WIDTH_INFO_BOX-8) 20, 0 0,			"@SKILL_CLASS",						TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR )
+		PREPROC_TEXT_DRAW( (ORIGIN_CLASSNAME_X+75) ORIGIN_CLASSNAME_Y (WIDTH_INFO_BOX-8) 20, 0 0,		"@"+dvarString(ui_skill_classname),	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_CLASSNAME_X (ORIGIN_CLASSNAME_Y+20) (WIDTH_INFO_BOX-8) 20, 0 0,		"@SKILL_BUDGET",					TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR )
+		PREPROC_TEXT_DRAW( (ORIGIN_CLASSNAME_X+75) (ORIGIN_CLASSNAME_Y+20) (WIDTH_INFO_BOX-8) 20, 0 0,	"@"+dvarString(playerPoints),		TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR )
+		PREPROC_SHADER_DRAW_ADV( ORIGIN_CLASSNAME_X, ORIGIN_CLASSNAME_Y+40, WIDTH_INFO_BOX-4, 2, 0 0, "white", 0.75 0.8 0.9 0.2 )	
+		PREPROC_SHADER_DRAW_ADV( ORIGIN_CLASSNAME_X, ORIGIN_CLASSNAME_Y+40, WIDTH_INFO_BOX-4, 2, 0 0, "white", 0 0 0 0.35 )					
+		// desc		
+		PREPROC_TEXT_DRAW_VIS_EX( ORIGIN_INFOBOX1_X ORIGIN_INFOBOX1_Y (WIDTH_INFO_BOX-8) 20, 0 0,	"@"+dvarString(ui_skill_desc1), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, 1, autowrapped )
+		// desc 2
+		PREPROC_TEXT_DRAW_VIS_EX( ORIGIN_INFOBOX2_X ORIGIN_INFOBOX2_Y (WIDTH_INFO_BOX-8) 20, 0 0,	"@"+dvarString(ui_skill_desc2), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, 1, autowrapped )
+		
+		#include "ui/safearea.menu"
+	}
+}

@@ -1,0 +1,10 @@
+{
+	menuDef
+	{
+		name			"initteam_marines"
+		onOpen
+		{
+			close self;
+		}
+	}
+}

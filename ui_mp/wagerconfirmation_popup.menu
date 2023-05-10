@@ -1,0 +1,75 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/framestyle.inc"
+
+#undef  CHOICE_X_START
+#define CHOICE_X_START			0
+
+#undef  CHOICE_Y_START
+#define CHOICE_Y_START			34
+
+#define CHOICE_GROUP			"patch_popups"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#undef CHOICE_TEXTSIZE
+#define CHOICE_TEXTSIZE TEXTSIZE_DEFAULT
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+#include "ui_mp/popup_player_info.inc"
+	
+{
+	#undef	POPUP_WIDTH
+	#define	POPUP_WIDTH								MEDIUM_POPUP_WIDTH		
+	#undef	POPUP_HEIGHT
+	#define	POPUP_HEIGHT							MEDIUM_POPUP_HEIGHT
+	#undef	CHOICE_SIZE_X			
+	#define CHOICE_SIZE_X							CONFIRM_PURCHASE_SIZE_X
+	#undef	CHOICE_Y_START
+	#define CHOICE_Y_START							POPUP_Y_START_TOP
+	#undef	PLAYER_INFO_ALIGN
+	#define PLAYER_INFO_ALIGN						// Purposely set to nothing. The popup setup macro sets the alignment. If items within it set their own aligment, they end up offset incorrectly.
+	#undef	PLAYER_INFO_X_START
+	#define	PLAYER_INFO_X_START( frameWidth )		( frameWidth - PLAYER_INFO_WIDTH - PLAYER_INFO_PAD )
+	#undef	PLAYER_INFO_Y_START
+	#define	PLAYER_INFO_Y_START( frameHeight )		( PLAYER_INFO_PAD * 2 )
+	#undef	BG_BACKCOLOR
+	#define BG_BACKCOLOR							POPUP_BACKCOLOR
+
+	#define PURCHASE_CONFIRMATION_RIGHT_X			( MEDIUM_POPUP_WIDTH / 2 )
+	#define PURCHASE_INFO_WIDTH						( ( MEDIUM_POPUP_WIDTH / 2 ) - POPUP_SIDE_PAD )
+
+	#define PURCHASE_CONFIRMATION_ITEM_INFO( itemName, itemCost )	\
+			CONFIRMATION_ITEM_INFO_VIS( itemName, itemCost, "@MPUI_BALANCE_AFTER_PURCHASE",	locString( "@MENU_POINTS", GetStatByName( "CODPOINTS" ) - itemCost ), 1 )	
+
+	#define CONFIRMATION_ITEM_INFO_VIS( itemName, itemCost, balanceHeader, balanceAfter, visArg )																																																	\
+			PREPROC_TEXT_DRAW_VIS_EX( (PURCHASE_CONFIRMATION_RIGHT_X)	CHOICE_Y( 1 )	PURCHASE_INFO_WIDTH CHOICE_SIZE_Y,	0 0, locString( itemName, itemCost ),						TEXTSIZE_LARGE,		0, 0, ITEM_ALIGN_MIDDLE_LEFT,	NEW_FRAME_GREEN_RGB 1,	visArg, ;				)	\	/* Name								*/
+			PREPROC_TEXT_DRAW_VIS_EX( (PURCHASE_CONFIRMATION_RIGHT_X)	CHOICE_Y( 7 )	PURCHASE_INFO_WIDTH CHOICE_SIZE_Y,	0 0, "@MPUI_YOUR_BANK",											TEXTSIZE_DEFAULT,	0, 0, ITEM_ALIGN_TOP_LEFT,		MEDIUM_POPUP_GRAY,		visArg, ;				)	\	/* Currency Available Header		*/
+			PREPROC_TEXT_DRAW_VIS_EX( (MEDIUM_POPUP_WIDTH-75)			CHOICE_Y( 7 )	PURCHASE_INFO_WIDTH CHOICE_SIZE_Y,	0 0, locString( "@MENU_POINTS", GetStatByName( "CODPOINTS" ) ),	TEXTSIZE_DEFAULT,	0, 0, ITEM_ALIGN_TOP_LEFT,		1 1 1 1,				visArg, ;				)	\	/* Currency Available				*/
+			PREPROC_TEXT_DRAW_VIS_EX( (PURCHASE_CONFIRMATION_RIGHT_X)	CHOICE_Y( 8 )	PURCHASE_INFO_WIDTH CHOICE_SIZE_Y,	0 0, balanceHeader,												TEXTSIZE_DEFAULT,	0, 0, ITEM_ALIGN_TOP_LEFT,		MEDIUM_POPUP_GRAY,		visArg, ;				)	\	/* Balance After Purchase Header	*/
+			PREPROC_TEXT_DRAW_VIS_EX( (MEDIUM_POPUP_WIDTH-75)			CHOICE_Y( 8 )	PURCHASE_INFO_WIDTH CHOICE_SIZE_Y,	0 0, balanceAfter,												TEXTSIZE_DEFAULT,	0, 0, ITEM_ALIGN_TOP_LEFT,		1 1 1 1,				visArg, ;				)		/* Balance After Purchase			*/
+
+		#define WAGER_ONESC \
+				setDvar ui_joiningwagerfrominvite "0"; \
+				close self;
+				
+		#define WAGER_ACTION \
+				play CHOICE_FOCUS_SOUND; \
+				uiScript JoinServer; \
+				WAGER_ONESC
+
+	menuDef
+	{
+		MEDIUM_POPUP_SETUP_VIS( "WagerConfirmationIngame", setfocus "WagerConfirmation_2";, ;, POPUP_GLOW_GREEN, 1, 1 )
+		MEDIUM_POPUP_TITLE_VIS( "@PLATFORM_CONFIRM_WAGER_CAPS", 1 )
+		PLAYER_INFO_VIS( MEDIUM_POPUP_WIDTH, MEDIUM_POPUP_HEIGHT, 1 )
+		PURCHASE_CONFIRMATION_ITEM_INFO( "@PLATFORM_WAGER_BET", dvarInt("ui_wagerbet") )
+		
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_JOIN_GAME_CAPS",				WAGER_ACTION,				1, ;							)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_CANCEL_CAPS",	close self,				1, name WagerConfirmation_2	) 
+	}
+	
+}

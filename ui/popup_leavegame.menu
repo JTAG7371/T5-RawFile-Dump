@@ -1,0 +1,417 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_SEP_1			3
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+{
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegame, setfocus popup_leavegame_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_GAME1", 1 )
+		
+		#define LOCAL_ACCEPT_LEAVEGAME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_leavegame;		\
+				close "pausedmenu";			\
+				exec "disconnect"
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_LEAVEGAME, 1, ;						)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,				1, name popup_leavegame_2	)
+	}
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegameandparty, setfocus popup_leavegameandparty_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LEAVE_GAME_AND_PARTY", 1 )
+		
+		#define LOCAL_ACCEPT_LEAVEGAMEANDPARTY						\
+				play CHOICE_FOCUS_SOUND;							\
+				close popup_leavegameandparty;						\
+				close "pausedmenu";									\
+				exec "disconnect; xstopprivateparty; xstopparty";	\
+				exec "xblive_privatematch 0";						\
+				exec "xstartprivateparty";
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_LEAVEGAMEANDPARTY,	1, ;								)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,						1, name popup_leavegameandparty_2	)
+	}
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_endgame, setfocus popup_endgame_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_END_GAME2", 1 )
+
+		visible when ( dvarbool( onlineunrankedgameandhost ) == 1 || dvarbool( sv_running ) == 1 );
+		
+		#define LOCAL_ACCEPT_ENDGAME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_endgame;		\
+				close "pausedmenu";			\
+				scriptMenuResponse "endround"; 
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_ENDGAME,	1, ;					)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,				1, name popup_endgame_2	)
+	}
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_systemlink_leavegame, setfocus popup_systemlink_leavegame_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_GAME1", 1 )
+		
+		#define LOCAL_ACCEPT_SYSTEMLINK_LEAVEGAME	\
+				play CHOICE_FOCUS_SOUND;			\
+				close popup_systemlink_leavegame;	\
+				close "pausedmenu";					\
+				exec "disconnect"
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_SYSTEMLINK_LEAVEGAME,	1, ;									)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,							1, name popup_systemlink_leavegame_2	)
+	}
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_systemlink_endgame, setfocus popup_systemlink_endgame_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_END_GAME2", 1 )
+
+		visible when ( dvarbool( systemlinkpartyandhost ) == 1 || dvarbool( sv_running ) == 1 );
+		
+		#define LOCAL_ACCEPT_SYSTEMLINK_ENDGAME	\
+				play CHOICE_FOCUS_SOUND;		\
+				close popup_systemlink_endgame;	\
+				close "pausedmenu";				\
+				scriptMenuResponse "endround"; 
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_SYSTEMLINK_ENDGAME,	1, ;								)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,							1, name popup_systemlink_endgame_2	)
+	}
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegame_ranked, setfocus popup_leavegame_ranked_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_GAME1", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_RANKED", 1 )
+		
+		#define LOCAL_ACCEPT_LEAVEGAME_RANKED	\
+				play CHOICE_FOCUS_SOUND;		\
+				close popup_leavegame;			\
+				close "pausedmenu";				\
+				exec "disconnect"
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_LEAVEGAME_RANKED,	1, ;								)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,						1, name popup_leavegame_ranked_2	)
+	}				
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_endgame_ranked, setfocus popup_endgame_ranked_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_GAME1", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_RANKED", 1 )
+		
+		visible when ( dvarbool( onlineunrankedgameandhost ) == 1 );
+		
+		#define LOCAL_ACCEPT_ENDGAME_RANKED		\
+				play CHOICE_FOCUS_SOUND;		\
+				close popup_endgame;			\
+				close "pausedmenu";				\
+				exec "xpartydisbandafterround";	\
+				scriptMenuResponse "endround"; 
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_ENDGAME_RANKED,	1, ;							)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,						1, name popup_endgame_ranked_2	)
+	}				
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegameandparty_ranked, setfocus popup_leavegameandparty_ranked_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LEAVE_GAME_AND_PARTY", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_RANKED", 1 )
+		
+		#define LOCAL_ACCEPT_LEAVEGAMEANDPARTY_RANKED				\
+				play CHOICE_FOCUS_SOUND;							\
+				close popup_leavegameandparty;						\
+				close "pausedmenu";									\
+				exec "disconnect; xstopprivateparty; xstopparty";	\
+				exec "xblive_privatematch 0";						\
+				exec "xstartprivateparty";
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_LEAVEGAMEANDPARTY_RANKED,	1, ;										)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,								1, name popup_leavegameandparty_ranked_2	)
+	}				
+
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegame_coop, setfocus popup_leavegame_coop_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LEAVE_GAME", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_DESC", 1 )
+		
+		#define LOCAL_ACCEPT_LEAVEGAME_COOP	\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";			\
+				exec "disconnect"
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_LEAVEGAME_COOP,	1, ;							)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,						1, name popup_leavegame_coop_2	)
+	}				
+
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegameandparty_coop, setfocus popup_leavegameandparty_coop_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LEAVE_GAME_AND_PARTY", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_AND_PARTY_DESC", 1 )
+		
+		#define LOCAL_ACCEPT_LEAVEGAMEANDPARTY_COOP					\
+				play CHOICE_FOCUS_SOUND;							\
+				close self;											\
+				close "pausedmenu";									\
+				exec "disconnect; xstopprivateparty; xstopparty";	\
+				exec "xblive_privatematch 0";						\
+				exec "xstartprivateparty";
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_LEAVEGAMEANDPARTY_COOP,	1, ;									)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,								1, name popup_leavegameandparty_coop_2	)
+	}				
+
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_coop_client_quit, focusFirst, close self; open "pausedmenu";, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_QUIT_WARNING", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_CLIENT_QUIT_WARNING_DESC", 1 )
+		
+		#define ACTION_COOP_CLIENT_RESUME	\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";
+
+		#define ACTION_COOP_CLIENT_QUIT		\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";			\
+				exec "disconnect"; 
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RESUMEGAME_CAPS",	ACTION_COOP_CLIENT_RESUME,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@PLATFORM_QUIT_CAPS",	ACTION_COOP_CLIENT_QUIT,	1, ; )
+	}				
+
+
+	menuDef
+	{
+		blurWorld		4.8
+
+#ifndef PC
+		#define COOP_QUIT_ONOPEN	\
+				focusFirst;			\
+				exec "fullscreenview";
+#else // #ifndef PC
+		#define COOP_QUIT_ONOPEN \
+				focusFirst; 
+#endif	// #ifndef PC
+
+		SYSTEM_POPUP_SETUP_VIS( popup_coop_host_quit, COOP_QUIT_ONOPEN, close self; open "pausedmenu";, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_QUIT_WARNING", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_HOST_QUIT_WARNING_DESC", 1 )
+		
+#ifndef PC
+		#define ACTION_COOP_QUIT_RESUME		\
+				play CHOICE_FOCUS_SOUND;	\
+				exec "splitscreenview";		\
+				close self;					\
+				close "pausedmenu";
+
+		#define ACTION_COOP_QUIT			\
+				play CHOICE_FOCUS_SOUND;	\
+				exec "splitscreenview";		\
+				close self;					\
+				close "pausedmenu";			\
+				scriptMenuResponse "endround";
+
+#else // #ifndef PC
+		#define ACTION_COOP_QUIT_RESUME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";
+
+		#define ACTION_COOP_QUIT			\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";			\
+				scriptMenuResponse "endround";
+
+#endif	// #ifndef PC
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RESUMEGAME_CAPS",	ACTION_COOP_QUIT_RESUME,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@PLATFORM_QUIT_CAPS",	ACTION_COOP_QUIT,			1, ; )
+	}				
+
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_coop_host_quit_clone, setfocus popup_coop_host_quit_clone_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LEAVE_GAME", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_DESC", 1 )
+		
+		#define LOCAL_ACCEPT_HOST_LEAVEGAME_COOP	\
+				play CHOICE_FOCUS_SOUND;			\
+				close self;							\
+				close "pausedmenu";					\
+				scriptMenuResponse "endround";
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_HOST_LEAVEGAME_COOP,	1, ;									)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,							1, name popup_coop_host_quit_clone_2	)
+	}				
+
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_noprofile_quit, focusFirst;, close self; open "pausedmenu";, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_QUIT_WARNING", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_NOPROFILE_QUIT_WARNING_DESC", 1 )
+		
+		#define ACTION_NO_PROFILE_RESUME	\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";
+
+		#define ACTION_NO_PROFILE_QUIT		\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";			\
+				exec "disconnect"; 
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RESUMEGAME_CAPS",	ACTION_NO_PROFILE_RESUME,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@PLATFORM_QUIT_CAPS",	ACTION_NO_PROFILE_QUIT,		1, ; )
+	}				
+
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_storage_quit, focusFirst;, close self; open "pausedmenu";, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_QUIT_WARNING", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_QUIT_WARNING_DESC", 1 )
+		
+		#define ACTION_STORAGE_RESUME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";
+
+		#define ACTION_STORAGE_QUIT				\
+				play CHOICE_FOCUS_SOUND;		\
+				close self;						\
+				setdvar ui_skipMainLockout "0";	\
+				close "pausedmenu";				\
+				exec "disconnect"; 
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RESUMEGAME_CAPS",	ACTION_STORAGE_RESUME,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@PLATFORM_QUIT_CAPS",	ACTION_STORAGE_QUIT,	1, ; )
+	}				
+
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_nosave_quit, focusFirst, close self; open "pausedmenu";, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_QUIT_WARNING", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_QUIT_WARNING_DESC", 1 )
+		
+		#define ACTION_NOSAVE_RESUME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";
+
+		#define ACTION_NOSAVE_QUIT				\
+				play CHOICE_FOCUS_SOUND;		\
+				close self;						\
+				setdvar ui_skipMainLockout "1";	\
+				close "pausedmenu";				\
+				exec "disconnect"; 
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RESUMEGAME_CAPS",	ACTION_NOSAVE_RESUME,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@PLATFORM_QUIT_CAPS",	ACTION_NOSAVE_QUIT,		1, ; )
+	}				
+
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_general_quit, focusFirst;, close self; open "pausedmenu";, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_QUIT_WARNING", 1 )
+		
+		#define ACTION_GENERAL_RESUME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";
+
+		#define ACTION_GENERAL_QUIT				\
+				play CHOICE_FOCUS_SOUND;		\
+				close self;						\
+				close "pausedmenu";				\
+				setdvar ui_skipMainLockout "1";	\
+				exec "disconnect"; 
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RESUMEGAME_CAPS",	ACTION_GENERAL_RESUME,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@PLATFORM_QUIT_CAPS",	ACTION_GENERAL_QUIT,	1, ; )
+	}				
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavedemo, setfocus popup_leavedemo_2, ;, 1 )
+
+		// Films
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_FILM",	when( !gameHost() && !isDemoClipPlaying() )	)
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_END_FILM",	when( gameHost() && !isDemoClipPlaying() )	)
+
+		// Clips
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_CLIP",	when( !gameHost() && isDemoClipPlaying() )	)
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_END_CLIP",	when( gameHost() && isDemoClipPlaying() )	)
+		
+		#define LOCAL_ACCEPT_LEAVEDEMO		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_leavedemo;		\
+				close "pausedmenu";			\
+				exec "xblive_theater 0";	\
+				exec "disconnect";
+
+		#define LOCAL_ACCEPT_ENDDEMO		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_leavedemo;		\
+				close "pausedmenu";			\
+				exec "xpartystopdemo";
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_LEAVEDEMO,	( !gameHost() && isClipModified() == 0 ),	;						)
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_ENDDEMO,	( gameHost() && isClipModified() == 0 ),	;						)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,				( isClipModified() == 0 ),					name popup_leavedemo_2	)
+	}				

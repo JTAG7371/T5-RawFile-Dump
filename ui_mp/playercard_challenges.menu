@@ -1,0 +1,357 @@
+// general definitions
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/stats_info.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+#include "ui_mp/popup_player_info.inc"
+#include "ui_mp/item_animate.inc"
+
+#ifdef CONSOLE
+	#undef CHOICE_X_START
+	#define CHOICE_X_START					-265
+	#undef CHOICE_Y_START
+	#define CHOICE_Y_START					-125
+#else
+	#undef CHOICE_X_START
+	#define CHOICE_X_START					-265
+	#undef CHOICE_Y_START
+	#define CHOICE_Y_START					-125
+#endif
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X						240
+
+#define CHALLENGES_HEIGHT					NEW_FRAME_DEFAULT_HEIGHT
+#define CHALLENGES_WIDTH					( CHALLENGES_HEIGHT * FRAME_ASPECT_RATIO )
+#define CHALLENGES_BG_SIZE ( (CHALLENGES_WIDTH/2-10) + 30 )
+
+#undef	CHOICE_TEXTSTYLE
+#define	CHOICE_TEXTSTYLE					ITEM_TEXTSTYLE_NORMAL
+
+#undef	CHOICE_VERTICAL_ALIGN
+#define	CHOICE_VERTICAL_ALIGN				VERTICAL_ALIGN_CENTER
+
+#undef	CHOICE_HORIZONTAL_ALIGN
+#define	CHOICE_HORIZONTAL_ALIGN				HORIZONTAL_ALIGN_CENTER
+
+#define ITEMGROUP_KILLSTREAK				23
+#define ITEMGROUP_GRENADE					10
+#define MILESTONE_GRENADES					7
+
+#define SETUP_ACTION_PRI												\ 
+		play CHOICE_FOCUS_SOUND;										\
+		execnow "set selected_slot primary";							\
+		closeImmediate self;											\
+		open "menu_playercard_challenges_primaryweapon";
+	
+#define SETUP_ACTION_SEC												\ 
+		play CHOICE_FOCUS_SOUND;										\
+		execnow "set selected_slot secondary";							\
+		closeImmediate self;											\
+		open "menu_playercard_challenges_secondaryweapon";
+			
+#define SETUP_ACTION_ATTACHMENTS						\
+		play CHOICE_FOCUS_SOUND;						\
+		closeImmediate self;							\
+		open "menu_playercard_challenges_attachments";
+
+#define SETUP_ACTION_KILLSTREAKS						\
+		play CHOICE_FOCUS_SOUND;						\
+		closeImmediate self;							\
+		execNow set weapon_group ITEMGROUP_KILLSTREAK;	\
+		open menu_xboxlive_killstreaks_type;
+
+#undef ON_ESC_ACTION
+#ifdef CONSOLE
+	#define ON_ESC_ACTION \
+		execnow changemenucloseslidedirection menu_playercard_challenges MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT; 	\
+		close self;																								\
+		if ( dvarInt( xblive_basictraining ) )																		\
+					{																											\
+						open menu_playercard_self_basictraining;																\
+					}																											\
+					else																										\
+					{																											\
+						open menu_playercard_self;																				\
+					}
+#else
+#define ON_ESC_ACTION \
+		execnow changemenucloseslidedirection menu_playercard_challenges MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT; \
+		close self; \
+		if ( !dvarbool( cl_ingame ) ) \
+		{ \
+			if ( dvarInt( xblive_basictraining ) )																		\
+					{																											\
+						open menu_playercard_self_basictraining;																\
+					}																											\
+					else																										\
+					{																											\
+						open menu_playercard_self;																				\
+					}																											\
+		}
+#endif // CONSOLE
+
+#define SETUP_ACTION_GRENADES						\
+		play CHOICE_FOCUS_SOUND;					\
+		execNow set weapon_group ITEMGROUP_GRENADE; \
+		execNow BuildChallengeList MILESTONE_GRENADES ( dvarInt( ui_challengeSort ) ) ( dvarInt( weapon_group ) );  \
+		closeImmediate self;						\
+		open menu_playercard_challenges_grenades;
+
+#define SETUP_ACTION_PERK1																		\ 
+		play CHOICE_FOCUS_SOUND;																\
+		execnow "set selected_loadout_perks_slot specialty1";									\
+		execnow buildItemListForChallengesPerks (dvarString( selected_loadout_perks_slot ));	\
+		closeImmediate self;																	\
+		open menu_challenges_perks_type;
+
+#define SETUP_ACTION_PERK2																		\ 
+		play CHOICE_FOCUS_SOUND;																\
+		execnow "set selected_loadout_perks_slot specialty2";									\
+		execnow buildItemListForChallengesPerks (dvarString( selected_loadout_perks_slot ));	\
+		closeImmediate self;																	\
+		open menu_challenges_perks_type;
+		
+#define SETUP_ACTION_PERK3																		\ 
+		play CHOICE_FOCUS_SOUND;																\
+		execnow "set selected_loadout_perks_slot specialty3";									\
+		execnow buildItemListForChallengesPerks (dvarString( selected_loadout_perks_slot ));	\
+		closeImmediate self;																	\
+		open menu_challenges_perks_type;
+
+#define SETUP_ACTION_GAMEMODE						\
+		play CHOICE_FOCUS_SOUND;					\
+		closeImmediate self;						\
+		execnow "set globalChallengeType GM_";		\
+		open menu_challenges_gamemode_type;			
+
+#define SETUP_ACTION_KILLS						\
+		play CHOICE_FOCUS_SOUND;					\
+		closeImmediate self;						\
+		execnow "set globalChallengeType KILLS_";   \
+		open menu_global_challenges_list;		
+
+#define SETUP_ACTION_BASIC							\
+		play CHOICE_FOCUS_SOUND;					\
+		closeImmediate self;						\
+		execnow "set globalChallengeType BASIC_";   \
+		open menu_global_challenges_list;
+		
+
+#define SETUP_ACTION_MEDALS							\
+		play CHOICE_FOCUS_SOUND;					\
+		closeImmediate self;						\
+		execnow "set globalChallengeType MEDAL_";   \
+		open menu_global_challenges_list;	
+
+#define SETUP_ACTION_FINAL							\
+		play CHOICE_FOCUS_SOUND;					\
+		closeImmediate self;						\
+		execnow "set globalChallengeType FINAL_";   \
+		open menu_global_challenges_list;	
+
+#define SETUP_ACTION_LIFETIME						\
+		play CHOICE_FOCUS_SOUND;					\
+		closeImmediate self;						\
+		execnow "set globalChallengeType LIFETIME_"; \
+		open menu_global_challenges_list;	
+	
+	menuDef	
+	{
+		name					menu_playercard_challenges
+		rect					0 0 640 480 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED 
+		control					MENU_CONTROL_OPENER			
+		priority				MENU_PRI_ONTOP 
+		soundloop 				MENU_MUSIC 
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		closeSlideDirection		MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT
+		popup
+		onOpen
+		{	
+			setdvar ui_hide_eog_menu "1";
+		}
+		onEsc {
+			ON_ESC_ACTION
+		}
+		onFocus 
+		{  
+			activateBlur;
+		}
+		onClose
+		{
+			deactivateBlur;
+			setdvar ui_hide_eog_menu "0";
+		}
+
+		NEW_FRAME( CHALLENGES_WIDTH, CHALLENGES_HEIGHT )
+
+		// Title
+		NEW_FRAME_TITLE( CHALLENGES_WIDTH, CHALLENGES_HEIGHT, "@MPUI_CHALLENGES_CAPS", 1 )
+		PLAYER_INFO_VIS( CHALLENGES_WIDTH, CHALLENGES_HEIGHT, 1 )
+
+		PREPROC_SHADER_DRAW( (0-CHALLENGES_BG_SIZE/2) (0-CHALLENGES_BG_SIZE/2+25) CHALLENGES_BG_SIZE CHALLENGES_BG_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, "menu_mp_lobby_aar_award_challenge", 1 1 1 0.05 )
+
+		NEW_FRAME_BUTTON(	1, CHOICE_RECT(1), 
+							"@MPUI_PRIMARY_WEAPONS_CAPS", 
+							SETUP_ACTION_PRI, 
+							exec set challenges_category_name "@MPUI_PRIMARY_WEAPONS_CAPS"; CLEARUIHINT, 
+							;,
+							1, ;, ; )
+
+
+		NEW_FRAME_BUTTON(	2, CHOICE_RECT(2), 
+							"@MPUI_SECONDARY_WEAPONS_CAPS", 
+							SETUP_ACTION_SEC, 
+							exec set challenges_category_name "@MPUI_SECONDARY_WEAPONS_CAPS"; CLEARUIHINT,
+							;,
+							1, ;, ; )
+		NEW_FRAME_NEWICON_VIS(	2, IS_ITEM_NEW( FEATURE_CHALLENGES_SPECIALS ),		; ) 
+		
+
+		NEW_FRAME_BUTTON(	3, CHOICE_RECT(3), 
+							"@MPUI_ATTACHMENTS_CAPS", 
+							SETUP_ACTION_ATTACHMENTS, 
+							exec set challenges_category_name "@MPUI_ATTACHMENTS_CAPS"; CLEARUIHINT,
+							;,
+							1, ;, ; )
+
+		
+		NEW_FRAME_BUTTON(	4, CHOICE_RECT(4), 
+							"@MPUI_PRIMARYGRENADE_EQUIPMENT_CAPS", 
+							SETUP_ACTION_GRENADES;, 
+							exec set challenges_category_name "@MPUI_PRIMARYGRENADE_EQUIPMENT_CAPS"; CLEARUIHINT,
+							;,
+							1, ;, ; )
+
+		NEW_FRAME_BUTTON(	5, CHOICE_RECT(5), 
+							"@MPUI_PERK1_CAPS", 
+							SETUP_ACTION_PERK1, 
+							exec set challenges_category_name "@MPUI_PERK1_CAPS"; CLEARUIHINT,
+							;,
+							1, ;, ; )
+
+
+		NEW_FRAME_BUTTON(	6, CHOICE_RECT(6), 
+							"@MPUI_PERK2_CAPS", 
+							SETUP_ACTION_PERK2, 
+							exec set challenges_category_name "@MPUI_PERK2_CAPS"; CLEARUIHINT,
+							;,
+							1, ;, ; )
+
+
+		NEW_FRAME_BUTTON(	7, CHOICE_RECT(7), 
+							"@MPUI_PERK3_CAPS", 
+							SETUP_ACTION_PERK3, 
+							exec set challenges_category_name "@MPUI_PERK3_CAPS"; CLEARUIHINT,
+							;,
+							1, ;, ; )
+
+		NEW_FRAME_BUTTON(	8, CHOICE_RECT(8), 
+							"@MPUI_BASIC_CAPS", 
+							SETUP_ACTION_BASIC;, 
+							exec set challenges_category_name "@MPUI_BASIC_CAPS"; CLEARUIHINT,
+							;,
+							1, ;, ; )
+
+		NEW_FRAME_BUTTON(	9, CHOICE_RECT(9), 
+							"@MPUI_GAMEMODE_CAPS", 
+							SETUP_ACTION_GAMEMODE;, 
+							exec set challenges_category_name "@MPUI_GAMEMODE_CAPS"; CLEARUIHINT CLEAR_ITEM_NEW( FEATURE_CHALLENGES_GAMEMODE ),
+							;,
+							!IS_ITEM_LOCKED( FEATURE_CHALLENGES_GAMEMODE  ), ;, ; )
+		NEW_FRAME_DBUTTON(	9, CHOICE_RECT( 9 ),  
+							"@MPUI_GAMEMODE_CAPS",
+							;, 
+							SET_HINT_TEXT( GET_UNLOCK_LEVEL_STRING( FEATURE_CHALLENGES_GAMEMODE  ) ) exec set challenges_category_name "@MPUI_GAMEMODE_CAPS";, 
+							CLEARUIHINT, 
+							IS_ITEM_LOCKED( FEATURE_CHALLENGES_GAMEMODE  ), ;, ; ) 
+		NEW_FRAME_NEWICON_VIS(		9, IS_ITEM_NEW( FEATURE_CHALLENGES_GAMEMODE ),		; ) 
+		NEW_FRAME_LOCKEDICON_VIS(	9, IS_ITEM_LOCKED( FEATURE_CHALLENGES_GAMEMODE  ),	; ) 
+
+		NEW_FRAME_BUTTON(	10, CHOICE_RECT(10), 
+							"@MPUI_KILLSTREAKS_CAPS", 
+							SETUP_ACTION_KILLSTREAKS, 
+							exec set challenges_category_name "@MPUI_KILLSTREAKS_CAPS"; CLEARUIHINT CLEAR_ITEM_NEW( FEATURE_CHALLENGES_KILLSTREAKS ),
+							;,
+							!IS_ITEM_LOCKED( FEATURE_CHALLENGES_KILLSTREAKS  ), ;, ; )
+		NEW_FRAME_DBUTTON(	10, CHOICE_RECT( 10 ),  
+							"@MPUI_KILLSTREAKS_CAPS", 
+							;, 
+							SET_HINT_TEXT( GET_UNLOCK_LEVEL_STRING( FEATURE_CHALLENGES_KILLSTREAKS  ) ) exec set challenges_category_name "@MPUI_KILLSTREAKS_CAPS";, 
+							CLEARUIHINT, 
+							IS_ITEM_LOCKED( FEATURE_CHALLENGES_KILLSTREAKS  ), ;, ; ) 
+		NEW_FRAME_NEWICON_VIS(		10, IS_ITEM_NEW( FEATURE_CHALLENGES_KILLSTREAKS ),		; ) 
+		NEW_FRAME_LOCKEDICON_VIS(	10, IS_ITEM_LOCKED( FEATURE_CHALLENGES_KILLSTREAKS  ),	; ) 
+		
+		NEW_FRAME_BUTTON(	11, CHOICE_RECT(11), 
+							"@MPUI_MEDALS_CAPS", 
+							SETUP_ACTION_MEDALS;, 
+							exec set challenges_category_name "@MPUI_MEDALS_CAPS"; CLEARUIHINT CLEAR_ITEM_NEW( FEATURE_CHALLENGES_MEDALS ),
+							;,
+							!IS_ITEM_LOCKED( FEATURE_CHALLENGES_MEDALS  ), ;, ; )
+		NEW_FRAME_DBUTTON(	11, CHOICE_RECT( 11 ),  
+							"@MPUI_MEDALS_CAPS", 
+							;, 
+							SET_HINT_TEXT( GET_UNLOCK_LEVEL_STRING( FEATURE_CHALLENGES_MEDALS  ) ) exec set challenges_category_name "@MPUI_MEDALS_CAPS";, 
+							CLEARUIHINT, 
+							IS_ITEM_LOCKED( FEATURE_CHALLENGES_MEDALS  ), ;, ; ) 
+		NEW_FRAME_NEWICON_VIS(		11, IS_ITEM_NEW( FEATURE_CHALLENGES_MEDALS ),		; ) 
+		NEW_FRAME_LOCKEDICON_VIS(	11, IS_ITEM_LOCKED( FEATURE_CHALLENGES_MEDALS  ),	; ) 
+
+		NEW_FRAME_BUTTON(	12, CHOICE_RECT(12), 
+							"@MPUI_ELITE_CAPS", 
+							SETUP_ACTION_KILLS;, 
+							exec set challenges_category_name "@MPUI_ELITE_CAPS"; CLEARUIHINT CLEAR_ITEM_NEW( FEATURE_CHALLENGES_ELITE ),
+							;,
+							!IS_ITEM_LOCKED( FEATURE_CHALLENGES_ELITE  ), ;, ; )
+		NEW_FRAME_DBUTTON(	12, CHOICE_RECT( 12 ),  
+							"@MPUI_ELITE_CAPS",
+							;, 
+							SET_HINT_TEXT( GET_UNLOCK_LEVEL_STRING( FEATURE_CHALLENGES_ELITE  ) ) exec set challenges_category_name "@MPUI_ELITE_CAPS";, 
+							CLEARUIHINT, 
+							IS_ITEM_LOCKED( FEATURE_CHALLENGES_ELITE  ), ;, ; ) 
+		NEW_FRAME_NEWICON_VIS(		12, IS_ITEM_NEW( FEATURE_CHALLENGES_ELITE ),		; ) 
+		NEW_FRAME_LOCKEDICON_VIS(	12, IS_ITEM_LOCKED( FEATURE_CHALLENGES_ELITE  ),	; ) 
+
+		NEW_FRAME_BUTTON(	13, CHOICE_RECT(13), 
+							"@MPUI_FINAL_CAPS", 
+							SETUP_ACTION_FINAL;, 
+							exec set challenges_category_name "@MPUI_FINAL_CAPS"; CLEARUIHINT CLEAR_ITEM_NEW( FEATURE_CHALLENGES_FINAL ),
+							;,
+							!IS_ITEM_LOCKED( FEATURE_CHALLENGES_FINAL  ), ;, ; )
+		NEW_FRAME_DBUTTON(	13, CHOICE_RECT( 13 ),  
+							"@MPUI_FINAL_CAPS", 
+							;, 
+							SET_HINT_TEXT( GET_UNLOCK_LEVEL_STRING( FEATURE_CHALLENGES_FINAL  ) ) exec set challenges_category_name "@MPUI_FINAL_CAPS";, 
+							CLEARUIHINT, 
+							IS_ITEM_LOCKED( FEATURE_CHALLENGES_FINAL  ), ;, ; ) 
+		NEW_FRAME_NEWICON_VIS(		13, IS_ITEM_NEW( FEATURE_CHALLENGES_FINAL ),		; ) 
+		NEW_FRAME_LOCKEDICON_VIS(	13, IS_ITEM_LOCKED( FEATURE_CHALLENGES_FINAL  ),	; ) 
+
+	    NEW_FRAME_BUTTON(	14, CHOICE_RECT(14), 
+							"@MPUI_LIFETIME_CAPS", 
+							SETUP_ACTION_LIFETIME;, 
+							exec set challenges_category_name "@MPUI_LIFETIME_CAPS"; CLEARUIHINT,
+							;,
+							1, ;, ; )
+
+		HINT_TEXT( 16, CHOICE_X_START, dvarString( ui_hint_text ), dvarBool( ui_show_arrow ) )
+
+		/* Challenge Weapon Group Name */ 
+		//PREPROC_TEXT_DRAW_ALL(	(CHOICE_X_START+300) ( CHOICE_Y_START - 5) 100 20 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0,dvarString( challenges_category_name ), 0.45, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 0.3, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL, 1, ; ) 
+
+#ifdef CONSOLE
+		NEW_FRAME_BACK_BUTTON_ACTION( CHALLENGES_WIDTH, CHALLENGES_HEIGHT, ON_ESC_ACTION )
+#else
+		NEW_FRAME_BACK_BUTTON_ACTION( CHALLENGES_WIDTH, CHALLENGES_HEIGHT, ON_ESC_ACTION )
+#endif // CONSOLE
+
+		#include "ui/safearea.menu"
+}

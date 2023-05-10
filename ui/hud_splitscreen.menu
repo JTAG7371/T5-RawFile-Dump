@@ -1,0 +1,646 @@
+#define SPLITSCREEN_ENABLED	1
+
+#include "ui/menudef.h"
+
+#ifdef PC
+	#define	BOTTOM_RECT_X 4
+	#define	BOTTOM_RECT_Y 2
+#else
+	#define	BOTTOM_RECT_X 0
+	#define	BOTTOM_RECT_Y 2
+#endif
+
+#define HUD_ALPHA 0.65
+#define HUD_FOREGROUND_ALPHA 0.75
+#define DPAD_ICON_ALPHA 0.65
+
+#define NOT_SPECTATING (!spectatingClient())
+
+
+{
+	assetGlobalDef
+	{
+		fadeClamp		1					// sets the fadeup alpha
+		fadeCycle		1					// how often fade happens in milliseconds
+		fadeAmount		0.1					// amount to adjust alpha per cycle
+	}
+
+// ------------------- START OF HIDEF ONLY MENUS -------------------//
+
+	// Mantle hint
+	menuDef
+	{
+    	name			"MantleHint_ss"
+    	rect			0 120 (40*SPLITSCREEN_MULTIPLIER) 40 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+		fullScreen		0
+		visible			1
+		visibilityBits  bits( !BIT_UI_ACTIVE )
+
+		itemDef
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 (40*SPLITSCREEN_MULTIPLIER) (40*SPLITSCREEN_MULTIPLIER)
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_MANTLE_HINT
+			visible			1
+			visibilityBits  bits( !BIT_SPECTATING_CLIENT )
+			forecolor		1 1 1 HUD_ALPHA
+			decoration
+		}
+	}
+
+	// Cursor hints
+	menuDef
+	{
+		name			"Cursorhints_ss"
+		rect			0 70 (40*SPLITSCREEN_MULTIPLIER) 40 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+		fullScreen		0
+		visible			1
+		visibilityBits  bits( !BIT_UI_ACTIVE )
+
+		itemDef
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			-20 0 40 40 // 64x64
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_CURSORHINT
+			visible			1
+			visibilityBits  bits( !BIT_SPECTATING_CLIENT )
+			forecolor		1 1 1 HUD_ALPHA
+			decoration
+		}
+	}
+
+#define WEAPINFO_X		(-93*SPLITSCREEN_MULTIPLIER)
+#define WEAPINFO_Y		(-62*SPLITSCREEN_MULTIPLIER)
+#define AMMO_COLOR		0.74 0.84 0.86
+	
+#define DPAD_BG_WIDTH			(92*SPLITSCREEN_MULTIPLIER)
+#define DPAD_BG_WIDTH_DOUBLED	(DPAD_BG_WIDTH*2)
+#define DPAD_BG_HEIGHT			(92*SPLITSCREEN_MULTIPLIER)
+
+#define DPAD_BG_X_START			(WEAPINFO_X+(5*SPLITSCREEN_MULTIPLIER))
+#define DPAD_BG_X_START_DOUBLED	(WEAPINFO_X+(5*SPLITSCREEN_MULTIPLIER)-DPAD_BG_WIDTH)
+#define DPAD_BG_Y_START			(WEAPINFO_Y+(5*SPLITSCREEN_MULTIPLIER))
+
+	menuDef
+	{
+		name			"weaponinfo_ss"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 0 0 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_BOTTOM
+		fullScreen		0
+		visible			when( (dvarString( createfx ) != "on") && dvarint( #"zombietron" ) == 0 );
+		visibilityBits  bits( !BIT_UI_ACTIVE !BIT_SPECTATING_CLIENT )
+
+		#define BG_X_START			(WEAPINFO_X-(99*SPLITSCREEN_MULTIPLIER))
+		#define BG_Y_START			(WEAPINFO_Y+(20*SPLITSCREEN_MULTIPLIER))
+
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			DPAD_BG_X_START_DOUBLED (DPAD_BG_Y_START-(32*SPLITSCREEN_MULTIPLIER)) DPAD_BG_WIDTH_DOUBLED DPAD_BG_HEIGHT
+			background		"hud_dpad_blood"
+			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND
+			forecolor		.21 0 0 1
+			visible 		1
+			decoration
+		}
+		
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(BG_X_START+(11*SPLITSCREEN_MULTIPLIER)) (BG_Y_START-(14*SPLITSCREEN_MULTIPLIER)) (128*SPLITSCREEN_MULTIPLIER) (62*SPLITSCREEN_MULTIPLIER)
+			background		"hud_dpad_lines_fade"
+			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND
+			forecolor		1 1 1 0.4
+			visible 		1
+			decoration
+		}
+		
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(BG_X_START+(9*SPLITSCREEN_MULTIPLIER)) (BG_Y_START-(14*SPLITSCREEN_MULTIPLIER)) (134*SPLITSCREEN_MULTIPLIER) (64*SPLITSCREEN_MULTIPLIER)
+			background		"hud_dpad_lines"
+			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND
+			forecolor		1 1 1 0.6
+			visible 		1
+			decoration
+		}
+
+		// Weapon Ammo
+		itemDef
+		{
+			name			"clip"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			(WEAPINFO_X - (74*SPLITSCREEN_MULTIPLIER)) (WEAPINFO_Y + (45*SPLITSCREEN_MULTIPLIER)) (60*SPLITSCREEN_MULTIPLIER) (40*SPLITSCREEN_MULTIPLIER)
+			textscale		TEXTSIZE_SUBTITLE
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_EXTRABIG
+			textalign		ITEM_ALIGN_RIGHT
+			forecolor		AMMO_COLOR 1
+			ownerdraw		CG_PLAYER_WEAPON_AMMO_CLIP
+			visible			1
+			visibilityBits	bits( !BIT_IS_FUEL_WEAPON )
+			decoration
+		}
+
+		#define DIVIDER_LINE_X_START		( (WEAPINFO_X - (14*SPLITSCREEN_MULTIPLIER)) - dvarInt( ui_right_ammo_width ) - 6 )
+		// Dual Wield Divider Line
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			0 (WEAPINFO_Y + (23*SPLITSCREEN_MULTIPLIER)) 3 (18*SPLITSCREEN_MULTIPLIER)
+			exp				rect X( DIVIDER_LINE_X_START )
+			background		"white"
+			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND
+			forecolor		AMMO_COLOR 0.2
+			visible			when( isdualwield() ) 
+			decoration
+		}
+
+
+		itemDef
+		{
+			name			"clipLeft"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 (WEAPINFO_Y + (45*SPLITSCREEN_MULTIPLIER)) (20*SPLITSCREEN_MULTIPLIER) (20*SPLITSCREEN_MULTIPLIER)
+			exp				rect X( DIVIDER_LINE_X_START - dvarInt( ui_right_ammo_width ) - 6 )
+			textscale		TEXTSIZE_SUBTITLE
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_EXTRABIG
+			textalign		ITEM_ALIGN_RIGHT
+			forecolor		AMMO_COLOR 1
+			ownerdraw		CG_PLAYER_WEAPON_AMMO_CLIP_DUAL_WIELD
+			visible			when( isdualwield() )
+			decoration
+		}
+
+		itemDef
+		{
+			name			"ammoStock"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			(WEAPINFO_X - (11*SPLITSCREEN_MULTIPLIER)) (WEAPINFO_Y + (41*SPLITSCREEN_MULTIPLIER)) (10*SPLITSCREEN_MULTIPLIER) (10*SPLITSCREEN_MULTIPLIER)
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_EXTRABIG
+			forecolor		AMMO_COLOR 1
+			ownerdraw		CG_PLAYER_WEAPON_AMMO_STOCK
+			visible			1
+			decoration
+		}
+
+		#define	GRENADE_X_START		(WEAPINFO_X-(9*SPLITSCREEN_MULTIPLIER))
+		// Grenades
+		itemDef
+		{
+			name			"offhandFragIcon"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			GRENADE_X_START (WEAPINFO_Y+(43*SPLITSCREEN_MULTIPLIER)) (18*SPLITSCREEN_MULTIPLIER) (18*SPLITSCREEN_MULTIPLIER)
+			forecolor		1 1 1 1
+			ownerdraw		CG_OFFHAND_WEAPON_ICON_FRAG
+			background		"hud_us_grenade" // default texture
+			visible			1
+			decoration
+		}
+
+		itemDef
+		{
+			name			"offhandSmokeIcon"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(GRENADE_X_START-(25*SPLITSCREEN_MULTIPLIER)) (WEAPINFO_Y+(43*SPLITSCREEN_MULTIPLIER)) (18*SPLITSCREEN_MULTIPLIER) (18*SPLITSCREEN_MULTIPLIER)
+			forecolor		1 1 1 1
+			ownerdraw		CG_OFFHAND_WEAPON_ICON_SMOKEFLASH
+			background		"hud_us_smokegrenade" // default texture
+			visible			1
+			decoration
+		}
+
+		// Weapon Name
+		itemDef
+		{
+			name			"weapname"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			(WEAPINFO_X+(24*SPLITSCREEN_MULTIPLIER)) (WEAPINFO_Y+(20*SPLITSCREEN_MULTIPLIER)) 1 1
+			textalign		ITEM_ALIGN_BOTTOM_RIGHT
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_EXTRABIG
+			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
+			ownerdraw		CG_PLAYER_WEAPON_NAME
+			visible 		1
+			decoration
+		}
+
+		itemDef
+		{
+			name			"lowammowarning"	
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			-130 -8 260 100 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			textfont		UI_FONT_DEFAULT
+			textscale		TEXTSIZE_SMALL
+			textalign		(ITEM_ALIGN_CENTER | ITEM_ALIGN_MIDDLE)
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			forecolor		1 1 1 HUD_ALPHA
+			//background	"white"
+			ownerdraw		CG_PLAYER_WEAPON_LOW_AMMO_WARNING
+			visible			1
+			decoration
+		}
+	}
+
+	#define	DPAD_BASE_SIZE			(32*SPLITSCREEN_MULTIPLIER)
+	#define	DPAD_BASE_SIZE_HALF		(DPAD_BASE_SIZE / 2)
+	#define DPAD_ICON_Y				(-1*SPLITSCREEN_MULTIPLIER)
+	#define DPAD_LABEL_Y			(40*SPLITSCREEN_MULTIPLIER)
+	#define DPAD_ICON_SPACING		(60*SPLITSCREEN_MULTIPLIER)
+
+	menuDef
+	{
+		name			"DPad_ss"
+ 	   	rect			BOTTOM_RECT_X (BOTTOM_RECT_Y-(32*SPLITSCREEN_MULTIPLIER)) (25*SPLITSCREEN_MULTIPLIER) (25*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_BOTTOM
+ 	   	fullScreen		0
+		visible			when( (dvarString( createfx ) != "on") && dvarint( actionslotshide ) == 0 && dvarint( #"zombietron" ) == 0 );
+		visibilityBits  bits( !BIT_UI_ACTIVE !BIT_SPECTATING_CLIENT )
+
+		// DPAD BACKGROUND
+		itemDef
+        {
+			type			ITEM_TYPE_OWNERDRAW			
+			background		"hud_faction_back_light"
+			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND
+            rect			DPAD_BG_X_START DPAD_BG_Y_START DPAD_BG_WIDTH DPAD_BG_HEIGHT
+            forecolor		1 1 1 0.2
+			visible			1
+			decoration
+        }
+
+		itemDef
+        {
+			type			ITEM_TYPE_OWNERDRAW			
+			background		"hud_dpad_outer_frame"
+			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND
+            rect			DPAD_BG_X_START DPAD_BG_Y_START DPAD_BG_WIDTH DPAD_BG_HEIGHT
+            forecolor		1 1 1 0.3
+			visible			1
+			decoration
+        }
+		
+		itemDef
+        {
+			type			ITEM_TYPE_OWNERDRAW			
+			background		"hud_dpad_outer_frame_rim"
+            rect			DPAD_BG_X_START DPAD_BG_Y_START DPAD_BG_WIDTH DPAD_BG_HEIGHT
+			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND
+            forecolor		1 1 1 0.2
+			visible			1
+			decoration
+        }
+
+
+		// DPAD ITEM ICONS
+		itemDef // Up
+        {
+			name			"slot1"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			(DPAD_BG_X_START+(DPAD_BG_WIDTH/2)-(DPAD_BASE_SIZE/2)) (DPAD_BG_Y_START+(5*SPLITSCREEN_MULTIPLIER)) DPAD_BASE_SIZE DPAD_BASE_SIZE
+			ownerdraw		CG_PLAYER_ACTIONSLOT_1		
+			forecolor		1 1 1 1
+			visible			1
+			decoration
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_NORMAL
+        }
+		
+		itemDef // Left
+        {
+            name			"slot3"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+            rect			(DPAD_BG_X_START+(5*SPLITSCREEN_MULTIPLIER)) (DPAD_BG_Y_START+(DPAD_BG_HEIGHT/2)-(DPAD_BASE_SIZE/2)) DPAD_BASE_SIZE DPAD_BASE_SIZE
+			ownerdraw		CG_PLAYER_ACTIONSLOT_3
+			forecolor		1 1 1 1
+			visible			1
+			decoration
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_NORMAL
+        }
+
+		itemDef // Right
+        {
+            name			"slot4"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+            rect			(DPAD_BG_X_START+DPAD_BG_WIDTH-DPAD_BASE_SIZE-(5*SPLITSCREEN_MULTIPLIER)) (DPAD_BG_Y_START+(DPAD_BG_HEIGHT/2)-(DPAD_BASE_SIZE/2)) DPAD_BASE_SIZE DPAD_BASE_SIZE 
+			ownerdraw		CG_PLAYER_ACTIONSLOT_4
+			forecolor		1 1 1 1
+			visible			1
+			decoration
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_NORMAL
+        }
+	
+		// DPAD FOREGROUND
+		itemDef
+        {
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND		
+#ifdef PS3
+			background		"hud_dpad_ps3"
+#else
+			background		"hud_dpad_xenon"
+#endif
+            rect			(DPAD_BG_X_START+(23*SPLITSCREEN_MULTIPLIER)) (DPAD_BG_Y_START+(23*SPLITSCREEN_MULTIPLIER)) (45*SPLITSCREEN_MULTIPLIER) (45*SPLITSCREEN_MULTIPLIER)
+            forecolor		1 1 1 1
+			visible			1
+			decoration
+        }
+		
+		itemDef
+        {
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND		
+			background		"hud_dpad_overlay_x"
+            rect			DPAD_BG_X_START DPAD_BG_Y_START DPAD_BG_WIDTH DPAD_BG_HEIGHT
+            forecolor		1 1 1 0.3
+			visible			1
+			decoration
+        }
+
+		itemDef
+        {
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		CG_PLAYER_WEAPON_BACKGROUND		
+			background		"hud_dpad_overlay_circle"
+            rect			DPAD_BG_X_START DPAD_BG_Y_START DPAD_BG_WIDTH DPAD_BG_HEIGHT
+            forecolor		1 1 1 0.3
+			visible			1
+			decoration
+        }
+
+		// Arrows
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		CG_PLAYER_ACTIONSLOT_ARROW_3	
+			rect			(DPAD_BG_X_START+(45*SPLITSCREEN_MULTIPLIER)) (DPAD_BG_Y_START+(33*SPLITSCREEN_MULTIPLIER)) (-26*SPLITSCREEN_MULTIPLIER) (26*SPLITSCREEN_MULTIPLIER)  
+			background		"hud_frame_arrow_right"
+			forecolor		1 1 1 0.3
+			visible 		1
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		CG_PLAYER_ACTIONSLOT_ARROW_4	
+			rect			(DPAD_BG_X_START+(46*SPLITSCREEN_MULTIPLIER)) (DPAD_BG_Y_START+(33*SPLITSCREEN_MULTIPLIER)) (26*SPLITSCREEN_MULTIPLIER) (26*SPLITSCREEN_MULTIPLIER)  
+			background		"hud_frame_arrow_right"
+			forecolor		1 1 1 0.3
+			visible 		1
+			decoration
+		}
+    }
+
+}
+
+{
+	// Friendly Arrows
+	menuDef
+	{
+		name			"Friendly_Arrows_SS"
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+ 	   	fullScreen		0
+ 	   	hiddenDuringScope
+		hiddenDuringFlashbang
+ 	   	visible when( dvarBool( #"cl_paused" ) == 0 && dvarBool( #"zombietron" ) == 0 );
+
+		itemDef
+		{
+			name			"friendlyarrowicons"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			0 0 640 480
+			forecolor		1 1 1 1
+			ownerdraw		CG_FRIENDLYARROWS
+			visible			1
+			decoration
+		}
+	}
+
+	// Friendly Names
+	menuDef
+	{
+		name			"Friendly_Names_SS"
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+ 	   	fullScreen		0
+ 	   	hiddenDuringScope
+		hiddenDuringFlashbang
+ 	   	visible when( dvarBool( #"cl_paused" ) == 0 && dvarBool( #"zombietron" ) == 0 );
+
+		itemDef
+		{
+			name			"friendlynameicons"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			0 0 640 480
+			forecolor		1 1 1 1
+			ownerdraw		CG_FRIENDLYNAMES
+			visible			1
+			decoration
+		}
+	}
+	
+	//objective indicators
+	menuDef
+	{
+		name			"Objective_Indicators_SS"
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+ 	   	fullScreen		0
+ 	   	hiddenDuringScope
+		hiddenDuringFlashbang
+ 	   	visible when  ( dvarBool( #"cl_paused" ) == 0 );
+
+		itemDef
+		{
+			name			"objectiveindicatoricons"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			0 0 640 480
+			forecolor		1 1 1 1
+			ownerdraw		CG_HUD_3DOBJECTIVEINDICATORS
+			visible			1
+			decoration
+		}
+	}
+	
+	menuDef
+	{
+		name			"Objective_Indicators_ui3d1_SS"
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+ 	   	fullScreen		0
+ 	   	hiddenDuringScope
+		hiddenDuringFlashbang
+		ui3dWindowId	1
+ 	   	visible when  ( dvarBool( #"cl_paused" ) == 0 );
+
+		itemDef
+		{
+			name			"objectiveindicatoricons_ui3d1"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			0 0 640 480
+			forecolor		1 1 1 1
+			ownerdraw		CG_HUD_3DOBJECTIVEINDICATORS
+			visible			1
+			decoration
+		}
+	}
+
+	// Hold breath zoom hint
+	menuDef 
+	{
+		name			"HoldBreathZoomHint_ss"
+		rect			0 110 0 0 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP
+		fullScreen		0
+		visible			when ( dvarBool(cg_drawHoldBreathHint)==1 );
+		visibilityBits  bits( !BIT_SPECTATING_CLIENT )
+
+		itemDef 
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 0 0
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_HOLD_BREATH_ZOOM_HINT
+			visible			1
+			decoration
+		}
+	}
+
+	// Hold breath hint
+	menuDef 
+	{
+		name			"HoldBreathHint_ss"
+		rect			0 80 0 0 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP
+		fullScreen		0
+		visible			when ( dvarBool(cg_drawHoldBreathHint)==1 );
+		visibilityBits  bits( !BIT_SPECTATING_CLIENT )
+
+		itemDef 
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 0 0
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_HOLD_BREATH_HINT
+			visible			1
+			decoration
+		}
+	}
+
+	// Invalid cmd hint
+	menuDef 
+	{
+		name			"InvalidCmdHint_ss"
+		rect			0 -130 0 0 HORIZONTAL_ALIGN_CENTER_SAFEAREA VERTICAL_ALIGN_CENTER_SAFEAREA
+		fullScreen		0
+		visible			1
+
+		itemDef 
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 0 0
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_INVALID_CMD_HINT
+			textfont		UI_FONT_NORMAL
+			visibilityBits  bits( !BIT_SPECTATING_CLIENT )
+			decoration
+		}
+	}
+
+	// game messages
+	// we don't have room for these in splitscreen
+	//menuDef
+	//{
+	//	name			"gamemessages_ss"
+	//	rect			(6*SPLITSCREEN_MULTIPLIER) (-75*SPLITSCREEN_MULTIPLIER) (10*SPLITSCREEN_MULTIPLIER) (10*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
+	//	fullScreen		0
+	//	visibilityBits  bits( !BIT_SPECTATING_CLIENT )
+	//	
+	//	itemDef
+	//	{
+	//		rect				0 0 0 0
+	//		type				ITEM_TYPE_GAME_MESSAGE_WINDOW
+	//		gamemsgwindowindex	0
+	//		gamemsgwindowmode	MODE_BOTTOMUP_ALIGN_BOTTOM
+	//		textfont			UI_FONT_SMALL
+	//		textstyle			ITEM_TEXTSTYLE_SHADOWED
+	//		textalign			ITEM_ALIGN_LEFT
+	//		textscale			0.3
+	//		visible				1
+	//		visibilityBits		bits( !BIT_UI_ACTIVE BIT_HUD_OBITUARIES )
+	//	}
+	//}
+	
+	menuDef
+	{
+		name			"boldgamemessages_ss"
+		rect			0 (-52*SPLITSCREEN_MULTIPLIER) (10*SPLITSCREEN_MULTIPLIER) (10*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_CENTER_SAFEAREA VERTICAL_ALIGN_CENTER_SAFEAREA
+		fullScreen		0
+		visible			1
+
+		itemDef
+		{
+			origin				0 0
+			type				ITEM_TYPE_GAME_MESSAGE_WINDOW
+			gamemsgwindowindex	1
+			gamemsgwindowmode	MODE_BOTTOMUP_ALIGN_BOTTOM
+			textfont			UI_FONT_NORMAL
+			textstyle			ITEM_TEXTSTYLE_SHADOWED
+			textalign			ITEM_ALIGN_CENTER
+			textscale			TEXTSIZE_DEFAULT 
+			visible				1
+			visibilityBits		bits( !BIT_UI_ACTIVE BIT_HUD_OBITUARIES )
+		}
+	}
+	
+	// Safe area
+	menuDef
+	{
+		name			"safearea_ss"
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible			1
+
+		#include "ui/safearea.menu"
+	}
+
+}
+	
+
+menuDef
+{
+	name			"miniscoreboard_splitscreen"
+	rect			-103 (-100*SPLITSCREEN_MULTIPLIER) 0 0 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_BOTTOM
+	fullScreen		0
+	visible when 	( !ui_active() && dvarBool( #"hud_missionFailed" ) == 0 && dvarint( #"zombiemode" ) == 1 && dvarint( #"zombietron" ) == 0 );
+	
+	itemDef
+	{
+		name			"playerscores"
+		type			ITEM_TYPE_OWNERDRAW
+		rect			0 0 100 0
+		ownerdraw		CG_COMPETITIVE_MODE_SCORES
+		visible			1
+	}		
+}	
+

@@ -1,0 +1,99 @@
+name,file,template,loadspec,secondary,group,vol_min,vol_max,team_vol_mod,dist_min,dist_max,dist_reverb_max,volume_falloff_curve,reverb_falloff_curve,volume_min_falloff_curve,reverb_min_falloff_curve,limit_count,limit_type,entity_limit_count,entity_limit_type,pitch_min,pitch_max,team_pitch_mod,min_priority,max_priority,min_priority_threshold,max_priority_threshold,spatialized,type,loop,randomize_type,probability,start_delay,reverb_send,duck,pan,center_send,envelop_min,envelop_max,envelop_percentage,occlusion_level,occlusion_wet_dry,is_big,distance_lpf,move_type,move_time,real_delay,subtitle,mature,doppler,futz,context_type,context_value,compression,timescale,music,fade_in,fade_out,pc_format,pause,stop_on_death,bus,snapshot
+# LEVEL SPEC MUSIC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_pentagon_underscore,mus\zombie_theatre,MUS_NORMAL_LOOP_2D,,,,72,72,,,,,,,,,,,,,,,,,,,,,,looping,,,,0,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# AMBIENCES,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+amb_office_bg,amb\stereo_backgrounds\zmb_pentagon\office_bg.wav,amb_bg_2d,,,,87,87,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+amb_warroom_bg,amb\stereo_backgrounds\zmb_pentagon\warroom_bg.wav,amb_bg_2d,,,,89,89,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+amb_lab_bg,amb\stereo_backgrounds\zmb_pentagon\labs_bg.wav,amb_bg_2d,,,,94,94,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Pentagon Offices,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+amb_lights_buzz,amb\lights\buzz\buzz_01.wav,AMB_500,,,ambience,86,86,,,,,,,,,,,,,0,0,,,,,,3d,,looping,,,,93,,,,100,150,92,0.5,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_clock_tick,amb\clocks\tick\loop\loop.wav,AMB_500,,,ambience,85,85,,,600,600,curve2,curve2,,,,,,,0,0,,,,,,3d,,looping,,,,93,,,,,,,0.2,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_switch_clack,amb\telephones\pentagon\clacks,AMB_500,,,ambience,93,96,,,700,700,,,,,,,,,0,0,,,,,,3d,,,,,,93,,,,,,,0.3,,,,,,,,,,,,,,,,,,,,,,ambience
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# War Room,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+amb_printer,amb\electronics\printer\printer_00.wav,AMB_500,,,ambience,95,95,,,,,curve2,curve2,,,,,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_comp_sonar,amb\electronics\computer\ping\ping_00.wav,AMB_500,,,ambience,86,86,,,,,curve2,curve2,,,,,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_comp_mainframe,amb\electronics\computer\loops\beeps_n_boops\bips.wav,AMB_500,,,ambience,88,88,,,,,curve2,curve2,,,,,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_comp_mainframe,amb\electronics\computer\loops\mainframe\mainframe_loop_02.wav,AMB_500,,,ambience,88,88,,,,,curve2,curve2,,,,,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_comp_mainframe,amb\electronics\computer\loops\beeps_n_boops\beeps.wav,AMB_500,,,ambience,88,88,,,,,curve2,curve2,,,,,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_comp_mainframe,amb\electronics\computer\loops\beeps_n_boops\boops.wav,AMB_500,,,ambience,88,88,,,,,curve2,curve2,,,,,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_comp_tape,amb\electronics\computer\loops\reel\reel.wav,AMB_500,,,ambience,95,95,,,,,curve2,curve2,,,,,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_projector,amb\projector\amb_projector_00.wav,AMB_500,,,ambience,96,96,,,,,curve2,curve2,,,,,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_clock_grandfather,amb\clocks\tick\antique\loop.wav,AMB_500,,,ambience,94,94,,,600,600,curve2,curve2,,,,,,,0,0,,,,,,3d,,looping,,,,93,,,,,,,0.2,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_tv_static,amb\electronics\tv\static\static.wav,AMB_500,,,ambience,91,91,,,,,curve2,curve2,,,,,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Labs,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+amb_power_box,amb\industrial\hum\hum_a.wav,AMB_500,,,ambience,100,100,,,,,curve3,curve2,,,,,,,-88,88,,,,,,3d,,looping,,,,95,,,,,,,0.6,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_ac,amb\industrial\fan\ac\ac_00.wav,AMB_500,,,ambience,93,93,,,,,curve3,curve2,,,,,,,-88,88,,,,,,3d,,looping,,,,95,,,,,,,0.6,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_alarms,amb\alarms\rebirth\alarm_2001.wav,AMB_1500,,,ambience,100,100,,,,,curve2,curve2,,,4,priority,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_alarms_out,amb\alarms\rebirth\outside.wav,EVT_3D,,,ambience,100,100,,500,9000,14000,curve3,curve2,,,4,priority,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,ambience_ext
+amb_alarms_computer,amb\alarms\armory\armory_alarm.wav,AMB_500,,,ambience,100,100,,,,,curve3,curve2,,,4,priority,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_alarms_offices,amb\alarms\buzz\buzz_00.wav,AMB_500,,,ambience,100,100,,,,,curve3,curve2,,,4,priority,,,0,0,,,,,,3d,,looping,,,,95,,,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,ambience
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Quad Step Sweetners,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_metal_duct,fly\step\corrugated_metal\stand,amb_1500,,,ambience,94,94,,100,1200,1600,log2,log1,,,,,,,-100,100,,,,,,3d,,,,,,98,,,,,,,0.45,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Quad Step Sweetners,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+amb_pig,aml\pig\squeal,amb_1000,,,ambience,97,99,,250,800,1200,log2,log1,,,,,,,-30,30,,,,,,3d,,,,,,98,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,
+amb_pig_death,aml\pig\death,amb_1000,,,ambience,100,100,,250,800,1200,log2,log1,,,,,,,-30,30,,,,,,3d,,,,,,98,,,,,,,0.5,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# EVENTS,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Teleporter,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_teleporter_loop,evt\zombie_global\teleporter\pentagon\evt_teleporter_loop.wav,evt_3d,,evt_teleporter_loop_close,,92,92,,150,1000,1500,,,,,,,,,,,,,,,,,,looping,,,,,,,,75,150,99,0.25,,,,,,,,,,,,,,,,,,,,,,
+evt_teleporter_loop_close,evt\zombie_global\teleporter\pentagon\evt_teleporter_loop_close.wav,evt_3d,,,,96,96,,50,400,800,,,,,,,,,,,,,,,,,,looping,,,,,,,,50,100,99,0.25,,,,,,,,,,,,,,,,,,,,,,
+evt_teleporter_out,evt\zombie_global\teleporter\pentagon\evt_teleport_out.wav,evt_3d,,,,100,100,,250,1750,2500,log2,log2,,,4,priority,,,,,,,,,,,,,,,,,,,,75,150,99,0.25,,,,,,,,,,,,,,,,,,,,,,
+evt_teleporter_go,evt\zombie_global\teleporter\pentagon\evt_teleport.wav,evt_3d,,,,100,100,,250,1750,2500,log2,log2,,,4,priority,,,,,,,,,,,,,,,,,,,,75,150,99,0.25,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_teleporter_start,evt\zombie_global\teleporter\pentagon\evt_teleporter_loop_start.wav,evt_3d,,,,100,100,,150,1000,1500,,,,,,,,,,,,,,,,,,,,,,,,,,75,150,99,0.25,,,,,,,,,,,,,,,,,,,,,,
+evt_teleporter_door_short,evt\zombie_global\teleporter\pentagon\door_open_short.wav,evt_3d,,,,98,98,,150,800,1200,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_teleporter_door_long,evt\zombie_global\teleporter\pentagon\door_open_long.wav,evt_3d,,,,98,98,,150,800,1200,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Office Elevator,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_elevator_office_door_open_1,amb\industrial\elevator\zmb\office\door_open.wav,evt_3d,,,event,94,94,,,,,,,,,,,,,0,0,,,,,,3d,,,,,,96,,,,,,,0.3,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_elevator_office_door_close,amb\industrial\elevator\zmb\office\door_close.wav,evt_3d,,,event,94,94,,,,,,,,,,,,,0,0,,,,,,3d,,,,,,96,,,,,,,0.3,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_elevator_office_start,amb\industrial\elevator\pentagon\move\start.wav,EVT_2D,,,event,98,98,,,,,,,,,,,,,0,0,,,,,,2d,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_elevator_office_run,amb\industrial\elevator\pentagon\move\run.wav,EVT_2D,,,event,100,100,,,,,,,,,,,,,0,0,,,,,,2d,,looping,,,,98,,quad,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_elevator_office_stop,amb\industrial\elevator\pentagon\move\stop.wav,EVT_2D,,,event,98,98,,,,,,,,,,,,,0,0,,,,,,2d,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_elevator_office_run_3d,amb\industrial\elevator\pentagon\3d\loop_mn.wav,evt_3d,,,event,100,100,,1,50,1000,rcurve1,rcurve0,,,,,,,0,0,,,,,,3d,,looping,,,,98,,,,75,150,98,0.2,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Freight Elevator,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_elevator_freight_start,amb\industrial\elevator\freight\elevator_start.wav,EVT_2D,,,event,98,98,,,,,,,,,,,,,0,0,,,,,,2d,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_elevator_freight_run,amb\industrial\elevator\freight\elevator_loop.wav,EVT_2D,,,event,98,98,,,,,,,,,,,,,0,0,,,,,,2d,,looping,,,,98,,quad,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_elevator_freight_stop,amb\industrial\elevator\freight\elevator_stop.wav,EVT_2D,,,event,98,98,,,,,,,,,,,,,0,0,,,,,,2d,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_elevator_freight_door_open,amb\industrial\elevator\zmb\freight\door_open.wav,evt_3d,,,event,99,99,,,,,,,,,,,,,0,0,,,,,,3d,,,,,,96,,,,,,,0.3,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_elevator_freight_door_close,amb\industrial\elevator\zmb\freight\door_close.wav,evt_3d,,,event,99,99,,,,,,,,,,,,,0,0,,,,,,3d,,,,,,96,,,,,,,0.3,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_elevator_freight_run_3d,amb\industrial\elevator\freight\elevator_loop.wav,evt_3d,,,event,100,100,,1,100,1000,rcurve1,rcurve0,,,,,,,0,0,,,,,,3d,,looping,,,,98,,,,75,150,98,0.2,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Defcon,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_defcon_switch,evt\zombie_pentagon\defcon\defcon_switch.wav,evt_3d,,,,100,100,,100,800,1200,log2,log1,,,,,,,0,0,,,,,,,,,,,,95,,,,,,,0.2,,,,,,,,,,,,,,,,,,,,,,
+zmb_defcon_alarm,evt\zombie_pentagon\defcon\defcon_alarm.wav,evt_3d,,,,98,98,,50,2500,3500,log2,log2,,,,,,,0,0,,,,,,,,looping,,,,100,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Thief Round,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_thief_alarm_single,evt\zombie_global\thief\thief_alarm.wav,evt_3d,,,,98,98,,250,3000,4000,log2,log2,,,,,,,0,0,,,,,,,,,,,,100,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_thief_alarm_looper,evt\zombie_global\thief\thief_alarm.wav,evt_3d,,,,98,98,,250,3000,4000,log2,log2,,,,,,,0,0,,,,,,,,looping,,,,100,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Packapunch Revolve,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_packapunch_revolve_start,evt\uwb\hoist\hoist_start.wav,evt_3d,,,,96,96,,100,1200,1500,log2,log1,,,1,reject,,,,,,,,,,,,,,,,97,,,,,,,0.65,,,,,,,,,,,,,,,,,,,,,,
+evt_packapunch_revolve_loop,evt\uwb\hoist\hoist_loop.wav,evt_3d,,,,96,96,,100,1200,1500,log2,log1,,,1,reject,,,,,,,,,,,,looping,,,,97,,,,,,,0.65,,,,,,,,,,,,,,,,,,,,,,
+evt_packapunch_revolve_end,evt\uwb\hoist\hoist_end.wav,evt_3d,,,,96,96,,100,1200,1500,log2,log1,,,1,reject,,,,,,,,,,,,,,,,97,,,,,,,0.65,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Gear Override,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_gear_plr,,FLY_GEAR_REAR_PLR_2d,,fly_cloth_plr,,,,,,,,,,,,,,,,,,,,,,,,,,,,70,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_gear_run_plr,,FLY_GEAR_REAR_PLR_2d,,fly_cloth_run_plr,,,,,,,,,,,,,,,,,,,,,,,,,,,,50,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_gear_sprint_plr,,FLY_GEAR_REAR_PLR_2d,,fly_cloth_sprint_plr,,,,,,,,,,,,,,,,,,,,,,,,,,,,70,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_gear_run_npc,,FLY_GEAR_REAR_NPC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,50,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_gear_npc,,FLY_GEAR_REAR_NPC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,70,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_gear_sprint_npc,,FLY_GEAR_REAR_NPC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,70,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Egg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_egg_phone_loop,evt\zombie_pentagon\egg\phone_ring.wav,evt_3d,,,,88,88,,50,250,300,log2,log1,,,,,,,,,,,,,,,,looping,,,,96,,,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,
+zmb_egg_phone_activate,evt\zombie_pentagon\egg\phone_activate.wav,evt_3d,,,,98,98,,100,250,300,log2,log1,,,,,,,,,,,,,,,,,,,,98,,,,,,,0.45,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Quad Spawn,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_pentagon_quad_spawn,dst\generic\metal\small,evt_3d,,zmb_vocals_quad_spawn,,98,98,,100,1200,1500,log2,log1,,,,,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# DOA Unlock,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_doa_unlock,evt\zombie_tron\scenes\prize_shower.wav,evt_2d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

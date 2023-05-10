@@ -1,0 +1,11 @@
+{
+	menuDef
+	{
+		name			"class_opfor"
+		onOpen
+		{
+			open class
+			close self
+		}
+	}
+}

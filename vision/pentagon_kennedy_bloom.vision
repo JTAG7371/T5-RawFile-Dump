@@ -1,0 +1,33 @@
+//				"1"
+//Radius0			"10"
+//BloomCutoff		"0.5"
+//BloomDesaturation		"0"
+//BloomIntensity0		"2"
+//SkyBleedIntensity0	"1.45"
+//RayExpansion 		"0.26"
+//RayIntensity 		"0.5"
+
+
+r_filmEnable                  "1"
+r_filmMidStart                "0.21"
+r_filmMidEnd                  "0.33"
+r_filmDarkFeather             "0.23"
+r_filmLightFeather            "0.14"
+r_filmColorTemp               "6500 6500 6500"
+r_filmHue                     "0 0 0"
+r_filmSaturation              "1 1 1"
+r_filmDarkTint                "1 1 1"
+r_filmMidTint                 "1.12 1.074 1.03"
+r_filmLightTint               "1.049 1.038 1.020"
+r_filmContrast                "1 1 1"
+ 
+r_sCurveEnable   "1"
+r_sCurveShoulderStrength   "0.068000"
+r_sCurveLinearStrength   "0.413000"
+r_sCurveLinearAngle   "0.093000"
+r_sCurveToeStrength   "0.117000"
+r_sCurveToeNumerator   "0.000000"
+r_sCurveToeDenominator   "0.228000" 
+
+
+r_reviveFX_Enable		"0"

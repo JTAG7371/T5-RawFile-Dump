@@ -1,0 +1,11 @@
+{
+	menuDef
+	{
+		name			"class_marines_splitscreen"
+		onOpen
+		{
+			open class_splitscreen
+			close self
+		}
+	}
+}

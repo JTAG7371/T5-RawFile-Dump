@@ -1,0 +1,203 @@
+name,file,template,loadspec,secondary,group,vol_min,vol_max,team_vol_mod,dist_min,dist_max,dist_reverb_max,volume_falloff_curve,reverb_falloff_curve,volume_min_falloff_curve,reverb_min_falloff_curve,limit_count,limit_type,entity_limit_count,entity_limit_type,pitch_min,pitch_max,team_pitch_mod,min_priority,max_priority,min_priority_threshold,max_priority_threshold,spatialized,type,loop,randomize_type,probability,start_delay,reverb_send,duck,pan,center_send,envelop_min,envelop_max,envelop_percentage,occlusion_level,occlusion_wet_dry,is_big,distance_lpf,move_type,move_time,real_delay,subtitle,mature,doppler,futz,context_type,context_value,compression,timescale,music,fade_in,fade_out,pc_format,pause,stop_on_death,bus,snapshot
+#Vehicle Car,Move to correct folders/names post GL -SE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+exp_veh_small,EXP\prop\car\stereo,,veh,veh_explo_dist,explosion,100,100,,500,7500,10000,log3,log1,,rcurve1,3,oldest,,,-350,350,,70,100,0.25,0.75,3d,,,,,,93,grenade_explode,,,250,700,98,0.1,,yes,no,,,,,,,,,,,,,,,,,,,explosion
+exp_veh_med,EXP\prop\car\stereo,,veh,veh_explo_dist,explosion,100,100,,500,8500,11000,log3,log1,,rcurve1,3,oldest,,,-350,350,,70,100,0.25,0.75,3d,,,,,,93,grenade_explode,,,250,700,98,0.1,,yes,no,,,,,,,,,,,,,,,,,,,explosion
+exp_veh_large,EXP\prop\car\stereo,,veh,veh_explo_dist,explosion,100,100,,1000,9500,12000,log3,log1,,rcurve1,3,oldest,,,-350,350,,75,100,0.25,0.75,3d,,,,,,93,grenade_explode,,,250,700,98,0.1,,yes,no,,,,,,,,,,,,,,,,,,,explosion
+exp_armor_vehicle,EXP\prop\car\stereo,,veh,veh_explo_dist,explosion,100,100,,1000,9500,13500,log3,log1,,rcurve1,3,oldest,,,-350,350,,70,100,0.25,0.75,3d,,,,,,93,grenade_explode,,,250,700,98,0.1,,yes,no,,,,,,,,,,,,,,,,,,,explosion
+veh_explo_dist,EXP\prop\car\distant,,veh,exp_veh_flux_l,explosion,100,100,,2500,12000,15000,sin,cos,rcurve1,,3,oldest,,,-350,350,,70,100,0.25,0.75,3d,,,,,,98,grenade_explode,,,,,,,,,,,,,,,,,,,,,,,,,,,,explosion
+exp_veh_flux_l,dst\generic\metal\flux,,veh,exp_veh_flux_r,explosion,99,100,,3000,12000,13000,curve5,,,,3,oldest,,,-182,0,,40,60,0.55,1,3d,,,,,350,98,,,,,,,,,,,left_player,7000,,,,,,,,,,,,,,,,,explosion
+exp_veh_flux_r,dst\generic\metal\flux,,veh,exp_veh_lfe,explosion,99,100,,3000,12000,13000,curve5,,,,3,oldest,,,-182,0,,40,60,0.55,1,3d,,,,,350,98,,,,,,,,,,,right_player,7000,,,,,,,,,,,,,,,,,explosion
+exp_veh_lfe,EXP\prop\car\stereo\lfe,,veh,,destructable,98,100,,3000,12000,13000,curve3,curve2,,,,,,,0,0,,50,95,0.25,1,3d,,,,,,98,,lfe,,,,,,,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_car_fire,DST\generic\fire\med,AMB_MID,veh,,destructable,,,,,,,,,,,,,1,,,,,,,,,,,looping,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,explosion
+dst_car_parts_tiny,DST\generic\metal\small,,veh,,destructable,98,100,,100,700,1400,curve3,curve2,,,,,1,reject,-182,84,,50,95,0.25,1,3d,,,pitch,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,explosion
+dst_car_parts_small,DST\generic\metal\small,,veh,,destructable,98,100,,100,700,1400,curve3,curve2,,,,,1,reject,-182,84,,50,95,0.25,1,3d,,,pitch,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,explosion
+dst_car_door_break,DST\generic\metal\small,,veh,,destructable,98,100,,100,700,1400,curve3,curve2,,,,,1,reject,-182,84,,50,95,0.25,1,3d,,,pitch,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,explosion
+dst_car_glass_piece,DST\generic\glass\med,,glass,,destructable,96,100,,100,700,1400,curve3,curve2,,,8,oldest,1,reject,-182,165,,40,70,0.25,0.75,3d,,,pitch,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_car_glass_crack,dst\generic\glass\small,,glass,,destructable,100,100,,50,700,1400,curve3,curve2,,,2,oldest,,,-100,100,,40,70,0.25,0.75,3d,,,pitch,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_car_light_crack,dst\generic\glass\small,,glass,,destructable,100,100,,50,700,1400,curve3,curve2,,,2,oldest,,,-100,100,,40,70,0.25,0.75,3d,,,pitch,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_car_wheel,DST\generic\metal\small,,veh,dst_car_tire,destructable,80,96,,100,700,1400,curve3,curve2,,,,,1,reject,-182,84,,50,95,0.25,1,3d,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,explosion
+dst_car_tire,DST\prop\tire,,veh,,destructable,92,100,,200,1400,2000,curve3,curve2,,,,,1,reject,-182,84,,50,95,0.25,1,3d,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Generic Electronics,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_electronics_sparks_lg,amb\electronics\spark\large,,electronics,,destructable,94,98,,100,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_electronics_elc_md,DST\generic\electric\med,,electronics,,destructable,94,98,,100,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_electronics_elc_sm,DST\generic\electric\small,,electronics,,destructable,94,98,,100,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_electronics_elc_md_flux_l,DST\generic\electric\med,,electronics,,destructable,94,98,,100,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,left_player,7000,yes,,,,,,,,,,,,,,,,explosion
+dst_electronics_elc_md_flux_r,DST\generic\electric\med,,electronics,,destructable,94,98,,100,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,right_player,7000,yes,,,,,,,,,,,,,,,,explosion
+dst_electronics_tv_tube,DST\prop\tv,,electronics,dst_electronics_tv_tube_spark,destructable,94,98,,100,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_electronics_tv_tube_spark,DST\generic\electric\med,,electronics,,destructable,94,98,,100,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,430,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_dest_jun_tvset_d1,DST\prop\tv,,electronics,dst_electronics_tv_tube_spark,destructable,94,98,,200,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_jun_tvset_d0,DST\prop\tv,,electronics,dst_electronics_tv_tube_spark,destructable,94,98,,200,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_jun_tvset_dp_d0,DST\prop\tv,,electronics,dst_electronics_tv_tube_spark,destructable,94,98,,200,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_jun_tvset_screen_dp_d0,DST\prop\tv,,electronics,dst_electronics_tv_tube_spark,destructable,94,98,,200,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Generic Electronics MP,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_electronics_sparks_lg,amb\electronics\spark\large,,electronics_mp,,destructable,90,96,,75,700,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_electronics_elc_md,DST\generic\electric\med,,electronics_mp,,destructable,90,96,,75,700,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_electronics_elc_sm,DST\generic\electric\small,,electronics_mp,,destructable,90,96,,75,700,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_electronics_elc_md_flux_l,DST\generic\electric\med,,electronics_mp,,destructable,90,96,,75,700,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,left_player,7000,yes,,,,,,,,,,,,,,,,explosion
+dst_electronics_elc_md_flux_r,DST\generic\electric\med,,electronics_mp,,destructable,90,96,,75,700,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,right_player,7000,yes,,,,,,,,,,,,,,,,explosion
+dst_electronics_tv_tube,DST\prop\tv,,electronics_mp,dst_electronics_tv_tube_spark,destructable,90,96,,75,700,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_electronics_tv_tube_spark,DST\generic\electric\med,,electronics_mp,,destructable,90,96,,75,700,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,430,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_dest_jun_tvset_d1,DST\prop\tv,,electronics_mp,dst_electronics_tv_tube_spark,destructable,90,96,,75,700,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_jun_tvset_d0,DST\prop\tv,,electronics_mp,dst_electronics_tv_tube_spark,destructable,90,96,,75,700,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_jun_tvset_dp_d0,DST\prop\tv,,electronics_mp,dst_electronics_tv_tube_spark,destructable,90,96,,75,700,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_jun_tvset_screen_dp_d0,DST\prop\tv,,electronics_mp,dst_electronics_tv_tube_spark,destructable,90,96,,75,700,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Sparks (non destructable),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+amb_spark_small,amb\electronics\spark\small,AMB_1000,sparks_mp,,ambience,83,91,,,,,,,,,,,,,-200,200,,,,,,3d,,,,,,96,,,,,,,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_comp_room_sparks,evt\wmd\comp_room,AMB_FAR,sparks_mp,,event,98,98,,100,500,1000,log2,log0,,,,,,,,,,,,,,3d,,,,,,93,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Barrels,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_dest_gascan_01_dp_d0,EXP\prop\barrel,,barrel,exp_barrel_LFE,explosion,100,100,,1000,10000,15000,log2,log1,,,3,priority,,,-182,67,,90,99,0.25,0.8,3d,,,,,,96,grenade_explode,,,200,1000,100,0.2,,yes,no,,,,,,,,,,,,,,,,,,,explosion
+exp_barrel,EXP\prop\barrel\new\barrel_00.wav,,barrel,exp_debris,explosion,100,100,,1000,10000,15000,log2,log1,,,3,priority,,,-182,67,,90,99,0.25,0.8,3d,,,,,,96,grenade_explode,,,200,1000,100,0.2,,yes,no,,,,,,,,,,,,,,,,,,,explosion
+exp_redbarrel,EXP\prop\barrel\new\barrel_b_00.wav,,barrel,exp_debris,explosion,100,100,,1000,10000,15000,log2,log1,,,3,priority,,,-182,67,,90,99,0.25,0.8,3d,,,,,,96,grenade_explode,,,200,1000,100,0.2,,yes,no,,,,,,,,,,,,,,,,,,,explosion
+exp_barrel_LFE,EXP\prop\barrel\new\lfe\barrel_b_lfe_00.wav,,barrel,exp_barrel_flux_l,explosion,100,100,,1250,5000,5000,log2,log1,,,,,,,0,0,,50,95,0.25,1,3d,,,,,,96,,,,100,800,98,0,,yes,no,,,,,,,,,,,,,,,,,,,explosion
+exp_redbarrel_ignition,,,barrel,,explosion,92,93,,500,10000,15000,log2,log1,,,,,,,-200,200,,50,95,0.25,1,3d,,,,,,100,,,,,,,,,,no,,,,,,,,,,,,,,,,,,,explosion
+exp_debris,EXP\prop\barrel\new\debris,,barrel,exp_barrel_LFE,explosion,98,98,,500,5000,6000,log2,log1,,,,,,,-200,200,,50,95,0.25,1,3d,,,,,600,100,,,,,,,0.15,,,no,random_player,8000,,,,,,,,,,,,,,,,,explosion
+exp_barrel_fire,amb\environment\fire\medium\medium.wav,AMB_MID,barrel,,explosion,100,100,,300,1500,2500,log2,log1,,,,,1,,,,,,,,,,,looping,,,,100,,,,,,,,,,no,,,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+exp_barrel_flux_l,wpn\grenade\explosion\flux_l,WPN_GRENADE_FLUX_L,barrel,exp_barrel_flux_r,explosion,100,100,,1000,10000,15000,,,,,,,,,-200,200,,,,,,,,,,,,100,,,,,,,0.1,,,,left_player,1000,,,,,,,,,,,,,,,,,explosion
+exp_barrel_flux_r,wpn\grenade\explosion\flux_r,WPN_GRENADE_FLUX_R,barrel,,explosion,100,100,,1000,10000,15000,,,,,,,,,-200,200,,,,,,,,,,,,100,,,,,,,0.1,,,,right_player,1000,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Generic Materials,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_rock_large,,,rock,,destructable,90,95,,100,1000,,log1,,,,,,,,,,,50,75,0.25,0.75,3d,,,,,,,,,,,,,,,,no,,,,,,,,,,,,,,,,,,,ambience
+dst_wood,,,wood,,destructable,90,95,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,no,,,,,,,,,,,,,,,,,,,ambience
+dst_electrical_large,DST\generic\electric\large,,electrical,,destructable,90,95,,50,850,,log1,,,,,,,,-182,182,,10,80,0.25,0.75,3d,,,,,,,,,,,,,,,,no,,,,,,,,,,,,,,,,,,,ambience
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Props,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_urn_splash,fly\water\splash,,urn,dst_urn,destructable,90,95,,100,2500,,log2,,,,,,,,-88,84,,50,75,0.25,0.75,3d,,,,,,,,,,,,,,,,no,,,,,,,,,,,,,,,,,,,ambience
+dst_urn,DST\prop\urn,,urn,,destructable,95,95,,100,2500,,log2,,,,,,,,-88,84,,50,75,0.25,0.75,3d,,,,,,,,,,,,,,,,no,,,,,,,,,,,,,,,,,,,ambience
+dst_foodstand,DST\prop\foodstand,,foodstand,,destructable,93,97,,100,2500,,log2,,,,,,,,,,,50,75,0.25,1,3d,,,,,,,,,,,,,,,,no,,,,,,,,,,,,,,,,,,,ambience
+dst_paper,DST\prop\paper\stack,,paper_stack,,destructable,99,99,,150,850,1400,log2,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_fire_extinguisher,DST\prop\fire_extinguisher,,fire_extinguisher,,destructable,95,95,,100,850,1400,log2,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_typewriter,DST\prop\typewriter,,typewriter,,destructable,95,95,,100,700,1400,log2,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_cigarette_machine,DST\prop\cigarette_machine,,cigarette_machine,,destructable,94,94,,100,700,1400,log2,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_fern,DST\prop\fern,,surf_fern,,destructable,95,95,,50,2000,,,,,,5,oldest,,,-88,84,,10,85,0.35,0.8,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_wood_crate,dst\prop\crate,,crate,,destructable,95,95,,100,2500,,log2,,,,,,,,-88,84,,50,75,0.25,0.75,3d,,,,,,,,,,,,,,,,no,,,,,,,,,,,,,,,,,,,ambience
+dst_water_bottle,dst\prop\water_bottle,,water_bottle,,destructable,95,95,,100,2500,,log2,,,,,,,,-88,84,,50,75,0.25,0.75,3d,,,,,,,,,,,,,,,,no,,,,,,,,,,,,,,,,,,,ambience
+dst_fish_tank,dst\prop\fish_tank,,fish_tank,,destructable,97,97,,50,2000,,,,,,5,oldest,,,-88,84,,10,85,0.35,0.8,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_garbage_bag,dst\prop\garbage_bag,,garbage_bag,dst_paper,destructable,97,97,,50,2000,,,,,,5,oldest,,,-88,84,,10,85,0.35,0.8,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_dest_vespa_01_dp_d0,EXP\prop\barrel\new\barrel_b_00.wav,,vespa,exp_debris,explosion,100,100,,1000,5000,7500,log2,log1,,,3,priority,,,-182,67,,90,99,0.25,0.8,3d,,,,,,100,grenade_explode,,,200,1000,100,0.2,,yes,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_vespa_02_dp_d0,EXP\prop\barrel\new\barrel_b_00.wav,,vespa,exp_debris,explosion,100,100,,1000,5000,7500,log2,log1,,,3,priority,,,-182,67,,90,99,0.25,0.8,3d,,,,,,100,grenade_explode,,,200,1000,100,0.2,,yes,no,,,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_dest_glo_paper_01_d0,DST\prop\paper\stack,,paper_stack,,destructable,97,100,,100,700,1400,log3,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_dest_glo_paper_02_d0,DST\prop\paper\stack,,paper_stack,,destructable,97,100,,100,700,1400,log3,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+p_dest_paper_stack01,DST\prop\paper\stack,,paper_stack,,destructable,97,100,,100,700,1400,log3,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+p_dest_paper_stack02,DST\prop\paper\stack,,paper_stack,,destructable,97,100,,100,700,1400,log3,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_dest_electronic_outlet01_d0,DST\generic\electric\small,,electronics,,destructable,97,100,,150,700,900,log2,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_electronic_outlet01_dp_d0,DST\generic\electric\small,,electronics,,destructable,97,100,,150,700,900,log2,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_dest_rus_console_rad_01_d0 ,DST\generic\electric\large,,electronics,,destructable,97,100,,150,700,900,log1,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_rus_console_rad_02_d0 ,DST\generic\electric\large,,electronics,,destructable,97,100,,150,700,900,log1,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_rus_console_rad_03_d0 ,DST\generic\electric\large,,electronics,,destructable,97,100,,150,700,900,log1,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_rus_console_rad_04_d0 ,DST\generic\electric\large,,electronics,,destructable,97,100,,150,700,900,log1,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_dest_reel2reel_02_dp_d0,DST\prop\cigarette_machine,,reel_to_reel,,destructable,94,94,,100,700,1400,log1,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_dest_jun_typewriter_d0,DST\prop\typewriter,,typewriter,,destructable,95,95,,100,700,1400,log2,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_dest_glo_data_recorder02_dp_d0,DST\prop\cigarette_machine,,electronics,,destructable,94,94,,100,700,1400,log2,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_dest_glo_data_recorder02_dp_d1,DST\generic\electric\large,,electronics,,destructable,97,100,,150,700,900,log2,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_reel2reel_01_dp_d0,DST\prop\cigarette_machine,,reel_to_reel,,destructable,94,94,,100,700,1400,log2,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_dest_rus_console_rad_05_d0,DST\generic\electric\large,,electronics,,destructable,97,100,,150,700,900,log2,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_glo_data_recorder01_dp_d1,DST\generic\electric\large,,electronics,,destructable,97,100,,150,700,900,log2,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_glo_paper_04_d0,DST\prop\paper\stack,,paper_stack,,destructable,97,100,,100,700,1400,log2,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_dest_reel2reel_01_dp_d1,DST\generic\electric\large,,reel_to_reel,,destructable,97,100,,150,700,900,log2,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_reel2reel_01_dp_d2,DST\generic\electric\large,,reel_to_reel,,destructable,97,100,,150,700,900,log2,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_dest_glo_fire_extinguisher_d0,DST\prop\fire_extinguisher,,fire_extinguisher,,destructable,95,95,,100,850,1400,log2,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_rus_cpu_soviet_monitor_des_base_d0,DST\generic\electric\large,,electronics,,destructable,97,100,,150,700,900,log2,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_rus_cpu_soviet_monitor_destructable_d0,DST\generic\electric\large,,electronics,,destructable,97,100,,150,700,900,log2,log0,,,,,,,-300,300,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Glass Pane ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_glass_pane,DST\generic\glass\med,,glass,,destructable,98,100,,100,700,1400,log3,log2,,,8,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_glass_radar_pane_hit,DST\generic\glass\small,,glass,,destructable,100,100,,300,700,1000,log3,log2,,,2,oldest,,,-100,100,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_glass_radar_pane_break,DST\generic\glass\large,,glass,,destructable,100,100,,300,900,1200,log3,log2,,,2,oldest,,,-40,50,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_generic_glass_small,DST\generic\glass\small,,glass,,destructable,98,100,,1000,,,log2,log1,,,3,oldest,,,-100,100,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_generic_glass_med,DST\generic\glass\med,,glass,,destructable,98,100,,1400,,,log2,log1,,,3,oldest,,,-182,165,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+dst_generic_glass_large,DST\generic\glass\large,,glass,,destructable,98,100,,1200,,,log2,log1,,,3,oldest,,,-40,50,,40,70,0.25,0.75,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Pipe Steam,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_pipe_steam,dst\pipe\steam,,pipe,dst_pipe_steam_pop,destructable,98,98,,200,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_pipe_steam_pop,dst\pipe\hit,,pipe,,destructable,95,95,,200,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+dst_pipe_water,dst\pipe\water,,pipe,dst_pipe_steam_pop,destructable,98,98,,200,850,1200,log2,log1,,,,,,,-400,400,,10,55,0.25,1,3d,,,,,,100,,,,100,300,93,,0.2,,no,,,,,,,,,,,,,,,,,,,explosion
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Jungle Buildings (sj - these are overridden in POW due to greater distances. Tailor sounds as you like as these currently point to one set of sounds in this csv.),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Building Explosions,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# dest_jun_camp_building_med01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_md_explo_1,exp\artillery\explosion,EVT_3D,jungle_building,dst_camp_bldg_md_explo_1_dist,,97,97,,500,2000,10000,log3,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_md_explo_1_dist,exp\distant\generic,EVT_EXPLO_LARGE_DIST,jungle_building,dst_camp_bldg_md_explo_1_sub,,97,97,,500,2000,10000,log3,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_md_explo_1_sub,wpn\rocket\rpg\explode\sub\wpn_rpg_sub_thump_00.wav,EVT_2D,jungle_building,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_md_explo_2,exp\artillery\explosion,EVT_3D,jungle_building,dst_camp_bldg_md_explo_2_dist,,97,97,,500,2000,10000,log3,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_md_explo_2_dist,exp\distant\generic,EVT_EXPLO_LARGE_DIST,jungle_building,dst_camp_bldg_md_explo_2_sub,,97,97,,500,2000,10000,log3,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_md_explo_2_sub,wpn\rocket\rpg\explode\sub\wpn_rpg_sub_thump_00.wav,EVT_2D,jungle_building,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# dest_jun_camp_building_sml01 & 2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_sm_explo_1,exp\artillery\explosion,EVT_3D,jungle_building,dst_camp_bldg_sm_explo_1_dist,,97,97,,500,2000,10000,log3,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_sm_explo_1_dist,exp\distant\generic,EVT_EXPLO_LARGE_DIST,jungle_building,dst_camp_bldg_sm_explo_1_sub,,97,97,,500,2000,10000,log3,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_sm_explo_1_sub,wpn\rocket\rpg\explode\sub\wpn_rpg_sub_thump_00.wav,EVT_2D,jungle_building,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_sm_explo_2,exp\artillery\explosion,EVT_3D,jungle_building,dst_camp_bldg_sm_explo_2_dist,,97,97,,500,2000,10000,log3,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_sm_explo_2_dist,exp\distant\generic,EVT_EXPLO_LARGE_DIST,jungle_building,dst_camp_bldg_sm_explo_2_sub,,97,97,,500,2000,10000,log3,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_camp_bldg_sm_explo_2_sub,wpn\rocket\rpg\explode\sub\wpn_rpg_sub_thump_00.wav,EVT_2D,jungle_building,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# dest_jun_village_2_building01 & 2 & 3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_bldg_01_explo_1,exp\artillery\explosion,EVT_3D,jungle_building,dst_vllg_bldg_01_explo_1_dist,,97,97,,500,2000,10000,log3,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_bldg_01_explo_1_dist,exp\distant\generic,EVT_EXPLO_LARGE_DIST,jungle_building,dst_vllg_bldg_01_explo_1_sub,,97,97,,500,2000,10000,log3,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_bldg_01_explo_1_sub,wpn\rocket\rpg\explode\sub\wpn_rpg_sub_thump_00.wav,EVT_2D,jungle_building,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_bldg_01_explo_2,exp\artillery\explosion,EVT_3D,jungle_building,dst_vllg_bldg_01_explo_2_dist,,97,97,,1500,40000,50000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_bldg_01_explo_2_dist,exp\distant\generic,EVT_EXPLO_LARGE_DIST,jungle_building,dst_vllg_bldg_01_explo_2_sub,,97,97,,4000,60000,65000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_bldg_01_explo_2_sub,wpn\rocket\rpg\explode\sub\wpn_rpg_sub_thump_00.wav,EVT_2D,jungle_building,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# dest_jun_village_dock,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_dock_explo_1,exp\artillery\explosion,EVT_3D,jungle_building,dst_vllg_dock_explo_1_dist,,97,97,,500,2000,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_dock_explo_1_dist,exp\distant\generic,EVT_EXPLO_LARGE_DIST,jungle_building,dst_vllg_dock_explo_1_sub,,97,97,,500,2000,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_dock_explo_1_sub,wpn\rocket\rpg\explode\sub\wpn_rpg_sub_thump_00.wav,EVT_2D,jungle_building,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_dock_explo_2,exp\artillery\explosion,EVT_3D,jungle_building,dst_vllg_dock_explo_2_dist,,97,97,,500,2000,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_dock_explo_2_dist,exp\distant\generic,EVT_EXPLO_LARGE_DIST,jungle_building,dst_vllg_dock_explo_2_sub,,97,97,,500,2000,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_dock_explo_2_sub,wpn\rocket\rpg\explode\sub\wpn_rpg_sub_thump_00.wav,EVT_2D,jungle_building,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# dest_jun_village_tower,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_towr_explo_1,exp\artillery\explosion,EVT_3D,jungle_building,dst_vllg_towr_explo_1_dist,,97,97,,500,2000,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_towr_explo_1_dist,exp\distant\generic,EVT_EXPLO_LARGE_DIST,jungle_building,dst_vllg_towr_explo_1_sub,,97,97,,500,2000,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_towr_explo_1_sub,wpn\rocket\rpg\explode\sub\wpn_rpg_sub_thump_00.wav,EVT_2D,jungle_building,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_towr_explo_2,exp\artillery\explosion,EVT_3D,jungle_building,dst_vllg_towr_explo_2_dist,,97,97,,500,2000,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_towr_explo_2_dist,exp\distant\generic,EVT_EXPLO_LARGE_DIST,jungle_building,dst_vllg_towr_explo_2_sub,,97,97,,500,2000,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_towr_explo_2_sub,wpn\rocket\rpg\explode\sub\wpn_rpg_sub_thump_00.wav,EVT_2D,jungle_building,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# dest_jun_tent,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_tent_explo_1,exp\artillery\explosion,EVT_3D,jungle_building,dst_vllg_tent_explo_1_dist,,97,97,,500,2000,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_tent_explo_1_dist,exp\distant\generic,EVT_EXPLO_LARGE_DIST,jungle_building,dst_vllg_tent_explo_1_sub,,97,97,,500,2000,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+dst_vllg_tent_explo_1_sub,wpn\rocket\rpg\explode\sub\wpn_rpg_sub_thump_00.wav,EVT_2D,jungle_building,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

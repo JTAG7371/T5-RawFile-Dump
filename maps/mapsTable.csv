@@ -1,0 +1,14 @@
+# Map Data Table,,,,,,,,,,,,
+a0,b1,c2,d3,e4,f5,g6,h7,i8,j9,k10,l11,m12
+maxnum_map,9,,,,,,,,,,,
+#mapname,#allies characters,#axis characters,#mapname,#mapimage,#index,#description,#level order coop,#gametype,#mis_01,#cac table,#dvarVis,#dlc map
+zombie_theater,,,MENU_ZOMBIE_THEATER_CAPS,preview_zombie_theater,,MENU_ZOMBIE_THEATER_DESC,0,zom,,maps/zombie_theater_class.csv,,0
+zombie_pentagon,,,MENU_ZOMBIE_PENTAGON_CAPS,preview_zombie_pentagon,,MENU_ZOMBIE_PENTAGON_DESC,1,zom,,maps/zombie_pentagon_class.csv,zombiefive_discovered,0
+zombietron,,,MENU_ZOMBIETRON_CAPS,preview_zombietron,,MENU_LEVEL_DESC_ZOMBIETRON,2,zom,,maps/zombietron_class.csv,zombietron_discovered,0
+zombie_cod5_prototype,,,WAW_MENU_ZOMBIE_PROTOTYPE_CAPS,preview_zombie_cod5_prototype,,WAW_MENU_DESC_ZOMBIE_PROTOTYPE,3,zom,,maps/zombie_cod5_prototype_class.csv,,1
+zombie_cod5_asylum,,,WAW_MENU_ZOMBIE_ASYLUM_CAPS,preview_zombie_cod5_asylum,,WAW_MENU_DESC_ZOMBIE_ASYLUM,4,zom,,maps/zombie_cod5_asylum_class.csv,,1
+zombie_cod5_sumpf,,,WAW_MENU_ZOMBIE_SUMPF_CAPS,preview_zombie_cod5_sumpf,,WAW_MENU_DESC_ZOMBIE_SUMPF,5,zom,,maps/zombie_cod5_sumpf_class.csv,,1
+zombie_cod5_factory,,,WAW_MENU_ZOMBIE_FACTORY_CAPS,preview_zombie_cod5_factory,,WAW_MENU_DESC_ZOMBIE_FACTORY,6,zom,,maps/zombie_cod5_factory_class.csv,,1
+zombie_cosmodrome,,,MENU_ZOMBIE_COSMODROME_CAPS,preview_zombie_cosmodrome,,MENU_ZOMBIE_COSMODROME_DESC,7,zom,,maps/zombie_cosmodrome_class.csv,,2
+zombie_coast,,,MENU_ZOMBIE_COAST_CAPS,preview_zombie_coast,,MENU_ZOMBIE_COAST_DESC,8,zom,,maps/zombie_coast_class.csv,,3
+locked,,,MPUI_LOCKED_MODE,loadscreen_locked,,MENU_LOCKED_MODE_DESC,12,locked,,,,

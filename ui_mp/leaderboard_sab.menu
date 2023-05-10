@@ -1,0 +1,167 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/overlaybg.inc"
+#include "ui_mp/popup_player_info.inc"
+#include "ui_mp/leaderboard.inc"
+#include "ui_mp/tab_slider.inc"
+
+#undef ON_ESC_ACTION
+#define ON_ESC_ACTION																								\
+	if( dvarInt( ui_lobbyLeaderBoard) == 1 )																		\
+	{																												\
+		execnow changemenucloseslidedirection menu_leaderboard_sab MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;				\
+	}																												\
+	else																											\
+	{																												\
+		execnow changemenucloseslidedirection menu_leaderboard_sab MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;				\
+	}																												\
+	close self;																										\
+	if( !dvarBool( ui_lobbyLeaderBoard ) )																			\
+	{																												\
+		if( dvarInt( leaderboard_type ) == 0 )																		\
+		{																											\
+			execnow changemenuopenslidedirection menu_playercards_lb MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;			\
+			open menu_playercards_lb;																				\
+		}																											\
+		else																										\
+		{																											\
+			execnow changemenuopenslidedirection menu_playercards_lb_prestige MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;	\
+			open menu_playercards_lb_prestige;																		\
+		}																											\
+	}																												\
+	else																											\
+	{																												\
+		setDvar ui_lobbyLeaderBoard "0";																			\
+	}																												\
+	setDvar ui_leaderboardOpen "0";
+	
+{
+	menuDef
+	{
+		name					menu_leaderboard_sab
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focusColor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		control					MENU_CONTROL_OPENER
+		soundloop 				MENU_MUSIC
+		priority				MENU_PRI_ONTOP 
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED 
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED 
+		openSlideDirection		MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT 
+		closeSlideDirection		MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT 
+		onFocus
+		{
+		}
+		onOpen
+		{
+			activateBlur;
+			uiScript RefreshLeaderboards;
+			execnow "nosplitscreen";
+#ifdef CONSOLE
+			setfocus leaderboard;
+#endif //#ifdef PC
+			setDvar ui_leaderboardOpen "1";
+			execNow set leaderboard_menu_name "menu_leaderboard_sab";
+		}
+		onClose
+		{ 
+			deactivateBlur;
+		}
+		onEsc			
+		{ 
+			ON_ESC_ACTION
+		}
+
+		NEW_FRAME( LEADERBOARD_WIDTH, LEADERBOARD_HEIGHT )
+		NEW_FRAME_TITLE( LEADERBOARD_WIDTH, LEADERBOARD_HEIGHT, "@MPUI_LEADERBOARDS_CAPS", when( !dvarbool( lb_prestige ) ) )
+		NEW_FRAME_TITLE( LEADERBOARD_WIDTH, LEADERBOARD_HEIGHT, "@MPUI_PRESTIGE_LEADERBOARDS_CAPS", when( dvarbool( lb_prestige ) ) )
+		
+		PLAYER_INFO_VIS( LEADERBOARD_WIDTH, LEADERBOARD_HEIGHT, 1 )
+
+		LEADERBOARD_GAMEMODE_TITLE( "leaderboard_sab_title", CHANGE_LB_TYPE_DEC , CHANGE_LB_TYPE_INC )
+
+		//LB_LOBBY_TIMER
+
+#ifdef PC
+		LB_BOTTOM_BAR( LEADERBOARD_WIDTH, LEADERBOARD_HEIGHT, ON_ESC_ACTION , open menu_lb_filter )
+#else // #ifdef PC
+		#define BUTTON_Y_FILTER		1
+		#define BUTTON_X_GOTOTOP	1
+		#define BUTTON_PGUP			1
+		#define BUTTON_PGDOWN		1
+		#define BUTTON_LSDR			1
+		#define BUTTON_RSDR			1
+		#define ALT_PANEL			1
+		#define BUTTON_ACCEPT		1
+		#define BACK_OPEN ON_ESC_ACTION
+		#include "ui_mp/navcontrols.inc"
+		#undef BACK_OPEN
+#endif // #ifdef PC
+		
+		#include "ui/safearea.menu"
+
+		COMMON_LB_COLUMNS
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+336) COLUMN_TITLE_Y, "@MPUI_PLANTS", ITEM_ALIGN_RIGHT, 1 )
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+391) COLUMN_TITLE_Y, "@MPUI_DEFUSES", ITEM_ALIGN_RIGHT, 1 )
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+446) COLUMN_TITLE_Y, "@MPUI_DEFENDS", ITEM_ALIGN_RIGHT, 1 )
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+501) COLUMN_TITLE_Y, "@MPUI_KILLS", ITEM_ALIGN_RIGHT, 1 )
+
+		LEADERBOARD_FILTER_SETTINGS_DESC
+		
+		// LEADERBOARD LIST 
+		itemDef
+		{
+			name						leaderboard
+			rect						LEADERBOARD_LIST_X_START LEADERBOARD_LIST_Y_START LIST_WIDTH LIST_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			type						ITEM_TYPE_LISTBOX
+			elementwidth				120
+			elementheight				18
+			textfont					UI_FONT_NORMAL
+			textscale					TEXTSIZE_SMALL
+			textstyle					ITEM_TEXTSTYLE_NORMAL
+			elementtype					LISTBOX_TEXT
+			feeder						FEEDER_LEADERBOARD
+			forecolor					CHOICE_TEXTCOLOR	
+			focusColor					CHOICE_TEXTCOLOR
+			disableColor				CHOICE_TEXTCOLOR
+			textaligny					-2 
+			outlinecolor				1 1 1 1
+			elementHighlightColor		0 0 0 1 
+			elementBackgroundColor		NEW_FRAME_TRANSPARENCY 
+			noBlinkingHighlight
+			modal
+			noscrollbars
+//			numcols			xpos	xwidth	textlen  alignment
+			columns	9		10		30		10		ITEM_ALIGN_LEFT			// RANK
+							73		16		10		ITEM_ALIGN_RIGHT		// LEVEL ICON
+							91		20		4		ITEM_ALIGN_LEFT			// LEVEL						
+							113		35		20		ITEM_ALIGN_LEFT			// GAMERTAG
+							240		64		10		ITEM_ALIGN_RIGHT		// SCORE PER MINUTE 
+							295		64		10		ITEM_ALIGN_RIGHT		// PLANTS 
+							350		64		10		ITEM_ALIGN_RIGHT		// DEFUSES
+							405		64		10		ITEM_ALIGN_RIGHT		// DEFENDS
+							460		64		10		ITEM_ALIGN_RIGHT		// KILLS
+			visible			1
+			usePaging
+			onListboxSelectionChange
+			{
+				play CHOICE_FOCUS_SOUND;
+			}
+			doubleClick
+			{
+				play CHOICE_FOCUS_SOUND;
+				LEADERBOARD_SELECT_ACTION( menu_leaderboard_sab );
+			}
+			execKeyInt BUTTON_X
+			{
+				play CHOICE_FOCUS_SOUND;
+				feederTop
+			}
+		}
+
+		#include "ui/safearea.menu"
+	}
+}
+

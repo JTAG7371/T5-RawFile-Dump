@@ -1,0 +1,397 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+#include "ui/frame.inc"
+
+#define PLAYER_CARD_HEIGHT					FRAME_DEFAULT_HEIGHT
+#define PLAYER_CARD_WIDTH					( PLAYER_CARD_HEIGHT * FRAME_ASPECT_RATIO )
+#define PLAYER_CARD_BOTTOM_Y				( LIST_Y_START + PLAYER_CARD_HEIGHT - NEW_FRAME_BG_Y_OFFSET( PLAYER_CARD_HEIGHT ) - 88 + 15 )
+
+#undef	CHOICE_X_START
+#define CHOICE_X_START	 					( -PLAYER_CARD_WIDTH / 2 + 18 )
+#undef	CHOICE_Y_START
+#define CHOICE_Y_START	 					( -PLAYER_CARD_HEIGHT / 2 + 15 + NEW_FRAME_BG_Y_OFFSET( PLAYER_CARD_HEIGHT ) )
+#define BUTTON_BG_WIDTH						180
+#define BUTTON_BG_X_START					80
+#define BUTTON_BG_Y_START					2
+
+#define CHOICE_SEP_OFFSET_X					20
+#define CHOICE_SEP_OFFSET_Y					-2
+
+#define CHOICE_GROUP						"playercard"
+
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/popup_player_info.inc"
+
+#define MENU_FONT_SIZE						TEXTSIZE_DEFAULT
+#define HIGHLIGHT_SIZE						142 22
+#define MENU_FONT_COLOR						1 1 1 0.5
+#define MENU_LOCKED_COLOR					0.25 0.25 0.25 1
+
+#define PLAYER_EMBLEM_BG_SIZE				(PLAYER_CARD_WIDTH/2 - 50)
+#define PLAYER_EMBLEM_SIZE					(PLAYER_EMBLEM_BG_SIZE *2/3)
+#define PLAYER_EMBLEM_X_START				30
+#define PLAYER_EMBLEM_Y_START				(CHOICE_Y_START+20)
+
+#undef  CHOICE_SIZE_X
+#define CHOICE_SIZE_X						BUTTON_BG_WIDTH
+#undef CHOICE_TEXTSTYLE
+#define CHOICE_TEXTSTYLE					ITEM_TEXTSTYLE_NORMAL
+
+#undef CHOICE_HORIZONTAL_ALIGN
+#define CHOICE_HORIZONTAL_ALIGN				HORIZONTAL_ALIGN_CENTER 
+
+#undef CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN				VERTICAL_ALIGN_CENTER
+
+#undef DEFAULT_SLIDE_OUT_SPEED
+#define DEFAULT_SLIDE_OUT_SPEED				180
+
+#define PLAYER_CARD_COMMON_ITEMS																																							\
+		/* PLAYER NAME */																																									\
+		PLAYER_NAME( PLAYER_EMBLEM_X_START, (PLAYER_EMBLEM_Y_START-28), 1 )																													\
+		/* BACKGROUND FOR EMBLEM */																																							\
+		PREPROC_SHADER_DRAW( PLAYER_EMBLEM_X_START PLAYER_EMBLEM_Y_START PLAYER_EMBLEM_BG_SIZE PLAYER_EMBLEM_BG_SIZE CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, "white", BG_BACKCOLOR )	\
+		/* PLAYER EMBLEM */																																									\
+		PLAYER_EMBLEM_ALL( (PLAYER_EMBLEM_X_START+(PLAYER_EMBLEM_BG_SIZE/6)), (PLAYER_EMBLEM_Y_START+(PLAYER_EMBLEM_BG_SIZE/6)), PLAYER_EMBLEM_SIZE, PLAYER_EMBLEM_SIZE, 1 )				\
+		/* PLAYER RANK ICON AND LEVEL INSIDE EMBLEM BG */																																	\
+		PLAYER_RANK_ICON_AND_LEVEL( (PLAYER_EMBLEM_X_START+5), (PLAYER_EMBLEM_Y_START+PLAYER_EMBLEM_BG_SIZE-20), 1 )																		\
+		/* PLAYER CODPOINTS INSIDE EMBLEM BG */																																				\
+		PLAYER_CP( PLAYER_EMBLEM_BG_SIZE, (PLAYER_EMBLEM_Y_START+PLAYER_EMBLEM_BG_SIZE-20), 1 ) 
+
+#define FRIENDS_PLAYER_CARD_COMMON_ITEMS																																					\
+		/* PLAYER NAME */																																									\
+		FRIEND_NAME( PLAYER_EMBLEM_X_START, (PLAYER_EMBLEM_Y_START-28), 1 )																													\
+		/* BACKGROUND FOR EMBLEM */																																							\
+		PREPROC_SHADER_DRAW( PLAYER_EMBLEM_X_START PLAYER_EMBLEM_Y_START PLAYER_EMBLEM_BG_SIZE PLAYER_EMBLEM_BG_SIZE CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, "white", BG_BACKCOLOR )	\
+		/* PLAYER EMBLEM */																																									\
+		FRIEND_EMBLEM_ALL( (PLAYER_EMBLEM_X_START+(PLAYER_EMBLEM_BG_SIZE/6)), (PLAYER_EMBLEM_Y_START+(PLAYER_EMBLEM_BG_SIZE/6)), PLAYER_EMBLEM_SIZE, PLAYER_EMBLEM_SIZE, 1 )				\
+		/* PLAYER RANK ICON AND LEVEL INSIDE EMBLEM BG */																																	\
+		FRIEND_RANK_ICON_AND_LEVEL( (PLAYER_EMBLEM_X_START+5), (PLAYER_EMBLEM_Y_START+PLAYER_EMBLEM_BG_SIZE-20), 1 )																		\
+		/* PLAYER CODPOINTS INSIDE EMBLEM BG */																																				\
+		FRIEND_CP( PLAYER_EMBLEM_BG_SIZE, (PLAYER_EMBLEM_Y_START+PLAYER_EMBLEM_BG_SIZE-20), 1 )
+
+#undef	NEW_FRAME_BUTTON_NAME
+#define NEW_FRAME_BUTTON_NAME				"playercard_button_"
+
+{
+
+#define CAN_JOIN_SESSION \
+		( FRIEND_JOINABLE == IsPlayerJoinable( dvarString( "selectedPlayerXuid" ) ) )
+		
+#define CAN_INVITE_TO_GAME \
+		( IsPlayerInvitable( dvarString( "selectedPlayerXuid" ) ) && ( ( inLobby() || inPrivateParty() ) && !dvarBool( systemlink ) ) && !IsInGame() )
+
+#define CAN_SEND_FRIEND_REQUEST	\
+		( getxuid() != dvarstring( "selectedPlayerXuid" ) && !isfriendfromxuid() )
+	
+#define CAN_MUTE_PLAYER	\
+		( getMutedStatus(dvarString( "selectedPlayerXuid" ) ) == 0 )
+
+#define CAN_KICK_PLAYER \
+		( dvarBool( xblive_privatematch ) && ( ( dvarBool( party_host ) || issuperuser() ) && !dvarBool( party_iamhost ) ) )
+
+#define IS_IN_GAME \
+		( IsInGame() )
+
+               
+#define ON_ESC                                                                                                                   \
+		if( dvarBool(ui_friendsListOpen) )                                                                                       \
+		{                                                                                                                        \
+			execnow changemenucloseslidedirection menu_playercard MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;                            \
+			execnow showmenu menu_friends;                                                                                       \
+		}                                                                                                                        \
+		elseif( dvarBool(ui_playerListOpen) )                                                                                    \
+		{                                                                                                                        \
+			execnow changemenucloseslidedirection menu_playercard MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;                            \
+			execnow showmenu menu_players;                                                                                       \
+		}                                                                                                                        \
+		elseif( dvarBool(ui_leaderboardOpen) )                                                                                   \
+		{                                                                                                                        \
+			execnow changemenucloseslidedirection menu_playercard MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;                            \
+			execnow openmenu (dvarString("leaderboard_menu_name"));                                                              \
+		}                                                                                                                        \
+		else                                                                                                                     \
+		{                                                                                                                        \
+			execnow changemenucloseslidedirection menu_playercard MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;                            \
+			execnow changemenuopenslidedirection menu_playercard MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;                             \
+			setdvar invite_visible "1";                                                                                          \
+			execnow if( menuisopen( menu_xboxlive ) )				ui_animate menu_xboxlive				frame_bg default 20; \
+			execnow if( menuisopen( menu_xboxlive_privatelobby ) )	ui_animate menu_xboxlive_privatelobby	frame_bg default 20; \
+			execnow if( menuisopen( menu_xboxlive_lobby ) )			ui_animate menu_xboxlive_lobby			frame_bg default 20; \
+			execnow if( menuisopen( menu_systemlink_lobby ) )		ui_animate menu_systemlink_lobby		frame_bg default 20; \
+		}                                                                                                                        \
+		setDvar ui_clearFeederWithoutReset "0";                                                                                  \
+		play uin_navigation_menu_lg_close;                                                                                       \
+		deactivateBlur;																											 \
+		close menu_playercard;                                                                                                   \
+		CLEARUIHINT;
+
+	menuDef   
+	{
+		name					menu_playercard
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		soundloop 				MENU_MUSIC
+		priority				MENU_PRI_ONTOP
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		onOpen
+		{
+			CLEARUIHINT;
+			play uin_navigation_menu_lg_open;
+			setdvar invite_visible "0";
+			execNow set ui_playercardOpen 1;
+			// This tests if we have to reset the cursor position ( ie. button focus on menu open )
+			if( dvarBool( "ui_clearFeederWithoutReset" ) )
+			{
+				execNow raiseFeederEvent ClearWithoutReset;
+			}
+			else
+			{
+				execNow raiseFeederEvent Clear;
+				setDvar ui_clearFeederWithoutReset "1";
+			}
+			execNow raiseFeederEvent Populate;
+
+			execnow if( menuisopen( menu_xboxlive ) )				ui_animate menu_xboxlive				frame_bg on 100;
+			execnow if( menuisopen( menu_xboxlive_privatelobby ) )	ui_animate menu_xboxlive_privatelobby	frame_bg on 100;
+			execnow if( menuisopen( menu_xboxlive_lobby ) )			ui_animate menu_xboxlive_lobby			frame_bg on 100;
+			execnow if( menuisopen( menu_systemlink_lobby ) )		ui_animate menu_systemlink_lobby		frame_bg on 100;
+		}
+		onClose	
+		{
+			play uin_navigation_menu_lg_close;
+			execNow set ui_playercardOpen 0;
+			execnow if( !dvarBool( ui_friendsListOpen ) && menuisopen( menu_xboxlive ) )				ui_animate menu_xboxlive				frame_bg default 20;
+			execnow if( !dvarBool( ui_friendsListOpen ) && menuisopen( menu_xboxlive_privatelobby ) )	ui_animate menu_xboxlive_privatelobby	frame_bg default 20;
+			execnow if( !dvarBool( ui_friendsListOpen ) && menuisopen( menu_xboxlive_lobby ) )			ui_animate menu_xboxlive_lobby			frame_bg default 20;
+			execnow if( !dvarBool( ui_friendsListOpen ) && menuisopen( menu_systemlink_lobby ) )		ui_animate menu_systemlink_lobby		frame_bg default 20;
+		}
+		onFocus { }
+		onESC
+		{
+			ON_ESC
+		}
+
+
+		FRAME_ZOMBIE_DEFAULT
+		FRAME_TITLE_DEFAULT( GetPlayerCardTitle( dvarString("selectedFriendName") ), 1 )
+		
+		//FRIEND_INFO_VIS( PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT, 1 )
+
+		HINT_TEXT( 15, CHOICE_X_START, dvarString( ui_hint_text ), dvarBool( ui_show_arrow ) )
+
+#ifdef PC
+		#undef	CHOICE_TEXTSIZE
+		#define	CHOICE_TEXTSIZE				TEXTSIZE_SMALL
+		#undef CHOICE_TEXTFONT
+		#define CHOICE_TEXTFONT				UI_FONT_NORMAL
+		#undef CHOICE_TEXTSTYLE
+		#define CHOICE_TEXTSTYLE			ITEM_TEXTSTYLE_NORMAL
+#endif //#ifdef PC
+		
+		itemDef
+		{		
+			DYNAMIC_MENU_COMMON_FIELDS
+			backgroundItemListbox		"white"  // omit this if you don't want button background transparency
+			rect CHOICE_X_START CHOICE_Y_START CHOICE_SIZE_X 275 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+
+			menuItemsDef
+			{
+				maxRows 15
+				
+				// THESE INCLUDE BACKGROUND, HIGHLIGHT AND SELECT BUTTON. DO NOT OMIT THESE.
+				DYNAMIC_MENU_COMMON_COLUMNS 
+
+				menuColDef
+				{
+					type		MENU_ITEM_TYPE_LOC_TEXT
+					rect		0 1 CHOICE_SIZE_X CHOICE_SIZE_Y ITEM_ALIGN_LEFT ITEM_ALIGN_MIDDLE
+					maxChars	50
+				}
+			}
+
+			onEvent InviteToGame			{
+												if( CAN_INVITE_TO_GAME )
+												{
+#ifdef XENON
+													exec "xsendinvite";
+#else
+													if( dvarBool( ui_friendsListOpen ) )
+													{
+														execNow sendInvite ( dvarstring( selectedPlayerXuid ) ) 0;
+													}
+													elseif( dvarBool( ui_playerListOpen ) )
+													{
+														execNow sendInvite ( dvarstring( selectedPlayerXuid ) ) 1;
+													}
+													else
+													{
+														execNow sendInvite ( dvarstring( selectedPlayerXuid ) ) 0;
+													}
+#endif
+												}
+
+											}
+			onEvent SendFriendRequest		{
+												if( CAN_SEND_FRIEND_REQUEST )
+												{
+#ifdef XENON
+													exec "xaddfriend";
+#else
+													execNow xaddfriend ( dvarstring( selectedPlayerXuid ) );
+#endif //#ifdef PS3
+												}
+											}
+	
+			onEvent JoinSessionPlayers		{
+												if( CAN_JOIN_SESSION )
+												{
+													exec JoinsessionInProgress ( dvarString( selectedPlayerXuid ) );
+													showmenu menu_players;
+													deactivateBlur;
+													close self;
+													setDvar ui_playerListOpen "0";
+													setdvar invite_visible "1"; 
+													exec set menu_xboxlive_buttons_visible 1;
+													close menu_players;
+												}
+											}
+			onEvent JoinSessionFriends		{
+												if( CAN_JOIN_SESSION )
+												{
+#ifdef XENON
+													exec xjoinfriendsessionforxuid ( dvarString( selectedPlayerXuid ) );
+													closeImmediate self;
+#else
+													execNow JoinsessionInProgress ( dvarstring( selectedPlayerXuid ) );
+													showmenu menu_friends;
+													deactivateBlur;
+													closeImmediate self;													
+													setDvar ui_friendsListOpen "0";
+													setdvar invite_visible "1"; 
+													exec set menu_xboxlive_buttons_visible 1;
+													close menu_friends;
+#endif //#ifdef PS3
+												}
+											}
+
+#define TOGGLEMUTE	exec party_toggleMute( dvarString( selectedPlayerXuid ) )
+
+			onEvent ToggleMute				{	TOGGLEMUTE  }
+			onEvent KickPlayer				{	deactivateBlur; close menu_playercard_lobby; getKickPlayerQuestion; }
+		
+			onEvent ReportUser				{	execnow openmenu menu_reportuser; }
+			onEvent ClearHint				{	CLEARUIHINT; }
+
+			onEvent Clear						{ execNow clearFeeder; }
+			onEvent ClearWithoutReset			{ execNow clearFeederWithoutResetCursor; }
+			// Adding buttons to the menu according to the conditions specified. 
+			onEvent Populate
+			{
+				if( isInGame() ) /* playercard in-game */
+				{		
+					if( dvarBool( ui_playerListOpen ) || dvarBool( ui_friendsListOpen ) )
+					{
+						execNow addToFeederExtended InviteToGame		ClearHint				(!CAN_INVITE_TO_GAME)		MENU_INVITE_TO_GAME_CAPS;
+						execNow addToFeederExtended JoinSessionFriends	ClearHint				(!CAN_JOIN_SESSION)			MENU_JOIN_IN_PROGRESS_CAPS;
+					}
+					else
+					{
+						execNow addToFeederExtended SendFriendRequest	ClearHint				(!CAN_SEND_FRIEND_REQUEST)	MENU_SEND_FRIEND_REQUEST_CAPS;
+					}				
+				}
+				elseif( dvarBool( ui_playerListOpen ) )	
+				{								//onAction event	//onFocus Event				//disable Button Condition //Text on button
+					execNow	addToFeederExtended	SendFriendRequest	ClearHint					(!CAN_SEND_FRIEND_REQUEST)	MENU_SEND_FRIEND_REQUEST_CAPS;
+					execNow	addToFeederExtended InviteToGame		ClearHint					(!CAN_INVITE_TO_GAME)		MENU_INVITE_TO_GAME_CAPS;
+					execNow addToFeederExtended JoinSessionPlayers	ClearHint					(!CAN_JOIN_SESSION)			MENU_JOIN_IN_PROGRESS_CAPS;
+#ifndef PC
+					execNow	addToFeeder			noop																		"";		
+#endif //#ifndef PC
+					execNow	addToFeederExtended	ReportUser			ClearHint					0							MENU_REPORT_USER_CAPS;	
+				}
+				elseif( dvarBool( ui_friendsListOpen ) )	
+				{
+					execNow	addToFeederExtended InviteToGame		ClearHint					(!CAN_INVITE_TO_GAME)		MENU_INVITE_TO_GAME_CAPS;
+					execNow addToFeederExtended JoinSessionFriends	ClearHint				(!CAN_JOIN_SESSION)			MENU_JOIN_IN_PROGRESS_CAPS;
+#ifndef PC
+					execNow	addToFeeder			noop																		"";		
+#endif //#ifndef PC
+					execNow	addToFeederExtended	ReportUser			ClearHint					0							MENU_REPORT_USER_CAPS;
+				}
+				elseif( dvarBool( ui_leaderboardOpen ) )
+				{
+					execNow	addToFeederExtended	SendFriendRequest	ClearHint					(!CAN_SEND_FRIEND_REQUEST)	MENU_SEND_FRIEND_REQUEST_CAPS;
+					execNow	addToFeederExtended InviteToGame		ClearHint					(!CAN_INVITE_TO_GAME)		MENU_INVITE_TO_GAME_CAPS;
+#ifndef PC
+					execNow	addToFeeder			noop																		"";		
+#endif //#ifndef PC
+					execNow	addToFeederExtended	ReportUser			ClearHint					0							MENU_REPORT_USER_CAPS;
+				}
+				else
+				{
+					execNow	addToFeederExtended	SendFriendRequest	ClearHint					(!CAN_SEND_FRIEND_REQUEST)	MENU_SEND_FRIEND_REQUEST_CAPS;
+					execNow	addToFeederExtended InviteToGame		ClearHint					(!CAN_INVITE_TO_GAME)		MENU_INVITE_TO_GAME_CAPS;
+#ifndef PC
+					execNow	addToFeeder			noop																		"";		
+#endif //#ifndef PC
+					execNow	addToFeederExtended	ReportUser			ClearHint					0							MENU_REPORT_USER_CAPS;
+					
+					execNow if ( CAN_MUTE_PLAYER && IsInGame() )		addToFeederExtended ToggleMute	ClearHint 0 	MENU_MUTE_CAPS;
+					execNow if ( !CAN_MUTE_PLAYER && IsInGame() )		addToFeederExtended ToggleMute	ClearHint 0 	MENU_UNMUTE_CAPS;
+					execNow if ( CAN_KICK_PLAYER )		addToFeederExtended KickPlayer	ClearHint 0 	MENU_KICK_PLAYER_CAPS;
+				}
+			}
+			onfocus						{	play CHOICE_FOCUS_SOUND; DYNAMIC_MENU_INIT( menu_playercard ) }		
+			onListboxSelectionChange	{	}
+			doubleclick					{	
+											play CHOICE_FOCUS_SOUND;		
+											execNow raiseFeederEvent;
+										}
+		}
+		
+#ifdef PC
+		FRAME_BACK_BUTTON_ACTION( PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT, ON_ESC )
+#else //#ifdef PC
+		FRAME_BACK_BUTTON( PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT )
+#endif //#ifdef PC			
+		
+		#include "ui/safearea.menu"
+	}
+} 
+
+
+#include "ui_mp/popupstyle.inc"	
+#include "ui/choices_setup_popmenu.menu"
+	
+
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		5
+
+//Report User Dialog
+menuDef
+{	
+	SYSTEM_POPUP_SETUP_VIS( "menu_reportuser", ;, close self;, 1 )
+
+	SYSTEM_POPUP_TITLE_VIS( locString( "@MENU_REPORT_USER_CAPS" ) + ":", 1 )
+	SYSTEM_POPUP_SUBTITLE_VIS( dvarString( "selectedFriendName" ), 1 )
+	
+	#define REPORT_USER( offence )												\
+			execNow reportUser (dvarString("selectedPlayerXuid")) offence 1;	\
+			close self;
+					
+	FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( 1, "@MENU_REPORT_USER_OFFENSIVE_CAPS", REPORT_USER( "offensive" ), setLocalVarString ui_info "@MENU_REPORT_USER_OFFENSIVE_MSG";,			;, 1, ;							)
+	FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( 2, "@MENU_REPORT_USER_OFFENSIVE_EMBLEM_CAPS", REPORT_USER( "offensive_emblem" ), setLocalVarString ui_info "@MENU_REPORT_USER_OFFENSIVE_EMBLEM_MSG";,	;, 1, ;							)
+	FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( 3, "@MENU_REPORT_USER_CHEATER_CAPS", REPORT_USER( "cheater" ), setLocalVarString ui_info "@MENU_REPORT_USER_CHEATER_MSG";,				;, 1, ;							)	
+
+	HINT_TEXT_ALL( 5, CHOICE_X_START, 0, CHOICE_SIZE_X, localVarString( ui_info ), 1 1 1 1, 1, ; )
+
+	SYSTEM_POPUP_BACK_BUTTON
+}

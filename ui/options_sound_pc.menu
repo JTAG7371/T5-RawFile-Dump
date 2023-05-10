@@ -1,0 +1,132 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#define OPTIONS_STYLE			1
+#define CHOICE_ACTION_SOUND		"uin_mouse_click_t"
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/framestyle.inc"
+#include "ui/frame.inc"
+
+
+#undef CHOICE_BUTTON_NAME
+#define CHOICE_BUTTON_NAME		"options_sound_"
+#undef MENUDEF_NAME
+#define MENUDEF_NAME			options_sound
+
+#undef	OPTIONS_SOUND_HEIGHT
+#undef	OPTIONS_SOUND_WIDTH
+#define OPTIONS_SOUND_HEIGHT		332
+#define OPTIONS_SOUND_WIDTH			OPTIONS_SOUND_HEIGHT * FRAME_ASPECT_RATIO
+
+{
+	menuDef 
+	{
+		name			options_sound
+		fullScreen		0
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		soundloop		""
+
+		onOpen
+		{
+			LOCAL_CLOSE_ALL_BUT( options_sound )
+			
+			setLocalVarBool ui_showApply 0;
+			setLocalVarBool ui_hideBack 1;
+
+			exec "setfromdvar ui_sd_xa2_device_name sd_xa2_device_name";
+//			exec "setfromdvar ui_outputConfig	snd_outputConfiguration";
+
+			if (IsInGame())
+			{
+				showMenu "pausedbkgnd";
+			}			
+			else
+			{
+				activateBlur;
+			}
+		}
+		onClose
+		{
+			setLocalVarBool ui_hideBack 0;
+
+			if (IsInGame())
+			{
+				hideMenu "pausedbkgnd";
+			}			
+			else
+			{
+				deactivateBlur;
+			}
+			
+			exec updategamerprofile;
+		}
+		onESC 
+		{ 
+			close self;
+			open options_new_pc;		
+		}
+		PC_TAB_SWITCH_ACTIONS( options_new_pc, options_controls_new_pc, options_controls_new_pc )
+
+		#include "ui_mp/leftside_options.inc"
+		
+#undef	CHOICE_X_START
+#undef	CHOICE_Y_START
+#undef	CHOICE_HORIZONTAL_ALIGN
+#undef	CHOICE_VERTICAL_ALIGN
+#undef	CHOICE_DVAR_EXTRA_WIDTH
+#undef	CHOICE_TEXT_OFFSET_X
+
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_CENTER
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_CENTER
+#define CHOICE_X_START				((-OPTIONS_SOUND_WIDTH/2) - 75)
+#define CHOICE_Y_START				((-OPTIONS_SOUND_HEIGHT/2) + 32)
+#define CHOICE_DVAR_EXTRA_WIDTH		120
+#define CHOICE_TEXT_OFFSET_X		-10
+
+#undef CHOICE_TEXTSTYLE
+#undef CHOICE_TEXTSIZE
+#define CHOICE_TEXTSTYLE		ITEM_TEXTSTYLE_NORMAL
+#define CHOICE_TEXTSIZE			TEXTSIZE_DEFAULT
+
+#undef	CHOICE_TEXT_COLOR_NO_HL
+#undef	CHOICE_TEXT_COLOR_HL
+#undef	CHOICE_CAPTION_TEXT_COLOR_NO_HL
+#undef	CHOICE_CAPTION_TEXT_COLOR_HL
+
+#define	CHOICE_TEXT_COLOR_NO_HL			CHOICE_TEXTCOLOR
+#define	CHOICE_TEXT_COLOR_HL			1 1 1 1
+#define	CHOICE_CAPTION_TEXT_COLOR_NO_HL	CHOICE_TEXTCOLOR
+#define	CHOICE_CAPTION_TEXT_COLOR_HL	0 0 0 1
+
+		FRAME_CHOICE_SECTION_TITLE( 21, "@MENU_SOUND_CAPS" )
+		
+		FRAME_DVARSLIDER( 22, "@PLATFORM_VOICE_VOLUME_CAPS", snd_menu_voice, 1.0, 0.0, 1.0, ; )
+		FRAME_DVARSLIDER( 23, "@PLATFORM_MUSIC_VOLUME_CAPS", snd_menu_music, 1.0, 0.0, 1.0, ; )
+		FRAME_DVARSLIDER( 24, "@PLATFORM_SFX_VOLUME_CAPS", snd_menu_sfx, 1.0, 0.0, 1.0, ; )
+		FRAME_DVARSLIDER( 25, "@PLATFORM_CINEMATICS_VOLUME_CAPS", snd_menu_cinematic, 1.0, 0.0, 1.0, ; )
+		FRAME_DVARSLIDER( 26, "@PLATFORM_MASTER_VOLUME_CAPS", snd_menu_master, 1.0, 0.0, 1.0, ; )
+		
+		FRAME_CHOICE_DVARFLOATLIST_VIS( 28, "@MENU_SOUND_LOSOCCLUSION_CAPS", snd_losOcclusion, { "@MENU_NO_CAPS" 0 "@MENU_YES_CAPS" 1 }, ;, ( !dvarint( ui_multiplayer ) ) )
+
+		FRAME_CHOICE_DVARFLOATLIST_VIS(	29, "@MENU_LISTENING_LEVEL_CAPS", snd_menu_listen_level, { "@MENU_QUIET_CAPS" 0 "@MENU_LOUD_CAPS" 1 }, ;, 1 )
+		FRAME_CHOICE_DVARFLOATLIST_VIS(	30, "@MENU_SPEAKER_SETUP_CAPS", snd_menu_speaker_setup, { "@PATCH_LAPTOP_OR_SMALL_SPEAKERS_CAPS" 0 "@PLATFORM_LARGE_EXTERNAL_SPEAKERS_CAPS" 1 "@PLATFORM_HEADPHONES_CAPS" 2 }, ;, 1 )
+
+		// Old-version speaker config
+		FRAME_CHOICE_DDVARALTTEXT_TWOLINE_VIS(	31, "@PLATFORM_SOUND_DEVICE_CAPS", "@MENU_STEREO_SPEAKERS",        ( 0 == dvarint(sd_can_switch_device) && dvarString( "snd_speakerConfiguration" ) == "Stereo"           ) )
+		FRAME_CHOICE_DDVARALTTEXT_TWOLINE_VIS(	31, "@PLATFORM_SOUND_DEVICE_CAPS", "@MENU_FIVE_ONE_SPEAKERS",      ( 0 == dvarint(sd_can_switch_device) && dvarString( "snd_speakerConfiguration" ) == "5.1"              ) )
+		FRAME_CHOICE_DDVARALTTEXT_TWOLINE_VIS(	31, "@PLATFORM_SOUND_DEVICE_CAPS", "@MENU_FIVE_ONE_SPEAKERS",      ( 0 == dvarint(sd_can_switch_device) && dvarString( "snd_speakerConfiguration" ) == "5.1 No Center 3D" ) )
+		FRAME_CHOICE_DDVARALTTEXT_TWOLINE_VIS(	31, "@PLATFORM_SOUND_DEVICE_CAPS", "@PLATFORM_SEVEN_ONE_SPEAKERS", ( 0 == dvarint(sd_can_switch_device) && dvarString( "snd_speakerConfiguration" ) == "7.1"              ) )
+		
+		// New-version speaker config with multiple devices
+		FRAME_CHOICE_DVARENUMLIST_TWOLINE_VIS(	31, "@PLATFORM_SOUND_DEVICE_CAPS", ui_sd_xa2_device_name, sd_xa2_device_name, setLocalVarBool ui_showApply 1, ( dvarint(sd_can_switch_device) && (dvarint(sd_xa2_num_devices) > 1) ) )
+		
+		// New-version speaker config with single device
+		FRAME_CHOICE_DDVARALTTEXT_TWOLINE_VIS(	31, "@PLATFORM_SOUND_DEVICE_CAPS", dvarstring(sd_xa2_device_name),	( 1 == dvarint(sd_can_switch_device) && 1 == dvarint(sd_xa2_num_devices) ) )
+
+		FRAME_BUTTON_PC_RIGHT_OFFSET( NEW_FRAME_DEFAULT_WIDTH, NEW_FRAME_DEFAULT_HEIGHT, 0, 
+			"@MENU_APPLY", 
+			open snd_restart_popmenu;, 
+			when( localVarBool( ui_showApply ) ); )
+	}
+}

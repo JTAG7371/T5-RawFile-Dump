@@ -1,0 +1,84 @@
+// CONSOLE HUD - MP
+
+#include "ui/menudef.h"
+#include "ui_mp/hud_gametypes.inc"
+#include "ui_mp/hud_wager_summary.inc"
+
+{
+
+	menuDef
+	{
+		name			"scorebars_wkh_background"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible 		1
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_UI_ACTIVE SHOULD_DISPLAY_SCOREBAR )
+		// TOP team background highlight for score
+		itemDef
+		{
+			style			ITEM_TYPE_TEXT
+			rect			75 -41 70 15 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			background		"white"
+			forecolor		1 1 1 0.1
+			visible			1
+			decoration
+		}
+
+	}
+
+	HUD_WAGER_FFA_SUMMARY_NO_PLACES( "wkh", 1 )
+
+	menuDef
+	{
+		name			"scorebars_wkh"
+
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN	
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );									
+		fullScreen		0																							
+		visible 		1																							
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_UI_ACTIVE !BIT_SPECTATING_CLIENT )								
+
+
+		// shows the current king of the hill
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 -45 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp text		( dvarString( "currentKingName" ) + " " + locString( "@MP_IS_KING" ) )
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
+			visible 		when( dvarString( "kingHillState" ) == "king" );
+			decoration 
+		}
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 -45 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp text		locString( "@MP_CONTESTED_HILL" )
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
+			visible 		when( dvarString( "kingHillState" ) == "contested" );
+			decoration 
+		}
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 -45 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp text		locString( "@MP_NO_ONE_IS_KING" )
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
+			visible 		when( dvarString( "kingHillState" ) == "empty" );
+			decoration 
+		}
+	}
+}

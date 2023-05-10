@@ -1,0 +1,49 @@
+// Note to translators:
+// If a sentence is the same in your language then please change it to "#same"
+//
+// eg:
+// LANG_ENGLISH  "HALT"
+// LANG_GERMAN   "#same"
+//
+// (This is so we can tell which strings have been signed-off as ok to be the same words for QA
+//  and because we do not store duplicate strings, which will then get exported again next time
+//  as being untranslated.)
+//
+VERSION             "1"
+CONFIG              "C:\projects\cod\t5\bin\StringEd.cfg"
+FILENOTES           ""
+
+REFERENCE           TITLE
+LANG_ENGLISH        "Juggernaut"
+
+REFERENCE           TITLE_CAPS
+LANG_ENGLISH        "JUGGERNAUT"
+
+REFERENCE           TITLE_SHORT_CAPS
+LANG_ENGLISH        "JUG"
+
+REFERENCE           SHORT
+LANG_ENGLISH        "Juggernaut"
+
+REFERENCE           WIN_MATCH
+LANG_ENGLISH        "Juggernauts win the match!"
+
+REFERENCE           WIN_ROUND
+LANG_ENGLISH        "Juggernauts have reached the limit!"
+
+REFERENCE           MISSION_ACCOMPLISHED
+LANG_ENGLISH        "Juggernauts mission accomplished"
+
+REFERENCE           ELIMINATED
+LANG_ENGLISH        "Juggernauts eliminated"
+
+REFERENCE           FORFEITED
+LANG_ENGLISH        "Juggernauts forfeited"
+
+REFERENCE           NAME
+LANG_ENGLISH        "JUGGERNAUTS"
+
+REFERENCE           GAMETYPE_DESC
+LANG_ENGLISH        "Get kills as a Juggernaut or kill a Juggernaut to become one."
+
+ENDMARKER

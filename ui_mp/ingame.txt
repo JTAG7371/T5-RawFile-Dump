@@ -1,0 +1,38 @@
+// ingame menu defs
+
+{	
+	loadMenu { "ui_mp/demo_ingame.menu" }
+
+	loadMenu { "ui_mp/scriptmenus/popup_leavegame.menu" }
+	loadMenu { "ui_mp/muteplayer.menu" }
+	loadMenu { "ui_mp/players.menu" }
+	
+	loadMenu { "ui_mp/scriptmenus/ingame_options.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_look_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_move_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_shoot_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_misc_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_graphics_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_game_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_sound_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_coop_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_control_defaults_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_gamepad_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_graphics_defaults_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_voice_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_multi_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/controls_multi_ingame.menu" }
+
+	loadMenu { "ui/vid_restart_pc.menu" }
+	loadMenu { "ui/snd_restart.menu" }
+
+	loadMenu { "ui_mp/after_action_report_ingame.menu" }	
+	loadMenu { "ui_mp/playercard_challenges.menu" }
+	loadMenu { "ui_mp/playercard_challenges_perks.menu" }
+	loadMenu { "ui_mp/playercard_challenges_weapon.menu" }
+	loadMenu { "ui_mp/playercard_challenges_killstreaks.menu" }
+	loadMenu { "ui_mp/scriptmenus/endofgame.menu" }
+	loadMenu { "ui_mp/createfavorite.menu" }
+
+	loadMenu { "ui_mp/wagerconfirmation_popup.menu" }
+}

@@ -1,0 +1,474 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#ifdef PC
+#include "ui_mp/newframe.inc"
+#endif //#ifdef PC
+#include "ui/frame.inc"
+
+#define CHOICE_GROUP					"leaderboards"
+
+#include "ui/framestyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#undef FILTER_ACTION
+#define FILTER_ACTION					\
+	play CHOICE_FOCUS_SOUND;			\
+	open "menu_lb_filter"
+	
+#ifdef PC
+#undef CHOICE_TEXTSIZE
+#define CHOICE_TEXTSIZE		TEXTSIZE_DEFAULT
+#endif //#ifdef PC
+
+#ifdef PC	
+#undef LEADERBOARD_ARROW_BUTTON
+#define LEADERBOARD_ARROW_BUTTON( rectArg, arrowImg, actionArg ) \	
+	itemDef \
+	{ \
+		type			ITEM_TYPE_BUTTON \
+		style			WINDOW_STYLE_SHADER \
+		background		arrowImg \
+		rect			rectArg \
+		origin			0 0 \
+		forecolor		1 1 1 1 \
+		action			{  play CHOICE_FOCUS_SOUND; actionArg } \
+		visible			1 \
+		mouseenter {  play CHOICE_FOCUS_SOUND; setcolor forecolor 0.98 0.83 0.25 1 }	\
+		mouseexit { setcolor forecolor 1 1 1 1 }			\
+	}
+	
+#undef LEADERBOARD_BOTTOM_BUTTONS
+#define LEADERBOARD_BOTTOM_BUTTONS( FRAME_WIDTH, FRAME_HEIGHT, leaderboardArg )		\
+		NEW_FRAME_HOME_BUTTON( FRAME_WIDTH, FRAME_HEIGHT, setFocus leaderboardArg ) \
+		NEW_FRAME_PGDN_BUTTON( FRAME_WIDTH, FRAME_HEIGHT, setFocus leaderboardArg ) \
+		NEW_FRAME_PGUP_BUTTON( FRAME_WIDTH, FRAME_HEIGHT, setFocus leaderboardArg )
+#endif //#ifdef PC
+
+#undef ON_ESC
+#define ON_ESC																			\
+	execnow if( menuisopen( menu_xboxlive_lobby ) ) ui_animate menu_xboxlive_lobby frame_bg default 20; \
+	setdvar invite_visible "1";															\
+	if( dvarInt( ui_lobbyLeaderBoard) == 1 )											\
+	{																					\
+		FRAME_SLIDE_RESET_TOP_TO_BOTTOM( menu_leaderboard_waves )						\
+		close self;																		\
+	}																					\
+	else																				\
+	{																					\
+		FRAME_BACK_TO_FRAME_SLIDE_ACTION( menu_leaderboard_waves, menu_leaderboards );	\
+	}																					\
+	play uin_navigation_menu_lg_close;													\
+	setDvar ui_lobbyLeaderBoard "0";                                                    \
+	setDvar ui_leaderboardOpen "0";
+
+{
+
+#define ZOMBIE_LEADERBOARD_SELECT_ACTION( menuName ) \
+		execnow set selectedPlayerXuid ( getfeederdata( "xuid" ) ); \
+		execnow set selectedFriendName ( getfeederdata( "name" ) ); \
+		if( dvarInt("ui_leaderboardFeederCountNotZero") == 1 ) \
+		{ \
+			CHANGE_MENU_SLIDE_DIRECTION( menuName, MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT, MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT ) \
+			close self; \
+			execnow changemenuopenslidedirection menu_playercard MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT; \
+			close self; \
+			execNow openMenu menu_playercard; \
+		} 
+
+	menuDef
+	{
+		name					menu_leaderboard_waves
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focusColor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		soundloop 				MENU_MUSIC
+		control					MENU_CONTROL_OPENER
+		priority				MENU_PRI_ONTOP 
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED 
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED 
+		openSlideDirection		MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT 
+		closeSlideDirection		MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT 
+
+		onOpen
+		{
+			uiScript RefreshLeaderboards;
+			setdvar invite_visible "0";
+			play uin_navigation_menu_lg_open;
+
+			execnow if( menuisopen( menu_xboxlive_lobby ) ) ui_animate menu_xboxlive_lobby frame_bg on 100;
+			execNow set leaderboard_menu_name "menu_leaderboard_waves";
+			//uiScript RefreshLeaderboards;
+			//execnow "nosplitscreen";
+			//setfocus leaderboard;
+			setDvar ui_leaderboardOpen "1";
+		}
+		onClose	{ }
+		onEsc
+		{
+			ON_ESC
+		}
+
+		// ------------------ statics ------------------------
+		FRAME_ZOMBIE_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MENU_LEADERBOARDS_CAPS",		1 )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIE_THEATER_CAPS",	when( dvarString( lb_mapname ) == zombie_theater ) )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIE_PENTAGON_CAPS",	when( dvarString( lb_mapname ) == zombie_pentagon ) )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIETRON_CAPS",		when( dvarString( lb_mapname ) == zombietron ) )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIE_COSMODROME_CAPS",	when( dvarString( lb_mapname ) == zombie_cosmodrome ) )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIE_COAST_CAPS",		when( dvarString( lb_mapname ) == zombie_coast ) )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIE_TEMPLE_CAPS",		when( dvarString( lb_mapname ) == zombie_temple ) )
+
+		#define LEADERBOARD_FILTER_X		90
+		#define LEADERBOARD_FILTER_Y		-150
+		#define LEADERBOARD_FILTER_WIDTH	125
+		#define LEADERBOARD_FILTER_HEIGHT	30
+		#define LEADERBOARD_FILTER_SIZE		LEADERBOARD_FILTER_WIDTH LEADERBOARD_FILTER_HEIGHT
+
+		#undef LEADERBOARD_TITLE_COLOR
+		#define LEADERBOARD_TITLE_COLOR		1 1 1 0.4
+
+#ifdef CONSOLE
+		#undef BUTTON_Y_FILTER
+		#define BUTTON_Y_FILTER		1
+		#undef BUTTON_X_GOTOTOP
+		#define BUTTON_X_GOTOTOP	1
+		#undef BUTTON_PGUP
+		#define BUTTON_PGUP			1
+		#undef BUTTON_PGDOWN
+		#define BUTTON_PGDOWN		1
+		#undef ALT_PANEL
+		#define ALT_PANEL			1
+		#undef BUTTON_ACCEPT
+		#define BUTTON_ACCEPT		1
+#else //#ifdef CONSOLE
+		#undef BACK_ENABLE
+		#define BACK_ENABLE			0
+		
+		#undef	BUTTON_SPACING
+		#undef	FILTER_BUTTON_OFFSET
+		#define BUTTON_SPACING 20
+		#define FILTER_BUTTON_OFFSET ( getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+		
+		FRAME_BUTTON_PC_LEFT_OFFSET( FRAME_DEFAULT_WIDTH, FRAME_DEFAULT_HEIGHT, FILTER_BUTTON_OFFSET, "@PLATFORM_CHANGE_FILTER", FILTER_ACTION, 1 )
+#endif //#ifdef CONSOLE
+		
+		#include "ui/navcontrols.inc"
+
+#ifdef PC
+		SIMPLE_CHOICE_BUTTON_ARROWS_CENTERED( "leaderboard_waves_title", 0, (LEADERBOARD_FILTER_Y+15), 180, "@PLATFORM_ZOMBIE_POINTS_CAPS",
+			1, TOGGLE_LEADERBOARD_TYPE_LEFT, TOGGLE_LEADERBOARD_TYPE_RIGHT )
+#else // #ifdef PC
+#ifdef PS3
+		PREPROC_TEXT_DRAW_ALL(	-65 (LEADERBOARD_FILTER_Y+15) LEADERBOARD_FILTER_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,
+								"@PLATFORM_ZOMBIE_POINTS_CAPS",
+								TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_MIDDLE_CENTER, COLOR_TITLE,
+								UI_FONT_SMALL, ITEM_TEXTSTYLE_NORMAL, 1, ; )
+#else // #ifdef PS3
+		PREPROC_TEXT_DRAW_VIS(	-65 (LEADERBOARD_FILTER_Y+15) LEADERBOARD_FILTER_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,
+								"@PLATFORM_ZOMBIE_POINTS_CAPS", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_MIDDLE_CENTER, COLOR_TITLE, 1 )
+
+#endif // #else // #ifdef PS3
+#endif // #else // #ifdef PC
+		PREPROC_TEXT_DRAW_VIS(	LEADERBOARD_FILTER_X LEADERBOARD_FILTER_Y LEADERBOARD_FILTER_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,
+								"@MPUI_FILTER_SET" , TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_RIGHT, LEADERBOARD_TITLE_COLOR, 1 )
+		PREPROC_TEXT_DRAW_VIS(	(LEADERBOARD_FILTER_X+LEADERBOARD_FILTER_WIDTH+3) LEADERBOARD_FILTER_Y LEADERBOARD_FILTER_SIZE VERTICAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,
+								getLBFilter() , TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, LEADERBOARD_TITLE_COLOR, 1 )
+
+		#undef COLUMN_TITLE_X
+		#define COLUMN_TITLE_X		-230
+		#undef COLUMN_TITLE_Y
+		#define COLUMN_TITLE_Y		-90
+
+		// ------------------ column names ------------------------
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X-22) COLUMN_TITLE_Y, "@MENU_RANK", ITEM_ALIGN_LEFT, 1 )
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+42) COLUMN_TITLE_Y, "@XBOXLIVE_PLAYER_CAPS", ITEM_ALIGN_LEFT, 1 )
+		
+		// Zombie Mode Waves Columns
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+305) COLUMN_TITLE_Y, "@MENU_ZOMBIES_WAVES_LEVEL", ITEM_ALIGN_RIGHT,			1 )
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+363) COLUMN_TITLE_Y, "@MENU_ZOMBIES_WAVES_PLAYERS", ITEM_ALIGN_RIGHT,		1 )
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+475) COLUMN_TITLE_Y, "@MENU_ZOMBIES_WAVES_SURVIVAL_TIME", ITEM_ALIGN_RIGHT,	1 )
+
+		#define LEADERBOARD_HEIGHT			FRAME_DEFAULT_HEIGHT
+		#define LEADERBOARD_WIDTH			( LEADERBOARD_HEIGHT * FRAME_ASPECT_RATIO )
+
+		#define LEADERBOARD_LIST_X_START	( -LEADERBOARD_WIDTH/2 + 20 )
+		#define LEADERBOARD_LIST_Y_START	( -90 )
+
+		#define LIST_WIDTH 535
+		#define LIST_HEIGHT 260
+		
+		// LEADERBOARD ZOMBIE WAVE LIST TEXT
+		itemDef
+		{
+			name						leaderboard_waves
+			rect						LEADERBOARD_LIST_X_START LEADERBOARD_LIST_Y_START LIST_WIDTH LIST_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			type						ITEM_TYPE_LISTBOX
+			elementwidth				120
+			elementheight				18
+			textaligny					-2
+			textfont					UI_FONT_NORMAL
+			textscale					TEXTSIZE_SMALL
+			textstyle					ITEM_TEXTSTYLE_NORMAL
+			elementtype					LISTBOX_TEXT
+			feeder						FEEDER_LEADERBOARD
+			forecolor					CHOICE_TEXTCOLOR	
+			focusColor					CHOICE_TEXTCOLOR	
+			disableColor				CHOICE_TEXTCOLOR
+			outlinecolor				1 1 1 1
+			elementHighlightColor		0 0 0 1 
+			elementBackgroundColor		NEW_FRAME_TRANSPARENCY 
+			noscrollbars
+			noBlinkingHighlight
+//			numcols			xpos	xwidth	textlen  alignment
+			columns	5		10		30		10		ITEM_ALIGN_LEFT
+							70		35		55		ITEM_ALIGN_LEFT
+							271		64		10		ITEM_ALIGN_RIGHT
+							356		40		10		ITEM_ALIGN_RIGHT
+							425		80		15		ITEM_ALIGN_RIGHT
+			visible			1
+#ifdef PC
+			modal
+#endif //#ifdef PC 
+			usePaging
+			doubleClick
+			{
+				play CHOICE_FOCUS_SOUND
+				ZOMBIE_LEADERBOARD_SELECT_ACTION( menu_leaderboard_waves );
+			}
+			execKeyInt BUTTON_X
+			{
+				feederTop
+			}
+		}		
+		
+		#include "ui/safearea.menu"
+
+		// --------- buttons ----------
+#ifdef PC
+		// Back button
+		FRAME_BACK_BUTTON_DEFAULT_ACTION( ON_ESC )	
+		LEADERBOARD_BOTTOM_BUTTONS( FRAME_DEFAULT_WIDTH, FRAME_DEFAULT_HEIGHT, leaderboard_waves )	
+#else //#ifdef PC
+		// Back button
+		FRAME_BACK_BUTTON_DEFAULT
+#endif //#ifdef PC
+	}
+
+#undef ON_ESC
+#define ON_ESC																			\
+	execnow if( menuisopen( menu_xboxlive_lobby ) ) ui_animate menu_xboxlive_lobby frame_bg default 20; \
+	setdvar invite_visible "1";															\
+	if( dvarInt( ui_lobbyLeaderBoard) == 1 )											\
+	{																					\
+		FRAME_SLIDE_RESET_TOP_TO_BOTTOM( menu_leaderboard_points )						\
+		close self;																		\
+	}																					\
+	else																				\
+	{																					\
+		FRAME_BACK_TO_FRAME_SLIDE_ACTION( menu_leaderboard_points, menu_leaderboards );	\
+	}																					\
+	play uin_navigation_menu_lg_close;													\
+	setDvar ui_lobbyLeaderBoard "0";                                                    \
+	setDvar ui_leaderboardOpen "0";
+
+
+	menuDef
+	{
+		name					menu_leaderboard_points
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focusColor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		soundloop 				MENU_MUSIC
+		control					MENU_CONTROL_OPENER
+		priority				MENU_PRI_ONTOP 
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED 
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED 
+		openSlideDirection		MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT 
+		closeSlideDirection		MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT 
+
+		onOpen
+		{
+			uiScript RefreshLeaderboards;
+			setdvar invite_visible "0";
+			play uin_navigation_menu_lg_open;
+
+			//uiScript RefreshLeaderboards;
+			//execnow "nosplitscreen";
+			//setfocus leaderboard;
+			setDvar ui_leaderboardOpen "1";
+			execnow if( menuisopen( menu_xboxlive_lobby ) ) ui_animate menu_xboxlive_lobby frame_bg on 100;
+			execNow set leaderboard_menu_name "menu_leaderboard_points";
+		}
+		onClose	{ }
+		onEsc
+		{
+			ON_ESC
+		}
+
+		// ------------------ statics ------------------------
+		FRAME_ZOMBIE_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MENU_LEADERBOARDS_CAPS",		1 )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIE_THEATER_CAPS",	when( dvarString( lb_mapname ) == zombie_theater ) )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIE_PENTAGON_CAPS",	when( dvarString( lb_mapname ) == zombie_pentagon ) )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIETRON_CAPS",		when( dvarString( lb_mapname ) == zombietron ) )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIE_COSMODROME_CAPS",	when( dvarString( lb_mapname ) == zombie_cosmodrome ) )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIE_COAST_CAPS",		when( dvarString( lb_mapname ) == zombie_coast ) )
+		FRAME_SUBTITLE_DEFAULT( "@MENU_ZOMBIE_TEMPLE_CAPS",		when( dvarString( lb_mapname ) == zombie_temple ) )
+
+#ifdef CONSOLE
+		#undef BUTTON_Y_FILTER
+		#define BUTTON_Y_FILTER		1
+		#undef BUTTON_X_GOTOTOP
+		#define BUTTON_X_GOTOTOP	1
+		#undef BUTTON_PGUP
+		#define BUTTON_PGUP			1
+		#undef BUTTON_PGDOWN
+		#define BUTTON_PGDOWN		1
+		#undef ALT_PANEL
+		#define ALT_PANEL			1
+		#undef BUTTON_ACCEPT
+		#define BUTTON_ACCEPT		1
+#else //#ifdef CONSOLE
+		#undef BACK_ENABLE
+		#define BACK_ENABLE			0
+		
+		#undef	BUTTON_SPACING
+		#undef	FILTER_BUTTON_OFFSET
+		#define BUTTON_SPACING 20
+		#define FILTER_BUTTON_OFFSET ( getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+		
+		FRAME_BUTTON_PC_LEFT_OFFSET( FRAME_DEFAULT_WIDTH, FRAME_DEFAULT_HEIGHT, FILTER_BUTTON_OFFSET, "@PLATFORM_CHANGE_FILTER", FILTER_ACTION, 1 )
+#endif //#ifdef CONSOLE
+
+		#include "ui/navcontrols.inc"
+
+#ifdef PC
+		SIMPLE_CHOICE_BUTTON_ARROWS_CENTERED( "leaderboard_points_title", 0, (LEADERBOARD_FILTER_Y+15), 180, "@PLATFORM_ZOMBIE_WAVES_CAPS",
+			1, TOGGLE_LEADERBOARD_TYPE_LEFT, TOGGLE_LEADERBOARD_TYPE_RIGHT )
+#else // #ifdef PC
+#ifdef PS3
+		PREPROC_TEXT_DRAW_ALL(	-65 (LEADERBOARD_FILTER_Y+15) LEADERBOARD_FILTER_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,
+								"@PLATFORM_ZOMBIE_WAVES_CAPS",
+								TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_MIDDLE_CENTER, COLOR_TITLE,
+								UI_FONT_SMALL, ITEM_TEXTSTYLE_NORMAL, 1, ; )
+#else // #ifdef PS3
+		PREPROC_TEXT_DRAW_VIS(	-65 (LEADERBOARD_FILTER_Y+15) LEADERBOARD_FILTER_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,
+								"@PLATFORM_ZOMBIE_WAVES_CAPS", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_MIDDLE_CENTER, COLOR_TITLE, 1 )
+#endif // #else // #ifdef PS3
+#endif // #else // #ifdef PC
+
+		PREPROC_TEXT_DRAW_VIS(	LEADERBOARD_FILTER_X LEADERBOARD_FILTER_Y LEADERBOARD_FILTER_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,
+								"@MPUI_FILTER_SET" , TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_RIGHT, LEADERBOARD_TITLE_COLOR, 1 )
+		PREPROC_TEXT_DRAW_VIS(	(LEADERBOARD_FILTER_X+LEADERBOARD_FILTER_WIDTH+3) LEADERBOARD_FILTER_Y LEADERBOARD_FILTER_SIZE VERTICAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,
+								getLBFilter() , TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, LEADERBOARD_TITLE_COLOR, 1 )
+
+
+		// ------------------ column names ------------------------
+		LEADERBOARD_COL_TITLE_VIS( COLUMN_TITLE_X COLUMN_TITLE_Y, "@MENU_RANK", ITEM_ALIGN_RIGHT, 1 )
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+42) COLUMN_TITLE_Y, "@XBOXLIVE_PLAYER_CAPS", ITEM_ALIGN_LEFT, 1 )
+	
+		// Zombie Mode Point Columns
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+423) COLUMN_TITLE_Y, "@MENU_ZOMBIES_POINTS_TOTAL", ITEM_ALIGN_RIGHT, 1 )
+		LEADERBOARD_COL_TITLE_VIS( (COLUMN_TITLE_X+475) COLUMN_TITLE_Y, "@MENU_ZOMBIES_POINTS_KILLS", ITEM_ALIGN_RIGHT, 1 )
+	
+		// LEADERBOARD ZOMBIE POINTS LIST TEXT
+		itemDef
+		{
+			name						leaderboard_points
+			rect						LEADERBOARD_LIST_X_START LEADERBOARD_LIST_Y_START LIST_WIDTH LIST_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			type						ITEM_TYPE_LISTBOX
+			elementwidth				120
+			elementheight				18
+			textaligny					-2
+			textfont					UI_FONT_NORMAL
+			textscale					TEXTSIZE_SMALL
+			textstyle					ITEM_TEXTSTYLE_NORMAL
+			elementtype					LISTBOX_TEXT
+			feeder						FEEDER_LEADERBOARD
+			forecolor					CHOICE_TEXTCOLOR	
+			focusColor					CHOICE_TEXTCOLOR	
+			disableColor				CHOICE_TEXTCOLOR
+			outlinecolor				1 1 1 1
+			elementHighlightColor		0 0 0 1 
+			elementBackgroundColor		NEW_FRAME_TRANSPARENCY 
+			noscrollbars
+			noBlinkingHighlight
+//			numcols			xpos	xwidth	textlen  alignment
+			columns	4		10		30		10		ITEM_ALIGN_LEFT
+							70		35		55		ITEM_ALIGN_LEFT
+							389		64		10		ITEM_ALIGN_RIGHT
+							425		80		15		ITEM_ALIGN_RIGHT
+			visible			1
+#ifdef PC
+			modal
+#endif //#ifdef PC 
+			usePaging
+			doubleClick
+			{
+				play CHOICE_FOCUS_SOUND
+				ZOMBIE_LEADERBOARD_SELECT_ACTION( menu_leaderboard_points );
+			}
+			execKeyInt BUTTON_X
+			{
+				feederTop
+			}
+		}
+
+		#include "ui/safearea.menu"
+
+		// --------- buttons ----------
+#ifdef PC
+		// Back button
+		FRAME_BACK_BUTTON_DEFAULT_ACTION( ON_ESC )
+		LEADERBOARD_BOTTOM_BUTTONS( FRAME_DEFAULT_WIDTH, FRAME_DEFAULT_HEIGHT, leaderboard_points )
+#else //#ifdef PC
+		// Back button
+		FRAME_BACK_BUTTON_DEFAULT
+#endif //#ifdef PC
+
+		
+
+	}
+
+#undef CHOICE_SEP_OFFSET_Y
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+#undef POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+
+#undef CHOICE_BUTTON_NAME
+#define CHOICE_BUTTON_NAME		"menu_lb_filter"
+
+#undef MENUDEF_NAME
+#define MENUDEF_NAME			menu_lb_filter
+
+#undef A_BUTTON_OFFSET_X
+#define A_BUTTON_OFFSET_X		100000
+
+#undef CHOICE_Y_START
+#define CHOICE_Y_START			40
+
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( menu_lb_filter, ;, ;, 1 )
+	SYSTEM_POPUP_TITLE_VIS( "@MPUI_LB_FILTER", 1 )
+
+	#define ACCEPT_ACTION \
+		if( ( milliseconds() - dvarInt( leaderBoardLastFetchTime ) ) > MIN_DELAY_FOR_LB_READ ) \
+		{ \
+			execNow set leaderBoardLastFetchTime ( milliseconds() ); \
+			execnow "downloadingleaderboard"; \
+			execNow set lb_typeByResetPeriod ( dvarInt( lb_typeByResetPeriod_scroll ) ); \
+			execNow set lb_filter ( dvarInt( lb_filter_scroll ) ); \
+			uiScript RefreshLeaderboards; \
+		} \
+		close self;
+
+	FRAME_CHOICE_DVARFLOATLIST_VIS( 1, "@MPUI_LB_PLAYERS", lb_filter_scroll, { "@MPUI_LB_EVERYONE_CAPS" 0 "@MPUI_LB_FRIENDS_ONLY_CAPS" 1 "@MPUI_LB_PLAYERS_IN_LOBBY_CAPS" 2 }, ;, 1 )
+	
+	SYSTEM_POPUP_BACK_BUTTON
+	SYSTEM_POPUP_BUTTON2( "@PLATFORM_CHANGE_FILTER", ACCEPT_ACTION, 1 )
+}

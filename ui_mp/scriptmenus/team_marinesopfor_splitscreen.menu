@@ -1,0 +1,159 @@
+#define SPLITSCREEN_ENABLED 1
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+
+#define INGAMEPLAYERLIST_HEIGHT				(350*SPLITSCREEN_MULTIPLIER)
+#define INGAMEPLAYERLIST_WIDTH				(235*SPLITSCREEN_MULTIPLIER)
+#define RANK_BG_WIDTH						(33*SPLITSCREEN_MULTIPLIER)
+#define COLUMN_SCORE_WIDTH					(34*SPLITSCREEN_MULTIPLIER)
+#define COLUMN_NAME_WIDTH					( INGAMEPLAYERLIST_WIDTH - RANK_BG_WIDTH )
+#define	SCORE_START_X						( INGAMEPLAYERLIST_WIDTH - COLUMN_SCORE_WIDTH - (4*SPLITSCREEN_MULTIPLIER) )
+
+#ifdef CONSOLE
+	#undef  CHOICE_X_START
+	#define CHOICE_X_START					30
+	#undef  CHOICE_Y_START
+	#define CHOICE_Y_START					180
+#else
+	#undef  CHOICE_X_START
+	#define CHOICE_X_START					30
+	#undef  CHOICE_Y_START
+	#define CHOICE_Y_START					130
+
+	#define	PC_INGAME
+	#include "ui_mp/overlaybg.inc"
+#endif
+
+#define CHOICE_SEP_OFFSET_Y					-2
+
+#include "ui_mp/menustyle.inc"
+#include "ui_mp/choices_setup_teams.menu"
+
+#undef	CHOICE_SIZE_X
+#define CHOICE_SIZE_X						(200*SPLITSCREEN_MULTIPLIER)
+
+#undef	CHOICE_TEXTSTYLE
+#define CHOICE_TEXTSTYLE					ITEM_TEXTSTYLE_NORMAL
+
+#undef	CHOICE_HORIZONTAL_ALIGN 
+#define CHOICE_HORIZONTAL_ALIGN				HORIZONTAL_ALIGN_LEFT
+#undef  CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN				VERTICAL_ALIGN_TOP
+
+#define INGAMEPLAYERLIST_BODY_X_START		(-INGAMEPLAYERLIST_WIDTH - 30)
+#define	INGAMEPLAYERLIST_BODY_Y_START		55
+
+#undef	BUTTON_BG_X_START
+#define BUTTON_BG_X_START					30
+
+{
+	menuDef
+	{
+		name			"team_marinesopfor_splitscreen"
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_EMPTY
+#ifdef CONSOLE
+		rect			0 0 640 480
+		blurWorld		7.0
+#else
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+#endif
+		onEsc
+		{
+			scriptMenuResponse "back";
+			//close "team_marinesopfor";
+		}
+		onOpen
+		{
+			//focusFirst;
+			setfocus "auto_assign";
+		}
+		
+#ifndef PC
+		execkeyint BUTTON_START
+		{
+			close self;
+		}
+
+		#include "ui_mp/ingamebg.inc"
+
+#else // #ifndef PC
+		BACKGROUND_BLACK_LETTERBOX_BLURWORLD( 1.0 )
+		OVERLAY_BACKGROUND
+
+#endif // #else // #ifndef PC
+		// ------------------ TREE TITLE ------------------
+		
+#undef BUTTON_BG_Y_START
+#define BUTTON_BG_Y_START		40
+
+		CHOICE_MENU_TITLE_ALIGN_VIS( "@MPUI_CHOOSE_TEAM_CAPS", HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP, ITEM_ALIGN_MIDDLE_LEFT, team( name ) == "TEAM_SPECTATOR" || team(name) == "TEAM_FREE"  )
+		CHOICE_MENU_TITLE_ALIGN_VIS( "@MPUI_CHANGE_TEAM_CAPS", HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP, ITEM_ALIGN_MIDDLE_LEFT, team( name ) == "TEAM_AXIS" || team(name) == "TEAM_ALLIES" )
+	
+		/* Choose team subtitle description. */
+		PREPROC_TEXT_DRAW_VIS_EX(	CHOICE_X_START (BUTTON_BG_Y_START+(30*SPLITSCREEN_MULTIPLIER)) CHOICE_SIZE_X 30 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0,
+									locString( "@MPUI_CHOOSETEAMDESC" ), 
+									TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, 
+									when( team( name ) == "TEAM_SPECTATOR" || team(name) == "TEAM_FREE" );, 
+									autowrapped )
+									
+		/* Change team subtitle description. */ 
+		PREPROC_TEXT_DRAW_VIS_EX(	CHOICE_X_START (BUTTON_BG_Y_START+(30*SPLITSCREEN_MULTIPLIER)) CHOICE_SIZE_X 30 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, 
+									locString( "@MPUI_CHANGETEAMDESC" ), 
+									TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, 
+									when( team( name ) == "TEAM_AXIS" || team(name) == "TEAM_ALLIES" );, 
+									autowrapped ) 
+
+		// ------------------ buttons ---------------------
+		#define BACK_OPEN	close self;
+			
+		//=========================================================
+		//===================== MENU SELECTION ====================
+		//=========================================================	
+
+#ifdef CONSOLE
+
+		FRAME_CHOICE_BUTTON_VIS(	1, "@" + dvarString( g_TeamName_Axis ) + "_CAPS", 
+									play CHOICE_FOCUS_SOUND; scriptMenuResponse "axis";,
+									( team( name ) == "TEAM_SPECTATOR" || team(name) == "TEAM_FREE" ) )
+		FRAME_CHOICE_BUTTON_VIS(	2, "@" + dvarString( g_TeamName_Allies )+ "_CAPS", 
+									play CHOICE_FOCUS_SOUND; scriptMenuResponse "allies";,
+									(team( name ) == "TEAM_AXIS" || team( name ) == "TEAM_SPECTATOR" || team(name) == "TEAM_FREE") )
+		FRAME_CHOICE_BUTTON_VIS(	2, "@" + dvarString( g_TeamName_Axis ) + "_CAPS", 
+									play CHOICE_FOCUS_SOUND; scriptMenuResponse "axis";,
+									( team( name ) == "TEAM_ALLIES" ) )		
+		FRAME_CHOICE_BUTTON_VIS_EX(	3, "@MPUI_AUTOASSIGN_CAPS", 
+									play CHOICE_FOCUS_SOUND; scriptMenuResponse "autoassign";, 
+									1, 
+									name "auto_assign"; )	
+		FRAME_CHOICE_BUTTON_VIS(	4, "@MPUI_SPECTATOR_CAPS", 
+									play CHOICE_FOCUS_SOUND; scriptMenuResponse "spectator";,
+									( team( name ) != "TEAM_SPECTATOR" && dvarbool( scr_game_spectatetype ) ) )
+#else
+		FRAME_CHOICE_BUTTON_VIS(	1, "@" + dvarString( g_TeamName_Axis ),
+									play CHOICE_FOCUS_SOUND; scriptMenuResponse "axis";, 
+									( dvarBool( ui_allow_teamchange ) && ( team( name ) == "TEAM_SPECTATOR" || team(name) == "TEAM_FREE" ) ) )
+		FRAME_CHOICE_BUTTON_VIS(	2, "@" + dvarString( g_TeamName_Allies ), 
+									play CHOICE_FOCUS_SOUND; scriptMenuResponse "allies";, 
+									( dvarBool( ui_allow_teamchange ) && ( team( name ) == "TEAM_AXIS" || team( name ) == "TEAM_SPECTATOR" || team(name) == "TEAM_FREE" ) ) )
+		FRAME_CHOICE_BUTTON_VIS(	2, "@" + dvarString( g_TeamName_Axis ), 
+									play CHOICE_FOCUS_SOUND; scriptMenuResponse "axis";, 
+									( dvarBool( ui_allow_teamchange )  && team( name ) == "TEAM_ALLIES" ) )		
+		FRAME_CHOICE_BUTTON_VIS_EX(	3, "@MPUI_AUTOASSIGN", 
+									play CHOICE_FOCUS_SOUND; scriptMenuResponse "autoassign";,
+									1,
+									name "auto_assign" )	
+		FRAME_CHOICE_BUTTON_VIS(	4, "@MPUI_SPECTATOR", 
+									play CHOICE_FOCUS_SOUND; scriptMenuResponse "spectator";, 
+									( team( name ) != "TEAM_SPECTATOR" && dvarbool( scr_game_spectatetype ) ) )
+#endif
+	
+		// Back button
+		PREPROC_TEXT_DRAW_VIS( CHOICE_X_START -17 50 17 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM, 0 0, "@PLATFORM_BACK", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1, 1 )
+
+	}
+}

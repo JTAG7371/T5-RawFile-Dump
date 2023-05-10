@@ -1,0 +1,150 @@
+#define SPLITSCREEN_ENABLED 1
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_SEP_1			3
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+{
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegame_splitscreen, setfocus popup_leavegame_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_GAME1", 1 )
+		
+		#define LOCAL_ACCEPT_LEAVEGAME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_leavegame;		\
+				exec "disconnect"
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_LEAVEGAME,	1, ;						)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,				1, name popup_leavegame_2	)
+	}				
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegameandparty_splitscreen, setfocus popup_leavegameandparty_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LEAVE_GAME_AND_PARTY", 1 )
+		
+		#define LOCAL_ACCEPT_LEAVEGAMEANDPARTY						\
+				play CHOICE_FOCUS_SOUND;							\
+				close popup_leavegameandparty;						\
+				exec "disconnect; xstopprivateparty; xstopparty";	\
+				exec "xblive_privatematch 0";						\
+				exec "xstartprivateparty";
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_LEAVEGAMEANDPARTY,	1, ;								)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,						1, name popup_leavegameandparty_2	)
+	}			
+	
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_endgame_splitscreen, setfocus popup_endgame_2, ;, ( dvarbool( onlineunrankedgameandhost ) == 1 || dvarbool( sv_running ) == 1 ) )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_END_GAME2", 1 )
+
+#ifdef CONSOLE		
+		#define LOCAL_ACCEPT_ENDGAME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_endgame;		\
+				scriptMenuResponse "endround"; 
+#else
+		#define LOCAL_ACCEPT_ENDGAME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_endgame;		\
+				exec "disconnect";
+#endif
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_ENDGAME,	1, ;					)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,				1, name popup_endgame_2	)
+	}	
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegame_ranked_splitscreen, setfocus popup_leavegame_ranked_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_GAME1", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_RANKED", when( dvarInt( xblive_wagermatch ) != 1 ); )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_WAGER", when( dvarInt( xblive_wagermatch ) == 1 ); )
+		
+		#define LOCAL_ACCEPT_LEAVEGAME_RANKED	\
+				play CHOICE_FOCUS_SOUND;		\
+				close popup_leavegame;			\
+				exec "disconnect"
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_LEAVEGAME_RANKED,	1, ;								)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,						1, name popup_leavegame_ranked_2	)
+	}		
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_endgame_ranked_splitscreen, setfocus popup_endgame_ranked_2, ;, ( dvarbool( onlineunrankedgameandhost ) == 1 ) )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_GAME1", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_RANKED", when( dvarInt( xblive_wagermatch ) != 1 ); );
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_WAGER", when( dvarInt( xblive_wagermatch ) == 1 ); )
+		
+#ifdef XENON
+		#define LOCAL_ACCEPT_ENDGAME_RANKED		\
+				play CHOICE_FOCUS_SOUND;		\
+				close popup_endgame;			\
+				exec "hostmigration_start";		\
+				exec "xpartydisbandafterround";
+#endif
+
+#ifdef PS3
+		#define LOCAL_ACCEPT_ENDGAME_RANKED		\
+				play CHOICE_FOCUS_SOUND;		\
+				close popup_endgame;			\
+				exec "xpartydisbandafterround"; \
+				scriptMenuResponse "endround"
+#endif
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_ENDGAME_RANKED,	1, ;							)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,						1, name popup_endgame_ranked_2	)
+	}	
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegameandparty_ranked_splitscreen, setfocus popup_leavegameandparty_ranked_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LEAVE_GAME_AND_PARTY", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_RANKED", when( dvarInt( xblive_wagermatch ) != 1 ); )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_WAGER", when( dvarInt( xblive_wagermatch ) == 1 ); )
+		
+		#define LOCAL_ACCEPT_LEAVEGAMEANDPARTY_RANKED				\
+				play CHOICE_FOCUS_SOUND;							\
+				close popup_leavegameandparty;						\
+				exec "disconnect; xstopprivateparty; xstopparty";	\
+				exec "xblive_privatematch 0";						\
+				exec "xstartprivateparty";
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_LEAVEGAMEANDPARTY_RANKED,	1, ;										)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,								1, name popup_leavegameandparty_ranked_2	)
+	}	
+
+#ifdef PS3
+	// PS3 controller removed warning put here for lack of a better place
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( controllerremoved_popmenu_splitscreen, ;, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( locString("@PLATFORM_CONTROLLER_DISCONNECTED") + (dvarString( "disconnected_ctrls" )), 1 )
+		itemDef 
+		{ 
+			type			ITEM_TYPE_BUTTON_NO_TEXT 
+			rect			0 0 0 0 0 0 
+			visible			1
+		}
+	}
+#endif	//	#ifdef PS3
+}

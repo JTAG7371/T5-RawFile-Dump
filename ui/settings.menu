@@ -1,0 +1,343 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/frame.inc"
+
+#define CHOICE_GROUP					"settings"
+
+#include "ui/framestyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/overlaybg.inc"
+#include "ui_mp/popup_player_info.inc"
+
+#define MISSION_SELECT_NAME_X			-20
+#define MISSION_SELECT_NAME_Y			CHOICE_Y_START
+#define MISSION_SELECT_NAME_SIZE		ITEM_IMAGE_WIDTH 30
+
+#define ITEM_IMAGE_X					MISSION_SELECT_NAME_X
+#define ITEM_IMAGE_Y					(MISSION_SELECT_NAME_Y + 30)
+#define ITEM_IMAGE_ASPECT_RATIO			(350/251)
+#define ITEM_IMAGE_WIDTH				(ITEM_IMAGE_HEIGHT * ITEM_IMAGE_ASPECT_RATIO)
+#define ITEM_IMAGE_HEIGHT				200
+#define ITEM_IMAGE_SIZE					ITEM_IMAGE_WIDTH ITEM_IMAGE_HEIGHT
+
+#define MISSION_SELECT_DESC_X			(ITEM_IMAGE_X + 2)
+#define MISSION_SELECT_DESC_Y			(ITEM_IMAGE_Y + ITEM_IMAGE_HEIGHT + 5)
+#define MISSION_SELECT_DESC_SIZE		(ITEM_IMAGE_WIDTH - 5) 75
+
+#define MISSION_SELELCT_INFO( vis )																																\
+		/* Name */																																				\
+		PREPROC_TEXT_DRAW_ALL(	MISSION_SELECT_NAME_X MISSION_SELECT_NAME_Y MISSION_SELECT_NAME_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,		\
+								"@"+dvarString( ui_level_loc_text )+"_CAPS",																					\
+								TEXTSIZE_SUBTITLE, 0, 0, ITEM_ALIGN_TOP_CENTER, 1 1 1 1,																		\
+								UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL, when( vis ), ; )																		\
+		/* Image */																																				\
+		PREPROC_SHADER_DRAW_VIS_EX( ITEM_IMAGE_X ITEM_IMAGE_Y ITEM_IMAGE_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,									\
+									"preview_"+dvarString( ui_load_level ), 1 1 1 0.9, when( vis );, ; )														\
+		/* Description */																																		\
+		PREPROC_TEXT_DRAW_VIS_EX(	MISSION_SELECT_DESC_X MISSION_SELECT_DESC_Y MISSION_SELECT_DESC_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,	\
+									"@"+dvarString( ui_level_loc_text )+"_DESC",																				\
+									TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_CENTER, WHITE,																			\
+									when( vis );, autowrapped )
+
+#undef CHOICE_Y_START
+#define CHOICE_Y_START					-125
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X					200
+
+#undef A_BUTTON_SIZE
+#define A_BUTTON_SIZE					A_BUTTON_SIZE_GLOBAL
+	
+#undef ON_ESC
+#define ON_ESC							\
+	play uin_navigation_menu_lg_close;	\
+	setDvar settings_map_selected 0;	\
+	setdvar invite_visible "1";			\
+	close self;
+
+	#define MAP_SELECTION_ACTION( mapname )											\
+			setDvar ui_mapname dvarString( ui_load_level );							\
+			play CHOICE_ACTION_SOUND;												\
+			execNow "xupdatepartystate";											\
+			close self;																\
+
+	#define MAP_SELECTION_ACTION_DLC( mapname )										\
+			play CHOICE_ACTION_SOUND;												\
+			setdvar com_errorTitle "@MENU_NOTICE_CAPS";				\
+			setdvar com_errorMessage "@PLATFORM_MISSINGMAP";		\
+			open error_popmenu;
+
+	#define MAP_SELECTION_ONFOCUS( itemIndex, textArg, mapname )					\
+			setDvar ui_level_loc_text textArg;										\
+			setDvar ui_load_level mapname;
+	
+	#define LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( itemIndex, textArg, imageName, mapname, vis )		\
+			FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, "@"+textArg+"_CAPS",						\
+							MAP_SELECTION_ACTION( mapname ),										\
+							MAP_SELECTION_ONFOCUS( itemIndex, textArg, imageName ),					\
+							;,																		\
+							vis, ; )								
+
+	#define LOCAL_MAP_SELECTION_VIS( itemIndex, textArg, imageName, mapname, vis, redactStyle)	\
+			FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, "@"+textArg+"_CAPS",					\
+							MAP_SELECTION_ACTION( mapname ),									\
+							MAP_SELECTION_ONFOCUS( itemIndex, textArg, imageName ),				\
+							;,																	\
+							vis, ; )															\
+							itemDef																\	
+							{																	\
+								style			WINDOW_STYLE_SHADER								\
+								rect			CHOICE_X( itemIndex ) CHOICE_Y( itemIndex ) CHOICE_SIZE_X 20 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN	\
+								forecolor		0 0 0 1											\
+								background		redactStyle										\
+								visible			when (!vis)										\
+								decoration														\
+							}
+	menuDef	
+	{
+		blurWorld				4.8
+
+		name					settings
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+
+		onOpen
+		{
+			play uin_navigation_menu_lg_open;
+			setdvar invite_visible "0";
+			setDvar ui_preview dvarString( ui_mapname );
+			setDvar settings_map_selected 1;
+			//exec "selectStringTableEntryInDvar maps/didyouknow_coop.csv 0 didyouknow"; 
+			//focusfirst; 
+
+			execnow if( menuisopen( menu_xboxlive_privatelobby ) )	ui_animate menu_xboxlive_privatelobby	frame_bg on 100;
+			execnow if( menuisopen( menu_systemlink_lobby ) )		ui_animate menu_systemlink_lobby		frame_bg on 100;
+			execnow if( menuisopen( menu_gamesetup_splitscreen ) )	ui_animate menu_gamesetup_splitscreen	frame_bg on 100;
+		}
+		onEsc
+		{
+			ON_ESC
+		}
+		onClose
+		{
+			execnow if( menuisopen( menu_xboxlive_privatelobby ) )	ui_animate menu_xboxlive_privatelobby	frame_bg default 20;
+			execnow if( menuisopen( menu_systemlink_lobby ) )		ui_animate menu_systemlink_lobby		frame_bg default 20;
+			execnow if( menuisopen( menu_gamesetup_splitscreen ) )	ui_animate menu_gamesetup_splitscreen	frame_bg default 20;
+
+			setdvar invite_visible "1";
+
+			if( dvarString( ui_mapname ) == "zombietron" )
+			{
+				if( dvarBool( splitscreen ) && dvarInt( #"party_maxlocalplayers" ) != 4 )
+				{
+					execNow "party_maxlocalplayers 4";
+					execNow "forcedisableallbutprimaryclients";
+				}
+				elseif( !dvarBool( splitscreen ) && dvarInt( #"party_maxlocalplayers" ) != 2 )
+				{
+					execNow "party_maxlocalplayers 2";
+					execNow "forcedisableallbutprimaryclients";
+				}
+			}
+			elseif( dvarString( ui_mapname ) != "zombietron" && dvarInt( #"party_maxlocalplayers" ) != 2 )
+			{
+				execNow "party_maxlocalplayers 2";
+				execNow "forcedisableallbutprimaryclients";
+			}
+		}
+
+		FRAME_ZOMBIE_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MPUI_CHANGE_MAP_CAPS", 1 )
+
+		LOCAL_MAP_SELECTION_VIS( 1, "MENU_ZOMBIE_THEATER",		"zombie_theater",		"zombie_theater"	,(1),redact1)
+		LOCAL_MAP_SELECTION_VIS( 2, "MENU_ZOMBIE_PENTAGON",		"zombie_pentagon",		"zombie_pentagon"	,(dvarInt( #"zombiefive_discovered" ) == 1),redact2)
+		LOCAL_MAP_SELECTION_VIS( 3, "MENU_ZOMBIETRON",			"zombietron",			"zombietron"		,(dvarInt( #"zombietron_discovered" ) == 1),redact3)
+	
+		// DLC2 UNLOCKED
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 4, "MENU_ZOMBIE_COSMODROME",	"zombie_cosmodrome",	"zombie_cosmodrome", !dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 8, "MENU_ZOMBIE_COSMODROME",	"zombie_cosmodrome",	"zombie_cosmodrome", dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) )
+		// DLC2 UNLOCKED
+		
+		// DLC3 UNLOCKED
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 4, "MENU_ZOMBIE_COAST",	"zombie_coast",		"zombie_coast", !dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 8, "MENU_ZOMBIE_COAST",	"zombie_coast",		"zombie_coast", dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 5, "MENU_ZOMBIE_COAST",	"zombie_coast",		"zombie_coast", !dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 9, "MENU_ZOMBIE_COAST",	"zombie_coast",		"zombie_coast", dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) )
+		// DLC3 UNLOCKED
+		
+		// DLC4 UNLOCKED
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 4, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", !dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && !dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 8, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && !dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 5, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", !dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && !dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 9, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && !dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 5, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", !dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 9, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 6, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", !dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 10, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		// DLC4 UNLOCKED						
+
+#ifdef PC
+	FRAME_BACK_BUTTON_DEFAULT_ACTION( ON_ESC )
+#else //#ifdef PC
+	FRAME_BACK_BUTTON_DEFAULT
+#endif //#ifdef PC
+		
+		MISSION_SELELCT_INFO( 1 ) //visible argument just in case we want to display all maps even ones that are not selectable yet.	
+	}
+
+	#include "ui_mp/popupstyle.inc"
+	#include "ui/choices_setup_popmenu.menu"
+
+	#undef	CHOICE_Y_START			// This is being done so the preferences buttons will be at the top for these two popups only.
+	#define CHOICE_Y_START			( POPUP_SIDE_PAD + SYSTEM_POPUP_TITLE_HEIGHT + POPUP_SIDE_PAD )
+	
+	#undef CHOICE_DVAR_OFFSET_X
+	#define CHOICE_DVAR_OFFSET_X	(CHOICE_SIZE_X-85)
+
+	#undef	CHOICE_BUTTON_NAME
+	#define CHOICE_BUTTON_NAME		"popup_preferences_both_"
+	#undef	MENUDEF_NAME
+	#define MENUDEF_NAME			popup_preferences_both
+	
+		#define PREFERENCES_ONOPEN_ACTION													\
+				setdvar invite_visible "0";													\
+				execNow set original_party_privacy ( dvarInt( party_privacyStatus ) );		\
+				exec "selectStringTableEntryInDvar maps/didyouknow_coop.csv 0 didyouknow";
+
+		#define PREFERENCES_ONESC_ACTION													\
+				setdvar invite_visible "1";													\
+				if( dvarInt( original_party_privacy ) != dvarInt( party_privacyStatus ) )	\
+				{																			\
+					exec "xsessionupdateprivacy";											\
+				}																			\
+				execNow "updategamerprofile";		
+
+	#undef ON_ESC
+	#define ON_ESC					\
+		PREFERENCES_ONESC_ACTION	\
+		close self;
+			
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_preferences_both, PREFERENCES_ONOPEN_ACTION, PREFERENCES_ONESC_ACTION, 1 )
+		execKeyInt BUTTON_A
+		{
+			ON_ESC
+		}
+		
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_PREFERENCES_CAPS", 1 )
+	
+#ifdef PC
+	#define PRIVACY_ACTION_OPEN_FRIENDS_DESC	exec "set ui_privacy_pref_desc @PLATFORM_OPEN_FRIENDS_DESC";
+#else //#ifdef PC
+	#define PRIVACY_ACTION_OPEN_FRIENDS_DESC	exec "set ui_privacy_pref_desc @MENU_OPEN_FRIENDS_DESC";
+#endif //#ifdef PC
+				
+		#define PRIVACY_ACTION													\
+				if( dvarInt( party_privacyStatus ) == 0 )						\
+				{																\
+					exec "set ui_privacy_pref_desc @MENU_OPEN_DESC";			\
+				}																\
+				elseif( dvarInt( party_privacyStatus ) == 1 )					\
+				{																\
+					PRIVACY_ACTION_OPEN_FRIENDS_DESC							\
+				}																\
+				elseif( dvarInt( party_privacyStatus ) == 2 )					\
+				{																\
+					exec "set ui_privacy_pref_desc @MENU_INVITE_ONLY_DESC";		\
+				}																\
+				elseif( dvarInt( party_privacyStatus ) == 3 )					\
+				{																\
+					exec "set ui_privacy_pref_desc @MENU_CLOSE_DESC";			\
+				}
+
+		#define LOCALE_ACTION													\
+				if( dvarInt( geographicalMatchmaking ) == 0 )					\
+				{																\
+					exec "set ui_search_pref_desc @MPUI_ANY_LOCALE_DESC";		\
+				}																\
+				elseif( dvarInt( geographicalMatchmaking ) == 1 )				\
+				{																\
+					exec "set ui_search_pref_desc @MPUI_LOCALE_PREFERRED_DESC";	\
+				}																\
+				elseif( dvarInt( geographicalMatchmaking ) == 2 )				\
+				{																\
+					exec "set ui_search_pref_desc @MPUI_LOCALE_ONLY_DESC";		\
+				}
+
+	#define SEARCH_PREFERENCES_INDEX	2
+
+		#undef A_BUTTON_OFFSET_X
+		#define A_BUTTON_OFFSET_X		100000
+
+#ifdef PS3
+		FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS( 1, "@MPUI_LOBBY_PRIVACY_CAPS", party_privacyStatus, { "@MPUI_OPEN_CAPS" 0 "@MPUI_INVITE_ONLY_CAPS" 2 "@MPUI_CLOSE_CAPS" 3 }, PRIVACY_ACTION, PRIVACY_ACTION, ;, 1 )
+#endif	//#ifdef PS3
+#ifdef XENON
+		FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS( 1, "@MPUI_LOBBY_PRIVACY_CAPS", party_privacyStatus, { "@MPUI_OPEN_CAPS" 0 "@MPUI_OPEN_FRIENDS_CAPS" 1 "@MPUI_INVITE_ONLY_CAPS" 2 "@MPUI_CLOSE_CAPS" 3 }, PRIVACY_ACTION, PRIVACY_ACTION, ;, 1 )
+#endif //#ifdef XENON
+
+#ifdef PC
+	#undef CHOICE_TEXTSIZE
+	#define CHOICE_TEXTSIZE TEXTSIZE_SMALL
+
+	#undef CHOICE_DVAR_OFFSET_X
+	#define CHOICE_DVAR_OFFSET_X	145
+
+	#undef CHOICE_SIZE_X
+	#define CHOICE_SIZE_X	(SYSTEM_POPUP_WIDTH-30)
+	
+	FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS( 1, "@MPUI_LOBBY_PRIVACY_CAPS", party_privacyStatus, { "@MPUI_OPEN_CAPS" 0 "@MPUI_OPEN_FRIENDS_CAPS" 1 "@MPUI_INVITE_ONLY_CAPS" 2 "@MPUI_CLOSE_CAPS" 3 }, PRIVACY_ACTION, PRIVACY_ACTION, ;, dvarInt( ui_multiplayer ) == 0 )
+#endif //#ifdef PC
+
+		FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS( 2, "@MPUI_MATCHMAKING_OPTIONS_CAPS", geographicalMatchmaking, { "@MPUI_ANY_LOCALE_CAPS" 0 "@MPUI_LOCALE_PREFERRED_CAPS" 1 "@MPUI_LOCALE_ONLY_CAPS" 2 }, LOCALE_ACTION, LOCALE_ACTION, ;, 1 )
+
+		#undef A_BUTTON_OFFSET_X
+		#define A_BUTTON_OFFSET_X		3
+
+		HINT_TEXT_ALL( 3, CHOICE_X_START, (CHOICE_SIZE_Y/2), CHOICE_SIZE_X, dvarString( ui_privacy_pref_desc ), 1 1 1 1, ( localVarInt( ui_highlight ) == 1 ), ; )
+		HINT_TEXT_ALL( 3, CHOICE_X_START, (CHOICE_SIZE_Y/2), CHOICE_SIZE_X, dvarString( ui_search_pref_desc ), 1 1 1 1, ( localVarInt( ui_highlight ) == 2 ), ; )
+
+#ifdef PC
+		SIMPLE_CHOICE_BUTTON_SOUND( 0 (SYSTEM_POPUP_HEIGHT) 80 16, "@PLATFORM_DONE_SELECT", ITEM_ALIGN_MIDDLE_CENTER, ON_ESC )
+#else //#ifdef PC
+		SYSTEM_POPUP_BACK_BUTTON
+#endif //#ifdef PC
+}
+
+
+	#undef	CHOICE_BUTTON_NAME
+	#define CHOICE_BUTTON_NAME		"popup_preferences_privacy_"
+	#undef	MENUDEF_NAME
+	#define MENUDEF_NAME			popup_preferences_privacy
+	menuDef
+	{		
+		SYSTEM_POPUP_SETUP_VIS( popup_preferences_privacy, PREFERENCES_ONOPEN_ACTION, PREFERENCES_ONESC_ACTION, 1 )
+		
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_PREFERENCES_CAPS", 1 )																																						
+
+		#undef A_BUTTON_OFFSET_X
+		#define A_BUTTON_OFFSET_X		100000
+
+#ifdef PS3
+		FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS( 1, "@MPUI_LOBBY_PRIVACY_CAPS", party_privacyStatus, { "@MPUI_INVITE_ONLY_CAPS" 2 "@MPUI_CLOSE_CAPS" 3 }, PRIVACY_ACTION, PRIVACY_ACTION, ;, 1 )
+#else //#ifdef PS3
+		FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS( 1, "@MPUI_LOBBY_PRIVACY_CAPS", party_privacyStatus, { "@MPUI_OPEN_CAPS" 0 "@MPUI_OPEN_FRIENDS_CAPS" 1 "@MPUI_INVITE_ONLY_CAPS" 2 "@MPUI_CLOSE_CAPS" 3 }, PRIVACY_ACTION, PRIVACY_ACTION, ;, 1 )
+#endif	//	#ifdef PS3
+
+		HINT_TEXT_ALL( 2, CHOICE_X_START, (CHOICE_SIZE_Y/2), CHOICE_SIZE_X, dvarString( ui_privacy_pref_desc ), 1 1 1 1, ( localVarInt( ui_highlight ) == 1 ), ; )
+
+		#undef A_BUTTON_OFFSET_X
+		#define A_BUTTON_OFFSET_X		3
+
+		SIMPLE_CHOICE_BUTTON_SOUND( 0 (SYSTEM_POPUP_HEIGHT) 80 16, "@PLATFORM_DONE_SELECT", ITEM_ALIGN_MIDDLE_CENTER, ON_ESC )
+	}
+}

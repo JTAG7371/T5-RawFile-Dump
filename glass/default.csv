@@ -1,0 +1,17 @@
+# verbose
+
+common,18000
+
+smallAllocatorBlocks,200,5,160,10,120,50,100,100
+groups,
+shards,
+physics,
+shardMemory,11000
+freeCmd,
+slots,20
+verts,1600,5,1024,20
+
+# These are values from sizeof()
+ShardGroupSize,92
+ShardSize,176
+PhysicsSize,160

@@ -1,0 +1,176 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#ifdef PC
+	#define 	SCOREBAR_OFFSET 0 4
+#else
+	#define 	SCOREBAR_OFFSET 0 0
+#endif
+	
+
+{	
+	menuDef  // Stub: the scoreboard is controlled by code
+	{
+		name			"scoreboard"
+		rect			0 0 640 480
+		onEsc 
+		{
+#ifdef PC		
+			setdvar ui_showEndOfGame "1";
+#endif	
+			close scoreboard;
+		}
+#ifdef PC
+		onClose
+		{
+			exec "set cg_hudChatPosition 5 200";
+		}
+		onOpen
+		{
+			exec "set cg_hudChatPosition 5 100";
+		}
+
+// 		itemDef 
+// 		{
+// 			type		ITEM_TYPE_TEXT
+// 			rect		0 22 1 1 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP
+// 			origin		SCOREBAR_OFFSET
+// 			text		"@PLATFORM_EOG_PRESS_ESC"
+// 			textfont	UI_FONT_NORMAL
+// 			textscale	TEXTSIZE_SMALL
+// 			textalign	ITEM_ALIGN_CENTER
+// 			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
+// 			visible 	when( isIntermission() )
+// 			decoration 
+// 		}
+#endif	
+
+		// Gametype / status
+		PREPROC_TEXT_DRAW_ALL(	-240 22 1 1 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								"@MENU_WINNING_CAPS",
+								TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_LEFT, 1 1 1 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( !IsSplitscreen() && !isIntermission() && (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_AXIS") && team( score ) > otherteam( score ) && (timeLeft() / 1000) % 8 > 3 && (dvarString( "g_gametype" ) != "twar") && (dvarString( "g_gametype" ) != "iwar") );, ; )
+
+		PREPROC_TEXT_DRAW_ALL(	-240 22 1 1 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								"@MENU_LOSING_CAPS",
+								TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_LEFT, 1 1 1 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( !IsSplitscreen() && !isIntermission() && (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_AXIS") && team( score ) < otherteam( score ) && (timeLeft() / 1000) % 8 > 3 && (dvarString( "g_gametype" ) != "twar") && (dvarString( "g_gametype" ) != "iwar") );, ; )
+
+		PREPROC_TEXT_DRAW_ALL(	-240 22 1 1 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								"@MENU_TIED_CAPS",
+								TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_LEFT, 1 1 1 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( !IsSplitscreen() && !isIntermission() && (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_AXIS") && team( score ) == otherteam( score ) && (timeLeft() / 1000) % 8 > 3 && (dvarString( "g_gametype" ) != "twar") && (dvarString( "g_gametype" ) != "iwar") );, ; )
+
+		PREPROC_TEXT_DRAW_ALL(	-240 22 1 1 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								toUpper( gameTypeName() ),
+								TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_LEFT, 1 1 1 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( !IsSplitscreen() && !isIntermission() && (((timeLeft() / 1000) % 8 < 4 || (timeLeft() / 1000) < 0) || ((dvarString( "g_gametype" ) == "twar") || (dvarString( "g_gametype" ) == "iwar"))) && !isDisplayingPartyScoreboard() );, ; )
+		
+		// Party scoreboard title
+		PREPROC_TEXT_DRAW_ALL(	-240 42 1 1 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								"@MENU_THEATER_PARTY",
+								TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_LEFT, 1 1 1 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( !IsSplitscreen() && isDisplayingPartyScoreboard() );, ; )
+
+		// Time						
+		PREPROC_TEXT_DRAW_ALL(	200 22 40 1 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								secondsAsCountdown( timeLeft() ),
+								TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_RIGHT, 1 1 1 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when ( !IsSplitscreen() && (timeLeft() / 1000) >= 30 );, ; )
+
+		PREPROC_TEXT_DRAW_ALL(	200 22 40 1 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								secondsAsCountdown( timeLeft() ),
+								TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_RIGHT, 1 0.75 0 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( (!IsSplitscreen() && timeLeft() / 1000) >= 10 && (timeLeft() / 1000) < 30 );, ; )
+
+		PREPROC_TEXT_DRAW_ALL(	200 22 40 1 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								secondsAsCountdown( timeLeft() ),
+								TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_RIGHT, 1 0.5 0 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( !IsSplitscreen() && (timeLeft() / 1000) >= 0 && (timeLeft() / 1000) < 10 );, ; )
+
+		// Splitscreen
+		
+		// Gametype / status
+		PREPROC_TEXT_DRAW_ALL(	100 42 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								"@MENU_WINNING_CAPS",
+								(TEXTSIZE_LARGE*SPLITSCREEN_MULTIPLIER), 0, 0, ITEM_ALIGN_LEFT, 1 1 1 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( IsSplitscreen() && !isIntermission() && (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_AXIS") && team( score ) > otherteam( score ) && (timeLeft() / 1000) % 8 > 3 && (dvarString( "g_gametype" ) != "twar") && (dvarString( "g_gametype" ) != "iwar") );, ; )
+
+		PREPROC_TEXT_DRAW_ALL(	150 42 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								"@MENU_LOSING_CAPS",
+								(TEXTSIZE_LARGE*SPLITSCREEN_MULTIPLIER), 0, 0, ITEM_ALIGN_LEFT, 1 1 1 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( IsSplitscreen() && !isIntermission() && (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_AXIS") && team( score ) < otherteam( score ) && (timeLeft() / 1000) % 8 > 3 && (dvarString( "g_gametype" ) != "twar") && (dvarString( "g_gametype" ) != "iwar") );, ; )
+
+		PREPROC_TEXT_DRAW_ALL(	150 42 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								"@MENU_TIED_CAPS",
+								(TEXTSIZE_LARGE*SPLITSCREEN_MULTIPLIER), 0, 0, ITEM_ALIGN_LEFT, 1 1 1 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( IsSplitscreen() && !isIntermission() && (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_AXIS") && team( score ) == otherteam( score ) && (timeLeft() / 1000) % 8 > 3 && (dvarString( "g_gametype" ) != "twar") && (dvarString( "g_gametype" ) != "iwar") );, ; )
+
+		PREPROC_TEXT_DRAW_ALL(	150 42 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								toUpper( gameTypeName() ),
+								(TEXTSIZE_LARGE*SPLITSCREEN_MULTIPLIER), 0, 0, ITEM_ALIGN_LEFT, 1 1 1 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( IsSplitscreen() && !isIntermission() && (((timeLeft() / 1000) % 8 < 4 || (timeLeft() / 1000) < 0) || ((dvarString( "g_gametype" ) == "twar") || (dvarString( "g_gametype" ) == "iwar"))) && !isDisplayingPartyScoreboard() );, ; )
+		
+		// Time						
+		PREPROC_TEXT_DRAW_ALL(	-150 42 40 1 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								secondsAsCountdown( timeLeft() ),
+								(TEXTSIZE_LARGE*SPLITSCREEN_MULTIPLIER), 0, 0, ITEM_ALIGN_RIGHT, 1 1 1 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( IsSplitscreen() && (timeLeft() / 1000) >= 30 );, ; )
+
+		PREPROC_TEXT_DRAW_ALL(	-150 42 40 1 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								secondsAsCountdown( timeLeft() ),
+								(TEXTSIZE_LARGE*SPLITSCREEN_MULTIPLIER), 0, 0, ITEM_ALIGN_RIGHT, 1 0.75 0 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( IsSplitscreen() && (timeLeft() / 1000) >= 10 && (timeLeft() / 1000) < 30 );, ; )
+
+		PREPROC_TEXT_DRAW_ALL(	-150 42 40 1 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP,
+								SCOREBAR_OFFSET,
+								secondsAsCountdown( timeLeft() ),
+								(TEXTSIZE_LARGE*SPLITSCREEN_MULTIPLIER), 0, 0, ITEM_ALIGN_RIGHT, 1 0.5 0 1,
+								UI_FONT_EXTRABIG,
+								ITEM_TEXTSTYLE_SHADOWEDMORE,
+								when( IsSplitscreen() && (timeLeft() / 1000) >= 0 && (timeLeft() / 1000) < 10 );, ; )
+	}
+
+}

@@ -1,0 +1,149 @@
+"fakelight normal":
+ 	sw_cod7_window_flicker_rad_vc_mtc_tex_normal_matcolor;
+"fakelight view":
+ 	sw_cod7_window_flicker_rad_vc_mtc_tex_view_matcolor;
+"unlit":
+ 	sw_cod7_window_flicker_rad_vc_mtc_tex_matcolor;
+"case texture":
+ 	sw_cod7_window_flicker_rad_vc_mtc_tex_case;
+"shaded wireframe":
+ 	sw_cod7_window_flicker_rad_vc_mtc_tex_matcolor_wireframe;
+"solid wireframe":
+ 	sw_cod7_window_flicker_rad_vc_mtc_wireframe;
+
+"depth prepass":
+	mtc_sw_cod7_window_flicker_noalpha_zpass;
+
+"build shadowmap depth":
+ 	mtc_sw_cod7_window_flicker_noalpha_none;
+
+"light spot":
+ 	mtc_sw_cod7_window_flicker_lightspot;
+"light spot shadow":
+ 	mtc_sw_cod7_window_flicker_lightspot_shad;
+"light omni":
+	mtc_sw_cod7_window_flicker_lightomni;
+
+"sunlight preview":
+	mtc_sw_cod7_window_flicker_sunprev;
+
+"lit":
+"lit charred":
+  	mtc_sw_cod7_window_flicker_m_sun;
+"lit sun":
+"lit sun charred":
+	mtc_sw_cod7_window_flicker_m_sun;
+"lit sun shadow":
+"lit sun shadow charred":
+ 	mtc_sw_cod7_window_flicker_m_sun_shad;
+"lit spot":
+"lit spot charred":
+ 	mtc_sw_cod7_window_flicker_m_spot;
+"lit spot shadow":
+"lit spot shadow charred":
+ 	mtc_sw_cod7_window_flicker_m_spot_shad;
+"lit omni":
+"lit omni charred":
+ 	mtc_sw_cod7_window_flicker_m_omni;
+"lit omni shadow":
+"lit omni shadow charred":
+ 	mtc_sw_cod7_window_flicker_m_omni_shad;
+
+"lit nvintz":
+  	mtc_sw_cod7_window_flicker_m_sun_nv_intz;
+"lit sun nvintz":
+	mtc_sw_cod7_window_flicker_m_sun_nv_intz;
+"lit sun shadow nvintz":
+ 	mtc_sw_cod7_window_flicker_m_sun_shad_nv_intz;
+"lit spot nvintz":
+ 	mtc_sw_cod7_window_flicker_m_spot_nv_intz;
+"lit spot shadow nvintz":
+ 	mtc_sw_cod7_window_flicker_m_spot_shad_nv_intz;
+"lit omni nvintz":
+ 	mtc_sw_cod7_window_flicker_m_omni_nv_intz;
+"lit omni shadow nvintz":
+ 	mtc_sw_cod7_window_flicker_m_omni_shad_nv_intz;
+
+"lit dlight":
+"lit sun dlight":
+  	mtc_sw_cod7_window_flicker_m_sun_dlight;
+"lit sun shadow dlight":
+ 	mtc_sw_cod7_window_flicker_m_sun_shad_dlight;
+"lit spot dlight":
+ 	mtc_sw_cod7_window_flicker_m_spot_dlight;
+"lit spot shadow dlight":
+ 	mtc_sw_cod7_window_flicker_m_spot_shad_dlight;
+"lit omni dlight":
+ 	mtc_sw_cod7_window_flicker_m_omni_dlight;
+"lit omni shadow dlight":
+ 	mtc_sw_cod7_window_flicker_m_omni_shad_dlight;
+
+"lit glight":
+"lit sun glight":
+  	mtc_sw_cod7_window_flicker_m_sun_glight;
+"lit sun shadow glight":
+ 	mtc_sw_cod7_window_flicker_m_sun_shad_glight;
+"lit spot glight":
+ 	mtc_sw_cod7_window_flicker_m_spot_glight;
+"lit spot shadow glight":
+ 	mtc_sw_cod7_window_flicker_m_spot_shad_glight;
+"lit omni glight":
+ 	mtc_sw_cod7_window_flicker_m_omni_glight;
+"lit omni shadow glight":
+ 	mtc_sw_cod7_window_flicker_m_omni_shad_glight;
+
+"lit dlight glight":
+"lit sun dlight glight":
+  	mtc_sw_cod7_window_flicker_m_sun_dlight_glight;
+"lit sun shadow dlight glight":
+ 	mtc_sw_cod7_window_flicker_m_sun_shad_dlight_glight;
+"lit spot dlight glight":
+ 	mtc_sw_cod7_window_flicker_m_spot_dlight_glight;
+"lit spot shadow dlight glight":
+ 	mtc_sw_cod7_window_flicker_m_spot_shad_dlight_glight;
+"lit omni dlight glight":
+ 	mtc_sw_cod7_window_flicker_m_omni_dlight_glight;
+"lit omni shadow dlight glight":
+ 	mtc_sw_cod7_window_flicker_m_omni_shad_dlight_glight;
+
+"lit dlight nvintz":
+"lit sun dlight nvintz":
+  	mtc_sw_cod7_window_flicker_m_sun_dlight_nv_intz;
+"lit sun shadow dlight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_sun_shad_dlight_nv_intz;
+"lit spot dlight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_spot_dlight_nv_intz;
+"lit spot shadow dlight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_spot_shad_dlight_nv_intz;
+"lit omni dlight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_omni_dlight_nv_intz;
+"lit omni shadow dlight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_omni_shad_dlight_nv_intz;
+
+"lit glight nvintz":
+"lit sun glight nvintz":
+  	mtc_sw_cod7_window_flicker_m_sun_glight_nv_intz;
+"lit sun shadow glight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_sun_shad_glight_nv_intz;
+"lit spot glight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_spot_glight_nv_intz;
+"lit spot shadow glight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_spot_shad_glight_nv_intz;
+"lit omni glight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_omni_glight_nv_intz;
+"lit omni shadow glight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_omni_shad_glight_nv_intz;
+
+"lit dlight glight nvintz":
+"lit sun dlight glight nvintz":
+  	mtc_sw_cod7_window_flicker_m_sun_dlight_glight_nv_intz;
+"lit sun shadow dlight glight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_sun_shad_dlight_glight_nv_intz;
+"lit spot dlight glight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_spot_dlight_glight_nv_intz;
+"lit spot shadow dlight glight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_spot_shad_dlight_glight_nv_intz;
+"lit omni dlight glight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_omni_dlight_glight_nv_intz;
+"lit omni shadow dlight glight nvintz":
+ 	mtc_sw_cod7_window_flicker_m_omni_shad_dlight_glight_nv_intz;

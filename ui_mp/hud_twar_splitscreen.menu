@@ -1,0 +1,149 @@
+// CONSOLE HUD - MP
+
+#define SPLITSCREEN_ENABLED	1
+
+#include "ui/menudef.h"
+#include "ui_mp/hud_gametypes.inc"
+
+{
+	// Bottom bar
+	menuDef
+	{
+		name			"teamiconbar_ss"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible 		1
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_UI_ACTIVE SHOULD_DISPLAY_SCOREBAR )
+
+		// grey background
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 0 (210*SPLITSCREEN_MULTIPLIER) 0 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect Y( (-45*SPLITSCREEN_MULTIPLIER) + (TEAM_IS_LOSING*(20*SPLITSCREEN_MULTIPLIER)) );
+			exp				rect H( (64*SPLITSCREEN_MULTIPLIER) - (TEAM_IS_LOSING2*(128*SPLITSCREEN_MULTIPLIER)) );
+			forecolor		1 1 1 HUD_ALPHA
+			background		"scorebar_backdrop"
+			visible			1
+			decoration
+		}
+
+		// allies icon
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(5*SPLITSCREEN_MULTIPLIER) (-60*SPLITSCREEN_MULTIPLIER) (56*SPLITSCREEN_MULTIPLIER) (56*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( dvarString( "g_TeamIcon_Axis" ) );
+			visible			when ( team( name ) == "TEAM_AXIS" );
+			forecolor		1 1 1 1
+			decoration
+		}
+
+		// axis icon
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(5*SPLITSCREEN_MULTIPLIER) (-60*SPLITSCREEN_MULTIPLIER) (56*SPLITSCREEN_MULTIPLIER) (56*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( dvarString( "g_TeamIcon_Allies" ) );
+			visible			when ( team( name ) == "TEAM_ALLIES" ); 
+			forecolor		1 1 1 1
+			decoration
+		}
+
+		// momentum progress
+		// version 2
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(65*SPLITSCREEN_MULTIPLIER) (-43*SPLITSCREEN_MULTIPLIER) (90*SPLITSCREEN_MULTIPLIER) (40*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		1 1 1 1
+			background		"hud_momentum_progress_bar_empty"
+			ownerdraw		CG_HUD_WAR_MOMENTUM_PROGRESS_BAR_EMPTY
+			visible			1
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(65*SPLITSCREEN_MULTIPLIER) (-43*SPLITSCREEN_MULTIPLIER) (90*SPLITSCREEN_MULTIPLIER) (40*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		1 1 1 1
+			background		"hud_momentum_progress_bar_full"
+			ownerdraw		CG_HUD_WAR_MOMENTUM_PROGRESS_BAR_FULL
+			visible			1
+			decoration
+		}
+
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(65*SPLITSCREEN_MULTIPLIER) (-43*SPLITSCREEN_MULTIPLIER) (90*SPLITSCREEN_MULTIPLIER) (40*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		1 1 1 1
+			background		"hud_blitzkrieg_progress_bar_full"
+			ownerdraw		CG_HUD_WAR_BLITZKRIEG_PROGRESS_BAR_FULL
+			visible			1
+			decoration
+		}
+
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(65*SPLITSCREEN_MULTIPLIER) (-43*SPLITSCREEN_MULTIPLIER) (90*SPLITSCREEN_MULTIPLIER) (40*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		1 1 1 1
+			background		"hud_momentum_progress_bar_outline"
+			ownerdraw		CG_HUD_WAR_MOMENTUM_PROGRESS_BAR_OUTLINE
+			visible			1
+			decoration
+		}
+
+		// momentum blitzkrieg icon
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(150*SPLITSCREEN_MULTIPLIER) (-55*SPLITSCREEN_MULTIPLIER) (32*SPLITSCREEN_MULTIPLIER) (32*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		1 1 1 1
+			background		"hud_momentum_blitzkrieg"
+			ownerdraw		CG_HUD_WAR_MOMENTUM_MULTIPLIER_BLITZKRIEG
+			visible			1
+			decoration
+		}
+	}
+
+	// War flag-status bar
+	menuDef
+	{
+		name			"war_statusbar_ss"
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible 		when ( dvarstring( "war_sb" ) != "" );
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_SPECTATING_CLIENT !BIT_SCOREBOARD_OPEN )
+		
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			(-BARWIDTH/2) 6 BARWIDTH (18*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP
+			background		"line_horizontal"
+			forecolor		0 0 0 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name			war_text
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			dvar			"war_sb"
+			rect			(-500*SPLITSCREEN_MULTIPLIER) (20*SPLITSCREEN_MULTIPLIER) (1000*SPLITSCREEN_MULTIPLIER) 2 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_CENTER
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		0.3 1 0.3 1
+			ownerdraw		CG_WAR_TEXT
+			visible			1
+			decoration 
+		}
+	}
+}

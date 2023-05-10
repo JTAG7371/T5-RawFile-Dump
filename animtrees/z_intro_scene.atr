@@ -1,0 +1,20 @@
+// Chair anims for the z_intro_scene scripts
+
+o_zom_s01_intro_chair_castro
+o_zom_s01_intro_chair_jfk
+o_zom_s01_intro_chair_mcnamara
+o_zom_s01_intro_chair_nixon
+
+o_zom_s02_intro_chair_castro
+o_zom_s02_intro_chair_jfk
+o_zom_s02_intro_chair_mcnamara
+o_zom_s02_intro_chair_nixon
+
+o_zom_s03_intro_chair_castro
+o_zom_s03_intro_chair_jfk
+o_zom_s03_intro_chair_mcnamara
+o_zom_s03_intro_chair_nixon
+
+o_zom_s03_intro_weapon_cash_anim
+o_zom_s03_intro_weapon_cash_closed
+o_zom_s03_intro_weapon_cash_open

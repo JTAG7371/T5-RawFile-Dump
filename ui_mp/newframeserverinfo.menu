@@ -1,0 +1,174 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+
+#define CHOICE_GROUP			"serverinfo"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/choices_setup_popmenu.menu"
+
+
+#undef	CHOICE_HORIZONTAL_ALIGN 
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_CENTER 
+
+#undef  CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_CENTER
+
+#define SIDE_MARGIN		20
+
+#undef 	ORIGIN_TITLE
+#define ORIGIN_TITLE		10 0
+
+#define INFO_BOX_HEIGHT 300
+#define INFO_BOX_WIDTH	(INFO_BOX_HEIGHT * FRAME_ASPECT_RATIO)
+#define INFO_BOX_SIZE 	INFO_BOX_WIDTH INFO_BOX_HEIGHT
+#define INFO_BOX_X_OFFSET 10
+#define INFO_BOX_Y_OFFSET 10
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X	(INFO_BOX_WIDTH+(SIDE_MARGIN*2))
+
+#undef CHOICE_POPUP_TITLE_HEIGHT
+#define CHOICE_POPUP_TITLE_HEIGHT	(INFO_BOX_HEIGHT+SIDE_MARGIN+24)
+
+
+#undef SMALL_CENTER_POPUP_HEIGHT
+#undef SMALL_CENTER_POPUP_WIDTH
+
+#define SMALL_CENTER_POPUP_HEIGHT INFO_BOX_HEIGHT
+#define SMALL_CENTER_POPUP_WIDTH INFO_BOX_WIDTH
+
+{
+	menuDef
+	{
+			SMALL_CENTER_POPUP_SETUP( newframeserverinfo, 1, setdvar ui_serverinfomessage ""; uiScript ServerStatus;, ;)
+			PREPROC_TEXT_DRAW( INFO_BOX_X_OFFSET INFO_BOX_Y_OFFSET 1 1 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, ORIGIN_TITLE, "SERVER NAME HERE", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_GREY_RGB 1 )
+			
+		#define BUTTON_SPACING	20
+		#define BACK_OFFSET		( NEW_FRAME_DEFAULT_TITLE_X_OFFSET )
+		#define SCORE_OFFSET	( BACK_OFFSET + getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+		#define REFRESH_OFFSET	( SCORE_OFFSET + getTextWidth( locString( "@MENU_SCOREBOARD" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+		
+			SIMPLE_CHOICE_BUTTON_SOUND( 0 (SMALL_CENTER_POPUP_HEIGHT+4) 70 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+				exp rect X( BACK_OFFSET ), 
+				"@PLATFORM_BACK", ITEM_ALIGN_MIDDLE_CENTER, close self; )
+
+			SIMPLE_CHOICE_BUTTON_SOUND( 0 (SMALL_CENTER_POPUP_HEIGHT+4) 70 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+				exp rect X( SCORE_OFFSET ), 
+				"@MENU_SCOREBOARD", ITEM_ALIGN_MIDDLE_CENTER, setdvar ui_serverinfomessage ""; open newframescoreinfo; )
+
+			SIMPLE_CHOICE_BUTTON_SOUND( 0 (SMALL_CENTER_POPUP_HEIGHT+4) 70 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+				exp rect X( REFRESH_OFFSET ), 
+				"@MENU_REFRESH", ITEM_ALIGN_MIDDLE_CENTER, uiScript ServerStatus; )
+
+		itemDef {
+			name			serverinfo
+			rect			(INFO_BOX_X_OFFSET) (INFO_BOX_Y_OFFSET+30) (INFO_BOX_WIDTH/2-INFO_BOX_X_OFFSET) (INFO_BOX_HEIGHT/4*3) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+			type			ITEM_TYPE_LISTBOX
+			style			WINDOW_STYLE_FILLED
+			elementwidth	120
+			elementheight	16
+			textfont		UI_FONT_NORMAL
+			textscale		.25
+			forecolor 		1 1 1 0.9
+			focusColor		1 1 1 0.9
+			disableColor 	1 1 1 0.9
+			backcolor		0 0 0 0
+			border			0
+			elementtype		LISTBOX_TEXT
+			feeder			FEEDER_SERVERSTATUS
+			notselectable
+			focuscolor		COLOR_FOCUSED
+			noscrollbars
+			visible			1
+			columns			2	2 	50 	20
+								100 40 	40
+	 	}
+
+#define LOGO_X		0
+#define LOGO_Y		0
+#define LOGO_WIDTH	100
+#define LOGO_RECT LOGO_X LOGO_Y LOGO_WIDTH LOGO_WIDTH
+#define BANNER_X	LOGO_X
+#define BANNER_Y	(LOGO_Y + LOGO_WIDTH + 20)
+#define BANNER_WIDTH 100
+#define BANNER_RECT BANNER_X BANNER_Y BANNER_WIDTH BANNER_WIDTH
+
+		itemDef 
+		{
+			name			"serverbanner"
+			rect			(INFO_BOX_X_OFFSET*4+(INFO_BOX_WIDTH/2)) (INFO_BOX_Y_OFFSET+30) (INFO_BOX_WIDTH/2-INFO_BOX_X_OFFSET*8) (INFO_BOX_WIDTH/2-INFO_BOX_X_OFFSET*8) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+			forecolor		1 1 1 1
+			style			WINDOW_STYLE_SHADER
+			background		"server_banner"
+			visible			1
+			decoration
+		}
+
+		itemDef
+		{
+			name			"servermessage"
+			type			ITEM_TYPE_TEXT
+			rect			(INFO_BOX_X_OFFSET+(INFO_BOX_WIDTH/2)+INFO_BOX_X_OFFSET) (INFO_BOX_Y_OFFSET+30+(INFO_BOX_WIDTH/2-INFO_BOX_X_OFFSET*7)) (INFO_BOX_WIDTH/2-INFO_BOX_X_OFFSET*3) (INFO_BOX_WIDTH/2-INFO_BOX_X_OFFSET*13) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+			textalign		ITEM_ALIGN_LEFT
+			textaligny		10
+			textfont		UI_FONT_NORMAL
+			textscale		.25
+			forecolor		1 1 1 1
+			exp				text( dvarString(ui_serverinfomessage));
+			visible			1
+			decoration
+			autowrapped
+		}
+	}
+
+	menuDef
+	{
+			SMALL_CENTER_POPUP_SETUP( newframescoreinfo, 1, uiScript ServerStatusScoreBoard;, ;)
+			PREPROC_TEXT_DRAW( INFO_BOX_X_OFFSET INFO_BOX_Y_OFFSET 1 1 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, ORIGIN_TITLE, "SCOREBOARD", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_GREY_RGB 1 )
+			
+		#define BUTTON_SPACING	20
+		#define BACK_OFFSET		( NEW_FRAME_DEFAULT_TITLE_X_OFFSET )
+		#define REFRESH_OFFSET	( BACK_OFFSET + getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+		
+			SIMPLE_CHOICE_BUTTON_SOUND( 0 (SMALL_CENTER_POPUP_HEIGHT+4) 70 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+				exp rect X( BACK_OFFSET ), 
+				"@PLATFORM_BACK", ITEM_ALIGN_MIDDLE_CENTER, close self; open newframeserverinfo; )
+
+			SIMPLE_CHOICE_BUTTON_SOUND( 0 (SMALL_CENTER_POPUP_HEIGHT+4) 70 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+				exp rect X( REFRESH_OFFSET ), 
+				"@MENU_REFRESH", ITEM_ALIGN_MIDDLE_CENTER, uiScript ServerStatusScoreBoard; )
+
+		itemDef {
+			name			serverinfoscoreboard
+			rect			(INFO_BOX_X_OFFSET) (INFO_BOX_Y_OFFSET+30) (INFO_BOX_WIDTH-INFO_BOX_X_OFFSET*2) (INFO_BOX_HEIGHT/4*3) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+			type			ITEM_TYPE_LISTBOX
+			style			WINDOW_STYLE_FILLED
+			elementwidth	120
+			elementheight	16
+			textfont		UI_FONT_NORMAL
+			textscale		.25
+			forecolor 		1 1 1 0.9
+			focusColor		1 1 1 0.9
+			disableColor 	1 1 1 0.9
+			backcolor		0 0 0 0
+			border			0
+			elementtype		LISTBOX_TEXT
+			feeder			FEEDER_SERVERSTATUSSCOREBOARD
+			notselectable
+			focuscolor		COLOR_FOCUSED
+			visible			1
+			columns			8	
+								2 	40 	20 //team
+								32 	40 	10 //rank
+								72 120	10 //name
+								192	40 	10 //score
+								232 40 	10 //kills
+								272 40 	10 //assists
+								312 40 	10 //deaths
+								352 30 	10 //ping
+	 	}
+	}
+}

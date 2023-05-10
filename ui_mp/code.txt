@@ -1,0 +1,12 @@
+// code menu defs
+//
+{
+	loadMenu { "ui/error.menu" }
+	loadMenu { "ui/code_popups.menu" }
+	loadMenu { "ui_mp/connect.menu" }
+	loadMenu { "ui_mp/friends.menu" }
+	loadMenu { "ui_mp/playercards.menu" }
+	loadMenu { "ui_mp/fileshare_playercard.menu" }
+	loadMenu { "ui_mp/ui_keyboard_popups.menu" }
+	loadMenu { "ui_mp/code_mp_popups.menu" }
+}

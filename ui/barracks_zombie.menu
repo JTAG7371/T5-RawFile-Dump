@@ -1,0 +1,67 @@
+#define CHOICE_GROUP			"barracks"
+#include "ui/menustyle_zombie.inc"
+
+{
+	menuDef
+	{
+		name			barracks_zombie
+		fullscreen		0
+#ifdef INGAME_MENUS		
+		ui3dWindowId	0
+		forecolor		1 1 1 1
+		backcolor		0 0 0 1
+		style			WINDOW_STYLE_FILLED
+#endif
+		rect			0 0 640 480
+		onOpen
+		{
+			open barracks_zombie_2d;
+		}
+		onClose
+		{
+			close barracks_zombie_2d;
+		}
+	}
+
+
+	menuDef
+	{
+		name barracks_zombie_2d;
+#ifdef INGAME_MENUS		
+		fullscreen		0
+#else
+		fullscreen		1
+		soundloop 		MENU_MUSIC
+#endif
+		
+		onEsc
+		{
+			close self;
+			close barracks_zombie;
+		}
+		
+#ifdef INGAME_MENUS
+		itemDef 
+		{ 
+			style	WINDOW_STYLE_SHADER 
+			rect	-4 40 648 400 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN 
+			forecolor		0 0 0 0.55
+			background		"white"  
+			visible			1
+			decoration  
+		}
+#else
+		// background
+		#include "ui/bg.inc"
+		MAIN_BG_ZOMBIE
+#endif
+
+
+		CHOICE_MENU_TITLE( "@MPUI_BARRACKS" )
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_CHALLENGES_CAPS",			open menu_challenges_zombie;,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_PLAYER_ABILITIES_CAPS",	;,								1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 3, "@MENU_LEADERBOARDS_CAPS",		;,								1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 4, "@MENU_AWARDS_AND_TITLES_CAPS",	open titles_zombie;,			1, ; )
+	}
+}

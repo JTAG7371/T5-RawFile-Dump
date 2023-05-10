@@ -1,0 +1,6 @@
+name,loadspec,smoothing,earlyTime,lateTime,earlyGain,lateGain,returnGain,earlyLpf,lateLpf,inputLpf,dampLpf,wallReflect,dryGain,earlySize,lateSize,diffusion
+havoc_outside,mpl_havoc,0.265,0.425,0.48,0.3315235,0.1151112,2.743236,0.5949999,0,0.635,0.6000001,0.2099999,0,5,11.7575,0.16
+havoc_small_room,mpl_havoc,0.525,0.65,0.42,0.755305,0.8158321,0.5865667,0.13,0.075,0.26,0.47,0.6750001,0,5.664999,3.8365,0.16
+havoc_partial_room,mpl_havoc,0.525,0.48,0.42,0.755305,0.8158321,1,0.13,0.075,0.455,0.4949999,0.6750001,0,5.664999,3.8365,0.16
+havoc_rock_wall,mpl_havoc,0.575,0.62,0.5349999,0.3602915,0.7208192,1.211282,0.305,0,0.49,0.405,0.625,0,3.251002,4.682,0.73
+havoc_stone_room,mpl_havoc,0.32,0.4600003,0.4599997,1.158298,0.8430172,0.6637228,0.575,0.315,0.365,0.205,0.755,0,5.23849,3.966482,0.38

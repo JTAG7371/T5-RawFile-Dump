@@ -1,0 +1,635 @@
+// general definitions
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/stats_info.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+#include "ui_mp/popup_player_info.inc"
+
+#undef	CHOICE_GROUP
+#define CHOICE_GROUP	"perk_challenges"
+
+#ifdef CONSOLE
+	#undef CHOICE_X_START
+	#define CHOICE_X_START			-265
+	#undef CHOICE_Y_START
+	#define CHOICE_Y_START			-125
+#else
+	#undef CHOICE_X_START
+	#define CHOICE_X_START			-265
+	#undef CHOICE_Y_START
+	#define CHOICE_Y_START			-125
+#endif
+
+#ifdef XENON
+	#define SELECT_ICON	"ui_button_xenon_3d_a_32x32"
+#endif
+#ifdef PS3
+	#define SELECT_ICON	"ui_button_ps3_x_32x32"
+#endif
+
+#define CHALLENGES_PERKS_HEIGHT NEW_FRAME_DEFAULT_HEIGHT
+#define CHALLENGES_PERKS_WIDTH ( CHALLENGES_PERKS_HEIGHT * FRAME_ASPECT_RATIO )
+#define CHALLENGES_PERKS_BG_SIZE ( (CHALLENGES_PERKS_WIDTH/2-10) + 30 )
+
+#undef	CHOICE_TEXTSTYLE
+#define	CHOICE_TEXTSTYLE		ITEM_TEXTSTYLE_NORMAL
+
+#undef	CHOICE_VERTICAL_ALIGN
+#define	CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_CENTER
+
+#undef	CHOICE_HORIZONTAL_ALIGN
+#define	CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_CENTER
+
+#define CHALLENGES_PERKS_BODY_X_START		( -CHALLENGES_PERKS_WIDTH / 2 + 15 )
+#define	CHALLENGES_PERKS_BODY_Y_START		( -CHALLENGES_PERKS_HEIGHT / 2 + 15 + NEW_FRAME_BG_Y_OFFSET( CHALLENGES_PERKS_HEIGHT ) )
+
+#undef LIST_X_START				
+#define LIST_X_START				(CHALLENGES_PERKS_BODY_X_START)
+#undef LIST_Y_START				
+#define LIST_Y_START				(CHALLENGES_PERKS_BODY_Y_START)
+#undef LIST_HEIGHT					
+#define LIST_HEIGHT					(CHALLENGES_PERKS_HEIGHT-120)
+#undef LIST_WIDTH					
+#define LIST_WIDTH					(CHALLENGES_PERKS_WIDTH/2-40)
+
+#undef	CHOICE_SIZE_X
+#define CHOICE_SIZE_X				LIST_WIDTH
+	
+#define TOP_BUTTONS_Y				NEW_FRAME_CHOICE_Y_START
+
+#undef CHALLENGES_SECTION_LABEL_COLOR
+#ifdef PC
+#define CHALLENGES_SECTION_LABEL_COLOR		0 0 0 1
+#else //#ifdef PC
+#define CHALLENGES_SECTION_LABEL_COLOR		NEW_FRAME_GREY_RGB 1
+#endif //#ifdef PC
+
+#define PERKS_LIST_ONSELECTION																					\
+		if ( IsItemLocked( GetCurrentItemIndex() ) || !IsCurrentItemPurchased() )								\
+		{																										\
+			execnow set ui_perks_hint_text ( locString( CLASS_PURCHASE_TO_UNLOCK, GetCurrentItemName() ) );		\ 
+			execNow "set ui_perks_show_arrow 1";																\	
+		}																										\
+		else																									\
+		{																										\
+			execnow set ui_perks_hint_text "";																	\
+			execnow set globalChallengeType (GetCurrentItemName());											\
+			execNow "set ui_perks_show_arrow 0";																\
+		}
+
+
+#ifdef CONSOLE
+#define GLOBAL_CHALLENGES_SORT_BUTTON																							\
+		itemDef																											\
+		{																												\
+			type			ITEM_TYPE_BUTTON																			\
+			rect			-165 ( CHALLENGES_PERKS_HEIGHT / 2 ) 50 17 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN	\
+			text			"@PLATFORM_CHALLENGES_SORT"																	\
+			textfont		UI_FONT_NORMAL																				\
+			textscale		TEXTSIZE_DEFAULT																			\ 
+			textalign		ITEM_ALIGN_BOTTOM_LEFT																		\ 
+			visible			1																							\
+			decoration																									\ 
+			execKeyInt BUTTON_X																							\
+			{																											\
+				open menu_playercard_challenges_sort;																	\
+			}																											\
+		}
+#else // #ifdef CONSOLE
+	#define BUTTON_SPACING 20
+	#define SORT_BUTTON_OFFSET ( getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+
+	#define GLOBAL_CHALLENGES_SORT_BUTTON \
+		NEW_FRAME_BUTTON_PC_LEFT_OFFSET( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, SORT_BUTTON_OFFSET, "@PLATFORM_CHALLENGES_SORT", open menu_playercard_challenges_sort;, 1 )
+#endif // #ifdef CONSOLE
+
+#define CHALLENGE_SORTORDER_STRING( challengeAvailable ) \
+		/* Sort Label */ \
+		PREPROC_TEXT_DRAW_VIS(	(CHALLENGE_INFO_X_START+75) (LIST_Y_START - 57) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+					locString( "@MENU_CHALLENGE_SORT" ) , TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHALLENGES_SECTION_LABEL_COLOR,  when( challengeAvailable ) )  \
+		/* Challenge Sort Order */ \
+		PREPROC_TEXT_DRAW_VIS(	(CHALLENGE_INFO_X_START+150) (LIST_Y_START - 57) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+					"@MENU_SORT_NEAREST_TO_COMPLETION", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1,  when( challengeAvailable && dvarInt( ui_challengeSort ) == 0 ) ) \
+		PREPROC_TEXT_DRAW_VIS(	(CHALLENGE_INFO_X_START+150) (LIST_Y_START - 57) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+					"@MENU_SORT_HIGHEST_REWARD", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1,  when( challengeAvailable && dvarInt( ui_challengeSort ) == 1 ) ) \
+		PREPROC_TEXT_DRAW_VIS(	(CHALLENGE_INFO_X_START+150) (LIST_Y_START - 57) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+					"@MENU_SORT_PERCENTAGE_COMPLETE", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1,  when( challengeAvailable && dvarInt( ui_challengeSort ) == 2 ) ) \
+		PREPROC_TEXT_DRAW_VIS(	(CHALLENGE_INFO_X_START+150) (LIST_Y_START - 57) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+					"@MENU_SORT_DEFAULT", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1,  when( challengeAvailable && dvarInt( ui_challengeSort ) == 3 ) ) 
+	
+#define PERKS_RIGHT_SIDE \		
+		/* perk item image */ \
+		PREPROC_SHADER_DRAW_VIS_EX( ITEM_INFO_X ITEM_INFO_IMAGE_Y ITEM_INFO_IMAGE_SIZE ITEM_INFO_IMAGE_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, \
+									GetItemImage( GetCurrentItemIndex() ) + "_256", 1 1 1 1, \
+									when( ( GetItemImage( GetCurrentItemIndex() ) != "" ) && ( !IsCurrentItemClassified() ) ), ; ) \
+		/* item name */ \
+		PREPROC_TEXT_DRAW_VIS_EX( ITEM_INFO_X ITEM_INFO_NAME_Y ITEM_INFO_IMAGE_SIZE 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,  \
+								  "@" + GetCurrentItemName(), TEXTSIZE_DEFAULT, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, \
+								  when( !IsCurrentItemClassified() ), ; ) \
+		/* perk item description */ \
+		PREPROC_TEXT_DRAW_VIS_EX( ITEM_INFO_X ITEM_INFO_DESC_Y ITEM_INFO_IMAGE_SIZE 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,  \
+								  "@" + GetItemDesc( GetCurrentItemIndex() ), TEXTSIZE_SMALL, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, NEW_FRAME_GRAY_TEXT_COLOR,  \
+								  when( !IsCurrentItemClassified() && !IsProItemVersion( GetCurrentItemIndex() ) ), autowrapped; ) \
+		PREPROC_TEXT_DRAW_VIS_EX( ITEM_INFO_X ITEM_INFO_DESC_Y ITEM_INFO_IMAGE_SIZE 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,  \
+								  locString( "@"+GetItemDesc(GetCurrentItemIndex()-1))+"\n\n"+locString( "@"+GetItemDesc(GetCurrentItemIndex())), TEXTSIZE_SMALL, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, NEW_FRAME_GRAY_TEXT_COLOR, \
+								  when( !IsCurrentItemClassified() && IsProItemVersion( GetCurrentItemIndex() ) ), autowrapped; ) \
+		/* pro perk image */ \
+		PREPROC_SHADER_DRAW_VIS_EX( (ITEM_INFO_X+ITEM_INFO_IMAGE_SIZE/2-ITEM_INFO_PRO_PERK_SIZE/2) ITEM_INFO_PRO_PERK_Y ITEM_INFO_PRO_PERK_SIZE ITEM_INFO_PRO_PERK_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, \
+									GetItemImage( GetCurrentItemIndex() + 1 ), 1 1 1 1, \
+									when( ( !IsCurrentItemClassified() ) && !IsProItemVersion( GetCurrentItemIndex() ) && IsProItemVersionUnlocked( GetCurrentItemIndex() ) );, ; ) \
+		PREPROC_SHADER_DRAW_VIS_EX( (ITEM_INFO_X+ITEM_INFO_IMAGE_SIZE/2-ITEM_INFO_PRO_PERK_SIZE/2) ITEM_INFO_PRO_PERK_Y ITEM_INFO_PRO_PERK_SIZE ITEM_INFO_PRO_PERK_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,  \
+									GetItemImage( GetCurrentItemIndex() + 1 ), 0 0 0 1, \
+									when( ( !IsCurrentItemClassified() ) && !IsProItemVersion( GetCurrentItemIndex() ) && !IsProItemVersionUnlocked( GetCurrentItemIndex() ) );, ; ) \
+		PREPROC_SHADER_DRAW_VIS_EX( (ITEM_INFO_X+ITEM_INFO_IMAGE_SIZE/2-ITEM_INFO_PRO_PERK_SIZE) (ITEM_INFO_PRO_PERK_Y-ITEM_INFO_PRO_PERK_SIZE/2) (ITEM_INFO_PRO_PERK_SIZE*2) (ITEM_INFO_PRO_PERK_SIZE*2) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,  \
+									"menu_mp_lobby_classified", 1 1 1 1, \
+									when( ( !IsCurrentItemClassified() ) && !IsProItemVersion( GetCurrentItemIndex() ) && !IsProItemVersionUnlocked( GetCurrentItemIndex() ) );, ; ) \
+		/* pro perk text */ \
+		PREPROC_TEXT_DRAW_VIS_EX( ITEM_INFO_X ITEM_INFO_PRO_PERK_TEXT_Y ITEM_INFO_IMAGE_SIZE 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,  \
+								  "@" + GetItemName( GetCurrentItemIndex() + 1 ), TEXTSIZE_DEFAULT, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1,  \
+								  when( ( !IsCurrentItemClassified() ) && !IsProItemVersion( GetCurrentItemIndex() ) );, ; ) \
+		/* pro perk description */ \
+		PREPROC_TEXT_DRAW_VIS_EX( ITEM_INFO_X ITEM_INFO_PRO_PERK_DESC_Y ITEM_INFO_IMAGE_SIZE 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,  \
+								   "@" + GetItemDesc( GetCurrentItemIndex() + 1 ), TEXTSIZE_SMALL, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, NEW_FRAME_GRAY_TEXT_COLOR,  \
+								  when( ( !IsCurrentItemClassified() ) && !IsProItemVersion( GetCurrentItemIndex() ) && IsProItemVersionUnlocked( GetCurrentItemIndex() ) );, autowrapped; ) \
+		/*Perk Description(belpow pro perk image) when the item has been purchased*/ \
+		PREPROC_TEXT_DRAW_VIS_EX( ( ITEM_INFO_X - 25 ) ( ITEM_INFO_PRO_PERK_DESC_Y ) ( ITEM_INFO_IMAGE_SIZE + 50 ) 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,  \
+								 locString("@PERKS_ITEM_DESCRIPTION", dvarString(perks_challenges_type), dvarString(perks_challenges_type) ), TEXTSIZE_SMALL, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, NEW_FRAME_GRAY_TEXT_COLOR,  \
+								  when( !IsCurrentItemClassified() && !IsProItemVersion( GetCurrentItemIndex() ) && IsCurrentItemPurchased() && !IsProItemVersionUnlocked( GetCurrentItemIndex() ) ), autowrapped ) 
+
+#undef ON_ESC_ACTION
+#define ON_ESC_ACTION									\
+		play uin_navigation_menu_lg_close;				\
+		close self;										\
+		openImmediate menu_playercard_challenges;
+
+menuDef
+{
+	name					menu_challenges_perks_type
+	rect					0 0 640 480
+	focuscolor				COLOR_FOCUSED
+	style					WINDOW_STYLE_FILLED
+	control					MENU_CONTROL_OPENER
+	soundloop 				MENU_MUSIC
+	priority				MENU_PRI_ONTOP
+	onOpen	
+	{ 
+		PERKS_LIST_ONSELECTION
+		setdvar ui_hide_eog_menu "1";
+	} 
+	onFocus 
+	{	activateBlur; 
+		setLocalVarString ui_choicegroup CHOICE_GROUP;	
+	} 
+	onClose	 
+	{ deactivateBlur; setdvar ui_hide_eog_menu "0"; } 
+	onESC 
+	{ 
+		ON_ESC_ACTION
+	} 
+	NEW_FRAME( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT ) 
+	NEW_FRAME_TITLE( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, "@MPUI_CHALLENGES_CAPS", 1 )
+	NEW_FRAME_SUBTITLE( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, locString("@MPUI_PERK1_CAPS"), when( dvarString( selected_loadout_perks_slot ) == "specialty1" ) )
+	NEW_FRAME_SUBTITLE(CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, locString("@MPUI_PERK2_CAPS"), when( dvarString( selected_loadout_perks_slot ) == "specialty2"  ) )
+	NEW_FRAME_SUBTITLE( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, locString("@MPUI_PERK3_CAPS"), when( dvarString( selected_loadout_perks_slot ) == "specialty3" ) )
+	PREPROC_SHADER_DRAW( (0-CHALLENGES_PERKS_BG_SIZE/2) (0-CHALLENGES_PERKS_BG_SIZE/2+25) CHALLENGES_PERKS_BG_SIZE CHALLENGES_PERKS_BG_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, "menu_mp_lobby_aar_award_challenge", 1 1 1 0.05 )
+	PLAYER_INFO_VIS( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, 1 ) 
+	
+	//Feeder for the perks
+	itemDef 
+		{ 
+			name						perks_type_list
+			type						ITEM_TYPE_LISTBOX 
+			feeder						FEEDER_CHALLENGES_PERKS 
+			rect						LIST_X_START (LIST_Y_START) (LIST_WIDTH) (LIST_HEIGHT+50) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN 
+			origin						0 0 
+			elementwidth				30 
+			elementheight				20 
+			elementtype					LISTBOX_TEXT 
+			textfont					CHOICE_TEXTFONT																														
+			textscale					TEXTSIZE_DEFAULT																													
+			textstyle					ITEM_TEXTSTYLE_NORMAL 
+			textalignx					12 
+			forecolor					1 1 1 1
+			focusColor					CHOICE_TEXTCOLOR 
+			disableColor				CHOICE_TEXTCOLOR 
+			outlinecolor				1 1 1 1  
+			noscrollbars 
+			modal
+			noBlinkingHighlight 
+			elementBackgroundColor		NEW_FRAME_BUTTON_BG_COLOR  
+			selectIcon					SELECT_ICON 
+			elementHighlightColor		NEW_FRAME_BUTTON_TEXT_HIGHLIGHT_COLOR 
+			userarea	2	10						-2					LIST_WIDTH		20			32	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE 			/* Name */
+							(LIST_WIDTH)		(17/2-LOCK_SIZE/2)	LOCK_SIZE			LOCK_SIZE	24	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE 			/* Lock */
+			visible			1 
+			onfocus 
+			{
+				exec "updateListboxPos menu_challenges_perks_type";
+			}		
+			onListboxSelectionChange																										
+			{																																
+				play CHOICE_FOCUS_SOUND;																									
+				PERKS_LIST_ONSELECTION																												
+			}
+			doubleclick
+			{
+				play CHOICE_FOCUS_SOUND;
+				if ( IsCurrentItemPurchased() )
+				{
+					execNow set perks_challenges_close 0;
+					close self;
+					open menu_perks_challenges_list;
+				}
+			}
+	}
+	
+	#define ITEM_INFO_X								115
+	#define ITEM_INFO_NAME_Y						(TOP_BUTTONS_Y-10)
+	#define ITEM_INFO_NAME_H						30
+
+	#define ITEM_INFO_IMAGE_Y						(ITEM_INFO_NAME_Y+ITEM_INFO_NAME_H)
+	#define ITEM_INFO_IMAGE_SIZE					80
+		
+	#define ITEM_INFO_DESC_Y						( ITEM_INFO_IMAGE_Y + ITEM_INFO_IMAGE_SIZE + 20 )
+	#define ITEM_INFO_DESC_W						( ITEM_INFO_IMAGE_SIZE * 2.5 )
+	#define ITEM_INFO_DESC_X						( ITEM_INFO_X + ( ITEM_INFO_IMAGE_SIZE / 2 ) - ( ITEM_INFO_DESC_W / 2 ) )
+
+	#define ITEM_INFO_PERK_IMAGE_SIZE				100
+	#define ITEM_INFO_PERK_IMAGE_X					( ITEM_INFO_X + ( ITEM_INFO_IMAGE_SIZE / 2 ) - ( ITEM_INFO_PERK_IMAGE_SIZE / 2 ) )
+
+	#define ITEM_INFO_PRO_PERK_SIZE					48
+	#define ITEM_INFO_PERK_PRO_IMAGE_X				( ITEM_INFO_X + ( ITEM_INFO_IMAGE_SIZE / 2 ) - ( ITEM_INFO_PRO_PERK_SIZE / 2 ) )
+	#define ITEM_INFO_PERK_PRO_CLASSIFIED_X			( ITEM_INFO_X + ( ITEM_INFO_IMAGE_SIZE / 2 ) - ITEM_INFO_PRO_PERK_SIZE )	
+
+	#define ITEM_INFO_PRO_PERK_TEXT_Y				( ITEM_INFO_DESC_Y + 50 )
+	#define ITEM_INFO_PRO_PERK_TEXT_H				20
+	#define ITEM_INFO_PRO_PERK_IMAGE_Y				( ITEM_INFO_PRO_PERK_TEXT_Y + ITEM_INFO_PRO_PERK_TEXT_H )
+	#define ITEM_INFO_PRO_PERK_DESC_Y				( ITEM_INFO_PRO_PERK_TEXT_Y + ITEM_INFO_PRO_PERK_SIZE + 20 )
+		
+	/* perk item name */
+	PREPROC_TEXT_DRAW_ALL(	ITEM_INFO_X ITEM_INFO_NAME_Y ITEM_INFO_IMAGE_SIZE ITEM_INFO_NAME_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, 
+							toUpper( locString( "@" + GetCurrentItemName() ) ), 
+							TEXTSIZE_SUBTITLE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,
+							when( !IsCurrentItemClassified() ), ; )
+							  
+	/* perk item image */
+	PREPROC_SHADER_DRAW_VIS_EX( ITEM_INFO_PERK_IMAGE_X ITEM_INFO_IMAGE_Y ITEM_INFO_PERK_IMAGE_SIZE ITEM_INFO_PERK_IMAGE_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,
+								GetItemImage( GetCurrentItemIndex() ) + "_256", 1 1 1 1,
+								when( ( GetItemImage( GetCurrentItemIndex() ) != "" ) && ( !IsCurrentItemClassified() ) ), ; )
+	
+	/* item desc */
+	PREPROC_TEXT_DRAW_VIS_EX( ITEM_INFO_DESC_X ITEM_INFO_DESC_Y ITEM_INFO_DESC_W 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, 
+							  "@" + GetItemDesc( GetCurrentItemIndex() ), 
+							  TEXTSIZE_SMALL, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, 
+							  when( !IsCurrentItemClassified() && !IsProItemVersion( GetCurrentItemIndex() ) ), 
+							  autowrapped; ; )
+	PREPROC_TEXT_DRAW_VIS_EX( ITEM_INFO_DESC_X ITEM_INFO_DESC_Y ITEM_INFO_DESC_W 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, 
+							  locString( "@"+GetItemDesc(GetCurrentItemIndex()-1))+"\n\n"+locString( "@"+GetItemDesc(GetCurrentItemIndex())), 
+							  TEXTSIZE_SMALL, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, 
+							  when( !IsCurrentItemClassified() && IsProItemVersion( GetCurrentItemIndex() ) ), 
+							  autowrapped; )		  
+
+	/* pro perk text */
+	PREPROC_TEXT_DRAW_ALL(	ITEM_INFO_DESC_X ITEM_INFO_PRO_PERK_TEXT_Y ITEM_INFO_DESC_W ITEM_INFO_PRO_PERK_TEXT_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, 
+							toUpper( locString( "@" + GetItemName( GetCurrentItemIndex() + 1 ) ) ), 
+							TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,
+							when( ( !IsCurrentItemClassified() ) && !IsProItemVersion( GetCurrentItemIndex() ) );, ; )
+							  
+	/* pro perk image */
+	PREPROC_SHADER_DRAW_VIS_EX( ITEM_INFO_PERK_PRO_IMAGE_X ITEM_INFO_PRO_PERK_IMAGE_Y ITEM_INFO_PRO_PERK_SIZE ITEM_INFO_PRO_PERK_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 
+								GetItemImage( GetCurrentItemIndex() + 1 ), 1 1 1 1,
+								when( ( !IsCurrentItemClassified() ) && !IsProItemVersion( GetCurrentItemIndex() ) && IsProItemVersionUnlocked( GetCurrentItemIndex() ) );, ; )
+	PREPROC_SHADER_DRAW_VIS_EX( ITEM_INFO_PERK_PRO_IMAGE_X ITEM_INFO_PRO_PERK_IMAGE_Y ITEM_INFO_PRO_PERK_SIZE ITEM_INFO_PRO_PERK_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 
+								GetItemImage( GetCurrentItemIndex() + 1 ), 0 0 0 1,
+								when( ( !IsCurrentItemClassified() ) && !IsProItemVersion( GetCurrentItemIndex() ) && !IsProItemVersionUnlocked( GetCurrentItemIndex() ) );, ; )
+	PREPROC_SHADER_DRAW_VIS_EX( ITEM_INFO_PERK_PRO_CLASSIFIED_X (ITEM_INFO_PRO_PERK_IMAGE_Y-ITEM_INFO_PRO_PERK_SIZE/2) (ITEM_INFO_PRO_PERK_SIZE*2) (ITEM_INFO_PRO_PERK_SIZE*2) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 
+								"menu_mp_lobby_classified", 1 1 1 1,
+								when( ( !IsCurrentItemClassified() ) && !IsProItemVersion( GetCurrentItemIndex() ) && !IsProItemVersionUnlocked( GetCurrentItemIndex() ) );, ; )
+								
+	/* pro perk description */
+	PREPROC_TEXT_DRAW_VIS_EX(	ITEM_INFO_DESC_X ITEM_INFO_PRO_PERK_DESC_Y ITEM_INFO_DESC_W 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, 
+								"@" + GetItemDesc( GetCurrentItemIndex() + 1 ), 
+								TEXTSIZE_SMALL, 0, -2, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 1, 
+								when( !IsCurrentItemClassified() && !IsProItemVersion( GetCurrentItemIndex() ) && IsProItemVersionUnlocked( GetCurrentItemIndex() ) );, 
+								autowrapped; )
+
+
+	HINT_TEXT( 16, -270, dvarString( ui_perks_hint_text ), dvarBool( ui_perks_show_arrow ) )
+	NEW_FRAME_BACK_BUTTON_ACTION( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, ON_ESC_ACTION ) 
+}
+
+#define IS_GLOBAL_CHALLENGES_AVAILABLE ( getNumChallenges( MILSTONE_GLOBAL ) != 0 )
+
+#define CHALLENGE_INFO_X_START 10
+#define CHALLENGE_INFO_Y_START (CHALLENGES_PERKS_BODY_Y_START+65)
+
+#define UIGREEN		NEW_FRAME_GREEN_RGB 1
+#define UIGREY		1 1 1 0.5
+#define UIWHITE		1 1 1 1
+#define MILESTONE_GLOBAL		0
+
+#define GLOBAL_CHALLENGES( feederName, challengeAvailable, challengeType )	\
+	/* Challenge Name */ \
+	PREPROC_TEXT_DRAW_ALL(	(CHALLENGE_INFO_X_START) (LIST_Y_START - 40) 270 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						toUpper( GetName( feederName, MILESTONE_GLOBAL, challengeType ) ), TEXTSIZE_SUBTITLE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL, when( challengeAvailable ), autowrapped ) \
+	/* Challenge Progress label */ \
+	PREPROC_TEXT_DRAW_VIS(	CHALLENGE_INFO_X_START (CHALLENGE_INFO_Y_START+17) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						toUpper( locString( "@STATS_CHALLENGE_PROGRESS" ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHALLENGES_SECTION_LABEL_COLOR,  when( challengeAvailable ) ) \
+	/* Challenge Progress */ \
+	PREPROC_TEXT_DRAW_VIS(	(CHALLENGE_INFO_X_START) (CHALLENGE_INFO_Y_START+34) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						getProgressString( feederName, MILESTONE_GLOBAL ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1,  when( challengeAvailable ) ) \
+	/* Challenge Description label */ \
+	PREPROC_TEXT_DRAW_VIS(	CHALLENGE_INFO_X_START (CHALLENGE_INFO_Y_START+97) 150 40 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						toUpper( locString( "@STATS_DESCRIPTION" ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHALLENGES_SECTION_LABEL_COLOR,  when( challengeAvailable ) ) \
+	/* Challenge Description */ \
+	PREPROC_TEXT_DRAW_VIS_EX(	( CHALLENGE_INFO_X_START) (CHALLENGE_INFO_Y_START+114) 220 40 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						GetDescription(  feederName, MILESTONE_GLOBAL, challengeType ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, UIWHITE,  when( challengeAvailable ),autowrapped ) \
+	/* Challenge reward label */ \
+	PREPROC_TEXT_DRAW_VIS(	CHALLENGE_INFO_X_START (CHALLENGE_INFO_Y_START+118) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						toUpper( locString( "@STATS_CHALLENGE_REWARD" ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHALLENGES_SECTION_LABEL_COLOR,  when( challengeAvailable && ( GetXpReward( feederName, MILESTONE_GLOBAL )!= 0 || GetCpReward( feederName, MILESTONE_GLOBAL )!= 0 ) ) ) \
+	/* Challenge XP reward */ \
+	PREPROC_TEXT_DRAW_VIS(	( CHALLENGE_INFO_X_START ) (CHALLENGE_INFO_Y_START+135) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						locString( "@STATS_CHALLENGE_XP_REWARDED", GetXpReward( feederName, MILESTONE_GLOBAL ) ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, NEW_FRAME_YELLOW_RGB 1,  when( challengeAvailable && GetXpReward( feederName, MILESTONE_GLOBAL )!= 0 ) ) \
+	/* Challenge Cp reward */ \
+	PREPROC_TEXT_DRAW_VIS(	(CHALLENGE_INFO_X_START + 100 ) (CHALLENGE_INFO_Y_START+135) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						locString( "@MENU_POINTS", GetCpReward( feederName, MILESTONE_GLOBAL ) ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, UIGREEN,  when( challengeAvailable && GetCpReward( feederName, MILESTONE_GLOBAL )!= 0 ) ) \
+	/* Displays the sort order */ \
+	CHALLENGE_SORTORDER_STRING( challengeAvailable )
+
+#define GLOBAL_CHALLENGES_PERKS( feederName, challengeAvailable )	\
+	/* Challenge Name */ \
+	PREPROC_TEXT_DRAW_ALL(	(CHALLENGE_INFO_X_START) (LIST_Y_START - 40) 270 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						toUpper( GetName( feederName, MILESTONE_GLOBAL ) ), TEXTSIZE_SUBTITLE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL, when( challengeAvailable ), autowrapped ) \
+	/* Challenge Progress label */ \
+	PREPROC_TEXT_DRAW_VIS(	CHALLENGE_INFO_X_START (CHALLENGE_INFO_Y_START+17) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						toUpper( locString( "@STATS_CHALLENGE_PROGRESS" ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHALLENGES_SECTION_LABEL_COLOR,  when( challengeAvailable ) ) \
+	/* Challenge Progress */ \
+	PREPROC_TEXT_DRAW_VIS(	(CHALLENGE_INFO_X_START) (CHALLENGE_INFO_Y_START+34) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						getProgressString( feederName, MILESTONE_GLOBAL ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1,  when( challengeAvailable ) ) \
+	/* Challenge Description label */ \
+	PREPROC_TEXT_DRAW_VIS(	CHALLENGE_INFO_X_START (CHALLENGE_INFO_Y_START+97) 150 40 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						toUpper( locString( "@STATS_DESCRIPTION" ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHALLENGES_SECTION_LABEL_COLOR,  when( challengeAvailable ) ) \
+	/* Challenge Description */ \
+	PREPROC_TEXT_DRAW_VIS_EX(	( CHALLENGE_INFO_X_START) (CHALLENGE_INFO_Y_START+114) 220 40 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						GetDescription(  feederName, MILESTONE_GLOBAL ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, UIWHITE,  when( challengeAvailable ),autowrapped ) \
+	/* Challenge reward label */ \
+	PREPROC_TEXT_DRAW_VIS(	CHALLENGE_INFO_X_START (CHALLENGE_INFO_Y_START+118) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						toUpper( locString( "@STATS_CHALLENGE_REWARD" ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHALLENGES_SECTION_LABEL_COLOR,  when( challengeAvailable && ( GetXpReward( feederName, MILESTONE_GLOBAL )!= 0 || GetCpReward( feederName, MILESTONE_GLOBAL )!= 0 ) ) ) \
+	/* Challenge XP reward */ \
+	PREPROC_TEXT_DRAW_VIS(	( CHALLENGE_INFO_X_START ) (CHALLENGE_INFO_Y_START+135) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						locString( "@STATS_CHALLENGE_XP_REWARDED", GetXpReward( feederName, MILESTONE_GLOBAL ) ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, NEW_FRAME_YELLOW_RGB 1,  when( challengeAvailable && GetXpReward( feederName, MILESTONE_GLOBAL )!= 0 ) ) \
+	/* Challenge Cp reward */ \
+	PREPROC_TEXT_DRAW_VIS(	(CHALLENGE_INFO_X_START + 100 ) (CHALLENGE_INFO_Y_START+135) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+						locString( "@MENU_POINTS", GetCpReward( feederName, MILESTONE_GLOBAL ) ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, UIGREEN,  when( challengeAvailable && GetCpReward( feederName, MILESTONE_GLOBAL )!= 0 ) ) \
+	/* Displays the sort order */ \
+	CHALLENGE_SORTORDER_STRING( challengeAvailable )
+
+
+#ifdef CONSOLE
+	#define GLOBAL_CHALLENGE_LIST_RECT_AND_SCROLL																			\
+		rect LIST_X_START (LIST_Y_START) (LIST_WIDTH) (LIST_HEIGHT+50) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN		\
+		noscrollbars
+#else // #ifdef CONSOLE
+	#define GLOBAL_CHALLENGE_LIST_RECT_AND_SCROLL																			\
+		/*Add scroll bars for PC*/																							\
+		rect LIST_X_START (LIST_Y_START) (LIST_WIDTH+16) (LIST_HEIGHT+50) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN		\
+		usePaging
+#endif // #ifdef CONSOLE
+
+
+#define ITEM_LISTBOX_GLOBALCHALLENGES																													\
+		/* Feeder for the global challenges */																											\
+		itemDef																																			\
+		{																																				\
+				name						global_challenges_list																						\
+				type						ITEM_TYPE_LISTBOX																							\
+				feeder						FEEDER_STATS_GLOBALCHALLENGES																				\
+			GLOBAL_CHALLENGE_LIST_RECT_AND_SCROLL \
+				elementwidth				30																											\
+				elementheight				20																											\
+				elementtype					LISTBOX_TEXT																								\
+				textstyle					ITEM_TEXTSTYLE_NORMAL																						\
+				textfont					UI_FONT_NORMAL																								\
+				textscale					TEXTSIZE_SMALL																								\
+				textalignx					12																											\
+				forecolor					1 1 1 1																										\
+				focusColor					CHOICE_TEXTCOLOR																							\
+				disableColor				CHOICE_TEXTCOLOR																							\
+				outlinecolor				1 1 1 1																										\
+				elementBackgroundColor		NEW_FRAME_TRANSPARENCY																						\
+			modal \
+				noBlinkingHighlight																														\
+				/*				x		y	w		h	len		horzAlign		vertAlign*/																\
+				userarea 3		10		7	200		10	50		ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP	/* STATS_MILESTONES_COLUMN_MILESTONE_NAME	*/			\
+								179		5	60		9	50		ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP	/* STATS_MILESTONES_COLUMN_PROGRESS_BAR		*/			\
+								172		8	60		9	50		ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP	/* STATS_MILESTONES_COLUMN_COMPLETED_TEXT	*/			\	
+				visible			1																														\
+				onListboxSelectionChange																												\
+				{																																		\
+					play CHOICE_FOCUS_SOUND;																											\
+				}																																		\
+		}
+
+
+#undef ON_ESC_ACTION
+#define ON_ESC_ACTION								\
+	play uin_navigation_menu_lg_close;				\
+	if(dvarInt(perks_challenges_close) == 0)		\
+	{												\
+		close self;									\
+		openImmediate menu_challenges_perks_type;	\
+	}												\
+	else											\
+	{												\
+		closeImmediate self;						\
+	}
+
+menuDef
+{
+	name					menu_perks_challenges_list
+	rect					0 0 640 480
+	focuscolor				COLOR_FOCUSED
+	style					WINDOW_STYLE_FILLED
+	soundloop 				MENU_MUSIC
+	priority				MENU_PRI_ONTOP
+	onOpen	
+	{ 
+		execNow BuildGlobalChallengesList ( dvarString(globalChallengeType) ) ( dvarInt( ui_challengeSort ) ); 
+		execNow set challengeType 4;
+		setdvar ui_hide_eog_menu "1";
+	} 
+	onFocus {	activateBlur; 
+	} 
+	onClose	 
+	{ deactivateBlur; setdvar ui_hide_eog_menu "0"; } 
+	onESC 
+	{ 
+		ON_ESC_ACTION
+			}
+	NEW_FRAME( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT ) 
+	NEW_FRAME_TITLE( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, "@MPUI_CHALLENGES_CAPS", 1 )
+	NEW_FRAME_SUBTITLE( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, locString(dvarString( challenges_category_name ) ) + " / " + toUpper( locString(dvarString(globalChallengeType) ) ), 1 )
+	PLAYER_INFO_VIS( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, 1 ) 
+	PREPROC_SHADER_DRAW( (0-CHALLENGES_PERKS_BG_SIZE/2) (0-CHALLENGES_PERKS_BG_SIZE/2+25) CHALLENGES_PERKS_BG_SIZE CHALLENGES_PERKS_BG_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, "menu_mp_lobby_aar_award_challenge", 1 1 1 0.05 )
+	GLOBAL_CHALLENGES_SORT_BUTTON
+	ITEM_LISTBOX_GLOBALCHALLENGES
+	GLOBAL_CHALLENGES_PERKS( "global_challenges_list", IS_GLOBAL_CHALLENGES_AVAILABLE )
+
+	NEW_FRAME_BACK_BUTTON_ACTION( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, ON_ESC_ACTION ) 
+}
+
+#undef ON_ESC_ACTION
+#define ON_ESC_ACTION									\
+		play uin_navigation_menu_lg_close;				\
+		close self;										\
+		play uin_navigation_menu_lg_close;              \
+		close self;                                     \
+		if( dvarInt( ui_isGamemodeChallenge ) )         \
+		{                                               \
+			openImmediate menu_challenges_gamemode_type; \
+		}                                                \
+		else			                                 \
+		{                                                \
+			openImmediate menu_playercard_challenges;    \
+		}
+
+menuDef
+{
+	name					menu_global_challenges_list
+	rect					0 0 640 480
+	focuscolor				COLOR_FOCUSED
+	style					WINDOW_STYLE_FILLED
+	control					MENU_CONTROL_OPENER
+	soundloop 				MENU_MUSIC
+	priority				MENU_PRI_ONTOP
+	onOpen	
+	{ 
+		execNow BuildGlobalChallengesList ( dvarString( globalChallengeType ) ) ( dvarInt( ui_challengeSort ) ); 
+		execNow set challengeType 4;
+		setdvar ui_hide_eog_menu "1";
+		execNow movefeeder top global_challenges_list;
+	} 
+	onFocus {	activateBlur; 
+	} 
+	onClose	 
+	{ deactivateBlur; setdvar ui_hide_eog_menu "0"; } 
+	onESC 
+	{ 
+		ON_ESC_ACTION
+			}
+	NEW_FRAME( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT ) 
+	NEW_FRAME_TITLE( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, "@MPUI_CHALLENGES_CAPS", 1 )
+	NEW_FRAME_SUBTITLE( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, locString(dvarString( challenges_category_name ) ) ,when( dvarInt( ui_isGamemodeChallenge ) == 0 ) )
+	NEW_FRAME_SUBTITLE( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, locString(dvarString( challenges_category_name ) ) + " / " + locString( "MPUI_" + ( dvarString( ui_challengeGameMode ) ) + "_CAPS" ), when( dvarInt( ui_isGamemodeChallenge ) == 1 ) )
+	PLAYER_INFO_VIS( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, 1 ) 
+	PREPROC_SHADER_DRAW( (0-CHALLENGES_PERKS_BG_SIZE/2) (0-CHALLENGES_PERKS_BG_SIZE/2+25) CHALLENGES_PERKS_BG_SIZE CHALLENGES_PERKS_BG_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, "menu_mp_lobby_aar_award_challenge", 1 1 1 0.05 )
+	GLOBAL_CHALLENGES_SORT_BUTTON
+	ITEM_LISTBOX_GLOBALCHALLENGES
+
+	GLOBAL_CHALLENGES( "global_challenges_list", IS_GLOBAL_CHALLENGES_AVAILABLE, ( dvarString(globalChallengeType) ) )
+
+	NEW_FRAME_BACK_BUTTON_ACTION( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, ON_ESC_ACTION ) 
+}
+
+#ifdef PC
+	#define CHALLENGES_GAMEMODE_DROPDOWN_LIST_PC_OPTIONS	\
+		modal
+#else //#ifdef PC
+	#define CHALLENGES_GAMEMODE_DROPDOWN_LIST_PC_OPTIONS
+#endif //#ifdef PC
+
+#define CHALLENGES_GAMEMODE_DROPDOWN_LIST( feederName, feederType, currMenu ) \
+		itemDef\
+		{ \
+			name						feederName \
+			type						ITEM_TYPE_LISTBOX \
+			feeder						feederType \
+			rect						LIST_X_START (LIST_Y_START) (LIST_WIDTH) (LIST_HEIGHT+50) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			origin						0 0 \
+			elementwidth				30 \
+			elementheight				20 \
+			elementtype					LISTBOX_TEXT \
+			textfont					CHOICE_TEXTFONT		\																												
+			textscale					TEXTSIZE_DEFAULT	\																												
+			textstyle					ITEM_TEXTSTYLE_NORMAL \
+			textaligny					-1 \			
+			textalignx					22 \
+			forecolor					1 1 1 1 \
+			focusColor					CHOICE_TEXTCOLOR \
+			disableColor				CHOICE_TEXTCOLOR \
+			noscrollbars \
+			selectIcon					SELECT_ICON \
+			outlineColor				1 1 1 1 \
+			elementHighlightColor		NEW_FRAME_BUTTON_TEXT_HIGHLIGHT_COLOR \
+			elementBackgroundColor		NEW_FRAME_BUTTON_BG_COLOR  \
+			noBlinkingHighlight \
+			CHALLENGES_GAMEMODE_DROPDOWN_LIST_PC_OPTIONS \
+			visible			1 \
+			onfocus  \
+			{ \
+				exec updateListboxPos currMenu;	\
+				play CHOICE_FOCUS_SOUND; \
+			}	\
+			onListboxSelectionChange \
+			{ \
+				play CHOICE_FOCUS_SOUND; \
+			} \
+			doubleclick \
+			{ \
+				execNow set globalChallengeType ( "GM_" + (tableLookup( "mp/gameTypesTable.csv", 0, int(getFeederData("selection")), 1 )) ); \
+				execNow set ui_challengeGameMode (tableLookup( "mp/gameTypesTable.csv", 0, int(getFeederData("selection")), 1 ) ); \
+				closeImmediate menu_challenges_gamemode_type; \
+				openImmediate menu_global_challenges_list; \
+			} \
+		}
+		
+#undef ON_ESC
+#define ON_ESC									\
+	setDvar ui_isGamemodeChallenge 0;			\
+	play uin_navigation_menu_lg_close;			\
+	close self;									\
+	openImmediate menu_playercard_challenges;
+
+//Menu for displaying the list of game modes.
+menuDef
+{
+	name					menu_challenges_gamemode_type
+	rect					0 0 640 480
+	focuscolor				COLOR_FOCUSED
+	style					WINDOW_STYLE_FILLED
+	control					MENU_CONTROL_OPENER
+	soundloop 				MENU_MUSIC
+	priority				MENU_PRI_ONTOP
+	onOpen	
+	{ 
+		setDvar ui_isGamemodeChallenge 1;
+		setdvar ui_hide_eog_menu "1";
+	} 
+	onFocus {	activateBlur; 
+	} 
+	onClose	 
+	{ deactivateBlur; setdvar ui_hide_eog_menu "0"; } 
+	onESC 
+	{ 
+		ON_ESC
+	} 
+	NEW_FRAME( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT ) 
+	NEW_FRAME_TITLE( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, "@MPUI_CHALLENGES_CAPS", 1 )
+	NEW_FRAME_SUBTITLE( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, locString(dvarString( challenges_category_name ) ) ,1 )
+	PLAYER_INFO_VIS( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, 1 ) 
+	PREPROC_SHADER_DRAW( (0-CHALLENGES_PERKS_BG_SIZE/2) (0-CHALLENGES_PERKS_BG_SIZE/2+25) CHALLENGES_PERKS_BG_SIZE CHALLENGES_PERKS_BG_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, "menu_mp_lobby_aar_award_challenge", 1 1 1 0.05 )
+	
+	// LEADERBOARD LIST 
+	CHALLENGES_GAMEMODE_DROPDOWN_LIST( challenges_gamemode_list, FEEDER_LEADERBOARD_GAMETYPES, menu_challenges_gamemode_type )
+	 
+#ifdef PC
+	NEW_FRAME_BACK_BUTTON_ACTION( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT, ON_ESC )
+#else //#ifdef PC
+	NEW_FRAME_BACK_BUTTON( CHALLENGES_PERKS_WIDTH, CHALLENGES_PERKS_HEIGHT ) 
+#endif //#ifdef PC
+}
+
+

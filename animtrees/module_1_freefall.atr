@@ -1,0 +1,15 @@
+freefall_player
+{
+	int_freefall_loop
+	int_base_jump_freefall_loop
+	int_base_jump_freefall_turnleft
+	int_base_jump_freefall_turnright
+	
+	int_base_jump_chuteopen_loop
+	int_base_jump_chuteopen_turnleft
+	int_base_jump_chuteopen_turnright
+	int_base_jump_cord_pull
+	v_base_jump_chute_loop
+	v_base_jump_chute_open 
+}
+

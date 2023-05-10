@@ -1,0 +1,198 @@
+#include "ui/menudef.h"
+
+#define ORIGIN_DIY_TITLE_HIDEF		42 300
+#define ORIGIN_DIY_FRAME_HIDEF		35 300
+#define ORIGIN_DIY_HIDEF			37 320
+
+#define ORIGIN_DIY_TITLE_STDEF		22 300
+#define ORIGIN_DIY_FRAME_STDEF		15 300
+#define ORIGIN_DIY_STDEF			17 320
+
+#define NOT_DEVELOPMENT				( !dvarbool( cg_development ) && !dvarbool ( ui_shipping_cheats ) )
+
+{
+	menuDef 
+	{
+		name			"briefing"
+		style			WINDOW_STYLE_FILLED
+		fullScreen		0
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		backcolor		0 0 0 0
+		visible			1
+#ifdef NOT_DEVELOPMENT
+		onEsc{ }
+#else
+		onEsc{ close self; }
+#endif // #ifdef NOT_DEVELOPMENT
+
+		// background
+		itemDef 
+		{
+			style			WINDOW_STYLE_FILLED
+			rect			FULLSCREEN_WIDE
+			backcolor		0 0 0 1
+			visible			when( !dvarbool(onlinegame) && !dvarbool(systemlink) )
+			background		"white"
+			decoration
+		}
+
+		itemDef 
+		{
+			name			"cinematic"
+			type			ITEM_TYPE_OWNERDRAW
+			style			WINDOW_STYLE_FILLED
+			rect			FULLSCREEN_WIDE
+			backcolor		1 1 1 1
+			visible			when( !dvarbool(onlinegame) && !dvarbool(systemlink) )
+			background		cinematic
+			decoration
+		}
+
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			#ifdef PC
+				rect			-250 378 500 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			#else
+				rect			-225 342 450 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			#endif			
+			textcinematicsubtitle
+			textfont		UI_FONT_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textscale		0.38
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			when( !dvarbool(onlinegame) && !dvarbool(systemlink) )
+			decoration
+			autowrapped
+		}		
+
+		itemDef 
+		{
+			name			"profile"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			40 40 560 400
+			align			HUD_HORIZONTAL
+			ownerdraw		UI_LOADPROFILING
+			visible			when( !dvarbool(onlinegame) && !dvarbool(systemlink) )
+			decoration
+		}
+
+#define LOADBAR_IMAGE_XSIZE 192
+#define LOADBAR_IMAGE_YSIZE 48
+
+		// LoadBar for Solo and Splitscreen
+		itemDef 
+		{
+			name			"loadbar_busy"
+			style			WINDOW_STYLE_SPINNERLOADBAR
+			rect			-64 -16 16 16 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			forecolor		1 1 1 1
+			border			0
+			visible			when( (dvarbool( cg_development ) ) && iscinematicfinished() != 1 && !dvarbool( onlinegame ) && !dvarbool( systemlink ) && dvarstring( mapname ) !="wmd" )
+			decoration
+		}
+
+
+		// load screen for online and system link games		
+		itemDef
+		{
+			name            "mapimage"
+			style			WINDOW_STYLE_LOADSCREEN
+			rect			FULLSCREEN_WIDE
+			visible			when( ( dvarbool(onlinegame) || dvarbool(systemlink) ) && dvarbool(widescreen) )
+			decoration
+			forecolor       1 1 1 1
+		}
+		
+		// load screen for online and system link games		
+		itemDef
+		{
+			name            "mapimage"
+			style			WINDOW_STYLE_LOADSCREEN
+			rect			FULLSCREEN
+			visible			when( ( dvarbool(onlinegame) || dvarbool(systemlink) ) && !dvarbool(widescreen) )
+			decoration
+			forecolor       1 1 1 1
+		}
+		
+#define GRADIENT_HEIGHT 200
+#define GRADIENT_INTENSITY 0.6
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 0 640 GRADIENT_HEIGHT HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+			background		"gradient_top"
+			forecolor       1 1 1 GRADIENT_INTENSITY
+			visible			when( dvarbool( onlinegame ) || dvarbool( systemlink ) )
+			decoration
+		}
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 (480-GRADIENT_HEIGHT) 640 GRADIENT_HEIGHT HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+			background		"gradient_bottom"
+			forecolor       1 1 1 GRADIENT_INTENSITY
+			visible			when( dvarbool( onlinegame ) || dvarbool( systemlink ) )
+			decoration
+		}
+
+#define LOADBAR_X -275
+#define LOADBAR_W 550
+#define LOADBAR_Y -30
+#define LOADBAR_HEIGHT 1.5
+		itemDef 
+		{ 
+			style			WINDOW_STYLE_SHADER 
+			rect			LOADBAR_X LOADBAR_Y LOADBAR_W LOADBAR_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			forecolor		0.1 0.1 0.1 .5
+			background		"white"
+			visible			when( dvarbool( onlinegame ) || dvarbool( systemlink ) )
+			decoration 
+		}
+		itemDef 
+		{
+			name			"loadbar"
+			style			WINDOW_STYLE_LOADBAR
+			rect			LOADBAR_X LOADBAR_Y LOADBAR_W LOADBAR_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			background		"white"
+			forecolor		0.9 0.9 0.9 1
+			visible			when( dvarbool( onlinegame ) || dvarbool( systemlink ) )
+			decoration
+		}
+		itemDef
+		{
+			rect			LOADBAR_X (LOADBAR_Y-20) LOADBAR_W 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_BUTTON
+			dvar			"ls_status"
+			textalign 		ITEM_ALIGN_BOTTOM_RIGHT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_SMALL
+			forecolor		1 1 1 0.5
+			backcolor		0 0 0 0
+			textalignx 		0
+			textaligny 		0   
+			visible			when( dvarbool( onlinegame ) || dvarbool( systemlink ) )
+			decoration
+		}
+		itemDef
+		{
+			rect			LOADBAR_X (LOADBAR_Y+LOADBAR_HEIGHT+15) LOADBAR_W 60 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_BUTTON
+			dvar			"didyouknow"
+			textalign 		ITEM_ALIGN_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_SMALL
+			forecolor		1 1 1 1
+			backcolor		0 0 0 0
+			textalignx 		0
+			textaligny 		0   
+			visible			when( dvarbool( onlinegame ) || dvarbool( systemlink ) )
+			decoration
+			autowrapped
+		}
+
+		#include "ui/safearea.menu"
+	}
+}
+

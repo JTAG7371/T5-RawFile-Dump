@@ -1,0 +1,208 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SIZE_X					150
+
+#define CHOICE_X_START					0
+#define CHOICE_Y_START					65
+
+#define CHOICE_GROUP					"xboxlive_privatematch"
+
+#define CHOICE_SEP_1					4
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/stats_info.inc"
+
+#define PLAYERLIST_WIDTH 				270
+
+#define ORIGIN_DESCRIPTION				(CHOICE_X_START + 15) 180
+#define STATUS_START_X					(CHOICE_X_START + 12)
+#define STATUS_START_Y					340
+#define COLOR_DESC_TEXT					1 1 1 0.7
+
+#define MENU_FONT_SIZE					TEXTSIZE_DEFAULT
+#define HIGHLIGHT_SIZE					142 22
+#define MENU_FONT_COLOR					1 1 1 0.5
+#define MENU_FONT_COLOR2				1 1 1 0.5
+#define MENU_LOCKED_COLOR				0.25 0.25 0.25 1
+
+#define ORIGIN_BUTTON_BACK				52 438
+#define ORIGIN_BUTTON_INVITE			390 86
+
+#define STATTODVAR_TIME_PLAYED_OTHER	execNow "statGetByNameInDvar TIME_PLAYED_OTHER ui_stat_time_played_other"   
+#define STATTODVAR_TIME_PLAYED_OPFOR	execNow "statGetByNameInDvar TIME_PLAYED_OPFOR ui_stat_time_played_opfor"   
+#define STATTODVAR_TIME_PLAYED_ALLIES	execNow "statGetByNameInDvar TIME_PLAYED_ALLIES ui_stat_time_played_allies"
+#define STATTODVAR_SUICIDES				execNow "statGetByNameInDvar SUICIDES ui_stat_suicides"                              
+#define STATTODVAR_TEAMKILLS			execNow "statGetByNameInDvar TEAMKILLS ui_stat_teamkills"                           
+#define STATTODVAR_HEADSHOTS			execNow "statGetByNameInDvar HEADSHOTS ui_stat_headshots"                           
+#define STATTODVAR_ASSISTS				execNow "statGetByNameInDvar ASSISTS ui_stat_assists"                                 
+#define STATTODVAR_DEATH_STREAK			execNow "statGetByNameInDvar DEATH_STREAK ui_stat_death_streak"                  
+#define STATTODVAR_DEATHS				execNow "statGetByNameInDvar DEATHS ui_stat_deaths"                                    
+#define STATTODVAR_KILL_STREAK			execNow "statGetByNameInDvar KILL_STREAK ui_stat_kill_streak"                     
+#define STATTODVAR_KILLS				execNow "statGetByNameInDvar KILLS ui_stat_kills"                                    
+#define STATTODVAR_SCORE				execNow "statGetByNameInDvar SCORE ui_stat_score"                                    
+#define STATTODVAR_RANKXP				execNow "statGetByNameInDvar RANKXP ui_stat_rankxp"                                    
+
+#define STAT_UPDATE						\
+		STATTODVAR_TIME_PLAYED_OTHER;	\
+		STATTODVAR_TIME_PLAYED_OPFOR;	\
+		STATTODVAR_TIME_PLAYED_ALLIES;	\
+		STATTODVAR_TEAMKILLS;			\
+		STATTODVAR_HEADSHOTS;			\
+		STATTODVAR_ASSISTS;				\
+		STATTODVAR_DEATH_STREAK;		\
+		STATTODVAR_DEATHS;				\
+		STATTODVAR_KILL_STREAK;			\
+		STATTODVAR_KILLS;				\
+		STATTODVAR_SCORE;				\
+		STATTODVAR_RANKXP;
+
+{
+	menuDef
+	{
+		name			menu_xboxlive_barracks
+		rect			0 0 640 470 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN//480
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		border			0
+		soundloop 		MENU_MUSIC
+		onOpen			{ STAT_UPDATE; focusFirst; setdvar invite_visible "0"; }
+		onFocus			{ setdvar invite_visible "0"; focusFirst; }
+		onEsc			{ close self; exec "set ui_hint_text @NULL_EMPTY; set ui_show_arrow 0"; }
+		onClose			{ setdvar invite_visible "1"; }
+
+		// ------------------  statics ------------------------
+		#include "ui_mp/overlaybg.inc"
+		OVERLAY_BACKGROUND
+		
+		CHOICE_OVERLAY_TITLE( "@MPUI_BARRACKS_CAPS" )
+
+		#include "ui_mp/navcontrols.inc"
+
+		HINT_TEXT( 9, CHOICE_X_START, dvarString( ui_hint_text ), dvarBool( ui_show_arrow ) )
+
+		//=========================================================
+		//===================== MENU SELECTION ====================
+		//=========================================================
+
+		#define SETUP_ACTION_LEADERBOARDS	\
+				setdvar lb_prestige 0;		\
+				open menu_leaderboards;
+
+		#define SETUP_ACTION_PRESTIGE_LEADERBOARDS	\
+				setdvar lb_prestige 1;				\
+				open menu_leaderboards;
+
+		#define SETUP_ACTION_CHALLENGES \
+				open menu_challenges
+
+		#define SETUP_ACTION_CLANTAG \
+				execnow "editclanname";
+
+		#define SETUP_ACTION_PRESTIGEMODE \
+				open prestige_reset1
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_PLAYER_EMBLEM_CAPS", open emblem_edit;, ( !IS_ITEM_LOCKED( FEATURE_EMBLEM ) ), ; )
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( 1, "@MENU_PLAYER_EMBLEM_CAPS", exec set ui_hint_text GET_UNLOCK_LEVEL_STRING( FEATURE_EMBLEM );exec set ui_show_arrow 1;, CLEARUIHINT, ( IS_ITEM_LOCKED( FEATURE_EMBLEM ) ), ; )	
+		CHOICE_LOCKEDICON_VIS( 1, "menu_mp_lobby_locked", when( IS_ITEM_LOCKED( FEATURE_EMBLEM ) ) )  		
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_COMBAT_RECORD_CAPS", setdvar ui_showFriendsCombatRecord 0; open menu_cr_career_summary;, ( !IS_ITEM_LOCKED( FEATURE_COMBAT_RECORD ) ), ; )
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( 2, "@MENU_COMBAT_RECORD_CAPS", exec set ui_hint_text GET_UNLOCK_LEVEL_STRING( FEATURE_COMBAT_RECORD );exec set ui_show_arrow 1;, CLEARUIHINT, ( IS_ITEM_LOCKED( FEATURE_COMBAT_RECORD ) ), ; )	
+		CHOICE_LOCKEDICON_VIS( 2, "menu_mp_lobby_locked", when( IS_ITEM_LOCKED( FEATURE_COMBAT_RECORD ) ) )  		
+
+		FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( 3, "@MENU_FILESHARE_CAPS",				open fileshare_myshare;,			;,	;,				1, ; )		
+		FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( 4, "@MPUI_LEADERBOARDS_CAPS",				SETUP_ACTION_LEADERBOARDS,			;,	CLEARUIHINT,	1, ; )
+		FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( 5, "@MPUI_PRESTIGE_LEADERBOARDS_CAPS",	SETUP_ACTION_PRESTIGE_LEADERBOARDS,	;,	CLEARUIHINT,	1, ; )
+				
+		FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( 6, "@MPUI_CLAN_TAG_CAPS", SETUP_ACTION_CLANTAG, ;, exec "statsetbyname hasclantag 1";CLEARUIHINT, ( !IS_ITEM_LOCKED( FEATURE_CLAN_TAG ) ), ; )
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( 6, "@MPUI_CLAN_TAG_CAPS", exec set ui_hint_text GET_UNLOCK_LEVEL_STRING( FEATURE_CLAN_TAG );exec set ui_show_arrow 1;, CLEARUIHINT, ( IS_ITEM_LOCKED( FEATURE_CLAN_TAG ) ), ; )
+		CHOICE_NEWICON_VIS( 6, "menu_mp_lobby_new", when( !IS_ITEM_LOCKED( FEATURE_CLAN_TAG ) && GetStatByName( "HASCLANTAG" ) == 0 ) )
+		CHOICE_LOCKEDICON_VIS( 6, "menu_mp_lobby_locked", when( IS_ITEM_LOCKED( FEATURE_CLAN_TAG ) ) )  		
+
+		FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( 7, "@MPUI_PRESTIGE_MODE_CAPS", SETUP_ACTION_PRESTIGEMODE, ;, exec "statsetbyname hasprestiged 1"; CLEARUIHINT, ( PRESTIGE_AVAIL ), ; )
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( 7, "@MPUI_PRESTIGE_MODE_CAPS", exec "set ui_hint_text @MPUI_DESC_PRESTIGE2; set ui_show_arrow 1", CLEARUIHINT, ( PRESTIGE_AVAIL==0 && PRESTIGE_FINISH==0 ), ; )
+		CHOICE_NEWICON_VIS( 7, "menu_mp_lobby_new", when( PRESTIGE_AVAIL && GetStatByName( "HASPRESTIGED" )==0 ) )
+		CHOICE_LOCKEDICON_VIS( 7, "menu_mp_lobby_locked", when( PRESTIGE_AVAIL == 0 && PRESTIGE_FINISH == 0 ) ) 		
+		
+		
+		// player stat section
+		#include "ui_mp/player_info.inc"
+		
+		#include "ui/safearea.menu"
+	}
+
+	
+	#include "ui_mp/popupstyle.inc"
+	#include "ui/choices_setup_popmenu.menu"
+
+	// -------------------- first prestige warning --------------------
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( prestige_reset1, ;, setfocus prestige_reset1_2, 1 )
+
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_PRESTIGE_RESET_TITLE1", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_PRESTIGE_RESET_WARNING1", 1 )
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_PRESTIGE_RESET_TITLE2",	close prestige_reset1; open prestige_reset2,	1, ;						)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_CANCEL",					close prestige_reset1,							1, name prestige_reset1_2	)
+	}
+
+	// -------------------- second prestige warning --------------------
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( prestige_reset2, ;, setfocus prestige_reset2_2, 1 )
+
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_PRESTIGE_RESET_TITLE2", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_PRESTIGE_RESET_WARNING2", 1 )
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_CONTINUE",	close prestige_reset2; open prestige_reset3,	1, ;						)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_CANCEL",		close prestige_reset2,							1, name prestige_reset2_2	)
+	}
+
+	// -------------------- third prestige warning --------------------
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( prestige_reset3, ;, setfocus prestige_reset3_2, 1 )
+
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_PRESTIGE_RESET_TITLE3", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_PRESTIGE_RESET_WARNING3", 1 )
+
+		#define PRESTIGE_RESET						\
+				exec "exec mp/prestige_reset.cfg";	\
+				play "enter_prestige";
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_PRESTIGE_ENTER",	PRESTIGE_RESET; close prestige_reset3;,	1, ;						)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_CANCEL",			close prestige_reset3;,					1, name prestige_reset3_2	)
+	}
+}
+
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+
+	// WEBSTATS
+#define WEBSTATS_X					57
+#define WEBSTATS_Y					130
+#define	WEBSTATS_ORIGIN				WEBSTATS_X WEBSTATS_Y
+
+
+	menuDef 
+	{
+		SYSTEM_POPUP_SETUP_VIS( menu_show_webtoken, ;, close self;, 1 )
+		
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_WEBSTATS", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( dvarString( stats_spacedwebtoken ), 1 )
+		
+		PREPROC_TEXT_DRAW( 0 0 450 25 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN,	WEBSTATS_ORIGIN, "@MPUI_WEBSTATS_DESC1", CHOICE_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR )
+		PREPROC_TEXT_DRAW( 20 55 400 25 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN,	WEBSTATS_ORIGIN, "@MPUI_WEBSTATS_DESC2", CHOICE_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR )
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self;, 1, ; )
+	}
+}

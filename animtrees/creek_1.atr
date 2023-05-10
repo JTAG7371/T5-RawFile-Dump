@@ -1,0 +1,129 @@
+// village sampan landing
+v_creek_b03_sampan_offload_dock
+
+// sampan for melee kill
+v_sampan_melee_sampan
+v_sampan_melee_crouch_idle_sampan
+v_sampan_melee_stand_idle_sampan
+
+// flashlight
+ch_creek_b04_rat_tunnel_intro_C_light
+
+// tunnel hatch
+ch_creek_b04_rat_tunnel_intro_A_hatch
+
+// rice bowl and chopsticks
+// rice bowl curtain open
+p_vc_eating_melee_curtain_open_bowl
+p_vc_eating_melee_curtain_open_chopstick_1
+p_vc_eating_melee_curtain_open_chopstick_2
+
+// rice bowl attack opportunity
+p_vc_eating_melee_attack_opportunity_bowl
+p_vc_eating_melee_attack_opportunity_chopstick_1
+p_vc_eating_melee_attack_opportunity_chopstick_2
+
+// rice bowl melee pass
+p_vc_eating_melee_bowl
+p_vc_eating_melee_chopstick_1
+p_vc_eating_melee_chopstick_2
+
+// rice bowl melee fail
+p_vc_eating_melee_fail_bowl
+p_vc_eating_melee_fail_chopstick_1
+p_vc_eating_melee_fail_chopstick_2
+
+// hammock
+p_creek_b02_hammock_sleep_hammock
+p_creek_hammock_melee_guy01_hammock
+p_creek_hammock_melee_guy02_hammock
+
+// smoke
+p_creek_b02_dock_gaurds_talking_guys_stogie
+
+// windows to look out
+o_creek_b02_windowlook_shade_l
+o_creek_b02_windowlook_shade_r
+o_creek_b02_windowlook_shade_l_idle
+o_creek_b02_windowlook_shade_r_idle
+
+// shelf in tunnel
+p_creek_b02_shelfpushover
+
+// backpack on bowman
+o_creek_b02_hey_charlie_backpack
+
+v_huey_creek_hover
+
+// ---------------------------------------------------------------------------------------------
+// ---- EVENT 1 - Helicopter crash scene, Meatshield scene - Sumeet Jakatdar & Brian Barnes ----
+// ---------------------------------------------------------------------------------------------
+
+// sampan
+v_creek_b01_huey_crash_sampan
+v_creek_b01_huey_crash_sampan_loop
+
+// player
+int_creek_b01_huey_crash_player_start_loop
+int_creek_b01_huey_crash_player
+int_creek_b01_huey_crash_player_fall
+int_creek_b01_huey_crash_player_at_door_loop
+int_creek_b01_huey_crash_player_open_door
+int_creek_b01_huey_crash_player_open_door_intro
+// strength test huey door
+int_creek_b01_huey_crash_player_open_door_exit
+int_creek_b01_huey_crash_player_open_door_phase1
+int_creek_b01_player_loop1
+int_creek_b01_huey_crash_player_open_door_phase2
+int_creek_b01_player_loop2
+
+
+// chopper
+v_creek_b01_huey_crash_chopper_fall
+v_creek_b01_huey_crash_chopper_open
+
+// chopper door
+v_creek_b01_huey_crash_chopper_open_pz1
+v_creek_b01_huey_crash_chopper_open_pz1_loop
+v_creek_b01_huey_crash_chopper_open_pz2
+v_creek_b01_huey_crash_chopper_open_pz2_loop
+v_creek_b01_huey_crash_chopper_open_pz3
+
+// SUMEET - Event 2 - Meatshield scene after intro
+
+// chopper
+v_creek_b01_ms_chopper_loop
+
+// sampans
+v_creek_b01_ms_sampan1
+v_creek_b01_ms_sampan1_loop
+v_creek_b01_ms_sampan2
+v_creek_b01_ms_sampan2_loop
+v_creek_b01_ms_sampan3
+v_creek_b01_ms_sampan3_loop
+v_creek_b01_ms_sampan4
+v_creek_b01_ms_sampan4_loop
+v_creek_b01_ms_sampan5
+v_creek_b01_ms_sampan5_loop
+v_creek_b01_ms_sampan6
+v_creek_b01_ms_sampan6_loop
+
+// player
+int_creek_b01_ms_player_run_up_front
+int_creek_b01_ms_player_run_up_mid_boat
+int_creek_b01_ms_player_run_up_back_of_boat
+
+//doors
+o_creek_b03_roof_flap2
+o_creek_b03_roof_flap
+
+o_creek_b02_regroup_before_village_door
+o_creek_b02_regroup_before_village_door_openloop
+
+// tunnel breakout rocks
+o_rocks_creek_tunnel_melee_a
+o_rocks_creek_tunnel_melee_b
+o_rocks_creek_tunnel_melee_c
+
+// 2nd c4 area gate
+o_creek_2nd_c4_plant_gate_open

@@ -1,0 +1,110 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define GAME_OPTIONS_MENU_NAME "custom_settings_koth"
+#define MENUDEF_NAME custom_settings_koth
+#define CUSTOM_GAME_OPTIONS_TITLE "@CUSTOM_GAME_MODE_OPTIONS_CAPS"
+
+#define TEAMBASED 1
+#define NUMLIVES_DVAR		"scr_koth_numlives"
+#define PLAYERRESPAWN_DVAR 	"scr_koth_playerrespawndelay"
+#define WAVERESPAWN_DVAR	"scr_koth_waverespawndelay"
+#define GAMETYPE_OPTIONS	"@"+tableLookup( "mp/gametypesTable.csv", 0, "koth", 1 )
+
+// --- gameplay options
+#define CHOICE1_TEXT		"@CUSTOM_HQ_HOLD_TIME"
+#define CHOICE1_DESC		"@CUSTOM_HQ_HOLD_TIME_DESC"
+#define CHOICE1_DVAR		"koth_autodestroytime"
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"@MPUI_RULES_UNLIMITED_CAPS"
+#define CHOICE1_STR2		"@MPUI_RULES_30SECONDS_CAPS"
+#define CHOICE1_STR3		"@MPUI_RULES_45SECONDS_CAPS"
+#define CHOICE1_STR4		"@MPUI_RULES_1MINUTE_CAPS"
+#define CHOICE1_STR5		"@MPUI_RULES_1_5MINUTES_CAPS"
+#define CHOICE1_STR6		"@MPUI_RULES_2MINUTES_CAPS"
+#define CHOICE1_STR7		"@MPUI_RULES_2_5MINUTES_CAPS"
+#define CHOICE1_STR8		"@MPUI_RULES_3MINUTES_CAPS"
+#define CHOICE1_STR9		"@MPUI_RULES_5MINUTES_CAPS"
+#define CHOICE1_STR10		"@MPUI_RULES_8MINUTES_CAPS"
+#define CHOICE1_STR11		""
+#define CHOICE1_STR12		""
+#define CHOICE1_VAL1		0
+#define CHOICE1_VAL2		30
+#define CHOICE1_VAL3		45
+#define CHOICE1_VAL4		60
+#define CHOICE1_VAL5		90
+#define CHOICE1_VAL6		120
+#define CHOICE1_VAL7		150
+#define CHOICE1_VAL8		180
+#define CHOICE1_VAL9		300
+#define CHOICE1_VAL10		480
+#define CHOICE1_VAL11		0
+#define CHOICE1_VAL12		0
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 CHOICE1_STR7 CHOICE1_VAL7 CHOICE1_STR8 CHOICE1_VAL8 CHOICE1_STR9 CHOICE1_VAL9 CHOICE1_STR10 CHOICE1_VAL10 CHOICE1_STR11 CHOICE1_VAL11 CHOICE1_STR12 CHOICE1_VAL12 }
+#define CHOICE1_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE1_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+#define CHOICE1_NUMVALS		10
+
+#define CHOICE2_TEXT		"@CUSTOM_HQ_RESPAWN_DELAY"
+#define CHOICE2_DESC		"@CUSTOM_HQ_RESPAWN_DELAY_DESC"
+#define CHOICE2_DVAR		"koth_spawntime"
+#define CHOICE2_DVARTEXT	CHOICE2_DVAR"_text"
+#define CHOICE2_SHOW		1
+#define CHOICE2_STR1		"@MPUI_RULES_INSTANT_CAPS"
+#define CHOICE2_STR2		"@MPUI_RULES_15SECONDS_CAPS"
+#define CHOICE2_STR3		"@MPUI_RULES_30SECONDS_CAPS"
+#define CHOICE2_STR4		"@MPUI_RULES_45SECONDS_CAPS"
+#define CHOICE2_STR5		"@MPUI_RULES_1MINUTE_CAPS"
+#define CHOICE2_STR6		""
+#define CHOICE2_STR7		""
+#define CHOICE2_STR8		""
+#define CHOICE2_STR9		""
+#define CHOICE2_STR10		""
+#define CHOICE2_STR11		""
+#define CHOICE2_STR12		""
+#define CHOICE2_VAL1		0
+#define CHOICE2_VAL2		15
+#define CHOICE2_VAL3		30
+#define CHOICE2_VAL4		45
+#define CHOICE2_VAL5		60
+#define CHOICE2_VAL6		0
+#define CHOICE2_VAL7		0
+#define CHOICE2_VAL8		0
+#define CHOICE2_VAL9		0
+#define CHOICE2_VAL10		0
+#define CHOICE2_VAL11		0
+#define CHOICE2_VAL12		0
+#define CHOICE2_EXEC		;
+#define CHOICE2_STRLIST		{ CHOICE2_STR1 CHOICE2_VAL1 CHOICE2_STR2 CHOICE2_VAL2 CHOICE2_STR3 CHOICE2_VAL3 CHOICE2_STR4 CHOICE2_VAL4 CHOICE2_STR5 CHOICE2_VAL5 CHOICE2_STR6 CHOICE2_VAL6 CHOICE2_STR7 CHOICE2_VAL7 CHOICE2_STR8 CHOICE2_VAL8 CHOICE2_STR9 CHOICE2_VAL9 CHOICE2_STR10 CHOICE2_VAL10 CHOICE2_STR11 CHOICE2_VAL11 CHOICE2_STR12 CHOICE2_VAL12 }
+#define CHOICE2_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE2_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+#define CHOICE2_NUMVALS		5
+
+#define CHOICE3_TEXT		"@CUSTOM_CLASSIC_HQ"
+#define CHOICE3_DESC		"@CUSTOM_CLASSIC_HQ_DESC"
+#define CHOICE3_DVAR		"koth_kothmode"
+#define CHOICE3_DVARTEXT	CHOICE3_DVAR"_text"
+#define CHOICE3_SHOW		1
+#define CHOICE3_STRLIST		{ "@MENU_DISABLED_CAPS" 0 "@MENU_ENABLED_CAPS" 1 }
+#define CHOICE3_ONFOCUS		setLocalVarBool ui_choice_hideaccept 1;
+#define CHOICE3_LEAVEFOCUS	setLocalVarBool ui_choice_hideaccept 0;
+
+/*
+	if ( getdvar("koth_autodestroytime") == "" )
+		setdvar("koth_autodestroytime", "90");
+	level.hqAutoDestroyTime = getdvarint("koth_autodestroytime");
+	
+	if ( getdvar("koth_spawntime") == "" )
+		setdvar("koth_spawntime", "30");
+	level.hqSpawnTime = getdvarint("koth_spawntime");
+	
+	if ( getdvar("koth_kothmode") == "" )
+		setdvar("koth_kothmode", "1");
+	level.kothmode = getdvarint("koth_kothmode");
+*/
+
+{
+	#include "ui_mp/custom_game_options.inc"
+}

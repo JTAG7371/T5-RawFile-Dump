@@ -1,0 +1,17 @@
+rawfile,character/c_cub_tropas_5.gsc
+xmodel,c_cub_tropas_body1
+xmodel,c_cub_tropas_head5
+xmodelalias,c_cub_tropas_gearalias
+xmodel,c_cub_tropas_body1_g_upclean
+xmodel,c_cub_tropas_body1_g_rarmoff
+xmodel,c_cub_tropas_body1_g_larmoff
+xmodel,c_cub_tropas_body1_g_torso
+xmodel,c_cub_tropas_body1_g_lowclean
+xmodel,c_cub_tropas_body1_g_rlegoff
+xmodel,c_cub_tropas_body1_g_llegoff
+xmodel,c_cub_tropas_body1_g_legsoff
+xmodel,c_cub_tropas_body1_g_rarmspawn
+xmodel,c_cub_tropas_body1_g_larmspawn
+xmodel,c_cub_tropas_body1_g_rlegspawn
+xmodel,c_cub_tropas_body1_g_llegspawn
+rawfile,character/clientscripts/c_cub_tropas_5.csc

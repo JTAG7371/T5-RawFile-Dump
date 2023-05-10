@@ -1,0 +1,24 @@
+#include "ui/menudef.h"
+
+
+// custom class name
+#define BLACKMARKET_MENU_NAME				"blackmarket"
+
+#include "ui_mp/common_macro.inc"
+
+{			
+	#include "ui_mp/blackmarket.inc"
+}
+
+#include "ui_mp/popupstyle.inc"	
+#include "ui/choices_setup_popmenu.menu"
+
+// saving popup for BLACKMARKET ONLY - for a lack of better place
+#define LOCAL_SAVING \
+		"wait; wait; wait; wait; wait; wait; wait; wait; wait; wait; wait; wait; wait; wait; wait; wait; wait; wait; wait; wait;"
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( bm_saving_popup, exec LOCAL_SAVING" "LOCAL_SAVING" closemenu saving_popup";, ; , 1 )
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_SAVING", 1 )
+	SYSTEM_POPUP_SPINNER( 1 )
+}

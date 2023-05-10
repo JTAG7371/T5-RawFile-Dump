@@ -1,0 +1,12 @@
+shotgunbreach_v1_shoot_hinge_door
+
+//[ceng] Pentagon
+o_pentagon_npc_door_open_loop
+o_pentagon_npc_door_close
+o_pentagon_npc_door_close_loop
+o_pentagon_rail_open_door_assist_door01 //Left door
+o_pentagon_rail_open_door_assist_door02 //Right door
+o_pentagon_rail_s_curve_door01
+o_pentagon_rail_s_curve_door02
+o_pentagon_rail_rarely_use_door01
+o_pentagon_rail_rarely_use_door02

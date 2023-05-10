@@ -1,0 +1,171 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_X_START					-258
+#define CHOICE_Y_START					35
+#define BUTTON_BG_WIDTH					180
+
+#define CHOICE_SEP_OFFSET_X				20
+#define CHOICE_SEP_OFFSET_Y				-2
+
+#define CHOICE_GROUP					"splitscreen"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/stats_info.inc"
+#include "ui_mp/friendslist.inc"
+
+#define MENU_FONT_SIZE					TEXTSIZE_DEFAULT
+#define HIGHLIGHT_SIZE					142 22
+#define MENU_FONT_COLOR					1 1 1 0.5
+#define MENU_LOCKED_COLOR				0.25 0.25 0.25 1
+
+#undef  CHOICE_SIZE_X
+#define CHOICE_SIZE_X					BUTTON_BG_WIDTH
+#undef	CHOICE_TEXTSTYLE
+#define	CHOICE_TEXTSTYLE				ITEM_TEXTSTYLE_NORMAL
+
+#undef CHOICE_HORIZONTAL_ALIGN
+#define CHOICE_HORIZONTAL_ALIGN			HORIZONTAL_ALIGN_CENTER
+
+{
+	menuDef
+	{
+		blurWorld		4.8
+
+		name			menu_gamesetup_splitscreen
+		rect			0 0 640 480 
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		border			0
+		soundloop 		MENU_MUSIC
+		control			MENU_CONTROL_OPENER
+		allowSignIn
+
+		onOpen
+		{
+			focusFirst;
+
+			execnow ui_animate menu_gamesetup_splitscreen frame_bg default 20;
+			setdvar invite_visible "1";
+			setdvar ui_gametype "zom";
+		}
+		onEsc
+		{
+			exec "splitscreen 0";
+			exec "splitscreen_playerCount 1";
+			execNow "forcedisableallbutprimaryclients";
+			close blackout_3d_tv;
+			close self;
+		}
+
+		// ------------------ statics ------------------------
+		#include "ui/bg.inc"
+		
+		// Scroller background only
+		#include "ui/scroller_bg.inc"
+
+		// ----------------- title --------------------------	
+		CHOICE_MENU_TITLE_CENTER_ALIGN_VIS( "@MENU_SPLIT_SCREEN_SETUP_CAPS", ITEM_ALIGN_TOP_RIGHT, 1 )
+
+		// ---------------------------- map ------------------------------------
+		#define GAMEINFO_ORIENTATION	1
+		#define GAMEINFO_X				CHOICE_X_START
+		#define GAMEINFO_Y				235
+		#define GAMEINFO_ORIGIN			GAMEINFO_X GAMEINFO_Y
+		#define GAMEINFO_WIDTH			BUTTON_BG_WIDTH
+		#define GAMEINFO_WIDTH2			GAMEINFO_WIDTH
+		#define GAMEINFO_HEIGHT			80
+		
+		#include "ui_mp/game_info.inc"
+		#define MAPIMAGE				( "preview_" + dvarString( ui_mapname ) )//SELECTION_IMAGE_FINAL( dvarString( ui_mapname ) )
+		#define MAPNAME					locString( tableLookup( "maps/mapstable.csv", 0, dvarString( ui_mapname ), 3 ) )
+		#define GAMETYPENAME			locString( tableLookup( "maps/gametypesTable.csv", 0, dvarString( ui_gametype ), 1 ) )
+
+		#define VOTE_BG_SIZE			20
+
+		#define SELECTION_IMAGE_FINAL( materialArg )	\
+				( "menu_" + materialArg + "_map_select_final" )
+
+		#define MAP_SELECTION_INFO( xPos, yPos, widthArg, heightArg, mapName, gametypeName, visArg )															\
+				PREPROC_TEXT_DRAW_ALL(	(xPos+widthArg-96-8) (yPos+heightArg-VOTE_BG_SIZE+1-18) 96 24 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM,			\
+										0 0, toUpper( mapName ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_TOP_RIGHT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,	\
+										visArg, ; )																												\
+				PREPROC_TEXT_DRAW_VIS_EX(	(xPos-8) (yPos+heightArg-VOTE_BG_SIZE+1) widthArg 20 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM,					\
+										0 0, gametypeName, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_RIGHT, 1 1 1 1,													\
+										visArg, autowrapped )
+
+		#define MAP_X_START				(CHOICE_X_START+CHOICE_SIZE_X-MAP_WIDTH-10)
+		#define MAP_Y_START				(-MAP_HEIGHT-25)
+		#define MAP_WIDTH				183
+		#define MAP_ASPECT_RATIO		(203/275)
+		#define MAP_HEIGHT				(MAP_WIDTH*MAP_ASPECT_RATIO)
+					
+		PREPROC_SHADER_DRAW_VIS_EX(	MAP_X_START MAP_Y_START MAP_WIDTH MAP_HEIGHT CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM, 
+									MAPIMAGE, 1 1 1 1, 
+									1, ; )
+
+		MAP_SELECTION_INFO( MAP_X_START, MAP_Y_START, MAP_WIDTH, MAP_HEIGHT, MAPNAME, GAMETYPENAME, 1 )
+		
+		// --------------------- lobby players count -----------------------
+		#define PLAYER_COUNT_START_X			-100
+		#define PLAYER_COUNT_START_Y			-63
+		#define PLAYER_COUNT_W					100
+		#define PLAYER_COUNT_H					15
+
+		PREPROC_TEXT_DRAW_VIS(	PLAYER_COUNT_START_X PLAYER_COUNT_START_Y PLAYER_COUNT_W PLAYER_COUNT_H HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM, 0 0,
+							dvarString( "splitscreen_lobbyPlayerCount" ),
+							TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_RIGHT, LOBBY_STATUS_COLOR, 
+							1 )
+
+		//=========================================================
+		//===================== MENU SELECTION ====================
+		//=========================================================
+		#define SETUP_ACTION_STARTMATCH							\
+				if( dvarInt( splitscreen_playerCount ) > 1 )	\
+				{												\
+					uiScript StartServer;						\
+				}												\
+				else											\
+				{												\
+					open local_splitscreen_error;				\
+				}												\
+
+		TEMP_CHOICE_BUTTON_FOCUS_VIS(	1, "@MPUI_START_MATCH_CAPS", 
+										SETUP_ACTION_STARTMATCH, 
+										CLEARUIHINT,
+										CLEARUIHINT, 1 )
+
+		TEMP_CHOICE_BUTTON_FOCUS_VIS(	2, "@MPUI_CHANGE_MAP_CAPS", 
+										open settings, 
+										CLEARUIHINT,
+										CLEARUIHINT, 1 )
+
+		// --------- buttons ----------
+		// Back button
+		PREPROC_TEXT_DRAW_VIS( CHOICE_X_START -15 50 17 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM, 0 0, "@PLATFORM_BACK", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1, when(  dvarbool( invite_visible ) ) )
+		
+		#define SPLITSCREEN_PLAYERLIST	1
+		#include "ui/playerlist.inc"
+
+		FRAME_BG_ON_PARENT_MENU
+
+		#include "ui/safearea.menu"
+	}
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+
+	menuDef 
+	{
+		SYSTEM_POPUP_SETUP_VIS( local_splitscreen_error, ;, ;, 1 )
+		
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_ERROR_CAPS", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_TWO_MIN_SUBTITLE", 1 )
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self, 1, ; )
+	}
+}

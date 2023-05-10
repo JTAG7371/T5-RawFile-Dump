@@ -1,0 +1,129 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/frame.inc"
+
+#define CHOICE_GROUP					"systemlink"
+
+#include "ui/framestyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#define ORIGIN_MENU_TREE				54 64
+#define ORIGIN_MENU_TITLE				151 64
+#define TREE_COLOR						1 1 1 0.5
+
+#define ORIGIN_BUTTON_BACK				52 438
+#define ORIGIN_BUTTON_CONTINUE			508 438
+#define ORIGIN_POPUPTITLE				320 160
+
+{
+	menuDef
+	{
+		name					menu_systemlink
+		rect					0 0 640 480
+		focusColor				COLOR_FOCUSED
+		style					WINDOW_STYLE_EMPTY
+		control					MENU_CONTROL_OPENER
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		popup
+		onOpen
+		{
+			activateBlur;
+			exec "selectStringTableEntryInDvar mp/didyouknow.csv 0 didyouknow";
+			uiScript UpdateFilter;
+			setfocus serverlist;
+		}
+		onEsc
+		{
+			deactivateBlur;
+			close self;
+			setdvar systemlink 0;
+		}
+		onClose
+		{
+			deactivateBlur;
+		}
+		
+		FRAME_DEFAULT	
+		FRAME_TITLE_DEFAULT( "@PLATFORM_SYSTEM_LINK_CAPS", 1 )
+		
+		#define SERVERLIST_X			( ( -FRAME_DEFAULT_WIDTH / 2 ) + CHOICE_SIZE_Y )
+		#define SERVERLIST_Y			( ( -FRAME_DEFAULT_HEIGHT / 2 ) + NEW_FRAME_HEADER_HEIGHT + CHOICE_SIZE_Y )
+		#define SERVERLIST_WIDTH		( FRAME_DEFAULT_WIDTH - (CHOICE_SIZE_Y* 2) )
+		#define SERVERLIST_HEIGHT		( FRAME_DEFAULT_HEIGHT - NEW_FRAME_HEADER_HEIGHT - (CHOICE_SIZE_Y* 2) )
+
+		#define TEXT_OFFSET_X			4
+		#define TEXT_OFFSET_Y			-2
+
+		#define HOSTS_WIDTH				170
+		#define MAPS_WIDTH				120
+		#define CLIENTS_WIDTH			70
+		#define GAMES_WIDTH				170
+
+		#define HOSTS_X					0
+		#define MAPS_X					(HOSTS_X + HOSTS_WIDTH)
+		#define CLIENTS_X				(MAPS_X + MAPS_WIDTH)
+		#define GAMES_X					(CLIENTS_X + CLIENTS_WIDTH)
+
+		// Background for list
+		PREPROC_SHADER_DRAW( (SERVERLIST_X+1) SERVERLIST_Y (SERVERLIST_WIDTH-1) SERVERLIST_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, "white", 1 1 1 0.05 )
+
+		// SERVER LIST TEXT --------------------------------
+		itemDef
+		{
+			name			serverlist
+			type			ITEM_TYPE_LISTBOX
+			feeder			FEEDER_SERVERS
+			rect			SERVERLIST_X (SERVERLIST_Y-3) SERVERLIST_WIDTH SERVERLIST_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+			elementwidth	120
+			elementheight	16
+			elementtype		LISTBOX_TEXT
+			textfont		UI_FONT_SMALL
+			textscale		TEXTSIZE_SMALL
+			textAlignX		TEXT_OFFSET_X
+			textAlignY		TEXT_OFFSET_Y
+			forecolor		1 1 1 1
+			focusColor		1 1 1 1
+			disableColor	1 1 1 1
+			selectBorder	1 1 1 1
+			visible			1
+			noScrollBars
+			noBlinkingHighlight
+//			numcols				x			y		w					h	textlen		horzAlign			vertAlign
+			userarea	6		0			0		SERVERLIST_WIDTH	18	16			ITEM_ALIGN_LEFT		ITEM_ALIGN_TOP	/* background		*/
+								0			0		SERVERLIST_WIDTH	18	16			ITEM_ALIGN_LEFT		ITEM_ALIGN_TOP	/* alternating bg	*/
+								HOSTS_X		0		HOSTS_WIDTH			18	30			ITEM_ALIGN_LEFT		ITEM_ALIGN_TOP	/* host				*/
+								MAPS_X		0		MAPS_WIDTH			18	25			ITEM_ALIGN_LEFT		ITEM_ALIGN_TOP	/* map				*/
+								CLIENTS_X	0		CLIENTS_WIDTH		18	10			ITEM_ALIGN_LEFT		ITEM_ALIGN_TOP	/* clients			*/
+								GAMES_X		0		GAMES_WIDTH			18	20			ITEM_ALIGN_LEFT		ITEM_ALIGN_TOP	/* game				*/
+			doubleClick
+			{
+				uiScript JoinServer
+			}
+		}
+		
+
+		//SERVER LIST HEADER SORT TABS -----------------------------------
+		PREPROC_TEXT_DRAW( (SERVERLIST_X + TEXT_OFFSET_X + HOSTS_X)		(SERVERLIST_Y - CHOICE_SIZE_Y) 50 CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, "@MENU_HOST_CAPS",			TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 0.65 ) 
+		PREPROC_TEXT_DRAW( (SERVERLIST_X + TEXT_OFFSET_X + MAPS_X)		(SERVERLIST_Y - CHOICE_SIZE_Y) 50 CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, "@MENU_MAP_NAME_CAPS",		TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 0.65 ) 
+		PREPROC_TEXT_DRAW( (SERVERLIST_X + TEXT_OFFSET_X + CLIENTS_X)	(SERVERLIST_Y - CHOICE_SIZE_Y) 50 CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, "@MENU_NUMPLAYERS_CAPS",	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 0.65 ) 
+		PREPROC_TEXT_DRAW( (SERVERLIST_X + TEXT_OFFSET_X + GAMES_X)		(SERVERLIST_Y - CHOICE_SIZE_Y) 50 CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, "@MENU_TYPE_CAPS",			TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 0.65 ) 
+	
+		// column dividers --------------------------------
+		PREPROC_SHADER_DRAW( (SERVERLIST_X + MAPS_X-3)		SERVERLIST_Y 1 SERVERLIST_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, "white", 0 0 0 0.2 )
+		PREPROC_SHADER_DRAW( (SERVERLIST_X + CLIENTS_X-3)	SERVERLIST_Y 1 SERVERLIST_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, "white", 0 0 0 0.2 )
+		PREPROC_SHADER_DRAW( (SERVERLIST_X + GAMES_X-3)		SERVERLIST_Y 1 SERVERLIST_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, "white", 0 0 0 0.2 )
+
+		// --------------------------- buttons ----------------------------
+		FRAME_BACK_BUTTON_DEFAULT
+
+		GAMEPAD_BUTTON( (SERVERLIST_X + MAPS_X-3) (FRAME_DEFAULT_HEIGHT/2) 50 17 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, "@PLATFORM_REFRESH", BUTTON_X{ play CHOICE_FOCUS_SOUND; uiScript RefreshServers; }, 1 )
+
+		PREPROC_TEXT_DRAW_VIS( (SERVERLIST_X + GAMES_X-3) (FRAME_DEFAULT_HEIGHT/2) 50 17 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, "@PLATFORM_SELECT", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1, 1 )
+		
+		#include "ui/safearea.menu"
+	}
+}

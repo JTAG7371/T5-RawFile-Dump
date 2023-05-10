@@ -1,0 +1,67 @@
+// --------------------------------------------------------------------------------
+// ---- Bar scene ----
+// --------------------------------------------------------------------------------
+int_cub_barscene_player_start
+int_cub_barscene_player_grab
+ch_cub_b01_bar_exit_player
+
+o_cub_barscene_map
+o_cub_b01_bar_exit_woods_gun
+
+o_cub_barscene_door_burst_open
+o_cub_barscene_door_close_end
+
+p_cub_b01_bar_exit_door
+p_cub_b01_bar_exit_door_closed
+p_cub_b01_bar_exit_door_open
+v_cub_b01_bar_exit_policecar_car
+v_cub_b01_bar_exit_policecar_idle_car
+
+// --------------------------------------------------------------------------------
+// ---- zipline ----
+// --------------------------------------------------------------------------------
+
+int_zip_entry_player
+int_zip_entry_loop_player
+int_zip_exit_player
+
+o_zipline_crossbow_align_bowman
+o_zipline_crossbow_align_woods
+
+// --------------------------------------------------------------------------------
+// ---- Castro Assasination ----
+// --------------------------------------------------------------------------------
+
+// door breach before assasination
+ch_cuba_b02_door_breach_player
+
+ch_cuba_b02_castro_assassination_part1_player
+ch_cuba_b02_castro_assassination_part2a_player
+ch_cuba_b02_castro_assassination_part2b_player
+
+o_cuba_b02_castro_assassination_shotgun_idle
+
+// --------------------------------------------------------------------------------
+// ---- Mansion Escape ----
+// --------------------------------------------------------------------------------
+
+o_cuba_b02_make_cover_l_cabinet
+o_cuba_b02_make_cover_r_cabinet
+o_cuba_b02_shot_hit_table_prop
+
+// --------------------------------------------------------------------------------
+// ---- Airfield ----
+// --------------------------------------------------------------------------------
+
+ch_b04_getting_caught_player
+ch_b04_get_on_plane_player
+ch_b04_launch_from_plane_player
+ch_b04_youre_dead_player
+int_forward_rappel
+o_forward_rappel_rope
+
+o_forward_rappel_rope_idle
+o_forward_rappel_leftguy_rope_idle
+o_forward_rappel_rightguy_rope_idle
+o_forward_rappel_leftguy_rope
+o_forward_rappel_rightguy_rope

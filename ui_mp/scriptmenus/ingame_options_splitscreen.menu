@@ -1,0 +1,55 @@
+#define SPLITSCREEN_ENABLED 1
+
+#define OPTIONS_INGAME
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/frame.inc"
+
+#define CHOICE_GROUP					"ingameoptions"
+
+#define CHOICE_SEP_OFFSET_Y				-2
+#define CHOICE_SIDEITEM_SPACING			-310
+
+#define CHOICE_ACTION_SOUND				"uin_navigation_slider"
+
+#define CHOICE_DVAR_TEXTALIGN			ITEM_ALIGN_MIDDLE_LEFT
+
+#include "ui/framestyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#undef	CHOICE_TEXTSIZE
+#define CHOICE_TEXTSIZE		TEXTSIZE_SMALL
+
+
+{
+
+	#define SENSITIVITY_1		0.6		//(Low)
+	#define SENSITIVITY_2		1		//(Medium)
+	#define SENSITIVITY_3		1.4
+	#define SENSITIVITY_4		1.8		//(High)
+	#define SENSITIVITY_5		2.0
+	#define SENSITIVITY_6		2.2
+	#define SENSITIVITY_7		2.6		//(Very High)
+	#define SENSITIVITY_8		3.0
+	#define SENSITIVITY_9		3.5
+	#define SENSITIVITY_10		4.0		//(Insane)
+	#define SENSITIVITY_1_S		"0.6"	//(Low)
+	#define SENSITIVITY_2_S		"1"		//(Medium)
+	#define SENSITIVITY_3_S		"1.4"
+	#define SENSITIVITY_4_S		"1.8"	//(High)
+	#define SENSITIVITY_5_S		"2.0"
+	#define SENSITIVITY_6_S		"2.2"
+	#define SENSITIVITY_7_S		"2.6"	//(Very High)
+	#define SENSITIVITY_8_S		"3.0"
+	#define SENSITIVITY_9_S		"3.5"
+	#define SENSITIVITY_10_S	"4.0"	//(Insane)
+
+
+// this is the in game menu controls for mp only
+{
+	#define BLUR_AMOUNT			7.0
+	#define CONTROL_IN_GAME		1
+	#undef SINGLE_PLAYER
+	#include "ui/ingame_options.menu"
+	#include "ui/controls_common_info.inc"
+}

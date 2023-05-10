@@ -1,0 +1,14 @@
+{
+	menuDef
+	{
+		name			"changeclass_opfor"
+		onOpen
+		{
+			
+			uiScript openMenuOnDvar "onlinegame" 0 "changeclass";			
+			uiScript openMenuOnDvar "onlinegame" 1 "changeclass";			
+
+			close self;
+		}
+	}
+}

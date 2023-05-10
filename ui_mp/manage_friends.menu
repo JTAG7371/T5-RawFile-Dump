@@ -1,0 +1,357 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_X_START			30
+#define CHOICE_Y_START			40
+
+#define LOGO_START_X			-300
+#define LOGO_START_Y			-160
+
+#define CHOICE_ACTION_SOUND "uin_navigation_slider"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/online_status.inc"
+
+//#include "ui_mp/stats_info.inc"
+#include "ui_mp/friends_common.inc"	
+
+#undef	SIGNED_IN_RECT
+#define SIGNED_IN_RECT			-350 60 250 15
+
+// menu origin is top right corner
+menuDef
+{
+	name			menu_pc_friends
+#ifndef PC_INGAME
+	fullScreen		1
+	rect			0 0 640 480
+#else
+	rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN
+#endif// PC_INGAME
+	focusColor		COLOR_FOCUSED
+	onOpen	        {}
+	onClose         {}
+	onEsc           { close menu_pc_friends; }
+	#undef BACK_OPEN
+#ifdef PC_INGAME
+	#define BACK_OPEN	close self; open class;
+	#include "ui/overlaybg.inc"
+	BACKGROUND_BLACK_LETTERBOX_BLURWORLD_VIS( 1.0 , 1 )
+	OVERLAY_BACKGROUND
+#else
+	#define BACK_OPEN	close self;
+	#include "ui/blurredbg.inc"
+#endif
+	#include "ui_mp/navcontrols.inc"
+
+	itemDef
+	{
+		name			signedinas
+		type			ITEM_TYPE_OWNERDRAW_TEXT
+		rect			SIGNED_IN_RECT HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_DEFAULT
+		style			WINDOW_STYLE_EMPTY
+		textscale		TEXTSIZE_SMALL
+		textfont		CHOICE_TEXTFONT
+		forecolor		COLOR_DISABLED
+		ownerdraw		UI_LOGGEDINUSER
+		visible			1
+		decoration
+	}
+
+#ifndef PC_INGAME
+	// cod:mw logo
+	itemDef
+	{
+		visible			1
+		rect			LOGO_START_X LOGO_START_Y 256 64 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+		forecolor		1 1 1 1
+		style			WINDOW_STYLE_SHADER
+		background		"logo_cod2"
+		visible 		when( !localvarBool( ui_hideBack ) );
+		decoration
+	}
+#endif //PC_INGAME
+
+
+	CHOICE_MENU_TITLE( "@MENU_FRIENDS_CAPS" );
+
+#ifdef PC_INGAME
+	CHOICE_BUTTON_BG( 1, 1 )
+	CHOICE_HIGHLIGHT( 1, 1 )
+	CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( 1, "@MENU_MANAGEFRIENDS_CAPS", setLocalVarBool ui_showGameInvites 0 ; setLocalVarBool ui_showInviteFriend 0; close self; open manage_friends, ;, ;, 1, name managefriends )
+	CHOICE_NEWICON_VIS( 1, "menu_mp_lobby_new", when( haspendingfriends() ); )
+	
+	CHOICE_BUTTON_BG( 2, 1 )
+	CHOICE_HIGHLIGHT( 2, 1 )
+	CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( 2, "@MENU_GAME_INVITES_CAPS", setLocalVarBool ui_showGameInvites 1; setLocalVarBool ui_showInviteFriend 0; uiScript sortFriends 6; close self; open manage_friends, ;, ;, 1, name gameinvites )					
+	CHOICE_NEWICON_VIS( 2, "menu_mp_lobby_new", when( hasinvites() ); )
+
+	CHOICE_BUTTON_BG( 3, 1 )
+	CHOICE_HIGHLIGHT( 3, 1 )
+	CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( 3, "@MENU_INVITE_FRIEND_CAPS", setLocalVarBool ui_showGameInvites 0; setLocalVarBool ui_showInviteFriend 1; close self; setDvar ui_inviteScreen 1; open manage_friends, ;, ;, 1, name friendinvites )					
+#else
+	CHOICE_BUTTON_BG( 1, 1 )
+	CHOICE_HIGHLIGHT( 1, 1 )
+	CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( 1, "@MENU_MANAGEFRIENDS_CAPS", setLocalVarBool ui_showGameInvites 0 ; setLocalVarBool ui_showInviteFriend 0; open manage_friends, ;, ;, 1, name managefriends )
+	CHOICE_NEWICON_VIS( 1, "menu_mp_lobby_new", when( haspendingfriends() ); )
+	
+	CHOICE_BUTTON_BG( 2, 1 )
+	CHOICE_HIGHLIGHT( 2, 1 )
+	CHOICE_BUTTON_FOCUS_VIS_NOHI_EX( 2, "@MENU_GAME_INVITES_CAPS", setLocalVarBool ui_showGameInvites 1; setLocalVarBool ui_showInviteFriend 0; uiScript sortFriends 6; open manage_friends, ;, ;, 1, name gameinvites )					
+	CHOICE_NEWICON_VIS( 2, "menu_mp_lobby_new", when( hasinvites() ); )
+
+#endif //PC_INGAME
+}
+
+// Listbox offsets and dimentions
+#define LIST_BOX_FR_WIDTH			280
+#define LIST_BOX_FR_HEIGHT			300
+#define LIST_BOX_FR_SIZE 			LIST_BOX_FR_WIDTH LIST_BOX_FR_HEIGHT
+
+#define LB_GROUP_X					90
+#define LB_GROUP_Y					20	
+#define LB_GROUP_ORIGIN         	LB_GROUP_X LB_GROUP_Y  
+#define LB_COLUMN1_OFFSET_X      	5
+#define LB_COLUMN2_OFFSET_X      	(LIST_BOX_FR_WIDTH-105)
+#define LB_COLUMN3_OFFSET_X      	(LIST_BOX_FR_WIDTH-70)
+#define LB_BOX_OFFSET_Y          	12
+
+
+//Colors
+#undef COLUMN_HEADER_COLOR
+#undef PLATING_COLOR
+#define PLATING_COLOR		0.3 0.3 0.3 0.65
+#define COLUMN_HEADER_COLOR 0.6 0.6 0.6 1
+
+
+	menuDef
+	{
+		name			manage_friends
+#ifndef PC_INGAME
+		fullscreen      1
+		rect			0 0 640 480
+#else
+	rect			    0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN
+#endif// PC_INGAME
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_EMPTY
+
+		onOpen			{ }
+		onclose			{ setLocalVarBool ui_showGameInvites 0; setLocalVarBool ui_showInviteFriend 0; setDvar ui_inviteScreen 0; uiScript "clearInvites"; }
+		onESC 			{ setLocalVarBool ui_showGameInvites 0; setLocalVarBool ui_showInviteFriend 0; close self; }
+
+		#undef BACK_OPEN
+		
+
+#ifdef PC_INGAME
+		#define BACK_OPEN	close self; open menu_pc_friends;
+		//#include "ui/overlaybg.inc"
+		BACKGROUND_BLACK_LETTERBOX_BLURWORLD_VIS( 1.0 , 1 )
+		OVERLAY_BACKGROUND
+#else
+		#define BACK_OPEN	close self;
+		//#include "ui/blurredbg.inc"
+#endif
+		#include "ui_mp/navcontrols.inc"
+
+		// draws signin status
+		SIGNIN_STATUS
+
+		FRIEND_CAPTION_VIS( "@MENU_MANAGEFRIENDS_CAPS", 22, 5, 100, 100, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP,when( !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend )); )
+		FRIEND_CAPTION_VIS( "@MENU_INVITE_FRIEND_CAPS", 22, 5, 100, 100, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, when( localVarBool( ui_showInviteFriend )); )
+		FRIEND_CAPTION_VIS( "@MENU_GAME_INVITES_CAPS", 22, 5, 100, 100, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, when( localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend )); )
+
+#ifndef PC_INGAME
+		FRIEND_LOGO_VIS( LOGO_START_X, LOGO_START_Y, when( localVarBool( ui_showGameInvites ) || localVarBool( ui_showInviteFriend )); )
+#endif //PC_INGAME
+		// player list frame clone
+		// caption liner
+		PREPROC_SHADER_DRAW( LB_GROUP_X (-4+LB_GROUP_Y) LIST_BOX_FR_WIDTH 16 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP, "white", PLATING_COLOR)
+		// highliter at the bottom of the list box ( underliner )
+		PREPROC_SHADER_DRAW( LB_GROUP_X (LIST_BOX_FR_HEIGHT+12+LB_GROUP_Y) LIST_BOX_FR_WIDTH 8 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP, "white", PLATING_COLOR )
+		
+		// Friends listbox section
+#undef SECTION_X_OFFSET
+#define SECTION_X_OFFSET 5
+#undef CHOICE_Y_START
+#define CHOICE_Y_START   20
+		CHOICE_SECTION_TITLE_VIS( 1, "@MENU_FRIENDS", when( !localVarBool( ui_showGameInvites ) || localVarBool( ui_showInviteFriend )) )
+		CHOICE_SECTION_TITLE_VIS( 1, "@MENU_GAME_INVITES", when( localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend )) )
+		
+		FRIEND_COLUMN_VIS( "@MENU_NAME", LB_COLUMN1_OFFSET_X, 0, 50, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, LB_GROUP_ORIGIN, uiScript sortFriends 0;, MENU_TRUE )
+		FRIEND_COLUMN_VIS( "@MENU_STATUS1", LB_COLUMN3_OFFSET_X, 0, 50, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, LB_GROUP_ORIGIN, uiScript sortFriends 2;, when( !localVarBool( ui_showGameInvites ) ))
+		itemDef 
+		{
+			name			friend_list
+			type			ITEM_TYPE_LISTBOX
+			feeder			FEEDER_FRIENDS
+			rect			0 LB_BOX_OFFSET_Y (LIST_BOX_FR_WIDTH-2) (LIST_BOX_FR_HEIGHT-4) HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin          LB_GROUP_ORIGIN
+			elementwidth	120
+			elementheight	18
+			textalignx		2
+			textaligny		0
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_NORMAL
+			forecolor		CHOICE_TEXTCOLOR
+			focusColor		CHOICE_TEXTCOLOR
+			disableColor 	CHOICE_TEXTCOLOR
+			outlinecolor	0.9 0.9 0.925 0.2
+			selectBorder	0.8 0.95 1 0
+			columns			3 
+			                LB_COLUMN1_OFFSET_X 0  20 
+			                LB_COLUMN2_OFFSET_X 24 4 
+			                LB_COLUMN3_OFFSET_X 0  8
+			visible			when( !localVarBool( ui_showGameInvites ) );
+			
+			onfocus 
+			{
+				play "mouse_over";
+			}
+			execkeyint 13
+			{
+				play CHOICE_ACTION_SOUND;
+				close manage_friends;
+			}
+			doubleclick
+			{
+				play CHOICE_ACTION_SOUND;
+				uiScript iviteOrDeleteFriend;
+			}
+		}
+		itemDef 
+		{
+			name			invite_list
+			type			ITEM_TYPE_LISTBOX
+			feeder			FEEDER_INVITES
+			rect			0 LB_BOX_OFFSET_Y (LIST_BOX_FR_WIDTH-2) (LIST_BOX_FR_HEIGHT-4) HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin          LB_GROUP_ORIGIN
+			elementwidth	120
+			elementheight	18
+			textalignx		2
+			textaligny		0
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_NORMAL
+			forecolor		CHOICE_TEXTCOLOR
+			focusColor		CHOICE_TEXTCOLOR
+			disableColor 	CHOICE_TEXTCOLOR
+			outlinecolor	0.9 0.9 0.925 0.2
+			selectBorder	0.8 0.95 1 0
+			columns			1
+			                LB_COLUMN1_OFFSET_X 0 20 
+			visible			when( localVarBool( ui_showGameInvites ) );
+			
+			onfocus 
+			{
+				play "mouse_over";
+			}
+			execkeyint 13
+			{
+				play CHOICE_ACTION_SOUND;
+				close manage_friends;
+			}
+			doubleclick
+			{
+				play CHOICE_ACTION_SOUND;
+				uiScript acceptInvite;
+			}
+		}
+
+		// --------------------  buttons ---------------------------------
+  		FRIEND_BUTTON_VIS( "@PLATFORM_ADD", 0, 420, 80, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, uiScript openMenuOnDvar dw_loggedin "1" friend_add_popmenu; uiScript openMenuOnDvarNot dw_loggedin "1" not_online_popmenu, when( !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ); )
+  		FRIEND_BUTTON_VIS( "@MENU_DELETE", 235, 420, 80, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, uiScript deleteFriendPopup;, when ( ( hasfriends() > 0 ) && !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ) ; )
+  		FRIEND_DBUTTON_VIS( "@MENU_DELETE", 235, 420, 80, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, when ( ( hasfriends() == 0 ) && !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ) ; )
+  		FRIEND_BUTTON_VIS( "@MENU_ACCEPT", 235, 420, 80, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, uiScript acceptInvite;, when (( hasinvites() > 0 ) && localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend )) ; )
+  		FRIEND_DBUTTON_VIS( "@MENU_ACCEPT", 235, 420, 80, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, when (( hasinvites() == 0 ) && localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend )) ; )
+  		FRIEND_BUTTON_VIS( "@MENU_SEND_INVITE", 220, 420, 80, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, uiScript inviteFriend, when (hasfriends()> 0 && localVarBool( ui_showInviteFriend ));  )
+  		FRIEND_DBUTTON_VIS( "@MENU_SEND_INVITE", 220, 420, 80, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, when (hasfriends()== 0 && localVarBool( ui_showInviteFriend ) ) ; )
+
+		// Pending listbox section
+#undef SECTION_X_OFFSET
+#define SECTION_X_OFFSET 330
+		CHOICE_SECTION_TITLE_VIS( 1, "@MENU_PENDING", when( !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend )) )
+
+#undef	LB_GROUP_X				
+#define LB_GROUP_X				340
+#undef	LB_GROUP_Y	
+#define LB_GROUP_Y				90
+		
+		// caption liner
+		PREPROC_SHADER_DRAW_VIS_EX( LB_GROUP_X (-4+LB_GROUP_Y) LIST_BOX_FR_WIDTH 16 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP,						"white", PLATING_COLOR, when( !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ));, ; )
+		// highliter at the bottom of the list box ( underliner )
+		PREPROC_SHADER_DRAW_VIS_EX( LB_GROUP_X (LIST_BOX_FR_HEIGHT+12+LB_GROUP_Y) LIST_BOX_FR_WIDTH 8 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP,	"white", PLATING_COLOR, when( !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ));, ; )
+		
+
+		FRIEND_COLUMN_VIS( "@MENU_NAME", LB_COLUMN1_OFFSET_X, 0, 50, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, LB_GROUP_ORIGIN, uiScript sortFriends 3;, when( !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ) ; )
+		
+		itemDef 
+		{
+			name			invite_friend_list
+			type			ITEM_TYPE_LISTBOX
+			feeder			FEEDER_PENDINGFRIENDS
+			rect			0 LB_BOX_OFFSET_Y (LIST_BOX_FR_WIDTH-2) (LIST_BOX_FR_HEIGHT-4) HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin          LB_GROUP_ORIGIN
+			elementwidth	120
+			elementheight	18
+			textalignx		2
+			textaligny		0
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_NORMAL
+			forecolor		CHOICE_TEXTCOLOR
+			focusColor		CHOICE_TEXTCOLOR
+			disableColor 	CHOICE_TEXTCOLOR
+			outlinecolor	0.9 0.9 0.925 0.2
+			selectBorder	0.8 0.95 1 0
+			columns			1 
+			                LB_COLUMN1_OFFSET_X 0 20 
+			visible         when( !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ) ;
+			
+			onfocus 
+			{
+				play "mouse_over";
+			}
+			execkeyint 13
+			{
+				play CHOICE_ACTION_SOUND;
+				close manage_friends;
+			}
+			doubleclick
+			{
+				play CHOICE_ACTION_SOUND;
+				uiScript acceptFriend;
+			}
+		}
+		
+
+		// --------------------  buttons ---------------------------------
+  		FRIEND_BUTTON_VIS( "@MENU_ACCEPT", 340, 420, 50, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, uiScript acceptFriend;, when ( ( haspendingfriends() > 0 ) && !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ) ; )
+  		FRIEND_DBUTTON_VIS( "@MENU_ACCEPT", 340, 420, 50, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, when ( (haspendingfriends() == 0 ) && !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ) ; )
+  		FRIEND_BUTTON_VIS( "@MENU_DECLINE", 405, 420, 50, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, uiScript declineFriend;, when (( haspendingfriends() > 0 ) && !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ) ; )
+  		FRIEND_DBUTTON_VIS( "@MENU_DECLINE", 405, 420, 50, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, when ( ( haspendingfriends() == 0 ) && !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend )) ; )
+  		FRIEND_BUTTON_VIS( "@MENU_ACCEPT_ALL", 470, 420, 70, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, uiScript acceptAllFriend;, when (( haspendingfriends() > 0 ) && !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ) ; )
+  		FRIEND_DBUTTON_VIS( "@MENU_ACCEPT_ALL", 470, 420, 70, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, when ( ( haspendingfriends() == 0 ) && !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ) ; )
+  		FRIEND_BUTTON_VIS( "@MENU_DECLINE_ALL", 552, 420, 70, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, uiScript declineAllFriend;, when ( ( haspendingfriends() > 0 ) && !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ) ; )
+  		FRIEND_DBUTTON_VIS( "@MENU_DECLINE_ALL", 552, 420, 70, 20, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, when ( ( haspendingfriends() == 0 ) && !localVarBool( ui_showGameInvites ) && !localVarBool( ui_showInviteFriend ) ) ; )
+		
+  	}//menuDef manage_friends
+
+
+#undef  CHOICE_X_START
+#undef  CHOICE_Y_START
+#define CHOICE_X_START			78
+#define CHOICE_Y_START			230
+
+#undef  CHOICE_GROUP
+#define CHOICE_GROUP			"friend_popup"
+
+#include "ui_mp/popupstyle.inc"	
+#include "ui/choices_setup_popmenu.menu"
+	
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X	180
+
+#undef  CHOICE_TEXT_OFFSET_X
+#define CHOICE_TEXT_OFFSET_X		CHOICE_SIZE_Y
+
+#include "ui_mp/friends_popups.inc"

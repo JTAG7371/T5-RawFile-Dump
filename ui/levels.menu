@@ -1,0 +1,285 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/frame.inc"
+
+#define CHOICE_GROUP					"level"
+
+#include "ui/framestyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/overlaybg.inc"
+#include "ui_mp/popup_player_info.inc"
+#include "ui_mp/newframe.inc"
+
+#define MISSION_SELECT_NAME_X			-20
+#define MISSION_SELECT_NAME_Y			CHOICE_Y_START
+#define MISSION_SELECT_NAME_SIZE		ITEM_IMAGE_WIDTH 30
+
+#define ITEM_IMAGE_X					MISSION_SELECT_NAME_X
+#define ITEM_IMAGE_Y					(MISSION_SELECT_NAME_Y + 30)
+#define ITEM_IMAGE_ASPECT_RATIO			(350/251)
+#define ITEM_IMAGE_WIDTH				(ITEM_IMAGE_HEIGHT * ITEM_IMAGE_ASPECT_RATIO)
+#define ITEM_IMAGE_HEIGHT				200
+#define ITEM_IMAGE_SIZE					ITEM_IMAGE_WIDTH ITEM_IMAGE_HEIGHT
+
+#define MISSION_SELECT_DESC_X			(ITEM_IMAGE_X + 2)
+#define MISSION_SELECT_DESC_Y			(ITEM_IMAGE_Y + ITEM_IMAGE_HEIGHT + 5)
+#define MISSION_SELECT_DESC_SIZE		(ITEM_IMAGE_WIDTH - 5) 75
+
+
+#define MISSION_SELELCT_INFO( vis )																																\
+		/* Name */																																				\
+		PREPROC_TEXT_DRAW_ALL(	MISSION_SELECT_NAME_X MISSION_SELECT_NAME_Y MISSION_SELECT_NAME_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,		\
+								"@"+dvarString( ui_level_loc_text )+"_CAPS",																					\
+								TEXTSIZE_SUBTITLE, 0, 0, ITEM_ALIGN_TOP_CENTER, 1 1 1 1,																		\
+								UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL, when( vis ), ; )																		\
+		/* Image */																																				\
+		PREPROC_SHADER_DRAW_VIS_EX( ITEM_IMAGE_X ITEM_IMAGE_Y ITEM_IMAGE_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,									\
+									"preview_"+dvarString( ui_mapname ), 1 1 1 0.9, when( vis );, ; )															\
+		/* Description */																																		\
+		PREPROC_TEXT_DRAW_VIS_EX(	MISSION_SELECT_DESC_X MISSION_SELECT_DESC_Y MISSION_SELECT_DESC_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,	\
+									"@"+dvarString( ui_level_loc_text )+"_DESC",																				\
+									TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_CENTER, WHITE,																			\
+									when( vis );, autowrapped )
+
+#undef CHOICE_Y_START
+#define CHOICE_Y_START					-125
+
+#undef CHOICE_X_START
+#define CHOICE_X_START					-270
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X					200
+
+#undef A_BUTTON_SIZE
+#define A_BUTTON_SIZE					A_BUTTON_SIZE_GLOBAL
+
+#undef CHOICE_TEXT_OFFSET_X
+#define CHOICE_TEXT_OFFSET_X			18
+
+
+	#define MAP_SELECTION_ACTION( mapname )											\
+			setDvar ui_load_level mapname;											\
+			if( dvarInt( #"zombiemode" ) == 1 || dvarInt( #"ui_zombiemode" ) == 1 )	\
+			{																		\
+				exec "set arcademode_lives 2; set arcademode_combined_score 0";		\
+				close self;															\
+				open dummy_menu;													\
+				uiscript sendMenuNotify "startlevel 0";								\
+			}																		\
+			else																	\
+			{																		\
+				setDvar newgame_difficulty 0;										\
+				FRAME_TO_NEXT_FRAME_SLIDE_ACTION( levels, popmenu_difficulty );		\
+			}
+
+	#define MAP_SELECTION_ACTION_DLC( mapname )										\
+			play CHOICE_ACTION_SOUND;												\
+			setdvar com_errorTitle "@MENU_NOTICE_CAPS";				\
+			setdvar com_errorMessage "@PLATFORM_MISSINGMAP";		\
+			open error_popmenu;
+
+	#define MAP_SELECTION_ONFOCUS( itemIndex, textArg, mapname )					\
+			setDvar ui_level_loc_text textArg										\
+			setDvar ui_mapname mapname
+
+	#define MAP_SELECTION_VIS( visArg )												\
+			( dvarInt( mis_01 ) >= ( visArg ) || dvarInt( #"zombiemode" ) == 1 || dvarInt( #"ui_zombiemode" ) == 1 )
+	
+	#define LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( itemIndex, textArg, imageName, mapname, vis )		\
+			FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, "@"+textArg+"_CAPS",						\
+							MAP_SELECTION_ACTION( mapname ),										\
+							MAP_SELECTION_ONFOCUS( itemIndex, textArg, imageName ),					\
+							;,																		\
+							vis, ; )		
+
+	#define LOCAL_MAP_SELECTION( itemIndex, textArg, imageName, mapname, unlockAt, redactStyle )	\
+			FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, "@"+textArg+"_CAPS",						\
+							MAP_SELECTION_ACTION( mapname ),										\
+							MAP_SELECTION_ONFOCUS( itemIndex, textArg, imageName ),					\
+							;,																		\
+							dvarint(mis_01) >= unlockAt, ; )										\
+							itemDef																	\
+							{																		\
+								style			WINDOW_STYLE_SHADER									\
+								rect			CHOICE_X( itemIndex ) CHOICE_Y( itemIndex ) CHOICE_SIZE_X 20 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN\
+								forecolor		0 0 0 1												\
+								background		redactStyle											\
+								visible			when (dvarint(mis_01) < unlockAt)					\
+								decoration															\
+							}
+
+	#define LOCAL_MAP_SELECTION_VIS( itemIndex, textArg, imageName, mapname, vis, redactStyle)		\
+			FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, "@"+textArg+"_CAPS",						\
+							MAP_SELECTION_ACTION( mapname ),										\
+							MAP_SELECTION_ONFOCUS( itemIndex, textArg, imageName ),					\
+							;,																		\
+							vis, ; )																\
+							itemDef																	\
+							{																		\
+								style			WINDOW_STYLE_SHADER									\
+								rect			CHOICE_X( itemIndex ) CHOICE_Y( itemIndex ) CHOICE_SIZE_X 20 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN\
+								forecolor		0 0 0 1												\
+								background		redactStyle											\
+								visible			when (!vis)											\
+								decoration															\
+							}
+
+
+
+
+	menuDef
+	{
+		name					levels
+		rect					0 0 640 480
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+
+#undef ON_ESC
+#define ON_ESC									\
+	play uin_navigation_menu_lg_close;			\
+	FRAME_SLIDE_RESET_TOP_TO_BOTTOM( levels );	\
+	close blackout_3d_tv;						\
+	close self;
+
+
+		onOpen	
+		{
+			setdvar ui_zombiemode 0;
+			focusfirst;
+			play uin_navigation_menu_lg_open;
+		}
+		onFocus { }
+		onClose	{ }
+		onESC	
+		{
+			ON_ESC
+		}
+
+		FRAME_SP_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MENU_MISSIONS_CAPS", 1 )
+
+		//PLAYER_INFO_VIS( FRAME_DEFAULT_WIDTH, FRAME_DEFAULT_HEIGHT, 1 )
+
+		LOCAL_MAP_SELECTION( 1, "MENU_LEVEL_CUBA",					"cuba",				"cuba",						0,		redact1 )
+		LOCAL_MAP_SELECTION( 2, "MENU_LEVEL_VORKUTA",				"vorkuta",			"so_narrative1_frontend",	1,		redact2 )
+		LOCAL_MAP_SELECTION( 3, "MENU_LEVEL_PENTAGON",				"pentagon",			"pentagon",					3,		redact3 )
+		LOCAL_MAP_SELECTION( 4, "MENU_LEVEL_FLASHPOINT",			"flashpoint",		"flashpoint",				4,		redact1 )
+		LOCAL_MAP_SELECTION( 5, "MENU_LEVEL_KHE_SANH",				"khe_sanh",			"so_narrative2_frontend",	5,		redact3 )
+		LOCAL_MAP_SELECTION( 6, "MENU_LEVEL_HUE_CITY",				"hue_city",			"hue_city",					7,		redact2 )
+		LOCAL_MAP_SELECTION( 7, "MENU_LEVEL_KOWLOON",				"kowloon",			"kowloon",					8,		redact1 )
+		LOCAL_MAP_SELECTION( 8, "MENU_LEVEL_FULLAHEAD",				"fullahead",		"so_narrative3_frontend",	9,		redact3 )
+		LOCAL_MAP_SELECTION( 9, "MENU_LEVEL_CREEK_1",				"creek_1",			"creek_1",					11,		redact1 )
+		LOCAL_MAP_SELECTION( 10, "MENU_LEVEL_RIVER",				"river",			"so_narrative4_frontend",	12,		redact2 )
+		LOCAL_MAP_SELECTION( 11, "MENU_LEVEL_WMD",					"wmd",				"wmd_sr71",					14,		redact3 )
+		LOCAL_MAP_SELECTION( 12, "MENU_LEVEL_POW",					"pow",				"pow",						16,		redact1 )
+		LOCAL_MAP_SELECTION( 13, "MENU_LEVEL_REBIRTH",				"rebirth",			"so_narrative5_frontend",	17,		redact2 )
+		LOCAL_MAP_SELECTION( 14, "MENU_LEVEL_INTERROGATION_ESCAPE",	"int_escape",		"int_escape",				19,		redact3 )
+		LOCAL_MAP_SELECTION( 15, "MENU_LEVEL_UNDERWATERBASE",		"underwaterbase",	"underwaterbase",			20,		redact1 )
+
+
+#ifdef PC
+		NEW_FRAME_BACK_BUTTON_ACTION( FRAME_DEFAULT_WIDTH, FRAME_DEFAULT_HEIGHT, ON_ESC ; )
+#else //#ifdef PC
+		FRAME_BACK_BUTTON_DEFAULT
+#endif //#ifdef PC
+
+		MISSION_SELELCT_INFO( 1 )//visible argument just in case we want to display all maps even ones that are not selectable yet.
+	}
+
+
+	menuDef
+	{
+		blurWorld				4.8
+
+		name					levels_zombie
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		
+#undef ON_ESC
+#define ON_ESC							\
+	play uin_navigation_menu_lg_close;	\
+			close blackout_3d_tv;		\
+			close self;
+			
+		onOpen	
+		{
+			setdvar ui_zombiemode 1;
+			focusfirst;
+			play uin_navigation_menu_lg_open;
+		}
+		onFocus { }
+		onClose	{ }
+		onESC	
+		{
+			ON_ESC
+		}
+
+		FRAME_ZOMBIE_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MENU_MISSIONS_CAPS", 1 )
+
+		LOCAL_MAP_SELECTION_VIS( 1, "MENU_ZOMBIE_THEATER",		"zombie_theater",		"zombie_theater",	1,	redact1 )
+		LOCAL_MAP_SELECTION_VIS( 2, "MENU_ZOMBIE_PENTAGON",		"zombie_pentagon",		"zombie_pentagon",	(dvarInt( #"zombiefive_discovered" ) == 1), redact2 )
+		LOCAL_MAP_SELECTION_VIS( 3, "MENU_ZOMBIETRON",			"zombietron",			"zombietron",		(dvarInt( #"zombietron_discovered" ) == 1), redact3 )
+
+		// DLC2 UNLOCKED
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 4, "MENU_ZOMBIE_COSMODROME", "zombie_cosmodrome", "zombie_cosmodrome", !dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 8, "MENU_ZOMBIE_COSMODROME", "zombie_cosmodrome", "zombie_cosmodrome", dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) )
+		
+		// DLC3 UNLOCKED
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 4, "MENU_ZOMBIE_COAST",      "zombie_coast",      "zombie_coast", !dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 8, "MENU_ZOMBIE_COAST",      "zombie_coast",      "zombie_coast", dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 5, "MENU_ZOMBIE_COAST",      "zombie_coast",      "zombie_coast", !dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 9, "MENU_ZOMBIE_COAST",      "zombie_coast",      "zombie_coast", dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) )
+
+		// DLC4 UNLOCKED
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 4, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", !dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && !dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 8, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && !dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 5, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", !dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && !dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 9, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && !dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 5, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", !dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 9, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", dvarBool( #"dlc1" ) && !dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 6, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", !dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		LOCAL_MAP_SELECTION_VIS_DLC_UNLOCKED( 10, "MENU_ZOMBIE_TEMPLE",	"zombie_temple",	"zombie_temple", dvarBool( #"dlc1" ) && dvarBool( #"dlc2" ) && dvarBool( #"dlc3" ) && dvarBool( #"dlc4" ) )
+		// DLC4 UNLOCKED						
+
+		// Lock message
+		//PREPROC_TEXT_DRAW_VIS( (-MISSION_SELECT_WIDTH/2+10) (MISSION_SELECT_HEIGHT/2-7) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, GET_UNLOCK_LEVEL_STRING( PERKS_KILLSTREAKS ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, CHOICE_TEXTCOLOR, when( KILLSTREAKS_LOCKED ) )
+	
+#ifdef PC
+		FRAME_BACK_BUTTON_DEFAULT_ACTION( ON_ESC )
+#else //#ifdef PC
+		FRAME_BACK_BUTTON_DEFAULT
+#endif //#ifdef PC
+
+		MISSION_SELELCT_INFO( 1 ) //visible argument just in case we want to display all maps even ones that are not selectable yet.
+	}
+
+	menuDef
+	{
+		name			levels_unlock
+		rect			0 0 1 1
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		border			0
+		visible 		0
+		onOpen
+		{
+			setdvar mis_01 20;
+			execnow "updategamerprofile";
+			close self;
+		}
+	}

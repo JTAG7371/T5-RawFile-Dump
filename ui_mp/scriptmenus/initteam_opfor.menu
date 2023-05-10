@@ -1,0 +1,10 @@
+{
+	menuDef
+	{
+		name			"initteam_opfor"
+		onOpen
+		{
+			close self;
+		}
+	}
+}

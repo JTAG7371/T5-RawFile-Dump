@@ -1,0 +1,146 @@
+"fakelight normal":
+ 	sw_cod7_mountians_rad_vc_tex_normal_matcolor;
+"fakelight view":
+ 	sw_cod7_mountians_rad_vc_tex_view_matcolor;
+"unlit":
+ 	sw_cod7_mountians_rad_vc_tex_matcolor;
+"case texture":
+ 	sw_cod7_mountians_rad_vc_tex_case;
+"shaded wireframe":
+ 	sw_cod7_mountians_rad_vc_tex_matcolor_wireframe;
+"solid wireframe":
+ 	sw_cod7_mountians_rad_vc_wireframe;
+
+"depth prepass":
+	swl_sw_cod7_mountians_zpass;
+
+"build shadowmap depth":
+ 	swl_sw_cod7_mountians_none;
+
+"light spot":
+ 	swl_sw_cod7_mountians_lightspot;
+"light spot shadow":
+ 	swl_sw_cod7_mountians_lightspot_shad;
+"light omni":
+	swl_sw_cod7_mountians_lightomni;
+
+"lit":
+"lit charred":
+  	swl_sw_cod7_mountians_w_sun;
+"lit sun":
+"lit sun charred":
+	swl_sw_cod7_mountians_w_sun;
+"lit sun shadow":
+"lit sun shadow charred":
+ 	swl_sw_cod7_mountians_w_sun_shad;
+"lit spot":
+"lit spot charred":
+ 	swl_sw_cod7_mountians_w_spot;
+"lit spot shadow":
+"lit spot shadow charred":
+ 	swl_sw_cod7_mountians_w_spot_shad;
+"lit omni":
+"lit omni charred":
+ 	swl_sw_cod7_mountians_w_omni;
+"lit omni shadow":
+"lit omni shadow charred":
+ 	swl_sw_cod7_mountians_w_omni_shad;
+
+"lit nvintz":
+  	swl_sw_cod7_mountians_w_sun_nv_intz;
+"lit sun nvintz":
+	swl_sw_cod7_mountians_w_sun_nv_intz;
+"lit sun shadow nvintz":
+ 	swl_sw_cod7_mountians_w_sun_shad_nv_intz;
+"lit spot nvintz":
+ 	swl_sw_cod7_mountians_w_spot_nv_intz;
+"lit spot shadow nvintz":
+ 	swl_sw_cod7_mountians_w_spot_shad_nv_intz;
+"lit omni nvintz":
+ 	swl_sw_cod7_mountians_w_omni_nv_intz;
+"lit omni shadow nvintz":
+ 	swl_sw_cod7_mountians_w_omni_shad_nv_intz;
+
+"lit dlight":
+"lit sun dlight":
+  	swl_sw_cod7_mountians_w_sun_dlight;
+"lit sun shadow dlight":
+ 	swl_sw_cod7_mountians_w_sun_shad_dlight;
+"lit spot dlight":
+ 	swl_sw_cod7_mountians_w_spot_dlight;
+"lit spot shadow dlight":
+ 	swl_sw_cod7_mountians_w_spot_shad_dlight;
+"lit omni dlight":
+ 	swl_sw_cod7_mountians_w_omni_dlight;
+"lit omni shadow dlight":
+ 	swl_sw_cod7_mountians_w_omni_shad_dlight;
+
+"lit glight":
+"lit sun glight":
+  	swl_sw_cod7_mountians_w_sun_glight;
+"lit sun shadow glight":
+ 	swl_sw_cod7_mountians_w_sun_shad_glight;
+"lit spot glight":
+ 	swl_sw_cod7_mountians_w_spot_glight;
+"lit spot shadow glight":
+ 	swl_sw_cod7_mountians_w_spot_shad_glight;
+"lit omni glight":
+ 	swl_sw_cod7_mountians_w_omni_glight;
+"lit omni shadow glight":
+ 	swl_sw_cod7_mountians_w_omni_shad_glight;
+
+"lit dlight glight":
+"lit sun dlight glight":
+  	swl_sw_cod7_mountians_w_sun_dlight_glight;
+"lit sun shadow dlight glight":
+ 	swl_sw_cod7_mountians_w_sun_shad_dlight_glight;
+"lit spot dlight glight":
+ 	swl_sw_cod7_mountians_w_spot_dlight_glight;
+"lit spot shadow dlight glight":
+ 	swl_sw_cod7_mountians_w_spot_shad_dlight_glight;
+"lit omni dlight glight":
+ 	swl_sw_cod7_mountians_w_omni_dlight_glight;
+"lit omni shadow dlight glight":
+ 	swl_sw_cod7_mountians_w_omni_shad_dlight_glight;
+
+"lit dlight nvintz":
+"lit sun dlight nvintz":
+  	swl_sw_cod7_mountians_w_sun_dlight_nv_intz;
+"lit sun shadow dlight nvintz":
+ 	swl_sw_cod7_mountians_w_sun_shad_dlight_nv_intz;
+"lit spot dlight nvintz":
+ 	swl_sw_cod7_mountians_w_spot_dlight_nv_intz;
+"lit spot shadow dlight nvintz":
+ 	swl_sw_cod7_mountians_w_spot_shad_dlight_nv_intz;
+"lit omni dlight nvintz":
+ 	swl_sw_cod7_mountians_w_omni_dlight_nv_intz;
+"lit omni shadow dlight nvintz":
+ 	swl_sw_cod7_mountians_w_omni_shad_dlight_nv_intz;
+
+"lit glight nvintz":
+"lit sun glight nvintz":
+  	swl_sw_cod7_mountians_w_sun_glight_nv_intz;
+"lit sun shadow glight nvintz":
+ 	swl_sw_cod7_mountians_w_sun_shad_glight_nv_intz;
+"lit spot glight nvintz":
+ 	swl_sw_cod7_mountians_w_spot_glight_nv_intz;
+"lit spot shadow glight nvintz":
+ 	swl_sw_cod7_mountians_w_spot_shad_glight_nv_intz;
+"lit omni glight nvintz":
+ 	swl_sw_cod7_mountians_w_omni_glight_nv_intz;
+"lit omni shadow glight nvintz":
+ 	swl_sw_cod7_mountians_w_omni_shad_glight_nv_intz;
+
+"lit dlight glight nvintz":
+"lit sun dlight glight nvintz":
+  	swl_sw_cod7_mountians_w_sun_dlight_glight_nv_intz;
+"lit sun shadow dlight glight nvintz":
+ 	swl_sw_cod7_mountians_w_sun_shad_dlight_glight_nv_intz;
+"lit spot dlight glight nvintz":
+ 	swl_sw_cod7_mountians_w_spot_dlight_glight_nv_intz;
+"lit spot shadow dlight glight nvintz":
+ 	swl_sw_cod7_mountians_w_spot_shad_dlight_glight_nv_intz;
+"lit omni dlight glight nvintz":
+ 	swl_sw_cod7_mountians_w_omni_dlight_glight_nv_intz;
+"lit omni shadow dlight glight nvintz":
+ 	swl_sw_cod7_mountians_w_omni_shad_dlight_glight_nv_intz;

@@ -1,0 +1,304 @@
+#include "ui/menudef.h"
+
+#define CHOICE_X_START			0
+#define CHOICE_Y_START			45
+#define HEADQUARTER_BACKGROUND_WIDTH 320
+#define HEADQUARTER_BACKGROUND_X_START 0
+#define HEADQUARTER_BACKGROUND_Y_START 40
+#define HEADQUARTER_BACKGROUND_HEIGHT 350
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_TOP
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_GROUP			"xboxlive_clanheadquarterslobby"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/friendslist.inc"
+
+#undef	CHOICE_HORIZONTAL_ALIGN 
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_LEFT
+
+
+#undef	CHOICE_X_START
+#define CHOICE_X_START				10
+#undef	CHOICE_Y_START
+#define CHOICE_Y_START				240
+
+#define CLAN_HEADQUARTER_LAYOUT \
+		/* grey background */ \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER  \
+			rect			HEADQUARTER_BACKGROUND_X_START HEADQUARTER_BACKGROUND_Y_START ( HEADQUARTER_BACKGROUND_WIDTH - 40 ) HEADQUARTER_BACKGROUND_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN  \
+			forecolor		.15 .15 .15 1  \
+			background		"white"  \
+			visible			1  \
+			decoration  \
+		}   \
+		itemDef  \
+		{  \
+			style           WINDOW_STYLE_SHADER \
+			type            ITEM_TYPE_IMAGE \
+			rect			( HEADQUARTER_BACKGROUND_X_START + 40 ) ( HEADQUARTER_BACKGROUND_Y_START + 20 ) 100 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN  \
+			exp             material( getcomposite( emblem_clan_local ) ) \
+			visible			1  \
+			decoration  \
+		}  \
+		/* black background */ \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER  \
+            rect            ( HEADQUARTER_BACKGROUND_X_START -300 ) HEADQUARTER_BACKGROUND_Y_START ( HEADQUARTER_BACKGROUND_WIDTH -20 ) HEADQUARTER_BACKGROUND_HEIGHT HORIZONTAL_ALIGN_RIGHT CHOICE_VERTICAL_ALIGN  \
+			forecolor		0 0 0 1  \
+			background		"white"  \
+			visible			1  \
+			decoration  \
+		}	\
+		/* Hardcoded map picture as loadscreen_mp_duga */ \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER  \
+            rect              ( HEADQUARTER_BACKGROUND_X_START - 290 ) HEADQUARTER_BACKGROUND_Y_START ( HEADQUARTER_BACKGROUND_WIDTH - 30 ) 160 HORIZONTAL_ALIGN_RIGHT CHOICE_VERTICAL_ALIGN  \
+			background		"white"  \
+			visible			1  \
+			decoration  \
+		}	\
+		/* Map Name harcoded right now to DUGA */ \
+		itemDef  \
+		{ \
+			type			ITEM_TYPE_TEXT \
+            rect            ( HEADQUARTER_BACKGROUND_X_START - 290 ) ( HEADQUARTER_BACKGROUND_Y_START + 165 ) ( HEADQUARTER_BACKGROUND_WIDTH -30 ) 15 HORIZONTAL_ALIGN_RIGHT CHOICE_VERTICAL_ALIGN  \
+			textfont		UI_FONT_SMALL \
+			textscale		FONTSCALE_SMALL \
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			forecolor		CHOICE_TEXTCOLOR \
+			exp				text( locString( "@MPUI_DUGA" ) ); \
+			visible			1 \
+			decoration  \
+		}	\
+		/* draw line */ \
+		itemDef  \
+		{  \
+			style			WINDOW_STYLE_SHADER  \
+            rect              ( HEADQUARTER_BACKGROUND_X_START -290 ) ( HEADQUARTER_BACKGROUND_Y_START + 185 ) ( HEADQUARTER_BACKGROUND_WIDTH - 30 ) 2 HORIZONTAL_ALIGN_RIGHT CHOICE_VERTICAL_ALIGN  \
+			background		"progress_bar_bg_small"  \
+			visible			1  \
+			decoration  \
+		}  \
+		/* Clan name */ \
+		itemDef  \
+		{ \
+			type			ITEM_TYPE_TEXT \
+            rect            ( HEADQUARTER_BACKGROUND_X_START - 290 ) ( HEADQUARTER_BACKGROUND_Y_START + 190 ) ( HEADQUARTER_BACKGROUND_WIDTH - 30 ) 10 HORIZONTAL_ALIGN_RIGHT CHOICE_VERTICAL_ALIGN  \
+			textfont		UI_FONT_SMALL \
+			textscale		FONTSCALE_SMALL \
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			forecolor		CHOICE_TEXTCOLOR \
+			exp				text( GetClanOnlineMemberCount() + " in HQ" ); \
+			visible			1 \
+			decoration  \
+		}	\
+		/* placeholder for clan count icon */  \
+		itemDef  \
+		{  \
+			type			ITEM_TYPE_OWNERDRAW  \
+            rect            ( HEADQUARTER_BACKGROUND_X_START - 290 ) ( HEADQUARTER_BACKGROUND_Y_START + 200) ( HEADQUARTER_BACKGROUND_WIDTH - 30 ) ( HEADQUARTER_BACKGROUND_HEIGHT - 200 ) HORIZONTAL_ALIGN_RIGHT CHOICE_VERTICAL_ALIGN  \
+			ownerdraw		UI_DISPLAY_CLAN_COUNT_ICON \
+			visible			1  \
+			decoration  \
+		}  \
+		/* Clan name */ \
+		itemDef  \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			( HEADQUARTER_BACKGROUND_X_START + 30 ) ( HEADQUARTER_BACKGROUND_Y_START + 130 ) ( HEADQUARTER_BACKGROUND_WIDTH - 40 ) 20 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN  \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			forecolor		CHOICE_TEXTCOLOR \
+			exp				text( getClanName( dvarString("clancard_clanid") ) ); \
+			visible			1 \
+			decoration  \
+		}	\
+		/* Clan MOTD or Announcement */ \
+		itemDef  \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			( HEADQUARTER_BACKGROUND_X_START + 30 ) ( HEADQUARTER_BACKGROUND_Y_START + 140 ) ( HEADQUARTER_BACKGROUND_WIDTH - 120 ) 40 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN  \
+			textfont		UI_FONT_SMALL \
+			textscale		0.25 \
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+			textalign		ITEM_ALIGN_MIDDLE_LEFT \
+			forecolor		CHOICE_TEXTCOLOR \
+			exp				text( locString( "@MPUI_ANNOUNCEMENT" ) + ( GetClanMOTD() ) ); \
+			visible			1 \
+			autowrapped	\
+			decoration  \
+		}
+{
+	menuDef
+	{
+		name			menu_xboxlive_clanheadquarterslobby
+		fullscreen		1
+		rect			0 0 640 480
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		border			0
+		soundloop 		MENU_MUSIC
+
+		CLAN_HEADQUARTER_LAYOUT
+			
+		#define SETUP_ACTION_CLANMANAGEMENT \
+				open menu_xboxlive_clanmanagement;
+
+		#define SETUP_ACTION_CREATEACLASS \				
+				exec "set ui_cac_ingame 0"; \
+				setdvar invite_visible "0"; \
+				/*exec "uploadstats";*/ \
+				play CHOICE_FOCUS_SOUND; \
+				open cac_main; 
+				/*open live_cac_popup;*/
+
+	
+		#ifdef XENON
+			#define SETUP_ACTION_VIEWCLANCARD \		
+				play CHOICE_ACTION_SOUND; \		
+				open menu_clancard;
+		#endif
+		
+		#define IS_PARTY_HOST		( privatepartyhost() || !inprivateparty() )
+		#define IS_NOT_PARTY_HOST	( !privatepartyhost() && inprivateparty() )
+
+		CHOICE_MENU_TITLE( "@MPUI_CLAN_HEADQUARTERS" )
+
+		itemDef
+        {       
+            DYNAMIC_MENU_COMMON_FIELDS
+			#ifdef XENON
+				selectIcon				"ui_button_xenon_3d_a_32x32"
+			#endif
+			#ifdef PS3
+				selectIcon				"ui_button_ps3_x_32x32"
+			#endif
+            rect CHOICE_X_START CHOICE_Y_START 200 400 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+
+			menuItemsDef
+			{
+				maxRows 3
+	
+				menuColDef
+				{	 // Menu Item
+					 type MENU_ITEM_TYPE_LOC_TEXT
+					 rect 0 0 220 26 ITEM_ALIGN_LEFT ITEM_ALIGN_TOP
+					 maxChars 50
+				}				
+			}  
+			onEvent CAC				 {	SETUP_ACTION_CREATEACLASS		}
+			onEvent ClanManagement   {	SETUP_ACTION_CLANMANAGEMENT		}
+			onEvent Clear			 {	execNow clearFeeder;			}
+			onEvent Populate
+			{
+				execNow	if( !IS_ITEM_LOCKED( FEATURE_CREATE_A_CLASS ) && IS_PARTY_HOST ) addToFeeder CAC MPUI_CREATE_A_CLASS;
+				execNow						addToFeeder ClanManagement	MPUI_CLAN_MANAGEMENT;
+			}
+			onfocus                     {	play CHOICE_FOCUS_SOUND;	}			           
+            onListboxSelectionChange    {	play CHOICE_FOCUS_SOUND;	}
+            doubleclick                 {	play CHOICE_FOCUS_SOUND;
+											execNow raiseFeederEvent;	} 
+		}
+		
+		onOpen
+		{
+			setdvar invite_visible "1";
+			execNow raiseFeederEvent Populate;
+		}
+
+		onClose
+		{
+			execNow raiseFeederEvent Clear;
+		}
+	
+		onESC
+		{
+			close menu_xboxlive_clanheadquarterslobby;
+		}
+
+		// OPEN FRIENDS LIST
+		FRIENDS_BUTTON
+		// OPEN Clan Card
+		GAMEPAD_BUTTON( 40 -4 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM, "@PLATFORM_VIEW_CLANCARD", BUTTON_X { SETUP_ACTION_VIEWCLANCARD; }, when ( dvarbool( invite_visible ) ) )
+
+		#include "ui/safearea.menu"
+	}
+}  
+
+#define CLANCREATE_BACKGROUND_WIDTH 320
+#define CLANCREATE_BACKGROUND_X_START 0
+#define CLANCREATE_BACKGROUND_Y_START 40
+#define CLANCREATE_BACKGROUND_HEIGHT 350
+
+#undef CHOICE_GROUP
+#define CHOICE_GROUP			"xboxlive_clancreate"
+
+#undef	CHOICE_HORIZONTAL_ALIGN 
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_LEFT
+
+#undef	CHOICE_X_START
+#define CHOICE_X_START				0
+#undef	CHOICE_Y_START
+#define CHOICE_Y_START				( CLANCREATE_BACKGROUND_Y_START + 10 )
+
+#define CLAN_CREATE_LAYOUT \
+		/* grey background */ \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER  \
+			rect			CLANCREATE_BACKGROUND_X_START CLANCREATE_BACKGROUND_Y_START ( 2*CLANCREATE_BACKGROUND_WIDTH ) CLANCREATE_BACKGROUND_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN  \
+			forecolor		.15 .15 .15 1  \
+			background		"white"  \
+			visible			1  \
+			decoration  \
+		}	
+		
+{
+	menuDef
+	{
+		name			menu_xboxlive_clancreate
+		fullscreen		1
+		rect			0 0 640 480
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		border			0
+		soundloop 		MENU_MUSIC
+
+		onOpen
+		{
+			setdvar invite_visible "1";
+		}
+		onClose	{ }
+		onESC 
+		{ 
+			close menu_xboxlive_clancreate;
+		}
+		
+		CLAN_CREATE_LAYOUT
+		
+		#define SETUP_ACTION_CLANCREATE \
+				execnow "clanNameKeyboard";
+			
+		CHOICE_MENU_TITLE( "@MPUI_CLAN_HEADQUARTERS" )
+		
+		CHOICE_BUTTON_FOCUS_VIS( 1, "@MPUI_CREATE_CLAN", SETUP_ACTION_CLANCREATE, ;, CLEARUIHINT, when( getclanrank( getxuid() ) == "" ) )
+		CHOICE_BUTTON_NT_FOCUS_VIS_NOHI( 1, ;, ; , CLEARUIHINT, when( isclanmember( getxuid() ) == 1 ))
+		CHOICE_DBUTTON_VIS( 1, "@MPUI_CREATE_CLAN", when( isclanmember( getxuid() ) == 1 ) )
+		
+		//In-game Friend list.
+		FRIENDS_BUTTON
+	
+		#include "ui/safearea.menu"
+	}
+}  

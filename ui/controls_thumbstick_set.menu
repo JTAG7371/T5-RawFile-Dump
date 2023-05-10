@@ -1,0 +1,87 @@
+
+#ifndef BUTTON_VISIBLE
+#define BUTTON_VISIBLE 1
+#endif
+
+#define SET6_IMAGE_LSTICK					xenon_stick_move_look
+#define SET6_IMAGE_RSTICK					xenon_stick_move_look
+#define SET6_TEXT_UL						"@MENU_MOVEMENT"
+#define SET6_TEXT_UR						"@MENU_SHOOTING"
+
+
+#ifndef BUTTON_X_START
+#define BUTTON_X_START						-170
+#endif //#ifndef BUTTON_X_START
+
+#ifndef BUTTON_Y_START
+#define BUTTON_Y_START						85
+#endif //#ifndef BUTTON_X_START
+
+#define	LSTICK_IMAGE_X						29
+#define	LSTICK_IMAGE_Y						84
+
+#define	RSTICK_IMAGE_X						130
+#define	RSTICK_IMAGE_Y						124
+
+#define LSTICK_LABEL_RECT					(BUTTON_X_START+LSTICK_IMAGE_X+100) (BUTTON_Y_START+LSTICK_IMAGE_Y-75) 0 0
+#define LSTICK_RECT							(BUTTON_X_START+LSTICK_IMAGE_X) (BUTTON_Y_START+LSTICK_IMAGE_Y) 95 95
+
+#define RSTICK_LABEL_RECT					(BUTTON_X_START+RSTICK_IMAGE_X+100) (BUTTON_Y_START+RSTICK_IMAGE_Y-75) 0 0
+#define RSTICK_RECT							(BUTTON_X_START+RSTICK_IMAGE_X) (BUTTON_Y_START+RSTICK_IMAGE_Y) 95 95
+
+#define STICK_ORIGIN_UL						 -43  60
+#define STICK_ORIGIN_UR						 -43  60
+#define STICK_ORIGIN_R						  14 129
+#define STICK_ORIGIN_LR						 -43 189
+#define STICK_ORIGIN_LL						 -43 189
+#define STICK_ORIGIN_L						-100 129
+
+#define STICK_ORIGIN_ZTL					-52 122
+#define STICK_ORIGIN_ZTR					-52 122
+
+
+
+		itemDef
+		{
+			rect 			BUTTON_X_START BUTTON_Y_START 290 290 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			style 			WINDOW_STYLE_SHADER
+			border 			0
+			background		xenon_controller_top
+			visible 		when(BUTTON_VISIBLE)
+			decoration
+		}
+
+#define CONTROLS_IMAGE( groupArg, shaderArg, rectArg )					 		\
+		itemDef																	\
+		{																		\
+			group			groupArg											\
+			rect 			rectArg HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP	\
+			style 			WINDOW_STYLE_SHADER									\
+			border 			0													\
+			background		shaderArg											\
+			visible 		when(BUTTON_VISIBLE)								\
+			decoration															\
+		}
+
+#define CONTROLS_LABEL( groupArg, textArg, rectArg, orgArg, alignArg ) 			\
+		itemDef																	\
+		{																		\
+			group			groupArg											\
+			type			ITEM_TYPE_TEXT										\
+			exp				text( textArg )										\
+			rect			rectArg HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP	\
+			textalign		alignArg											\
+			origin			orgArg												\
+			textscale		TEXTSIZE_SMALL										\
+			textfont		UI_FONT_NORMAL										\
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE							\
+			forecolor		1 1 1 1												\
+			visible			when(BUTTON_VISIBLE)								\
+			decoration															\
+		}
+
+	CONTROLS_IMAGE( controls_buttons_set6, SET6_IMAGE_LSTICK, LSTICK_RECT )
+	CONTROLS_IMAGE( controls_buttons_set6, SET6_IMAGE_RSTICK, RSTICK_RECT )
+
+	CONTROLS_LABEL( controls_buttons_set6, SET6_TEXT_UL,				LSTICK_LABEL_RECT,		STICK_ORIGIN_ZTL,	ITEM_ALIGN_MIDDLE_CENTER )
+	CONTROLS_LABEL( controls_buttons_set6, SET6_TEXT_UR,				RSTICK_LABEL_RECT,		STICK_ORIGIN_ZTR,	ITEM_ALIGN_MIDDLE_CENTER )

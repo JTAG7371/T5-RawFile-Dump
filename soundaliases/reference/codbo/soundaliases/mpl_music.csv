@@ -1,0 +1,140 @@
+name,file,template,loadspec,secondary,group,vol_min,vol_max,team_vol_mod,dist_min,dist_max,dist_reverb_max,volume_falloff_curve,reverb_falloff_curve,volume_min_falloff_curve,reverb_min_falloff_curve,limit_count,limit_type,entity_limit_count,entity_limit_type,pitch_min,pitch_max,team_pitch_mod,min_priority,max_priority,min_priority_threshold,max_priority_threshold,spatialized,type,loop,randomize_type,probability,start_delay,reverb_send,duck,pan,center_send,envelop_min,envelop_max,envelop_percentage,occlusion_level,occlusion_wet_dry,is_big,distance_lpf,move_type,move_time,real_delay,subtitle,mature,doppler,futz,context_type,context_value,compression,timescale,music,fade_in,fade_out,pc_format,pause,stop_on_death,bus,snapshot
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#GLOBAL MP,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#MAP SPECIFIC UNDERSCORES,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\industrial\mus_underscore_industrial_00.wav,mus_normal_2D,,,music,92,92,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,looping,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#WMD Set,,,wmd,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\wmd\mus_rts_canyon_loop.wav,mus_normal_2D,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,looping,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#Kowloon Set,,,kowloon,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\kowloon\mus_rooftops_ambience_loop.wav,mus_normal_2D,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,looping,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#Shared Silence,This randomizes between silent underscore and music,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\silence\mus_silence.wav,mus_normal_2D,,,music,92,92,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,looping,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#RANDOMIZED UNDERSCORES (in progress: Eckert),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\deviant_underscore_lp_a.wav,mus_normal_2D,cuba_mp,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\Blackbird_underscore_lp_a.wav,mus_normal_2D,russia_mp,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\Arclight_underscore_lp_b.wav,mus_normal_2D,russia_mp,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\CanyonRock_underscore_lp_a.wav,mus_normal_2D,cuba_mp,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\Commies_underscore_a.wav,mus_normal_2D,cuba_mp,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\pentagon_underscore_a.wav,mus_normal_2D,other_mp,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\Eagleclaw_underscore_a.wav,mus_normal_2D,vietnam_mp,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\Eagleclaw_underscore_b.wav,mus_normal_2D,vietnam_mp,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\Foe_underscore_a.wav,mus_normal_2D,russia_mp,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_underscore,mus\mp\underscores\Chopperintro_underscore_a.wav,mus_normal_2D,other_mp,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#MAP SPAWN ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_spawn_wager,mus\mp\spawn\long\mp_wager_sting.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_op4,mus\mp\spawn\long\mp_spawn_01.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_spawn,mus\mp\spawn\long\Arclight_underscore_lp_a.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_rus,mus\mp\spawn\long\commies_match_start_a.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_cub,mus\mp\spawn\long\mus_virus_downhill_perc_mp.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_ops,mus\mp\spawn\long\pentagon_start_a.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_sog,mus\mp\spawn\long\Chopperintro_spawn_long_a.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_spawn,mus\mp\spawn\long\Gamewarden_spawn_long_a.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_nva,mus\mp\spawn\long\Invictus_spawn_long_a.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_spawn,mus\mp\spawn\long\mellville_spawn_long_a.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_spawn,mus\mp\spawn\long\mellville_spawn_long_b.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_short,mus\mp\spawn_short,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_short,mus\mp\spawn_short\short\Deviant_sting_a.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_short,mus\mp\spawn_short\short\Drexel_sting_a.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_short,mus\mp\spawn_short\short\pentagon_spawn_quick_b.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_short,mus\mp\spawn_short\short\pentagon_start_b.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_spawn_short,mus\mp\spawn_short\short\pentagon_sting_a.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_spawn_wager,mus\mp\spawn_short\short\pentagon_sting_a.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#MAP Victory and Loss\Draw,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_victory,mus\creek\mus_hardtarget_perc_stg.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_victory,mus\mp\results\victory\commies_sting_a.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_victory,mus\mp\results\victory\pentagon_treyarch_sting.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_victory,mus\mp\results\victory\Eagleclaw_win_a.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_loss,mus\wmd\mus_radar_battle_stg.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_loss,mus\mp\results\loss\albion_sting_a.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_loss,mus\mp\results\loss\Commies_sting_b.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_loss,mus\mp\results\loss\Deviant_sting_b.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_loss,mus\mp\results\loss\pentagon_sting_b.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_loss,mus\mp\results\loss\Foe_loss_a.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_draw,mus\pow\mus_intro_fight_stg.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_draw,mus\mp\results\draw\pentagon_lose_a.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_overtime,mus\mp\results\overtime\Drexel_sting_b.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_overtime,mus\mp\results\overtime\pentagon_halftime.wav,MUS_NORMAL_2D,,,music,99,99,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#MAP Suspense,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_suspense,mus\creek\mus_village_fight_loop.wav,MUS_NORMAL_LOOP_2D,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#Flashpoint Set,,,flashpoint,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_suspense,mus\flashpoint\mus_flashpoint_base_stairs_b.wav,MUS_NORMAL_LOOP_2D,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#Kowloon Set,,,kowloon,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_suspense,mus\kowloon\mus_rooftops_light_action_loop.wav,MUS_NORMAL_LOOP_2D,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_last_stand,mus\mp\last_stand\mus_last_stand_sting_00.wav,MUS_NORMAL_2D,,,music,98,98,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,mp_music_duck,music,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mus_last_stand_die,mus\creek\mus_reznov_fight_sting_short.wav,MUS_NORMAL_2D,,,music,94,94,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,mp_music_duck,music,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mus_last_stand_revive,mus\pow\mus_intro_fight_stg.wav,MUS_NORMAL_2D,,,music,94,94,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,mp_music_duck,music,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#MAP Action,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_action,mus\hue_city\mus_street_metal_01.wav,MUS_NORMAL_LOOP_2D,,,music,94,94,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#WMD Set,,,wmd,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_action,mus\wmd\mus_rts_virus_loop.wav,MUS_NORMAL_LOOP_2D,,,music,96,96,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#Kowloon Set,,,kowloon,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_action,mus\kowloon\mus_lead_to_climax_action_loop.wav,MUS_NORMAL_LOOP_2D,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#Switching sides / Round end (NOT match end),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_halftime,mus\mp\halftime\mp_roundend_1.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_halftime,mus\mp\halftime\mp_roundend_2.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_halftime,mus\mp\halftime\mp_roundend_3.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_halftime,mus\mp\halftime\mp_roundend_4.wav,MUS_NORMAL_2D,,,music,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#Time Running Out,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_time_running_out,mus\mp\timers\industrial\mus_timer_industrial_00.wav,MUS_NORMAL_2D,,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_time_running_out,mus\mp\timers\commies_tension_a.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_time_running_out,mus\mp\timers\Danbau_timer_a.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,4000,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_time_running_out,mus\mp\timers\Delirious_tension_a.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,4000,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_time_running_out,mus\mp\timers\Eagleclaw_timer_a.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,2000,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_time_running_out,mus\mp\timers\Gamewarden_time_a.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,3500,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_time_running_out,mus\mp\timers\Invictus_time_a.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_time_running_out,mus\mp\timers\Invictus_time_b.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,2971,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_time_running_out,mus\mp\timers\mellville_time_a.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#CTF,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# FLAG TAKEN ,Plays when the flag is removed from base,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_ctf_they_take,mus\mp\ctf\mus_ctf_they_take.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_ctf_we_take,mus\mp\ctf\mus_ctf_we_take.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# SCORING,Plays when a team scores,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_ctf_we_score,mus\mp\ctf\mus_ctf_we_score.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_ctf_they_score,mus\mp\ctf\mus_ctf_they_score.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#DEM,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# FLAG TAKEN ,Plays when the flag is removed from base,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_dem_they_take,mus\mp\ctf\mus_ctf_they_take.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_dem_we_take,mus\mp\ctf\mus_ctf_we_take.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# SCORING,Plays when a team scores,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mus_dem_we_score,mus\mp\ctf\mus_ctf_we_score.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+mus_dem_they_score,mus\mp\ctf\mus_ctf_they_score.wav,MUS_NORMAL_2D,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#DOMINATION,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# DOMINATION - Play music if two flags are held ?,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Securing ,Plays while securing the flag in DOMINATION,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_dom_securing_us,Stream\Music\mp\war\mx_war_securing_us.wav,,game_dom_us,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_dom_securing_ru,Stream\Music\mp\war\mx_war_securing_ru.wav,,game_dom_ru,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_dom_securing_ja,Stream\Music\mp\war\mx_war_securing_ja.wav,,game_dom_ja,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_dom_securing_ge,Stream\Music\mp\war\mx_war_securing_ge.wav,,game_dom_ge,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Captured,Plays after capturing the flag in DOMINATION,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_dom_captured_us,Stream\Music\mp\war\mx_war_captured_us.wav,,game_dom_us,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_dom_captured_ru,Stream\Music\mp\war\mx_war_captured_ru.wav,,game_dom_ru,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_dom_captured_ja,Stream\Music\mp\war\mx_war_captured_ja.wav,,game_dom_ja,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_dom_captured_ge,Stream\Music\mp\war\mx_war_captured_ge.wav,,game_dom_ge,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#Search and Destroy,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Search and Destroy - Play when last two players are left (light underscore),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

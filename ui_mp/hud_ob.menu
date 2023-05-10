@@ -1,0 +1,32 @@
+// CONSOLE HUD - MP
+
+#include "ui/menudef.h"
+#include "ui_mp/hud_gametypes.inc"
+#include "ui_mp/hud_wager_summary.inc"
+
+{
+
+	menuDef
+	{
+		name			"scorebars_ob_background"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible 		1
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_UI_ACTIVE !BIT_SPECTATING_CLIENT )
+		// TOP team background highlight for score
+		itemDef
+		{
+			style			ITEM_TYPE_TEXT
+			rect			75 -41 70 15 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect Y( -41 );
+			background		"white"
+			forecolor		1 1 1 0.1
+			visible			1
+			decoration
+		}
+
+	}
+
+	HUD_WAGER_FFA_SUMMARY( "ob", 1, "" )
+}

@@ -1,0 +1,23 @@
+{	
+	loadMenu { "ui/error.menu" }
+
+	loadMenu { "ui/vid_restart_pc.menu" }
+	loadMenu { "ui/snd_restart.menu" }
+
+	loadMenu { "ui/pregame.menu" }
+	loadMenu { "ui/savegame_loading.menu"}
+//	loadMenu { "ui/savegame_saving.menu"}
+	loadMenu { "ui/savegame_info.menu" }
+
+	loadMenu { "ui/objective_info.menu" }
+	loadMenu { "ui/options_ingame.menu" }
+	
+	loadMenu { "ui/popup_leavegame.menu" }
+	loadMenu { "ui/popup_ingame.menu" }
+
+	loadMenu { "ui/scriptmenus/special_features.menu" }
+	loadMenu { "ui/scriptmenus/invert_axis_pc.menu" }
+	loadMenu { "ui/scriptmenus/select_difficulty.menu" }
+
+//	loadMenu { "ui/difficulty.menu" }
+}

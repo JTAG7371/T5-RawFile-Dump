@@ -1,0 +1,81 @@
+#include "ui/menudef.h"
+
+{
+	// Pause menu
+	menuDef
+	{
+		name			"readingsavedevice"
+		fullScreen		0
+		visible			1
+		focusColor		COLOR_FOCUSED
+		rect			0 0 0 0 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+		onOpen			{ }
+		onClose			{ }
+		
+		itemDef
+		{
+			name			"backdrop"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			-1 -1 1 1
+			visible			1
+			forecolor		0 0 0 0.75
+			ownerdraw		CG_MISSION_OBJECTIVE_BACKDROP
+			decoration			
+		}
+
+#define SAVING_TEXT_PAD		10
+
+#define TEXT_WIDTH			( getTextWidth( locString( "@PLATFORM_READING_SAVE_DEVICE_CAPS" ), UI_FONT_NORMAL, TEXTSIZE_SMALL ) + SAVING_TEXT_PAD )
+#define TEXT_X_START		(-TEXT_WIDTH)
+
+#define SPINNER_WIDTH		16
+#define SPINNER_X_START		( -(TEXT_WIDTH+SPINNER_WIDTH) )
+
+		// "now saving" text
+#ifdef PS3
+		itemDef
+		{
+			rect			0 -16 100 16 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			exp				rect X( SPINNER_X_START - (SAVING_TEXT_PAD/2) )
+			exp				rect W( TEXT_WIDTH + SPINNER_WIDTH + SAVING_TEXT_PAD )
+			style			WINDOW_STYLE_SHADER_FRAMED
+			frame			5 0.5 FRAME_SIDE_ALL
+			forecolor		0.1 0.1 0.1 0.6
+			background		"menu_mp_lobby_frame_circle"
+			visible			1
+			decoration
+		}
+#endif
+		itemDef
+		{
+			name			"savingMsg"
+			type			ITEM_TYPE_TEXT
+			rect			0 -16 48 16 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			exp				rect X( TEXT_X_START )
+			exp				rect W( TEXT_WIDTH )
+			text			"@PLATFORM_READING_SAVE_DEVICE_CAPS"
+			forecolor		COLOR_TITLE
+			textscale		TEXTSIZE_SMALL
+			textalign		ITEM_ALIGN_MIDDLE_RIGHT
+#ifdef PS3
+			visible			1
+#else
+			visible			when ( dvarbool( sv_saveDeviceAvailable ) );
+#endif
+			decoration
+		}
+		itemDef
+		{
+			rect			0 -16 SPINNER_WIDTH 16 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			exp				rect X( SPINNER_X_START )
+			forecolor		1 1 1 1
+			style			WINDOW_STYLE_SPINNER
+
+#ifdef PS3
+			visible			1
+#else
+			visible			when ( dvarbool( sv_saveDeviceAvailable ) );
+#endif
+			decoration
+		}
+	}	

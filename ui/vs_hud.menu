@@ -1,0 +1,309 @@
+// CONSOLE HUD - MP
+
+#include "ui/menudef.h"
+#include "ui_mp/hud_gametypes.inc"
+
+{
+	#define MINIMAP_ORIGIN 2 2
+	#define RECT_COMPASS	0 0 COMPASS_SIZE_MP COMPASS_SIZE_MP HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+	
+	// Compass
+	menuDef
+	{
+		name			"Compass_old"
+ 	   	rect			RECT_COMPASS
+ 	   	fullScreen		0
+		visible when( !selecting_location() && !inkillcam() && !flashbanged() && !ui_active() && !scoped() && NOT_SPECTATING );
+ 
+		itemDef
+		{
+			name			"minimapBG"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(MINIMAP_X_MP - 14) (MINIMAP_Y_MP - 6) COMPASS_SIZE_MP COMPASS_SIZE_MP
+	 	   	origin 			MINIMAP_ORIGIN
+			forecolor		1 1 1 1
+			background		"minimap_background"
+			ownerdraw		CG_PLAYER_COMPASS_BACK
+			visible			1
+			decoration
+		}
+		itemDef
+        {
+            name			"minimapTickerBorder"
+			type			ITEM_TYPE_OWNERDRAW
+            rect			MINIMAP_X_MP (MINIMAP_Y_MP - 15) MINIMAP_W_MP 14
+	 	   	origin 			MINIMAP_ORIGIN
+            forecolor		1 1 1 1
+            background		"minimap_tickertape_background"
+            ownerdraw		CG_PLAYER_COMPASS_BACK
+			visible			1
+			decoration
+        }
+		itemDef
+        {
+            name			"minimapTicker"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+            rect			MINIMAP_X_MP (MINIMAP_Y_MP - 12) MINIMAP_W_MP 9
+	 	   	origin 			MINIMAP_ORIGIN
+            forecolor		1 1 1 1
+            background		"minimap_tickertape_mp"
+            ownerdraw		CG_PLAYER_COMPASS_TICKERTAPE_NO_OBJ
+			visible			1
+			decoration
+        }
+		itemDef
+ 	   	{
+			name			"mini_map"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			MINIMAP_X_MP MINIMAP_Y_MP MINIMAP_W_MP MINIMAP_H_MP
+	 	   	origin 			MINIMAP_ORIGIN
+			forecolor		1 1 1 1
+			background		"compass_map_default"
+			ownerdraw		CG_PLAYER_COMPASS_MAP
+			visible			1
+			decoration
+ 	   	}
+		// tank pointers
+		itemDef
+		{
+			name			"compasstanks"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			MINIMAP_X_MP MINIMAP_Y_MP MINIMAP_W_MP MINIMAP_H_MP
+			origin 			MINIMAP_ORIGIN
+			forecolor		1 1 1 1
+			ownerdraw		CG_PLAYER_COMPASS_TANKS
+			visible			1
+		}
+		// dog pointers
+		itemDef
+		{
+			name			"compassdogs"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			MINIMAP_X_MP MINIMAP_Y_MP MINIMAP_W_MP MINIMAP_H_MP
+			origin 			MINIMAP_ORIGIN
+			forecolor		1 1 1 1
+			ownerdraw		CG_PLAYER_COMPASS_DOGS
+			visible			1
+		}
+		// Objective pointers
+		itemDef
+		{
+			name			"compasspointers"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			MINIMAP_X_MP MINIMAP_Y_MP MINIMAP_W_MP MINIMAP_H_MP
+	 	   	origin 			MINIMAP_ORIGIN
+			forecolor		1 1 1 1
+			background		"objective_line"
+			ownerdraw		CG_PLAYER_COMPASS_POINTERS
+			visible			when ( dvarint( ui_hud_showobjicons ) > 0 );
+			decoration
+		}
+ 	   	// Friendlies pointers
+		itemDef
+		{
+			name			"compassfriendlies"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			MINIMAP_X_MP MINIMAP_Y_MP MINIMAP_W_MP MINIMAP_H_MP
+	 	   	origin 			MINIMAP_ORIGIN
+			forecolor		1 1 1 1
+			ownerdraw		CG_PLAYER_COMPASS_FRIENDS
+			visible			1
+		}
+ 	   	// Enemy pings
+		itemDef
+		{
+			name			"compassenemies"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			MINIMAP_X_MP MINIMAP_Y_MP MINIMAP_W_MP MINIMAP_H_MP
+	 	   	origin 			MINIMAP_ORIGIN
+			forecolor		1 1 1 1
+			ownerdraw		CG_PLAYER_COMPASS_ENEMIES
+			visible			1
+		}
+ 	   	// Helicopter pointers
+		itemDef
+		{
+			name			"compasshelicopters"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			MINIMAP_X_MP MINIMAP_Y_MP MINIMAP_W_MP MINIMAP_H_MP
+	 	   	origin 			MINIMAP_ORIGIN
+			forecolor		1 1 1 1
+			ownerdraw		CG_PLAYER_COMPASS_HELICOPTERS
+			visible			1
+		}
+ 	   	// Plane pointers
+		itemDef
+		{
+			name			"compassplanes"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			MINIMAP_X_MP MINIMAP_Y_MP MINIMAP_W_MP MINIMAP_H_MP
+	 	   	origin 			MINIMAP_ORIGIN
+			forecolor		1 1 1 1
+			ownerdraw		CG_PLAYER_COMPASS_PLANES
+			visible			1
+		}
+		// Player direction indicator
+		itemDef
+		{
+			name			"compassplayer"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			MINIMAP_X_MP MINIMAP_Y_MP MINIMAP_W_MP MINIMAP_H_MP
+	 	   	origin 			MINIMAP_ORIGIN
+			forecolor		1 1 1 1//HUD_FOREGROUND_ALPHA
+			background		"compassping_player"
+			ownerdraw		CG_PLAYER_COMPASS_PLAYER
+			visible			1
+		}
+   	// Artillery Icon
+		itemDef
+		{
+			name			"compassartilleryicon"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			MINIMAP_X_MP MINIMAP_Y_MP MINIMAP_W_MP MINIMAP_H_MP
+	 	   	origin 			MINIMAP_ORIGIN
+			forecolor		1 1 1 1
+			ownerdraw		CG_PLAYER_COMPASS_ARTILLERY_ICON
+			visible			1
+		}
+	}
+	
+	// Bottom bar
+	menuDef
+	{
+		name			"scorebars_team_background"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible 		when( SHOULD_DISPLAY_SCOREBAR && !inkillcam() && !ui_active() );
+
+		// GREY BACKGROUND
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 -45 210 64 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect Y( -45 + (TEAM_IS_LOSING*20) );
+			exp				rect H( 64 - (TEAM_IS_LOSING2*128) );
+			forecolor		1 1 1 HUD_ALPHA
+			background		"scorebar_backdrop"
+			visible			1
+			decoration
+		}
+
+		// TOP team background highlight for score
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			75 -41 76 15 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect Y( -41 + 0-(PLAYER_IS_LOSING*20) );
+			background		"white"
+			forecolor		1 1 1 0.05
+			visible			1 
+			decoration
+		}
+
+		// white line separator for the scores
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			75 -24 70 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			background		"menu_white_line_faded"
+			forecolor		1 1 1 0.5
+			visible			1
+			decoration
+		}
+	}
+
+	menuDef
+	{
+		name			"scorebars_team_spectator"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible 		when( SHOULD_DISPLAY_SCOREBAR && !inkillcam() && !ui_active() && team( name ) == "TEAM_SPECTATOR" );
+
+		// FACTION ICONS
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			0 -55 56 56 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			origin			5 -5
+			exp				material( dvarString( "g_TeamIcon_Allies" ) );
+			visible			1 
+			forecolor		1 1 1 1
+			decoration
+		}
+	}
+	
+	menuDef
+	{
+		name			"scorebars_team_allies"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible 		when( SHOULD_DISPLAY_SCOREBAR && !inkillcam() && !ui_active() && team( name ) == "TEAM_ALLIES" );
+
+		// FACTION ICONS
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			0 -55 56 56 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			origin			5 -5
+			exp				material( dvarString( "g_TeamIcon_Allies" ) );
+			visible			1 
+			forecolor		1 1 1 1
+			decoration
+		}
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			80 -25 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect Y( -25 + 0-(TEAM_IS_LOSING*20) );
+			text			VS_ATTACKER
+			textfont		UI_FONT_NORMAL
+			textscale		0.35
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
+			visible 		1
+			decoration 
+		}
+	}
+
+	menuDef
+	{
+		name			"scorebars_team_axis"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible 		when( SHOULD_DISPLAY_SCOREBAR && !inkillcam() && !ui_active() && team( name ) == "TEAM_AXIS" );
+
+		// FACTION ICONS
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			0 -55 56 56 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			origin			5 -5
+			exp				material( dvarString( "g_TeamIcon_Axis" ) );
+			visible			1
+			forecolor		1 1 1 1
+			decoration
+		}
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			80 -25 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect Y( -25 + 0-(TEAM_IS_LOSING*20) );
+			text			VS_DEFENDER
+			textfont		UI_FONT_NORMAL
+			textscale		0.35
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
+			visible 		1
+			decoration 
+		}
+	}
+}

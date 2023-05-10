@@ -1,0 +1,344 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/stats_info.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+
+#define CHALLENGES_KILLSTREAKS_HEIGHT NEW_FRAME_DEFAULT_HEIGHT
+#define CHALLENGES_KILLSTREAKS_WIDTH ( CHALLENGES_KILLSTREAKS_HEIGHT * FRAME_ASPECT_RATIO )
+#define CHALLENGES_KILLSTREAKS_BOTTOM_Y ( LIST_Y_START + CHALLENGES_KILLSTREAKS_HEIGHT - NEW_FRAME_BG_Y_OFFSET( CHALLENGES_KILLSTREAKS_HEIGHT ) - 88 + 35 )
+
+#define LIST_X_START	 			( -CHALLENGES_KILLSTREAKS_WIDTH / 2 + 15 )
+#define LIST_Y_START	 			( -CHALLENGES_KILLSTREAKS_HEIGHT / 2 + 15 + NEW_FRAME_BG_Y_OFFSET( CHALLENGES_KILLSTREAKS_HEIGHT ) )
+#define LIST_HEIGHT					( CHALLENGES_KILLSTREAKS_BOTTOM_Y - LIST_Y_START )
+#define LIST_WIDTH					(CHALLENGES_KILLSTREAKS_WIDTH/2-40)
+
+#undef  CHOICE_X_START
+#define CHOICE_X_START				-510
+#undef  CHOICE_Y_START
+#define CHOICE_Y_START				( LIST_Y_START )
+
+#define ITEM_IMAGE_HEIGHT		( CHALLENGES_KILLSTREAKS_HEIGHT - NEW_FRAME_HEADER_HEIGHT )
+#define ITEM_IMAGE_WIDTH		(327)
+
+#define CHALLENGES_KILLSTREAKS_BG_SIZE ( (CHALLENGES_KILLSTREAKS_WIDTH/2-10) + 30 )
+#define MILESTONE_KILLSTREAKS   6
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/overlaybg.inc"
+#include "ui_mp/popup_player_info.inc"
+#include "ui_mp/cac_loadout.inc"
+
+#undef	CHOICE_HORIZONTAL_ALIGN 
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_CENTER 
+
+#undef  CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_CENTER
+
+#undef	CHOICE_GROUP
+#define CHOICE_GROUP	"killstreaks_challenges"
+
+#ifdef XENON
+	#define SELECT_ICON	"ui_button_xenon_3d_a_32x32"
+#endif
+#ifdef PS3
+	#define SELECT_ICON	"ui_button_ps3_x_32x32"
+#endif
+
+#undef CHALLENGES_SECTION_LABEL_COLOR
+#ifdef PC
+#define CHALLENGES_SECTION_LABEL_COLOR		0 0 0 1
+#else //#ifdef PC
+#define CHALLENGES_SECTION_LABEL_COLOR		NEW_FRAME_GREY_RGB 1
+#endif //#ifdef PC
+
+#define KILLSTREAKS_LIST_ONSELECTION																					\
+		if ( !IsCurrentItemPurchased() )								\
+		{		 \
+			execnow set ui_hint_text ( locstring( CLASS_PURCHASE_TO_UNLOCK, GetCurrentItemName() ) );		\ 
+			execNow "set ui_show_arrow 1";																\	
+		}																										\
+		else																									\
+		{																										\
+			execnow set ui_hint_text "";																	\
+			execNow "set ui_show_arrow 0";																\
+		}
+
+#define SORTED_ITEM_LISTBOX_KILLSTREAK( listName, feederType ) \
+		itemDef \
+		{ \
+			name						listName \
+			type						ITEM_TYPE_LISTBOX \
+			feeder						feederType \
+			rect						LIST_X_START LIST_Y_START LIST_WIDTH (LIST_HEIGHT) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN \
+			origin						0 0 \
+			elementwidth				30 \
+			elementheight				20 \
+			elementtype					LISTBOX_TEXT \
+			textfont					CHOICE_TEXTFONT		\																											
+			textscale					TEXTSIZE_DEFAULT	\																												
+			textstyle					ITEM_TEXTSTYLE_NORMAL \
+			textalignx					12 \
+			forecolor					1 1 1 1 \
+			focusColor					CHOICE_TEXTCOLOR \
+			disableColor				CHOICE_TEXTCOLOR \
+			outlinecolor				1 1 1 1  \
+			modal \
+			usePaging \
+			noBlinkingHighlight \
+			elementBackgroundColor		NEW_FRAME_BUTTON_BG_COLOR  \
+			selectIcon					SELECT_ICON \
+			elementHighlightColor		NEW_FRAME_BUTTON_TEXT_HIGHLIGHT_COLOR \
+			/*				x					y					w				h			len	horzAlign		vertAlign*/ \
+			userarea	2	10					-1					LIST_WIDTH		20			32	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE \				/* Name */
+							(LIST_WIDTH)		(17/2-LOCK_SIZE/2)	LOCK_SIZE		LOCK_SIZE	24	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE \				/* Lock */
+			visible			1			\
+			onfocus							\
+			{								\
+				play CHOICE_FOCUS_SOUND;	\
+				exec "updateListboxPos menu_xboxlive_killstreaks_type"; \
+			}								\
+			onListboxSelectionChange		\
+			{								\
+				play CHOICE_FOCUS_SOUND;	\
+				KILLSTREAKS_LIST_ONSELECTION \
+			}								\
+			action						\
+			{	\
+				if ( IsCurrentItemPurchased() )	 \
+				{	\
+					play CHOICE_FOCUS_SOUND;	\
+					close self;					\
+					open menu_killstreak_challenges_list; \
+				} \
+			}								\
+		}
+
+#undef ON_ESC_ACTION
+#define ON_ESC_ACTION							 \
+		deactivateBlur;                          \
+		play uin_navigation_menu_lg_close;       \
+		close self;                              \
+		openImmediate menu_playercard_challenges;
+
+menuDef
+{
+	name					menu_xboxlive_killstreaks_type
+	rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+	focuscolor				COLOR_FOCUSED
+	style					WINDOW_STYLE_FILLED
+	priority				MENU_PRI_ONTOP
+	control					MENU_CONTROL_OPENER
+	soundloop 				MENU_MUSIC
+
+	onOpen	
+	{
+		setdvar ui_choice_noaction 1;
+		activateBlur;
+		execnow buildItemListForGroupName ("killstreak");
+		play uin_navigation_menu_lg_open;
+		execnow focusitem killstreaks;
+		KILLSTREAKS_LIST_ONSELECTION
+		setdvar ui_hide_eog_menu "1";
+	}
+	onFocus 
+	{  
+		setLocalVarString ui_choicegroup CHOICE_GROUP;	
+	}
+	onClose	
+	{
+		setdvar ui_choice_noaction 0;
+		deactivateBlur; 
+		setdvar ui_hide_eog_menu "0";
+	}
+	onESC	
+	{
+		ON_ESC_ACTION
+	}
+	
+	itemDef
+	{
+		name	dummyButton
+		type	ITEM_TYPE_BUTTON_NO_TEXT
+		rect	0 0 0 0
+		visible	1
+	}
+
+	NEW_FRAME( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT )
+	NEW_FRAME_TITLE( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT, "@MPUI_CHALLENGES_CAPS", 1 )
+	NEW_FRAME_SUBTITLE( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT, "@MENU_KILLSTREAKS_CAPS", 1 )
+	PLAYER_INFO_VIS( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT, 1 )
+	PREPROC_SHADER_DRAW( (0-CHALLENGES_KILLSTREAKS_BG_SIZE/2) (0-CHALLENGES_KILLSTREAKS_BG_SIZE/2+25) CHALLENGES_KILLSTREAKS_BG_SIZE CHALLENGES_KILLSTREAKS_BG_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, "menu_mp_lobby_aar_award_challenge", 1 1 1 0.05 )
+	// Lists
+	SORTED_ITEM_LISTBOX_KILLSTREAK( killstreaks, FEEDER_CHALLENGES_KILLSTREAKS )
+	
+	HINT_TEXT( 16, LIST_X_START, dvarString( ui_hint_text ), dvarBool( ui_show_arrow ) )
+
+#ifdef CONSOLE	
+	NEW_FRAME_BACK_BUTTON( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT )
+#else
+	NEW_FRAME_BACK_BUTTON_ACTION( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT, ON_ESC_ACTION ) 
+#endif
+
+	#include "ui/safearea.menu"
+}
+
+#define UIGREEN		NEW_FRAME_GREEN_RGB 1
+#define UIGREY		1 1 1 0.5
+#define UIWHITE		1 1 1 1
+#define KILLSTREAK_INFO_X_START 10
+#define KILLSTREAK_INFO_Y_START ( -CHALLENGES_KILLSTREAKS_HEIGHT / 2 + NEW_FRAME_BG_Y_OFFSET( CHALLENGES_KILLSTREAKS_HEIGHT ) + 80 )
+
+#define IS_KILLSTREAKS_CHALLENGES_AVAILABLE ( getNumChallenges( MILESTONE_KILLSTREAKS ) != 0 )
+
+
+#ifdef CONSOLE
+#define KILLSTREAKS_CHALLENGES_SORT_BUTTON																							\
+		itemDef																											\
+		{																												\
+			type			ITEM_TYPE_BUTTON																			\
+			rect			-165 ( CHALLENGES_KILLSTREAKS_HEIGHT / 2 ) 50 17 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN	\
+			text			"@PLATFORM_CHALLENGES_SORT"																	\
+			textfont		UI_FONT_NORMAL																				\
+			textscale		TEXTSIZE_DEFAULT																			\ 
+			textalign		ITEM_ALIGN_BOTTOM_LEFT																		\ 
+			visible			1																							\
+			decoration																									\ 
+			execKeyInt BUTTON_X																							\
+			{																											\
+				open menu_playercard_challenges_sort;																	\
+			}																											\
+		}
+#else // #ifdef CONSOLE
+	#define BUTTON_SPACING 20
+	#define SORT_BUTTON_OFFSET ( getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+
+	#define KILLSTREAKS_CHALLENGES_SORT_BUTTON \
+		NEW_FRAME_BUTTON_PC_LEFT_OFFSET( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT, SORT_BUTTON_OFFSET, "@PLATFORM_CHALLENGES_SORT", open menu_playercard_challenges_sort;, 1 )
+#endif // #ifdef CONSOLE
+
+
+#define CHALLENGE_SORTORDER_STRING( challengeAvailable ) \
+		/* Sort Label */ \
+		PREPROC_TEXT_DRAW_VIS(	(KILLSTREAK_INFO_X_START+75) (LIST_Y_START-57) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+					locString( "@MENU_CHALLENGE_SORT" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHALLENGES_SECTION_LABEL_COLOR,  when( challengeAvailable ) )  \
+		/* Challenge Sort Order */ \
+		PREPROC_TEXT_DRAW_VIS(	(KILLSTREAK_INFO_X_START+150) (LIST_Y_START-57) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+					"@MENU_SORT_NEAREST_TO_COMPLETION", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1,  when( challengeAvailable && dvarInt( ui_challengeSort ) == 0 ) ) \
+		PREPROC_TEXT_DRAW_VIS(	(KILLSTREAK_INFO_X_START+150) (LIST_Y_START-57) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+					"@MENU_SORT_HIGHEST_REWARD", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1,  when( challengeAvailable && dvarInt( ui_challengeSort ) == 1 ) ) \
+		PREPROC_TEXT_DRAW_VIS(	(KILLSTREAK_INFO_X_START+150) (LIST_Y_START-57) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+					"@MENU_SORT_PERCENTAGE_COMPLETE", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1,  when( challengeAvailable && dvarInt( ui_challengeSort ) == 2 ) ) \
+		PREPROC_TEXT_DRAW_VIS(	(KILLSTREAK_INFO_X_START+150) (LIST_Y_START-57) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+					"@MENU_SORT_DEFAULT", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1,  when( challengeAvailable && dvarInt( ui_challengeSort ) == 3 ) ) 
+
+
+#define KILLSTREAK_METADATA( feederName, milestoneType, challengeAvailable )	\
+		/* Challenge Name */ \
+		PREPROC_TEXT_DRAW_ALL(	(KILLSTREAK_INFO_X_START) (LIST_Y_START - 40) 270 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+							toUpper( GetName( feederName, milestoneType ) ), TEXTSIZE_SUBTITLE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL, when( challengeAvailable ), autowrapped ) \
+		/* Challenge Progress label */  \
+		PREPROC_TEXT_DRAW_VIS(	KILLSTREAK_INFO_X_START (KILLSTREAK_INFO_Y_START+17) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0,  \
+							toUpper( locString( "@STATS_CHALLENGE_PROGRESS" ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHALLENGES_SECTION_LABEL_COLOR,  when( challengeAvailable ) )  \
+		/* Challenge Progress */  \
+		PREPROC_TEXT_DRAW_VIS(	(KILLSTREAK_INFO_X_START) (KILLSTREAK_INFO_Y_START+34) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0,  \
+							getProgressString( feederName, milestoneType ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1,  when( challengeAvailable ) )  \
+		/* Challenge Description label */  \
+		PREPROC_TEXT_DRAW_VIS(	KILLSTREAK_INFO_X_START (KILLSTREAK_INFO_Y_START+97) 150 40 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+							toUpper( locString( "@STATS_DESCRIPTION" ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHALLENGES_SECTION_LABEL_COLOR,  when( challengeAvailable ) ) \
+		/* Challenge Description */ \
+		PREPROC_TEXT_DRAW_VIS_EX(	( KILLSTREAK_INFO_X_START) (KILLSTREAK_INFO_Y_START+114) 220 40 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+							GetDescription( feederName, milestoneType ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, UIWHITE,  when( challengeAvailable ),autowrapped ) \
+		/* Challenge reward label */ \
+		PREPROC_TEXT_DRAW_VIS(	KILLSTREAK_INFO_X_START (KILLSTREAK_INFO_Y_START+118) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+							toUpper( locString( "@STATS_CHALLENGE_REWARD" ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHALLENGES_SECTION_LABEL_COLOR,  when( challengeAvailable && ( GetXpReward( feederName, milestoneType )!= 0 || GetCpReward( feederName, milestoneType )!= 0 ) ) ) \
+		/* Challenge XP reward */ \
+		PREPROC_TEXT_DRAW_VIS(	( KILLSTREAK_INFO_X_START ) (KILLSTREAK_INFO_Y_START+135) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+							locString( "@STATS_CHALLENGE_XP_REWARDED", GetXpReward( feederName, milestoneType ) ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, NEW_FRAME_YELLOW_RGB 1,  when( challengeAvailable && GetXpReward( feederName, milestoneType )!= 0 ) ) \
+		/* Challenge Cp reward */ \
+		PREPROC_TEXT_DRAW_VIS(	( KILLSTREAK_INFO_X_START + 100 ) (KILLSTREAK_INFO_Y_START+135) 10 100 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, \
+							locString( "@MENU_POINTS", GetCpReward( feederName, milestoneType ) ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, UIGREEN,  when( challengeAvailable && GetCpReward( feederName, milestoneType )!= 0 ) )  \
+		/* Challenge Sort order */ \
+		CHALLENGE_SORTORDER_STRING( challengeAvailable )
+
+
+#undef ON_ESC_ACTION
+#define ON_ESC_ACTION							 \
+	play uin_navigation_menu_lg_close;           \
+	close self;                                  \
+	openImmediate menu_xboxlive_killstreaks_type;
+
+menuDef
+{
+	name					menu_killstreak_challenges_list
+	rect					0 0 640 480
+	focuscolor				COLOR_FOCUSED
+	style					WINDOW_STYLE_FILLED
+	soundloop 				MENU_MUSIC
+	priority				MENU_PRI_ONTOP
+	onOpen	
+	{ 
+		execNow BuildKillstreakChallengeList (GetCurrentItemName()) ( dvarInt( ui_challengeSort ) );
+		execNow set challengeType 3;
+		setdvar ui_hide_eog_menu "1";
+	} 
+	onFocus 
+	{	
+		activateBlur; 
+	} 
+	onClose	 
+	{ 
+		deactivateBlur; 
+		setdvar ui_hide_eog_menu "0";
+	} 
+	onESC 
+	{ 
+		ON_ESC_ACTION
+	} 
+	NEW_FRAME( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT ) 
+	NEW_FRAME_TITLE( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT, "@MPUI_CHALLENGES_CAPS", 1 )
+	NEW_FRAME_SUBTITLE( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT, locString( "@MPUI_KILLSTREAKS_CAPS" ) + " / " + toUpper( locString( "@" + GetCurrentItemName() ) ), 1 )
+	PLAYER_INFO_VIS( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT, 1 ) 
+	PREPROC_SHADER_DRAW( (0-CHALLENGES_KILLSTREAKS_BG_SIZE/2) (0-CHALLENGES_KILLSTREAKS_BG_SIZE/2+25) CHALLENGES_KILLSTREAKS_BG_SIZE CHALLENGES_KILLSTREAKS_BG_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, "menu_mp_lobby_aar_award_challenge", 1 1 1 0.05 )
+	KILLSTREAKS_CHALLENGES_SORT_BUTTON
+	//Feeder for the perks
+	itemDef 
+		{ 
+			name						killstreak_challenges_list
+			type						ITEM_TYPE_LISTBOX 
+			feeder						FEEDER_STATS_KILLSTREAKS
+#ifdef PC
+			rect						LIST_X_START (LIST_Y_START) (LIST_WIDTH) (LIST_HEIGHT) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN 
+#else //#ifdef PC
+			rect						LIST_X_START (LIST_Y_START) (LIST_WIDTH) (LIST_HEIGHT+50) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN 
+#endif //#ifdef PC
+			origin						0 0 
+			elementwidth				30 
+			elementheight				20 
+			elementtype					LISTBOX_TEXT 
+			textstyle					ITEM_TEXTSTYLE_NORMAL 
+			textfont					UI_FONT_NORMAL 
+			textscale					TEXTSIZE_SMALL 
+			textalignx					12 
+			forecolor					1 1 1 1 
+			focusColor					CHOICE_TEXTCOLOR 
+			disableColor				CHOICE_TEXTCOLOR 
+			outlinecolor				1 1 1 1 
+			elementBackgroundColor		NEW_FRAME_TRANSPARENCY 
+			noscrollbars 
+			noBlinkingHighlight 
+			userarea 3		10	7 200 10	50	ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP			/* STATS_MILESTONES_COLUMN_MILESTONE_NAME */ 
+							179	 5 60 9		50	ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP			/* STATS_MILESTONES_COLUMN_PROGRESS_BAR */ 
+							172	 8 60 9		50	ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP			/* STATS_MILESTONES_COLUMN_COMPLETED_TEXT */ 
+			visible			1  
+			modal
+			onListboxSelectionChange							
+			{													
+				play CHOICE_FOCUS_SOUND;						
+			}
+	}
+	KILLSTREAK_METADATA( "killstreak_challenges_list", MILESTONE_KILLSTREAKS, IS_KILLSTREAKS_CHALLENGES_AVAILABLE )
+	KILLSTREAKS_CHALLENGES_SORT_BUTTON
+	NEW_FRAME_BACK_BUTTON_ACTION( CHALLENGES_KILLSTREAKS_WIDTH, CHALLENGES_KILLSTREAKS_HEIGHT, ON_ESC_ACTION ) 
+}

@@ -1,0 +1,60 @@
+#include "ui/menudef.h"
+
+	menuDef
+	{
+		name			credits
+		fullScreen		0				
+		rect			0 0 640 480	HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN			// Size and position of the menu
+		focusColor		1 1 1 0.85				// Menu focus color for text and items
+		style			WINDOW_STYLE_FILLED
+		foreColor		1 1 1 1
+		backColor		0.6 0.6 0.6 1
+		background		"menu_background_press_start"
+		control			MENU_CONTROL_USED
+
+		onOpen	
+		{
+			execNow "updategamerprofile";		
+			credits_start;
+		}
+		onFocus			{ }
+		onClose			{ execNow "updategamerprofile";	}
+		onESC	
+		{
+			uiscript sendMenuNotify "credits done";
+			setdvar next_menu_name "";
+			close self;
+			open options;
+		}
+
+#define IS_LOC_SMALL_FONT				( dvarint( loc_language ) == 11 )
+#define CREDITS_SMALL_TEXTSIZE			0.5000
+
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			ownerdraw		UI_CREDITS
+			rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN		
+			origin			ORIGIN_TITLE 
+			backColor		0 0 0 1
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		1 1 1 1
+			visible			when( !IS_LOC_SMALL_FONT )
+		}
+
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			ownerdraw		UI_CREDITS
+			rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN		
+			origin			ORIGIN_TITLE 
+			backColor		0 0 0 1
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		1 1 1 1
+			textfont		UI_FONT_NORMAL
+			textscale		CREDITS_SMALL_TEXTSIZE
+			visible			when( IS_LOC_SMALL_FONT )
+		}
+	}
+
+

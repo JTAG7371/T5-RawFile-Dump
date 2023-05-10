@@ -1,0 +1,1186 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define EMBLEM_FRAME_HEIGHT NEW_FRAME_DEFAULT_HEIGHT
+#define EMBLEM_FRAME_WIDTH ( EMBLEM_FRAME_HEIGHT * FRAME_ASPECT_RATIO )
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/overlaybg.inc"
+#include "ui_mp/popup_player_info.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+
+#undef CHOICE_X_START
+#undef CHOICE_Y_START
+#undef BUTTON_BG_WIDTH
+#undef BUTTON_BG_X_START
+#undef BUTTON_BG_Y_START
+#undef CHOICE_SEP_OFFSET_X
+#undef CHOICE_SEP_OFFSET_Y
+#undef CHOICE_GROUP
+#define CHOICE_X_START	 			( -EMBLEM_FRAME_WIDTH / 2 + 18 )
+#define CHOICE_Y_START	 			( -EMBLEM_FRAME_HEIGHT / 2 + 15 + NEW_FRAME_BG_Y_OFFSET( EMBLEM_FRAME_HEIGHT ) )
+#define BUTTON_BG_WIDTH			180
+#define BUTTON_BG_X_START		80
+#define BUTTON_BG_Y_START		2
+
+#define CHOICE_SEP_OFFSET_X		20
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_GROUP			"emblem"
+
+#define SETUIHINT(x)            execnow set ui_hint_text x; execnow setlocalvarbool ui_hint_low 0;
+#define SETUIHINT_LOW(x)        execnow set ui_hint_text x; execnow setlocalvarbool ui_hint_low 1;
+
+#define EMBLEM_BORDER_SELECTED_RGBA		WHITE_RGB .8
+#define EMBLEM_BORDER_UNSELECTED_RGBA	.8 .8 .8 .25
+
+#define BG_ICON_W 180
+#define BG_ICON_H 39
+
+
+// clone of what the playercard is doing
+#define PLAYER_EMBLEM_SIZE (EMBLEM_FRAME_WIDTH/2 - 50)
+#define PLAYER_EMBLEM_X_START	30
+#define PLAYER_EMBLEM_Y_START	( CHOICE_Y( 1 ) )
+
+#undef NEW_FRAME_BACK_BUTTON_ACTION_EE
+#ifdef CONSOLE
+       #define NEW_FRAME_BACK_BUTTON_ACTION_EE( FRAME_WIDTH, FRAME_HEIGHT, actionArg ) \
+                     NEW_FRAME_BACK_BUTTON( FRAME_WIDTH, FRAME_HEIGHT )
+#else // #ifdef CONSOLE
+       #define NEW_FRAME_BACK_BUTTON_ACTION_EE( FRAME_WIDTH, FRAME_HEIGHT, actionArg ) \
+                     NEW_FRAME_BACK_BUTTON_ACTION( FRAME_WIDTH, FRAME_HEIGHT, actionArg )
+#endif // #ifdef CONSOLE
+
+
+#define EDIT_LAYER execNow showitem emblem_keycatcher;execNow focusitem emblem_keycatcher;
+#define SELECT_IMAGE closeimmediate emblem_edit; open emblem_icon_select;
+#define PURCHASE_LAYER open PurchaseEmblemLayerConfirmation;
+#define PURCHASE_ICON open PurchaseEmblemIconConfirmation;
+#define PURCHASE_BACKGROUND open PurchaseEmblemBackgroundConfirmation;
+
+#define SYNC_HIGHLIGHT execNow setlocalvarint ui_highlight ( emblemSelectedLayer() + 1 )
+
+#define IS_LAYER_EDITABLE( index ) ( emblemLayerState( index - 1 ) == EMBLEM_LAYER_INUSE )
+#define IS_LAYER_EMPTY( index ) ( emblemLayerState( index - 1 ) == EMBLEM_LAYER_EMPTY )
+#define IS_LAYER_FIRST_UNPURCHASED( index ) ( emblemLayerState( index - 1 ) == EMBLEM_LAYER_UNLOCKED && emblemLayerState( index - 2 ) != EMBLEM_LAYER_UNLOCKED )
+#define IS_LAYER_NOT_FIRST_UNPURCHASED( index ) ( emblemLayerState( index - 1 ) == EMBLEM_LAYER_UNLOCKED && emblemLayerState( index - 2 ) == EMBLEM_LAYER_UNLOCKED )
+#define IS_LAYER_AFFORDABLE( index ) ( emblemLayerCost( index - 1 ) <= GetStatByName( "CODPOINTS" ) )
+#define IS_LAYER_LOCKED( index ) ( emblemLayerState( index - 1 ) == EMBLEM_LAYER_LOCKED )
+#define IS_LAYER_UNLOCKED( index ) ( emblemLayerState( index - 1 ) == EMBLEM_LAYER_UNLOCKED )
+
+#ifdef PC
+
+#define EMBLEM_KEYCATCHER_ENABLED	isvisible( "emblem_keycatcher" )
+#define ARE_LAYERS_ENABLED			( !EMBLEM_KEYCATCHER_ENABLED )
+#define ARE_LAYERS_ENABLED_AND		ARE_LAYERS_ENABLED &&
+
+#undef EMBLEM_COLOR_NOICON_BUTTON
+#define EMBLEM_COLOR_NOICON_BUTTON( itemIndex, rectArg, textArg, rgbArg, alphaArg, highlightedColorArg, actionArg, onFocusArg, onLeaveFocusArg, visArg, navArg, extraArg )
+
+#undef EMBLEM_DISABLED_BUTTON
+#define EMBLEM_DISABLED_BUTTON( itemIndex, rectArg, textArg, visArg ) \
+		NEW_FRAME_BUTTON_BG( itemIndex, rectArg, visArg, decoration ) \
+		CHOICE_BUTTON_RECT_FOCUS_VIS_NOHI_EX( itemIndex, rectArg, NEW_FRAME_BUTTON_NAME, textArg, MEDIUM_GRAY, ;, ;, ;, when( visArg );, NEW_FRAME_TRANSPARENT_STATE( 0 0 0 ); decoration ) 
+
+#define DISABLED_LAYER_BUTTON( index )	\
+	EMBLEM_DISABLED_BUTTON( index, CHOICE_RECT( index ), emblemLayerName( index - 1 ),       ( !ARE_LAYERS_ENABLED && IS_LAYER_EDITABLE( index ) ) ) \
+	EMBLEM_DISABLED_BUTTON( index, CHOICE_RECT( index ), locString( "@MENU_EMBLEM_LAYER_CAPS", index ), ( !ARE_LAYERS_ENABLED && IS_LAYER_EMPTY( index ) ) ) \
+	EMBLEM_DISABLED_BUTTON( index, CHOICE_RECT( index ), locString( "@MENU_EMBLEM_LAYER_CAPS", index ), ( !ARE_LAYERS_ENABLED && IS_LAYER_FIRST_UNPURCHASED( index ) && IS_LAYER_AFFORDABLE( index ) ) ) \
+	EMBLEM_DISABLED_BUTTON( index, CHOICE_RECT( index ), locString( "@MENU_EMBLEM_LAYER_CAPS", index ), ( !ARE_LAYERS_ENABLED && ( IS_LAYER_NOT_FIRST_UNPURCHASED( index ) || ( IS_LAYER_UNLOCKED( index ) && !IS_LAYER_AFFORDABLE( index ) ) ) ) ) \
+	EMBLEM_DISABLED_BUTTON( index, CHOICE_RECT( index ), locString( "@MENU_EMBLEM_LAYER_CAPS", index ), ( !ARE_LAYERS_ENABLED && IS_LAYER_LOCKED( index ) ) )
+#define EXIT_LAYER execNow emblemRepeatBttnsLooseFocus; execNow "emblemEndEdit" emblem_keycatcher; execNow hideitem emblem_keycatcher;
+
+#else	// PC
+
+#define ARE_LAYERS_ENABLED	
+#define ARE_LAYERS_ENABLED_AND		
+#define EMBLEM_KEYCATCHER_ENABLED	hasfocus( "emblem_keycatcher" )
+
+#undef EMBLEM_COLOR_NOICON_BUTTON
+#define EMBLEM_COLOR_NOICON_BUTTON( itemIndex, rectArg, textArg, rgbArg, alphaArg, highlightedColorArg, actionArg, onFocusArg, onLeaveFocusArg, visArg, navArg, extraArg ) \
+	NEW_FRAME_BUTTON_COLOR_NOICON( itemIndex, rectArg, textArg, rgbArg, alphaArg, highlightedColorArg, actionArg, onFocusArg, onLeaveFocusArg, visArg, navArg, extraArg )
+
+#define DISABLED_LAYER_BUTTON( index )
+#define EXIT_LAYER 
+
+#endif	// PC
+
+#define LAYER_BUTTON( index ) \
+	NEW_FRAME_BUTTON( index, CHOICE_RECT( index ), emblemLayerName( index - 1 ), EDIT_LAYER, execNow emblemSelect ( index - 1 ); SETUIHINT(  ( locString( "@MENU_EMBLEM_EDIT_DESC", index ) ) );, /*LEAVE_FOCUS*/;, ( ARE_LAYERS_ENABLED_AND IS_LAYER_EDITABLE( index ) ), ;, ; ) \
+	EMBLEM_COLOR_NOICON_BUTTON( index, CHOICE_RECT( index ), emblemLayerName( index - 1 ), 1 1 1, 0, NEW_FRAME_ORANGE_RGB 1, EDIT_LAYER, execNow emblemSelect ( index - 1 ); CLEARUIHINT;, /*LEAVE_FOCUS*/;, ( EMBLEM_KEYCATCHER_ENABLED && IS_LAYER_EDITABLE( index ) ), ;, ; ) \
+	NEW_FRAME_BUTTON( index, CHOICE_RECT( index ), locString( "@MENU_EMBLEM_LAYER_CAPS", index ), SELECT_IMAGE, execNow emblemSelect ( index - 1 ); SETUIHINT( ( locString( "@MENU_EMBLEM_SELECT_DESC", index ) ) );, /*LEAVE_FOCUS*/;, ( ARE_LAYERS_ENABLED_AND IS_LAYER_EMPTY( index ) ), ;, ; ) \
+	NEW_FRAME_BUTTON( index, CHOICE_RECT( index ), locString( "@MENU_EMBLEM_LAYER_CAPS", index ), PURCHASE_LAYER, execNow emblemSelect ( index - 1 ); SETUIHINT( ( locString( "@MENU_EMBLEM_PURCHASE_DESC", index ) ) );, /*LEAVE_FOCUS*/;, ( ARE_LAYERS_ENABLED_AND IS_LAYER_FIRST_UNPURCHASED( index ) && IS_LAYER_AFFORDABLE( index ) ), ;, ; ) \
+	NEW_FRAME_DBUTTON( index, CHOICE_RECT( index ), locString( "@MENU_EMBLEM_LAYER_CAPS", index ), ;, execNow emblemSelect ( index - 1 ); CLEARUIHINT;, /*LEAVE_FOCUS*/;, ( ARE_LAYERS_ENABLED_AND ( IS_LAYER_NOT_FIRST_UNPURCHASED( index ) || ( IS_LAYER_UNLOCKED( index ) && !IS_LAYER_AFFORDABLE( index ) ) ) ), ;, ; ) \
+	NEW_FRAME_DBUTTON( index, CHOICE_RECT( index ), locString( "@MENU_EMBLEM_LAYER_CAPS", index ), ;, execNow emblemSelect ( index - 1 ); SETUIHINT( ( locString( "PERKS_UNLOCKED_AT_LV", emblemLayerUnlockLevel( index - 1 ) + 1 ) ) );, /*LEAVE_FOCUS*/;, ( ARE_LAYERS_ENABLED_AND IS_LAYER_LOCKED( index ) ), ;, ; ) \
+	DISABLED_LAYER_BUTTON( index ) \
+	PREPROC_TEXT_DRAW_VIS( CHOICE_RECT( index ), 0 0, locString( "@MENU_POINTS", emblemLayerCost( index - 1 ) ), TEXTSIZE_DEFAULT, -4, 0, ITEM_ALIGN_TOP_RIGHT, NEW_FRAME_GREEN_RGB 1, when( IS_LAYER_FIRST_UNPURCHASED( index ) && IS_LAYER_UNLOCKED( index ) && IS_LAYER_AFFORDABLE( index ) ) ) \
+	PREPROC_TEXT_DRAW_VIS( CHOICE_RECT( index ), 0 0, locString( "@MENU_POINTS", emblemLayerCost( index - 1 ) ), TEXTSIZE_DEFAULT, -4, 0, ITEM_ALIGN_TOP_RIGHT, NEW_FRAME_RED_RGB 1, when( IS_LAYER_FIRST_UNPURCHASED( index ) && IS_LAYER_UNLOCKED( index ) && !IS_LAYER_AFFORDABLE( index ) ) ) \
+	PREPROC_TEXT_DRAW_VIS( CHOICE_RECT( index ), 0 0, locString( "@MENU_POINTS", emblemLayerCost( index - 1 ) ), TEXTSIZE_DEFAULT, -4, 0, ITEM_ALIGN_TOP_RIGHT, NEW_FRAME_LT_GREY_RGB 1, when( IS_LAYER_NOT_FIRST_UNPURCHASED( index ) || IS_LAYER_LOCKED( index ) ) ) \
+	NEW_FRAME_LOCKEDICON_VIS( index, IS_LAYER_LOCKED( index ), ; )
+		
+#define EXIT_ACTION \
+	close self; \
+	close emblem_edit; \
+	open menu_playercard_self
+
+#define EXIT_SAVE_ACTION \
+	execNow "emblemsetprofile"; \
+	execNow userPublishNews TICKER_EMBLEMUPDATE; \
+	close self; \
+	close emblem_edit; \
+	open menu_playercard_self
+		
+
+#ifdef PC		
+#undef ON_ESC_ACTION
+#define ON_ESC_ACTION \
+			if( EMBLEM_KEYCATCHER_ENABLED ) \
+			{ \
+				EXIT_LAYER \
+			} \
+			else \
+			{ \
+				execNow "uploadstats"; \
+				if( emblemIsModified() ) \
+				{ \
+					open emblem_confirm; \
+				} \
+				else \
+				{ \
+					open menu_playercard_self; \
+					close self; \
+				} \
+			}
+#else
+#undef ON_ESC_ACTION
+#define ON_ESC_ACTION \
+			execNow "uploadstats"; \
+			if( emblemIsModified() ) \
+			{ \
+				open emblem_confirm; \
+			} \
+			else \
+			{ \
+				open menu_playercard_self; \
+				close self; \
+			} 
+#endif	// PC
+
+#undef ICON_PAGE_BUTTON_NAME
+#define ICON_PAGE_BUTTON_NAME "icon_page_button_"
+
+#undef ICON_PAGE_BUTTON
+#define ICON_PAGE_BUTTON( itemIndex, X, Y, FRAME_WIDTH, FRAME_HEIGHT, bgArg, actionArg, visArg ) \
+	itemDef \
+	{ \
+		name			EMBLEM_EDIT_REPEATING_BUTTON_NAME#itemIndex \
+		type			ITEM_TYPE_BUTTON \
+		style			WINDOW_STYLE_SHADER \
+		background		bgArg \
+		rect			X Y FRAME_WIDTH FRAME_HEIGHT \
+		origin			0 0 \
+		forecolor		1 1 1 1 \
+		mouseEnter 		{ play CHOICE_FOCUS_SOUND; } \
+		action			{  play CHOICE_FOCUS_SOUND; actionArg; } \
+		visible			when ( visArg ) \
+		mouseenter {  play CHOICE_FOCUS_SOUND; setcolor forecolor 0.98 0.83 0.25 1 }	\
+		mouseexit { setcolor forecolor 1 1 1 1 } \	
+	}
+			
+{
+	menuDef
+	{
+		name					emblem_edit
+		rect					0 0 640 480
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		control					MENU_CONTROL_OPENER
+		soundloop       		MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT
+		closeSlideDirection		MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT
+
+		onOpen
+		{
+			execNow playerBanCheck BAN_EMBLEM_EDITOR;
+			execNow emblemFlushResults;
+		}
+
+		onFocus
+		{
+			activateBlur;
+			execNow focusitem ( NEW_FRAME_BUTTON_NAME + ( emblemSelectedLayer() + 1 ) );
+		}
+
+		onEsc
+		{
+			ON_ESC_ACTION
+		}
+
+		execKeyInt 		BUTTON_Y
+		{
+			if( !EMBLEM_KEYCATCHER_ENABLED )
+			{
+				execNow emblemClear;
+			}
+			else
+			{
+				execNow emblemreset;
+			}
+		}
+
+		execKeyInt 		BUTTON_X
+		{
+			if( !hasfocus( "emblem_keycatcher" ) )
+			{
+				execNow emblemDuplicate;
+				execNow focusitem ( NEW_FRAME_BUTTON_NAME + ( emblemSelectedLayer() + 1 ) );
+			}
+			else
+			{
+				play "uin_navigation_slider";
+				execNow emblemToggleFlip;
+			}
+		}
+		
+		execKeyInt K_MWHEELDOWN
+		{
+			if ( EMBLEM_KEYCATCHER_ENABLED )
+			{
+				execNow "emblemScale -.2 -.2";
+			}
+		}
+		
+		execKeyInt K_MWHEELUP
+		{
+			if ( EMBLEM_KEYCATCHER_ENABLED )
+			{
+				execNow "emblemScale .2 .2";
+			}
+		}
+
+		NEW_FRAME( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT )
+		NEW_FRAME_TITLE( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, "@MENU_MY_PLAYERCARD_CAPS", 1 )
+		NEW_FRAME_SUBTITLE( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, locString( "@MENU_EMBLEM_EDITING_EMBLEM_CAPS", "@" + emblemLayerName( emblemSelectedLayer() ) ), when( EMBLEM_KEYCATCHER_ENABLED ) )
+		NEW_FRAME_SUBTITLE( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, "@MENU_EMBLEM_LAYER_EDITOR_CAPS", when( !EMBLEM_KEYCATCHER_ENABLED ) )
+
+
+		PLAYER_INFO_VIS( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, 1 )
+
+		LAYER_BUTTON( 1 );
+		LAYER_BUTTON( 2 );
+		LAYER_BUTTON( 3 );
+		LAYER_BUTTON( 4 );
+		LAYER_BUTTON( 5 );
+		LAYER_BUTTON( 6 );
+		LAYER_BUTTON( 7 );
+		LAYER_BUTTON( 8 );
+		LAYER_BUTTON( 9 );
+		LAYER_BUTTON( 10 );
+		LAYER_BUTTON( 11 );
+		LAYER_BUTTON( 12 );
+	
+		NEW_FRAME_BUTTON( 15, CHOICE_RECT( 15 ), "@" + emblemBackgroundName( emblemSelectedBackground() ), closeimmediate self; open emblem_bg_select;, execNow emblemSelect(-1); SETUIHINT_LOW( "@MENU_BACKGROUND_EDIT_DESC" );, /*LEAVE_FOCUS*/;, !EMBLEM_KEYCATCHER_ENABLED, ;, ; )
+
+		// Tooltip
+		HINT_TEXT( 13, CHOICE_X_START, dvarString( ui_hint_text ), ( dvarString( ui_hint_text ) != "@NULL_EMPTY" && localvarbool( ui_hint_low ) == 0 ) )
+		HINT_TEXT( 16, CHOICE_X_START, dvarString( ui_hint_text ), ( dvarString( ui_hint_text ) != "@NULL_EMPTY" && localvarbool( ui_hint_low ) == 1 ) )
+		
+#ifdef PC
+	#define PC_HINT_STRING \
+		"^3" + locString("@KEY_MOUSE1") + "^7 " + locString("@MENU_MOVE") + "\n" + \
+		"^3" + locString("@KEY_MOUSE2") + "^7 " + locString("@PLATFORM_ROTATE")  + "\n" + \
+		"^3" + locString("@KEY_MOUSE1") + "^7 + ^3" + locString("@KEY_MOUSE2") + "^7 " + locString("@PLATFORM_SCALE")
+		
+		HINT_TEXT( 13, CHOICE_X_START, PC_HINT_STRING, EMBLEM_KEYCATCHER_ENABLED )
+#endif // PC
+
+		/* Editing hints */
+#define HINT_X_START	 			( -EMBLEM_FRAME_WIDTH / 2 + 18 )
+#define HINT_Y_START	 			( ( -EMBLEM_FRAME_HEIGHT / 2 + 15 + NEW_FRAME_BG_Y_OFFSET( EMBLEM_FRAME_HEIGHT ) ) + 244 )
+#define HINT_Y_SEP 18
+#define HINT_X_SEP 100
+#define HINT_X_BUTTON 32
+#define HINT_TEXT_RECT( X, Y ) ( HINT_X_START + HINT_X_BUTTON + ( HINT_X_SEP * X ) ) ( HINT_Y_START + ( HINT_Y_SEP * Y ) ) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+#define HINT_BUTTON_RECT( X, Y ) ( HINT_X_START + ( HINT_X_SEP * X ) ) ( HINT_Y_START + ( HINT_Y_SEP * Y ) ) HINT_X_BUTTON 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+
+
+#define EDIT_HINT_TEXT_VIS( X, Y, TEXT, VIS ) \
+		PREPROC_TEXT_DRAW_VIS_EX( HINT_BUTTON_RECT( X, Y ),  \
+						  0 0, TEXT"_BUTTON", TEXTSIZE_DEFAULT, \
+						  -4, 0, ITEM_ALIGN_MIDDLE_RIGHT, CHOICE_TEXTCOLOR, when( EMBLEM_KEYCATCHER_ENABLED && (VIS) ), ; ) \
+		PREPROC_TEXT_DRAW_VIS_EX( HINT_TEXT_RECT( X, Y ),  \
+						  0 0, TEXT, TEXTSIZE_DEFAULT, \
+						  0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR, when( EMBLEM_KEYCATCHER_ENABLED && (VIS) ), ; )
+
+#define NON_EDIT_HINT_TEXT_VIS( X, Y, TEXT, VIS ) \
+		PREPROC_TEXT_DRAW_VIS_EX( HINT_BUTTON_RECT( X, Y ),  \
+						  0 0, TEXT"_BUTTON", TEXTSIZE_DEFAULT, \
+						  -4, 0, ITEM_ALIGN_MIDDLE_RIGHT, CHOICE_TEXTCOLOR, when( !EMBLEM_KEYCATCHER_ENABLED && (VIS) ), ; ) \
+		PREPROC_TEXT_DRAW_VIS_EX( HINT_TEXT_RECT( X, Y ),  \
+						  0 0, TEXT, TEXTSIZE_DEFAULT, \
+						  0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR, when( !EMBLEM_KEYCATCHER_ENABLED && (VIS) ), ; )
+
+
+#define EDIT_HINT_TEXT( X, Y, TEXT ) EDIT_HINT_TEXT_VIS( X, Y, TEXT, 1 )
+
+#ifndef PC
+		EDIT_HINT_TEXT( 0, 0, "@PLATFORM_EMBLEM_MOVE_LAYER" )
+		EDIT_HINT_TEXT( 0, 1, "@PLATFORM_EMBLEM_SCALE_LAYER" )
+		EDIT_HINT_TEXT( 0, 2, "@PLATFORM_EMBLEM_ROTATE_LAYER" )
+		EDIT_HINT_TEXT( 0, 3, "@PLATFORM_EMBLEM_EDIT_DONE" )
+		EDIT_HINT_TEXT_VIS( 1, 0, "@PLATFORM_EMBLEM_LAYER_UPDOWN", emblemSelectedLayer() > 0 && emblemSelectedLayer() < ( emblemPurchasedLayerCount() - 1 ) )
+		EDIT_HINT_TEXT_VIS( 1, 0, "@PLATFORM_EMBLEM_LAYER_DOWN", emblemSelectedLayer() == 0 && emblemPurchasedLayerCount() > 1 )
+		EDIT_HINT_TEXT_VIS( 1, 0, "@PLATFORM_EMBLEM_LAYER_UP", emblemSelectedLayer() == ( emblemPurchasedLayerCount() - 1 ) && emblemPurchasedLayerCount() > 1 )
+		EDIT_HINT_TEXT( 1, 1, "@PLATFORM_EMBLEM_TOGGLE_FLIP" )
+		EDIT_HINT_TEXT( 1, 2, "@PLATFORM_EMBLEM_RESET_LAYER" )
+		EDIT_HINT_TEXT_VIS( 1, 3, "@PLATFORM_EMBLEM_TOGGLE_OUTLINE", emblemLayerCanOutline( emblemSelectedLayer() ) )
+
+		NEW_FRAME_BUTTON_BAR_VIS( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, 80,
+			"@PLATFORM_EMBLEM_CLEAR_LAYER", emblemLayerState( emblemSelectedLayer() ) == EMBLEM_LAYER_INUSE && !EMBLEM_KEYCATCHER_ENABLED )
+		NEW_FRAME_BUTTON_BAR_VIS( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, 160,
+			"@PLATFORM_EMBLEM_DUPLICATE_LAYER", emblemLayerCanDuplicate( emblemSelectedLayer() ) && emblemLayerState( emblemSelectedLayer() ) == EMBLEM_LAYER_INUSE && !EMBLEM_KEYCATCHER_ENABLED )
+#endif	// ndef PC
+
+
+		PREPROC_SHADER_DRAW( PLAYER_EMBLEM_X_START PLAYER_EMBLEM_Y_START PLAYER_EMBLEM_SIZE PLAYER_EMBLEM_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, "white", 0 0 0 .4 ) 
+
+		PREPROC_SHADER_DRAW_VIS_EX(	PLAYER_EMBLEM_X_START CHOICE_Y( 15 ) 187 42 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER; origin -1 -1,
+									"emblem_bg_blank", NEW_FRAME_ORANGE_RGB 1,
+									when( !EMBLEM_KEYCATCHER_ENABLED && emblemSelectedLayer() == -1 ), ; ) 
+		itemDef
+		{
+			rect PLAYER_EMBLEM_X_START CHOICE_Y( 15 ) 185 40 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			type ITEM_TYPE_IMAGE
+			forecolor 1 1 1 1
+			style WINDOW_STYLE_SHADER_STREAMED
+			visible when( !EMBLEM_KEYCATCHER_ENABLED )
+			exp material ( emblemBackgroundMaterial( emblemSelectedBackground() ) )
+			decoration
+		}
+		
+		itemDef 
+		{
+			rect			( PLAYER_EMBLEM_X_START + 4 ) ( CHOICE_Y( 15 ) + 4 ) 32 32 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			origin			0 0
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_CUSTOM_EMBLEM_CREATOR
+			visible			when( !EMBLEM_KEYCATCHER_ENABLED )
+			decoration
+		}
+
+		itemDef 
+		{
+			rect			( PLAYER_EMBLEM_X_START - 2 ) ( PLAYER_EMBLEM_Y_START - 2 ) ( PLAYER_EMBLEM_SIZE + 2 ) ( PLAYER_EMBLEM_SIZE + 2 ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			origin			0 0
+			type			ITEM_TYPE_IMAGE
+			background      "white"
+			visible			when( emblemLayerState( emblemSelectedLayer() ) == EMBLEM_LAYER_INUSE )
+			forecolor       1 1 1 0
+			decoration
+			border          1
+			borderColor     NEW_FRAME_ORANGE_RGB 1
+		}
+
+		itemDef 
+		{
+			name			emblem_preview
+			rect			PLAYER_EMBLEM_X_START PLAYER_EMBLEM_Y_START PLAYER_EMBLEM_SIZE PLAYER_EMBLEM_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			origin			0 0
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_CUSTOM_EMBLEM_CREATOR
+			visible			1
+			decoration
+		}
+
+#undef EMBLEM_EDIT_BUTTON_NAME
+#define EMBLEM_EDIT_BUTTON_NAME "emblem_edit_button_"
+		
+#undef EMBLEM_EDIT_REPEATING_BUTTON_NAME
+#define EMBLEM_EDIT_REPEATING_BUTTON_NAME "emblem_edit_repeating_button_"
+
+#undef EMBLEM_EDIT_BUTTON
+#define EMBLEM_EDIT_BUTTON( itemIndex, X, Y, FRAME_WIDTH, FRAME_HEIGHT, textArg, actionArg, leaveFocusArg ) \
+		itemDef \
+		{ \
+			type		ITEM_TYPE_BUTTON \
+			rect		X Y FRAME_WIDTH FRAME_HEIGHT \
+			name		EMBLEM_EDIT_REPEATING_BUTTON_NAME#itemIndex \
+			exp			text( textArg ); \
+			forecolor	NEW_FRAME_BUTTON_TEXT_COLOR \
+			border		1 \
+			bordersize	1 \
+			backcolor	NEW_FRAME_RGB 1 \
+			bordercolor	EMBLEM_BORDER_UNSELECTED_RGBA \
+			textfont	UI_FONT_NORMAL \
+			textscale	TEXTSIZE_DEFAULT \
+			textstyle	CHOICE_TEXTSTYLE \
+			textalign	ITEM_ALIGN_MIDDLE_CENTER \
+			visible		when( EMBLEM_KEYCATCHER_ENABLED ) \
+			onfocus		{ } \
+			leavefocus	{ leaveFocusArg } \
+			action		{ play CHOICE_ACTION_SOUND; actionArg } \
+			mouseEnter	{ play CHOICE_FOCUS_SOUND; setitemcolor EMBLEM_EDIT_REPEATING_BUTTON_NAME#itemIndex bordercolor EMBLEM_BORDER_SELECTED_RGBA; } \
+			mouseExit	{ setitemcolor EMBLEM_EDIT_REPEATING_BUTTON_NAME#itemIndex bordercolor EMBLEM_BORDER_UNSELECTED_RGBA; }  \
+		}
+		
+#define EMBLEM_EDIT_BUTTON_WITH_ARROW( itemIndex, X, Y, FRAME_WIDTH, FRAME_HEIGHT, textArg, actionArg, leaveFocusArg, arrowImg ) \
+	EMBLEM_EDIT_BUTTON( itemIndex, X, Y, FRAME_WIDTH, FRAME_HEIGHT, textArg, actionArg, leaveFocusArg ) \
+	itemDef \
+	{ \
+		name			EMBLEM_EDIT_REPEATING_BUTTON_NAME#itemIndex \
+		type			ITEM_TYPE_IMAGE \
+		style			WINDOW_STYLE_SHADER \
+		background		arrowImg \
+		rect			(X + (FRAME_WIDTH / 2) - 7) (Y + (FRAME_HEIGHT / 2) - 7) 16 16 \
+		origin			0 0 \
+		forecolor		1 1 1 1 \
+		visible			when ( EMBLEM_KEYCATCHER_ENABLED ) \
+		decoration \
+	}
+
+#undef EMBLEM_EDIT_TEXT
+#define EMBLEM_EDIT_TEXT( X, Y, FRAME_WIDTH, FRAME_HEIGHT, textArg ) \
+	itemDef \
+	{ \
+		type			ITEM_TYPE_TEXT \
+		rect			X Y FRAME_WIDTH FRAME_HEIGHT \
+		forecolor		NEW_FRAME_BUTTON_TEXT_COLOR \
+		exp				text( textArg ); \
+		textfont		UI_FONT_NORMAL \
+		textscale		TEXTSIZE_DEFAULT \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textalign		ITEM_ALIGN_TOP_CENTER \
+		visible         when( EMBLEM_KEYCATCHER_ENABLED ) \
+		decoration \
+	} 
+
+#ifdef PC
+		EMBLEM_EDIT_BUTTON( 5, 260, 115, 60, 20, "@PLATFORM_FLIP", play "uin_navigation_slider"; execNow emblemToggleFlip;, ; );
+		EMBLEM_EDIT_BUTTON( 6, 260, 145, 60, 20, "@PLATFORM_OUTLINE", execNow emblemToggleOutline;, ; );		
+		EMBLEM_EDIT_BUTTON( 11, 260, 175, 60, 20, "@MENU_RESET", execNow emblemReset;, ; );
+		EMBLEM_EDIT_BUTTON( 12, 260, 205, 60, 20, "@PLATFORM_CLEAR", execNow emblemClear; EXIT_LAYER;, ; );
+		EMBLEM_EDIT_BUTTON_WITH_ARROW( 13, 260, 235, 60, 20, "", execNow emblemMoveLayerRelative -1; SYNC_HIGHLIGHT;, ;, "ui_arrow_up" );
+		EMBLEM_EDIT_BUTTON_WITH_ARROW( 14, 260, 265, 60, 20, "", execNow emblemMoveLayerRelative 1; SYNC_HIGHLIGHT;, ;, "ui_arrow_down" );
+		EMBLEM_EDIT_BUTTON( 15, 260, 295, 60, 20, "@PLATFORM_DONE", EXIT_LAYER, ; );
+#endif	// PC
+		
+		itemDef
+		{
+			rect			PLAYER_EMBLEM_X_START ( PLAYER_EMBLEM_Y_START + PLAYER_EMBLEM_SIZE + 8 ) PLAYER_EMBLEM_SIZE PLAYER_EMBLEM_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			origin			0 0
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_EMBLEM_COLORS
+			visible			when( EMBLEM_KEYCATCHER_ENABLED )
+			forecolor       1 1 1 0
+#ifdef PC
+			action			{ play "uin_navigation_slider"; execNow "emblemPalettePick"; }
+#else
+			decoration
+#endif	// PC
+		}
+
+#ifdef CONSOLE
+		PREPROC_TEXT_DRAW_VIS_EX( ( (-CHOICE_X_START) - 256 ) ( CHOICE_Y_START + 280 ) 256 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,
+						  0 0, "@PLATFORM_EMBLEM_PALETTE", TEXTSIZE_DEFAULT,
+						  0, 0, ITEM_ALIGN_TOP_CENTER, CHOICE_TEXTCOLOR, when( EMBLEM_KEYCATCHER_ENABLED ), ; )
+#endif // CONSOLE
+
+		itemDef
+		{
+			name  			emblem_keycatcher
+			type            ITEM_TYPE_BUTTON_NO_TEXT
+			
+			onFocus
+			{
+				CLEARUIHINT;
+				execNow "emblemBeginEdit";
+				SYNC_HIGHLIGHT;
+				play CHOICE_ACTION_SOUND;
+			}
+
+			LeaveFocus
+			{
+#ifndef PC
+				execNow "emblemEndEdit";
+				execNow "hideitem";
+#endif // ndef PC
+			}
+
+			execKeyInt 		DPAD_UP
+			{
+				play "uin_navigation_slider";
+				execNow emblemMoveLayerRelative -1;
+				SYNC_HIGHLIGHT;
+			}
+			execKeyInt 		DPAD_DOWN
+			{
+				play "uin_navigation_slider";
+				execNow emblemMoveLayerRelative 1;
+				SYNC_HIGHLIGHT;
+			}
+			execKeyInt 		DPAD_LEFT
+			{
+				play "uin_navigation_slider";
+				execNow "emblemPaletteCycle -1";
+			}
+			execKeyInt 		DPAD_RIGHT
+			{
+				play "uin_navigation_slider";
+				execNow "emblemPaletteCycle 1";
+			}
+			execKeyInt 		APAD_UP { }
+			execKeyInt 		APAD_DOWN { }
+			execKeyInt 		APAD_LEFT { }
+			execKeyInt 		APAD_RIGHT { }
+			execKeyInt 		BUTTON_LTRIG { }
+			execKeyInt 		BUTTON_RTRIG { }
+			execKeyInt 		BUTTON_LSHLDR { }
+			execKeyInt 		BUTTON_RSHLDR { }
+			execKeyInt 		BUTTON_B { execNow focusitem ( NEW_FRAME_BUTTON_NAME + ( emblemSelectedLayer() + 1 ) ); }
+			execKeyInt 		BUTTON_A { execNow focusitem ( NEW_FRAME_BUTTON_NAME + ( emblemSelectedLayer() + 1 ) ); }
+			execKeyInt      BUTTON_X { play "uin_navigation_slider"; execNow emblemToggleFlip; }
+			execKeyInt 		BUTTON_RSHLDR { execNow emblemToggleOutline; }
+			visible         0
+		}
+
+		NEW_FRAME_BACK_BUTTON_ACTION( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, ON_ESC_ACTION )
+	}
+
+
+
+
+
+
+
+#define ICON_COLS 6
+#define ICON_ROWS 3
+#define ICON_W 48
+#define ICON_H 48
+#define ICON_PER_PAGE 18
+#define ICON_X_OFFSET 0
+#define ICON_Y_OFFSET ( -ICON_Y_SPACING * 0.75 )
+#define ICON_X_SPACING  62
+#define ICON_Y_SPACING  78
+#define ICON_XY( col, row ) ( ( ( col * ICON_X_SPACING ) + ICON_X_OFFSET ) - ( ICON_W / 2 ) ) ( ( ( row * ICON_Y_SPACING ) + ICON_Y_OFFSET ) - ( ICON_H / 2 ) )
+
+#define SET_ICON_HI_INDEX(x) execnow setlocalvarint icon_hi_index ( x )
+#define ICON_HI_INDEX ( localvarint( icon_hi_index ) )
+#define ICON_ID( x ) ( emblemFilterIconID( localVarInt( emblem_state_filter), localVarInt( emblem_type_filter ), (x) ) )
+#define ICON_COUNT ( emblemFilterCount( localVarInt( emblem_state_filter), localVarInt( emblem_type_filter ) ) )
+#define ICON_HI_ID ( ICON_ID( ICON_HI_INDEX ) )
+
+#define PAGE_INDEX(index) ( int( ( index ) / ICON_PER_PAGE ) )
+#define CURRENT_PAGE_INDEX ( PAGE_INDEX( ICON_HI_INDEX ) )
+#define ICON_INDEX( index ) ( ( index )  + ( CURRENT_PAGE_INDEX * ICON_PER_PAGE ) )
+#define SELECT_OR_PURCHASE_ABLE( index ) ( ( emblemIconState( ICON_ID( ICON_INDEX( index ) ) ) == EMBLEM_ICON_PURCHASED ) || ( emblemIconState( ICON_ID ( ICON_INDEX( index ) ) ) == EMBLEM_ICON_UNLOCKED && emblemIconCost( ICON_ID( ICON_INDEX( index ) ) ) <= GetStatByName( "CODPOINTS" ) ) )
+
+#ifdef PC
+#define ICON_BUTTON_SELECTABLE( index )	type	ITEM_TYPE_BUTTON \
+										mouseEnter { play "uin_navigation_slider"; SET_ICON_HI_INDEX( ICON_INDEX( index ) ) } \
+										action { execkeyhandler BUTTON_A } 
+#else	// PC
+#define ICON_BUTTON_SELECTABLE( index )	type	ITEM_TYPE_IMAGE \
+										decoration 
+#endif	// PC
+
+#define ICON_BUTTON( index, col, row ) \
+	itemDef \
+	{ \
+		rect            ICON_XY( col, row ) ( ICON_W + 6 ) ( ICON_H + 6 ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin          -3 -3 \
+		forecolor       1 1 1 1 \
+		type            ITEM_TYPE_HIGHLIGHT \
+		style           WINDOW_STYLE_SHADER_FRAMED \
+		background		"menu_mp_lobby_frame_circle" \
+		frame           4 0.5 FRAME_SIDE_ALL \
+		visible         when( ICON_COUNT > 0 && ICON_HI_INDEX == ICON_INDEX( index ) && !SELECT_OR_PURCHASE_ABLE( index ) ) \
+		decoration      \
+	} \
+	itemDef \
+	{ \
+		rect            ICON_XY( col, row ) ( ICON_W + 6 ) ( ICON_H + 6 ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin          -3 -3 \
+		forecolor       NEW_FRAME_GREEN_RGB 1 \
+		type            ITEM_TYPE_HIGHLIGHT \
+		style           WINDOW_STYLE_SHADER_FRAMED \
+		background		"menu_mp_lobby_frame_circle" \
+		frame           4 0.5 FRAME_SIDE_ALL \
+		visible         when( ICON_COUNT > 0 && ICON_HI_INDEX == ICON_INDEX( index ) && SELECT_OR_PURCHASE_ABLE( index ) ) \
+		decoration      \
+	} \
+	itemDef \
+	{ \
+		rect            ICON_XY( col, row ) ( ICON_W + 4 ) ( ICON_H + 4 ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin          -2 -2 \
+		forecolor       .2 .2 .2 1 \
+		ICON_BUTTON_SELECTABLE( index )      \
+		style           WINDOW_STYLE_SHADER_FRAMED \
+		background		"menu_mp_lobby_frame_circle" \
+		frame           4 0.5 FRAME_SIDE_ALL \
+		visible         when( ICON_INDEX( index ) < ICON_COUNT ) \
+	} \
+	itemDef \
+	{ \
+		rect            ICON_XY( col, row ) ( ICON_W ) ( ICON_H ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin          0 0 \
+		forecolor       1 1 1 1 \
+		type			ITEM_TYPE_OWNERDRAW \
+		ownerdraw		UI_CUSTOM_EMBLEM_SELECTOR \
+		visible         when( ICON_INDEX( index ) < ICON_COUNT && emblemIconState( ICON_ID( ICON_INDEX( index ) ) ) != EMBLEM_ICON_CLASSIFIED ) \
+		decoration \
+		exp ownerdata   ( ICON_ID( ICON_INDEX( index ) ) ) \
+	} \
+	itemDef \
+	{ \
+		rect            ICON_XY( col, row ) ( ICON_W ) ( ICON_H ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		forecolor       1 1 1 1 \
+		type			ITEM_TYPE_IMAGE \
+		style           WINDOW_STYLE_SHADER \
+		visible         when( ICON_INDEX( index ) < ICON_COUNT && emblemIconState( ICON_ID( ICON_INDEX( index ) ) ) == EMBLEM_ICON_CLASSIFIED ) \
+		decoration \
+		rotation        45 \
+		background      "menu_mp_lobby_classified" \
+	} \
+	itemDef \
+	{ \
+		type			ITEM_TYPE_TEXT \
+		rect			ICON_XY( col, row ) ICON_W ICON_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin			0 ( ICON_H + 4 ) \
+		forecolor		NEW_FRAME_GREEN_RGB 1 \
+		exp				text( locString( "@MENU_POINTS", emblemIconCost( ICON_ID( ICON_INDEX( index ) ) ) ) ) \
+		textfont		UI_FONT_NORMAL \
+		textscale		TEXTSIZE_DEFAULT \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textalign		ITEM_ALIGN_TOP_CENTER \
+		visible         when( ICON_INDEX( index ) < ICON_COUNT && emblemIconState( ICON_ID( ICON_INDEX( index ) ) ) == EMBLEM_ICON_UNLOCKED && emblemIconCost( ICON_ID( ICON_INDEX( index ) ) ) <= GetStatByName( "CODPOINTS" ) ) \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		type			ITEM_TYPE_TEXT \
+		rect			ICON_XY( col, row ) ICON_W ICON_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin			0 ( ICON_H + 4 ) \
+		forecolor		NEW_FRAME_RED_RGB 1 \
+		exp				text( locString( "@MENU_POINTS", emblemIconCost( ICON_ID( ICON_INDEX( index ) ) ) ) ) \
+		textfont		UI_FONT_NORMAL \
+		textscale		TEXTSIZE_DEFAULT \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textalign		ITEM_ALIGN_TOP_CENTER \
+		visible         when( ICON_INDEX( index ) < ICON_COUNT && emblemIconState( ICON_ID( ICON_INDEX( index ) ) ) == EMBLEM_ICON_UNLOCKED && emblemIconCost( ICON_ID( ICON_INDEX( index ) ) ) > GetStatByName( "CODPOINTS" ) ) \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		rect            ICON_XY( col, row ) ( 16 ) ( 16 ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin          ( 0 ) ( ICON_H - 18 ) \
+		type            ITEM_TYPE_IMAGE \
+		forecolor       1 1 1 1 \
+		style           WINDOW_STYLE_SHADER \
+		visible         when( ICON_INDEX( index ) < ICON_COUNT && emblemIconState( ICON_ID( ICON_INDEX( index ) ) ) == EMBLEM_ICON_LOCKED ) \
+		exp material    ( "menu_mp_lobby_locked" ) \
+		decoration \
+	}
+
+#define MOVE(dir) \
+			if( ( ICON_HI_INDEX == GridMove( ICON_ROWS, ICON_COLS, ICON_COUNT, ICON_HI_INDEX, dir ) ) ) \
+			{ \
+			} \
+			else \
+			{ \
+				SET_ICON_HI_INDEX( GridMove( ICON_ROWS, ICON_COLS, ICON_COUNT, ICON_HI_INDEX, dir ) ); \
+				play "uin_navigation_slider"; \
+			}
+
+#undef ON_ESC_ICON_ACTION 
+#define ON_ESC_ICON_ACTION close self; openimmediate emblem_edit;
+	
+	menuDef
+	{
+		name			emblem_icon_select
+		rect			0 0 640 480
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		priority		MENU_PRI_ONTOP
+		soundloop       MENU_MUSIC
+
+		NEW_FRAME( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT )
+		NEW_FRAME_TITLE( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, "@MENU_MY_PLAYERCARD_CAPS", 1 )
+		NEW_FRAME_SUBTITLE( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, "@MENU_EMBLEM_TITLE_SELECT_IMAGE_CAPS", 1 )
+		
+		PLAYER_INFO_VIS( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, 1 )
+
+#ifdef PC		
+		SIMPLE_CHOICE_BUTTON_ARROWS_CENTERED_PRELOC( "emblem_icon_select_title", 0, -136, 180, locString("@MENU_LISTBOX_POS", CURRENT_PAGE_INDEX + 1, PAGE_INDEX(ICON_COUNT - 1) + 1), 1, MOVE( "page_right" ), MOVE( "page_left" ) )
+#else
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 -136 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			origin			0 0
+			forecolor		CHOICE_TEXTCOLOR
+			exp				text( locString( "@PLATFORM_BACKGROUND_PAGE", CURRENT_PAGE_INDEX + 1, PAGE_INDEX( ICON_COUNT - 1 ) + 1 ) )
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			1
+			decoration
+		}
+#endif	// PC
+
+		ICON_BUTTON( 0, -4, 0 )
+		ICON_BUTTON( 1, -3, 0 )
+		ICON_BUTTON( 2, -2, 0 )
+		ICON_BUTTON( 3, -1, 0 )
+		ICON_BUTTON( 4, 0, 0 )
+		ICON_BUTTON( 5, 1, 0 )
+		ICON_BUTTON( 6, -4, 1 )
+		ICON_BUTTON( 7, -3, 1 )
+		ICON_BUTTON( 8, -2, 1 )
+		ICON_BUTTON( 9, -1, 1 )
+		ICON_BUTTON( 10, 0, 1 )
+		ICON_BUTTON( 11, 1, 1 )
+		ICON_BUTTON( 12, -4, 2 )
+		ICON_BUTTON( 13, -3, 2 )
+		ICON_BUTTON( 14, -2, 2 )
+		ICON_BUTTON( 15, -1, 2 )
+		ICON_BUTTON( 16, 0, 2 )
+		ICON_BUTTON( 17, 1, 2 )
+	
+		PREPROC_TEXT_DRAW_VIS( ICON_XY( 2.3, 2.05 ) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( emblemIconName( ICON_HI_ID ) ), TEXTSIZE_LARGE, -2, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_LT_GREY_RGB 1, when( !USE_SMALLER_FONT ) )
+		PREPROC_TEXT_DRAW_VIS( ICON_XY( 2.3, 2.05 ) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( emblemIconName( ICON_HI_ID ) ), TEXTSIZE_SMALL, -2, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_LT_GREY_RGB 1, when( USE_SMALLER_FONT ) )
+
+		PREPROC_TEXT_DRAW_VIS_EX( ICON_XY( 2.3, 2.3 ) (ICON_X_SPACING * 2.5) 50 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, emblemIconUnlockDesc( ICON_HI_ID ), TEXTSIZE_DEFAULT, -2, 0, ITEM_ALIGN_TOP_LEFT, CHOICE_TEXTCOLOR, 1, autowrapped; )
+
+		PREPROC_TEXT_DRAW_VIS( ICON_XY( 2.3, 2.3 ) (ICON_X_SPACING * 3) 50 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@MENU_POINTS", emblemIconCost( ICON_HI_ID ) ), TEXTSIZE_LARGE, -2, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_GREEN_RGB 1, when( emblemIconState( ICON_HI_ID ) == EMBLEM_ICON_UNLOCKED && emblemIconCost( ICON_HI_ID ) <= GetStatByName( "CODPOINTS" ) ) )
+		PREPROC_TEXT_DRAW_VIS( ICON_XY( 2.3, 2.3 ) (ICON_X_SPACING * 3) 50 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@MENU_POINTS", emblemIconCost( ICON_HI_ID ) ), TEXTSIZE_LARGE, -2, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_RED_RGB 1, when( emblemIconState( ICON_HI_ID ) == EMBLEM_ICON_UNLOCKED && emblemIconCost( ICON_HI_ID ) > GetStatByName( "CODPOINTS" ) ) )
+
+		itemDef
+		{
+			rect            ICON_XY( 2.3, 0 ) ( ICON_X_SPACING * 2.5 + 4 ) ( ICON_X_SPACING * 2.5 + 4 ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			origin          -2 -2
+			forecolor       .2 .2 .2 1
+			type            ITEM_TYPE_IMAGE
+			style           WINDOW_STYLE_SHADER_FRAMED
+			background		"menu_mp_lobby_frame_circle"
+			frame           8 0.5 FRAME_SIDE_ALL
+			visible         when( ICON_HI_INDEX < ICON_COUNT )
+			decoration      
+		}
+
+		itemDef
+		{
+			rect            ICON_XY( 2.3, 0 ) ( ICON_X_SPACING * 2.5 ) ( ICON_X_SPACING * 2.5 ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			forecolor       1 1 1 1
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_CUSTOM_EMBLEM_SELECTOR
+			visible         when( emblemIconState( ICON_HI_ID ) != EMBLEM_ICON_CLASSIFIED )
+			decoration
+			exp ownerdata   ( ICON_HI_ID )
+		}
+
+		itemDef
+		{
+			rect            ICON_XY( 2.3, 0 ) ( ICON_X_SPACING * 2.5 ) ( ICON_X_SPACING * 2.5 ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			forecolor       1 1 1 1
+			type			ITEM_TYPE_IMAGE
+			style           WINDOW_STYLE_SHADER
+			visible         when( emblemIconState( ICON_HI_ID ) == EMBLEM_ICON_CLASSIFIED )
+			decoration
+			rotation        45
+			background      "menu_mp_lobby_classified"
+		}
+	
+		onOpen
+		{
+			activateBlur;
+			play CHOICE_ACTION_SOUND;
+		}
+		
+		onEsc{ ON_ESC_ICON_ACTION }
+		onClose{ }
+		execKeyInt      BUTTON_B  { close self; openimmediate emblem_edit; }
+		
+		
+#define ON_ENTER_ICON_ACTION \
+			if( emblemIconState( ICON_HI_ID ) == EMBLEM_ICON_UNLOCKED && emblemIconCost( ICON_HI_ID ) <= GetStatByName( "CODPOINTS" ) ) \
+			{ \
+				play CHOICE_ACTION_SOUND; \
+				execnow setlocalvarint emblem_selected_icon_id ( ICON_HI_ID ); \
+				PURCHASE_ICON; \
+			} \
+			elseif( emblemIconState( ICON_HI_ID ) == EMBLEM_ICON_PURCHASED ) \
+			{ \
+				play CHOICE_ACTION_SOUND; \
+				execNow emblemClear; \
+				execNow emblemIcon ( ICON_HI_ID ); \
+				close self; \
+				openimmediate emblem_edit; \
+			}
+			
+		execKeyInt      BUTTON_A { ON_ENTER_ICON_ACTION }
+		
+		// Enter
+		execKeyInt      13 { ON_ENTER_ICON_ACTION }
+
+		execKeyInt DPAD_LEFT { MOVE( "left" ) }
+		execKeyInt DPAD_RIGHT { MOVE( "right" ) }
+		execKeyInt DPAD_UP { MOVE( "up" ) }
+		execKeyInt DPAD_DOWN { MOVE( "down" ) }
+
+		execKeyInt APAD_LEFT { MOVE( "left" ) }
+		execKeyInt APAD_RIGHT { MOVE( "right" ) }
+		execKeyInt APAD_UP { MOVE( "up" ) }
+		execKeyInt APAD_DOWN { MOVE( "down" ) }
+		
+		execKeyInt K_LEFTARROW { MOVE( "left" ) }
+		execKeyInt K_RIGHTARROW { MOVE( "right" ) }
+		execKeyInt K_UPARROW { MOVE( "up" ) }
+		execKeyInt K_DOWNARROW { MOVE( "down" ) }
+
+		execKeyInt BUTTON_LSHLDR { MOVE( "page_left" ) }
+		execKeyInt BUTTON_RSHLDR { MOVE( "page_right" ) }
+		
+		execKeyInt K_MWHEELDOWN { MOVE( "page_left" ) }
+		execKeyInt K_MWHEELUP { MOVE( "page_right" ) }
+
+		/*
+		execKeyInt BUTTON_Y
+		{
+			execnow setlocalvarint emblem_state_filter ( localvarint( emblem_state_filter ) + 1 );
+			SET_ICON_HI_INDEX( min( ICON_COUNT - 1, ICON_HI_INDEX ) );
+			play CHOICE_ACTION_SOUND;
+		}
+		*/
+
+		NEW_FRAME_BACK_BUTTON_ACTION( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, ON_ESC_ICON_ACTION )
+
+#ifdef CONSOLE
+		NEW_FRAME_BUTTON_BAR_VIS( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, 120,
+			"@PLATFORM_PURCHASE", emblemIconState( ICON_HI_ID ) == EMBLEM_ICON_UNLOCKED && emblemIconCost( ICON_HI_ID ) <= GetStatByName( "CODPOINTS" ) )
+		NEW_FRAME_BUTTON_BAR_VIS( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, 120,
+			"@PLATFORM_EMBLEM_SELECT", emblemIconState( ICON_HI_ID ) == EMBLEM_ICON_PURCHASED )
+
+		/*NEW_FRAME_BUTTON_BAR_VIS( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, 230,
+			( locString( "@PLATFORM_FILTER_BUTTON" ) + " " + emblemStateDisplay( localvarint( emblem_state_filter ) ) ), 1 )*/
+#endif // CONSOLE
+	}
+
+#undef PAGE_INDEX
+#undef CURRENT_PAGE_INDEX
+
+#define BG_PER_PAGE 12
+#define BG_X_OFFSET 0
+#define BG_Y_OFFSET ( -BG_Y_SPACING * 1.4 )
+#define BG_X_SPACING  190
+#define BG_Y_SPACING  64
+#define BG_XY( col, row ) ( ( ( col * BG_X_SPACING ) + BG_X_OFFSET ) - ( BG_ICON_W / 2 ) ) ( ( ( row * BG_Y_SPACING ) + BG_Y_OFFSET ) - ( BG_ICON_H / 2 ) )
+
+#define SET_BG_HI_INDEX(x) execnow setlocalvarint bg_hi_index ( x )
+#define BG_HI_INDEX ( localvarint( bg_hi_index ) )
+
+#define PAGE_INDEX(index) ( int( ( index ) / BG_PER_PAGE ) )
+#define CURRENT_PAGE_INDEX ( PAGE_INDEX( localVarInt( bg_hi_index ) ) )
+#define BG_INDEX( index ) ( ( index )  + ( CURRENT_PAGE_INDEX * BG_PER_PAGE ) )
+
+#ifdef PC
+#define BG_BUTTON_SELECTABLE( index, col, row )	\
+	itemDef \
+	{ \
+		type            ITEM_TYPE_BUTTON \
+		rect            BG_XY( col, row ) BG_ICON_W BG_ICON_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		text			"" \
+		visible         when( BG_INDEX( index ) < emblemBackgroundCount() ) \
+		action			{ execkeyhandler BUTTON_A } \
+		mouseEnter		{ play "uin_navigation_slider"; SET_BG_HI_INDEX( BG_INDEX( index ) ) } \
+	} 
+#else
+#define BG_BUTTON_SELECTABLE( index, col, row )	
+#endif
+
+#define BG_BUTTON( index, col, row ) \
+	BG_BUTTON_SELECTABLE( index, col, row ) \
+	itemDef \
+	{ \
+		rect            BG_XY( col, row ) ( BG_ICON_W + 2 ) ( BG_ICON_H + 2 ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin          -1 -1 \
+		forecolor       1 1 1 1 \
+		type            ITEM_TYPE_HIGHLIGHT \
+		style           WINDOW_STYLE_SHADER \
+		visible         when( BG_INDEX( index ) == BG_HI_INDEX && ( emblemBackgroundIsLocked( BG_INDEX( index ) ) || ( !emblemBackgroundIsPurchased( BG_INDEX( index ) ) && emblemBackgroundCost( BG_INDEX( index ) ) > GetStatByName( "CODPOINTS" ) ) ) ) \
+		background      "emblem_bg_blank" \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		rect            BG_XY( col, row ) ( BG_ICON_W + 2 ) ( BG_ICON_H + 2 ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin          -1 -1 \
+		forecolor       NEW_FRAME_GREEN_RGB 1 \
+		type            ITEM_TYPE_HIGHLIGHT \
+		style           WINDOW_STYLE_SHADER \
+		visible         when( BG_INDEX( index ) == BG_HI_INDEX && !emblemBackgroundIsLocked( BG_INDEX( index ) ) && ( emblemBackgroundIsPurchased( BG_INDEX( index ) ) || emblemBackgroundCost( BG_INDEX( index ) ) <= GetStatByName( "CODPOINTS" ) ) ) \
+		background      "emblem_bg_blank" \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		rect            BG_XY( col, row ) ( BG_ICON_W ) ( BG_ICON_H ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin          0 0 \
+		forecolor       .2 .2 .2 1 \
+		type            ITEM_TYPE_HIGHLIGHT \
+		style           WINDOW_STYLE_SHADER \
+		visible         when( BG_INDEX( index ) < emblemBackgroundCount() ) \
+		background      "emblem_bg_blank" \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		rect            BG_XY( col, row ) BG_ICON_W BG_ICON_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		type            ITEM_TYPE_IMAGE \
+		forecolor       .5 .5 .5 1 \
+		style           WINDOW_STYLE_SHADER_STREAMED \
+		visible         when( BG_INDEX( index ) < emblemBackgroundCount() && BG_INDEX( index ) != BG_HI_INDEX && !emblemBackgroundIsLocked( BG_INDEX( index ) ) ) \
+		exp material    ( emblemBackgroundMaterial( BG_INDEX( index ) ) ) \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		rect            BG_XY( col, row ) BG_ICON_W BG_ICON_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		type            ITEM_TYPE_IMAGE \
+		forecolor       .5 .5 .5 1 \
+		style           WINDOW_STYLE_SHADER_STREAMED \
+		visible         when( BG_INDEX( index ) < emblemBackgroundCount() && BG_INDEX( index ) != BG_HI_INDEX && emblemBackgroundIsLocked( BG_INDEX( index ) ) && !emblemBackgroundIsClassified( BG_INDEX( index ) ) ) \
+		exp material    ( emblemBackgroundMaterial( BG_INDEX( index ) ) ) \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		rect            BG_XY( col, row ) BG_ICON_W BG_ICON_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		type            ITEM_TYPE_IMAGE \
+		forecolor       1 1 1 1 \
+		style           WINDOW_STYLE_SHADER_STREAMED \
+		visible         when( BG_INDEX( index ) == BG_HI_INDEX && !emblemBackgroundIsClassified( BG_INDEX( index ) ) ) \
+		exp material    ( emblemBackgroundMaterial( BG_INDEX( index ) ) ) \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		rect            BG_XY( col, row ) BG_ICON_W BG_ICON_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		type            ITEM_TYPE_IMAGE \
+		forecolor       .5 .5 .5 1 \
+		style           WINDOW_STYLE_SHADER \
+		visible         when( BG_INDEX( index ) < emblemBackgroundCount() && BG_HI_INDEX != BG_INDEX( index ) && emblemBackgroundIsClassified( BG_INDEX( index ) ) ) \
+		background      "emblem_bg_classified_lobby" \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		rect            BG_XY( col, row ) BG_ICON_W BG_ICON_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		type            ITEM_TYPE_IMAGE \
+		forecolor       1 1 1 1 \
+		style           WINDOW_STYLE_SHADER \
+		visible         when( BG_INDEX( index ) < emblemBackgroundCount() && BG_HI_INDEX == BG_INDEX( index ) && emblemBackgroundIsClassified( BG_INDEX( index ) ) ) \
+		background      "emblem_bg_classified_lobby" \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		rect            BG_XY( col, row ) ( BG_ICON_H - 8 ) ( BG_ICON_H - 8 ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin          4 4 \
+		type            ITEM_TYPE_IMAGE \
+		forecolor       1 1 1 1 \
+		style           WINDOW_STYLE_SHADER \
+		visible         when( emblemBackgroundIsLocked( BG_INDEX( index ) ) && !emblemBackgroundIsClassified( BG_INDEX( index ) ) ) \
+		exp material    ( "menu_mp_lobby_locked_big" ) \
+		decoration \
+	} \
+	itemDef \
+	{ \
+		type			ITEM_TYPE_TEXT \
+		rect			BG_XY( col, row ) BG_ICON_W BG_ICON_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin			0 18 \
+		forecolor		NEW_FRAME_GREEN_RGB 1 \
+		exp				text( locString( "@MENU_POINTS", emblemBackgroundCost( BG_INDEX( index ) ) ) ) \
+		textfont		UI_FONT_BOLD \
+		textscale		TEXTSIZE_LARGE \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textalign		ITEM_ALIGN_BOTTOM_CENTER \
+		visible         when( BG_INDEX( index ) < emblemBackgroundCount() && emblemBackgroundCost( BG_INDEX( index ) ) <= GetStatByName( "CODPOINTS" ) && !emblemBackgroundIsPurchased( BG_INDEX( index ) ) && !emblemBackgroundIsLocked( BG_INDEX( index ) ) ) \
+		decoration \
+	}\
+	itemDef \
+	{ \
+		type			ITEM_TYPE_TEXT \
+		rect			BG_XY( col, row ) BG_ICON_W BG_ICON_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		origin			0 18 \
+		forecolor		NEW_FRAME_RED_RGB 1 \
+		exp				text( locString( "@MENU_POINTS", emblemBackgroundCost( BG_INDEX( index ) ) ) ) \
+		textfont		UI_FONT_BOLD \
+		textscale		TEXTSIZE_LARGE \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textalign		ITEM_ALIGN_BOTTOM_CENTER \
+		visible         when( BG_INDEX( index ) < emblemBackgroundCount() && emblemBackgroundCost( BG_INDEX( index ) ) > GetStatByName( "CODPOINTS" ) && !emblemBackgroundIsPurchased( BG_INDEX( index ) ) && !emblemBackgroundIsLocked( BG_INDEX( index ) ) ) \
+		decoration \
+	}\
+	
+#undef MOVE
+#define MOVE(dir) \
+			if( ( BG_HI_INDEX == GridMove( 4, 3, emblemBackgroundCount(), BG_HI_INDEX, dir ) ) ) \
+			{ \
+			} \
+			else \
+			{ \
+				SET_BG_HI_INDEX( GridMove( 4, 3, emblemBackgroundCount(), BG_HI_INDEX, dir ) ); \
+				play "uin_navigation_slider"; \
+			} 
+
+#define ON_ESC_BG_ACTION play CHOICE_ACTION_SOUND; close self; openimmediate emblem_edit;
+
+	menuDef
+	{
+		name			emblem_bg_select
+		rect			0 0 640 480
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		priority		MENU_PRI_ONTOP
+		soundloop       MENU_MUSIC
+
+		NEW_FRAME( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT )
+		NEW_FRAME_TITLE( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, "@MENU_MY_PLAYERCARD_CAPS", 1 )
+		NEW_FRAME_SUBTITLE( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, "@MENU_EMBLEM_SELECT_BACKGROUND_CAPS", 1 )
+		
+		PLAYER_INFO_VIS( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, 1 )
+
+		BG_BUTTON( 0, -1, 0 )
+		BG_BUTTON( 1, 0, 0 )
+		BG_BUTTON( 2, 1, 0 )
+		BG_BUTTON( 3, -1, 1 )
+		BG_BUTTON( 4, 0, 1 )
+		BG_BUTTON( 5, 1, 1 )
+		BG_BUTTON( 6, -1, 2 )
+		BG_BUTTON( 7, 0, 2 )
+		BG_BUTTON( 8, 1, 2 )
+		BG_BUTTON( 9, -1, 3 )
+		BG_BUTTON( 10, 0, 3 )
+		BG_BUTTON( 11, 1, 3 )
+
+#ifdef PC		
+		SIMPLE_CHOICE_BUTTON_ARROWS_CENTERED_PRELOC( "emblem_bg_select_title", 0, -136, 180, locString("@MENU_LISTBOX_POS", CURRENT_PAGE_INDEX + 1, PAGE_INDEX(emblemBackgroundCount() - 1) + 1), 1, MOVE( "page_right" ), MOVE( "page_left" ) )
+#else
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 -136 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			origin			0 0
+			forecolor		CHOICE_TEXTCOLOR
+			exp				text( locString( "@PLATFORM_BACKGROUND_PAGE", CURRENT_PAGE_INDEX + 1, PAGE_INDEX( emblemBackgroundCount() - 1 ) + 1 ) )
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			1
+			decoration
+		}
+#endif	// PC
+		
+		PREPROC_TEXT_DRAW_VIS( BG_XY( -1, 3.8 ) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( emblemBackgroundName( BG_HI_INDEX ) ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_LT_GREY_RGB 1, 1 )
+		PREPROC_TEXT_DRAW_VIS( BG_XY( -1, 3.8 ) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 18, emblemBackgroundUnlockDesc( BG_HI_INDEX ), TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_LT_GREY_RGB 1, 1 )
+
+		onOpen
+		{
+			activateBlur;
+			execnow setlocalvarint bg_hi_index ( emblemSelectedBackground() );
+		}
+
+		execKeyInt DPAD_LEFT { MOVE( "left" ) }
+		execKeyInt DPAD_RIGHT { MOVE( "right" ) }
+		execKeyInt DPAD_UP { MOVE( "up" ) }
+		execKeyInt DPAD_DOWN { MOVE( "down" ) }
+
+		execKeyInt APAD_LEFT { MOVE( "left" ) }
+		execKeyInt APAD_RIGHT { MOVE( "right" ) }
+		execKeyInt APAD_UP { MOVE( "up" ) }
+		execKeyInt APAD_DOWN { MOVE( "down" ) }
+		
+		execKeyInt K_LEFTARROW { MOVE( "left" ) }
+		execKeyInt K_RIGHTARROW { MOVE( "right" ) }
+		execKeyInt K_UPARROW { MOVE( "up" ) }
+		execKeyInt K_DOWNARROW { MOVE( "down" ) }
+		
+		execKeyInt BUTTON_LSHLDR { MOVE( "page_left" ) }
+		execKeyInt BUTTON_RSHLDR { MOVE( "page_right" ) }
+		
+		execKeyInt K_MWHEELDOWN { MOVE( "page_left" ) }
+		execKeyInt K_MWHEELUP { MOVE( "page_right" ) }
+		
+		#define ON_ENTER_BG_ACTION \
+			if( emblemBackgroundIsLocked( BG_HI_INDEX ) ) \
+			{ \
+			} \
+			elseif( emblemBackgroundIsPurchased( BG_HI_INDEX ) ) \
+			{ \
+				play CHOICE_ACTION_SOUND; \
+				execNow emblemSelectBackground ( BG_HI_INDEX ); \
+				close self; \
+				openimmediate emblem_edit; \
+			} \
+			elseif( emblemBackgroundCost( BG_HI_INDEX ) <= GetStatByName( "CODPOINTS" ) ) \
+			{ \
+				play CHOICE_ACTION_SOUND; \
+				PURCHASE_BACKGROUND; \
+			}
+
+		execKeyInt BUTTON_A { ON_ENTER_BG_ACTION }
+		
+		// Enter
+		execKeyInt 13 { ON_ENTER_BG_ACTION }
+
+		onEsc
+		{
+			ON_ESC_BG_ACTION
+		}
+
+		NEW_FRAME_BACK_BUTTON_ACTION( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, ON_ESC_BG_ACTION )
+
+#ifdef CONSOLE
+		NEW_FRAME_BUTTON_BAR_VIS( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, 120,
+			"@PLATFORM_PURCHASE", !emblemBackgroundIsPurchased( BG_HI_INDEX ) && !emblemBackgroundIsLocked( BG_HI_INDEX ) && emblemBackgroundCost( BG_HI_INDEX ) <= GetStatByName( "CODPOINTS" ) )
+		NEW_FRAME_BUTTON_BAR_VIS( EMBLEM_FRAME_WIDTH, EMBLEM_FRAME_HEIGHT, 120,
+			"@PLATFORM_EMBLEM_SELECT", emblemBackgroundIsPurchased( BG_HI_INDEX ) )
+#endif // CONSOLE
+	}
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( emblem_confirm, ;, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_EMBLEM_CONFIRM_SAVE_CAPS", 1 )
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_EMBLEM_SAVE_AND_EXIT_CAPS",	EXIT_SAVE_ACTION,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_EMBLEM_EXIT_CAPS",			EXIT_ACTION,		1, ; )
+	}	
+
+#define STATE_FILTER_KEYS																									\
+		execKeyInt APAD_LEFT { execNow setlocalvarint( emblem_state_filter ) ( localvarint( emblem_state_filter ) - 1 ); }	\
+		execKeyInt APAD_RIGHT { execNow setlocalvarint( emblem_state_filter ) ( localvarint( emblem_state_filter ) + 1 ); }	\
+		execKeyInt DPAD_LEFT { execNow setlocalvarint( emblem_state_filter ) ( localvarint( emblem_state_filter ) - 1 ); }	\
+		execKeyInt DPAD_RIGHT { execNow setlocalvarint( emblem_state_filter ) ( localvarint( emblem_state_filter ) + 1 ); }
+
+#define TYPE_FILTER_KEYS																									\
+		execKeyInt APAD_LEFT { execNow setlocalvarint( emblem_type_filter ) ( localvarint( emblem_type_filter ) - 1 ); }	\
+		execKeyInt APAD_RIGHT { execNow setlocalvarint( emblem_type_filter ) ( localvarint( emblem_type_filter ) + 1 ); }	\
+		execKeyInt DPAD_LEFT { execNow setlocalvarint( emblem_type_filter ) ( localvarint( emblem_type_filter ) - 1 ); }	\
+		execKeyInt DPAD_RIGHT { execNow setlocalvarint( emblem_type_filter ) ( localvarint( emblem_type_filter ) + 1 ); }
+
+#define APPLY_ACTION \
+	execnow emblemsetfilter ( localVarInt( emblem_state_filter ) ) ( localVarInt( emblem_type_filter ) ); \
+	close self;
+

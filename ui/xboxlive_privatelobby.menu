@@ -1,0 +1,450 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_X_START					-258
+#define CHOICE_Y_START					35
+#define BUTTON_BG_WIDTH					180
+
+#define CHOICE_SEP_OFFSET_X				20
+#define CHOICE_SEP_OFFSET_Y				-2
+#define CHOICE_SEP_1					2
+
+#define CHOICE_GROUP					"xboxlive_privatematch"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/stats_info.inc"
+#include "ui_mp/friendslist.inc"
+
+#define MENU_FONT_SIZE					TEXTSIZE_DEFAULT
+#define HIGHLIGHT_SIZE					142 22
+#define MENU_FONT_COLOR					1 1 1 0.5
+#define MENU_FONT_COLOR2				1 1 1 0.5
+#define MENU_LOCKED_COLOR				0.25 0.25 0.25 1
+
+#undef  CHOICE_SIZE_X
+#define CHOICE_SIZE_X					BUTTON_BG_WIDTH
+#undef	CHOICE_TEXTSTYLE
+#define	CHOICE_TEXTSTYLE				ITEM_TEXTSTYLE_NORMAL
+
+#undef CHOICE_HORIZONTAL_ALIGN
+#define CHOICE_HORIZONTAL_ALIGN			HORIZONTAL_ALIGN_CENTER
+
+#ifdef PC
+	#define PC_X_SHIFT -10
+#else
+	#define PC_X_SHIFT 0
+#endif
+
+// ------------------ preprocessing function definitions ------------------
+#define PAD_LEFT \
+		execKeyInt DPAD_LEFT { \
+			setdvar ui_selectlobby "0" \
+			focusFirst; \
+			show selection_left; \
+			hide selection_right; \
+		} \
+		execKeyInt APAD_LEFT { \
+			setdvar ui_selectlobby "0" \
+			focusFirst; \
+			show selection_left; \
+			hide selection_right; \
+		}
+
+#define PAD_RIGHT \
+		execKeyInt DPAD_RIGHT { \
+			setdvar ui_selectlobby "1" \
+			setFocus lobbyList; \
+		} \
+		execKeyInt APAD_RIGHT { \
+			setdvar ui_selectlobby "1" \
+			setFocus lobbyList; \
+		}
+	
+#undef ON_ESC
+#define ON_ESC																									\
+	play CHOICE_FOCUS_SOUND;																					\
+	if ( isprimarylocalclient() )																				\
+	{																											\
+		/*open warning popup*/																					\
+		execNow if( !AloneInLobby() ) openmenu leavelobbywarning;												\
+																												\
+		/*leave immediately*/																					\
+		/*All these actions need to be done in the same line, otherwise the condition fails after xstopparty*/	\
+		execNow if( AloneInLobby() && !menuisopen(menu_xboxlive_lobbyended) ) set leaveImmediately 1;			\
+		if( dvarBool( leaveImmediately ) )																		\
+		{																										\
+			execNow xstopparty;																					\
+			execNow xblive_privatematch 0;																		\
+			execNow set invite_visible 1;																		\
+			execNow closemenu menu_xboxlive_privatelobby;														\
+			execNow openmenu menu_xboxlive;																		\
+			execNow set leaveImmediately 0;																		\
+		}																										\
+	}																											\
+	else																										\
+	{																											\
+		execNow "signclientout";																				\
+	}
+
+#define SELECTION_IMAGE_BIG( materialArg )	( "menu_" + materialArg + "_map_select_big" )
+
+{
+	menuDef
+	{
+		blurWorld		4.8
+
+		name			menu_xboxlive_privatelobby
+		fullscreen		0
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		soundloop 		MENU_MUSIC
+		control			MENU_CONTROL_OPENER
+		allowSignIn
+
+		onOpen
+		{
+			execnow ui_animate menu_xboxlive_privatelobby frame_bg default 20;
+#ifdef PC
+			//uiScript acceptServerSettings;
+#endif
+			execnow "xblive_rankedmatch 0";
+			execnow "party_timerVisible 0";
+			execnow "xblive_privatematch 1";
+			exec "exec dvar_defaults.cfg";
+			exec "set ui_inviteonly 0";
+			setdvar ui_mapname "zombie_theater";
+			setdvar ui_gametype "zom";
+			
+			// popup for rank promotion
+			//uiScript openMenuOnDvar "ui_lobbypopup" summary "popup_unlock";	
+			//execnow "set ui_lobbypopup_text summary";
+			//exec "set ui_lobbypopup none"; 
+
+			show dpad_left;
+			show selection_left;
+			hide dpad_right;
+			hide selection_right;
+
+			setdvar invite_visible "1";
+			focusFirst;
+
+			exec "selectStringTableEntryInDvar maps/didyouknow_coop.csv 0 didyouknow";
+			execOnDvarStringValue "ui_gametype" zom "set arcademode 0";
+
+			execNow if( menuisopen( menu_xboxlive ) ) closemenu menu_xboxlive;
+			execNow if( menuisopen( menu_xboxlive_lobby ) ) closemenu menu_xboxlive_lobby;
+
+			exec "set next_menu_name menu_xboxlive";
+			exec "set menu_parent_3d_tv_name main_online";
+			//execNowOnDvarIntValue zombiemode 1 "openMenu menu_xboxlive_privatelobby_zombie; closeMenu menu_xboxlive_privatelobby;";
+		}
+		onEsc		
+		{
+			ON_ESC
+		}
+
+		onClose
+		{
+			hide selection_right;
+#ifdef PC
+			uiScript clearLobbyChat;
+#endif
+			//open menu_xboxlive;
+		}
+#ifndef PC
+		PAD_RIGHT
+#endif //#ifndef PC
+
+		// ------------------ statics ------------------------
+		#include "ui/bg.inc"
+
+		// ----------------- Scroller --------------------------		
+		#include "ui/scroller.inc"
+
+		// ----------------- title --------------------------
+		#define HIDEF ( dvarBool( hiDef ) )
+		// Hi-def
+		CHOICE_MENU_TITLE_CENTER_ALIGN_VIS( "@MPUI_CUSTOM_MATCH_LOBBY_CAPS", ITEM_ALIGN_TOP_RIGHT, HIDEF )
+		// Std-def
+		CHOICE_MENU_TITLE_CENTER_TEXTSCALE_ALIGN_VIS( "@MPUI_CUSTOM_MATCH_LOBBY_CAPS", TEXTSIZE_SUBTITLE, ITEM_ALIGN_TOP_RIGHT, !HIDEF )
+
+		// ---------------------------- map ------------------------------------
+		#define GAMEINFO_ORIENTATION	1
+		#define GAMEINFO_X				CHOICE_X_START
+		#define GAMEINFO_Y				235
+		#define GAMEINFO_ORIGIN			GAMEINFO_X GAMEINFO_Y
+		#define GAMEINFO_WIDTH			BUTTON_BG_WIDTH
+		#define GAMEINFO_WIDTH2			GAMEINFO_WIDTH
+		#define GAMEINFO_HEIGHT			80
+		
+		#include "ui_mp/game_info.inc"
+		#define MAPIMAGE				( "preview_" + dvarString( ui_mapname ) )//SELECTION_IMAGE_FINAL( dvarString( ui_mapname ) )
+		#define MAPNAME					locString( tableLookup( "maps/mapstable.csv", 0, dvarString( ui_mapname ), 3 ) )
+		#define GAMETYPENAME			locString( tableLookup( "maps/gametypesTable.csv", 0, dvarString( ui_gametype ), 1 ) )
+
+#ifdef CONSOLE
+		#define MAPINFOPRESENT			1
+#else
+		#define MAPINFOPRESENT			when( dvarString( ui_mapname ) != "frontend" && dvarString( ui_mapname ) != "" ) 
+#endif
+
+		#define GAMEINFO_BG_SIZE		20
+
+		#define SELECTION_IMAGE_FINAL( materialArg )	\
+				( "loadscreen_" + materialArg + "_mini" )
+
+		#define MAP_SELECTION_INFO( xPos, yPos, widthArg, heightArg, mapName, gametypeName, visArg )															\
+				PREPROC_TEXT_DRAW_ALL(	(xPos+widthArg-96-8) (yPos+heightArg-GAMEINFO_BG_SIZE+1-18) 96 24 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM,		\
+										0 0, toUpper( mapName ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_TOP_RIGHT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,	\
+										visArg, ; )																												\
+				PREPROC_TEXT_DRAW_VIS(	(xPos+widthArg-96-8) (yPos+heightArg-GAMEINFO_BG_SIZE+1) 96 20 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM,			\
+										0 0, gametypeName, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_RIGHT, 1 1 1 1,													\
+										visArg )
+
+		#define MAP_X_START				(CHOICE_X_START+CHOICE_SIZE_X-MAP_WIDTH-10)
+		#define MAP_Y_START				(-MAP_HEIGHT-25)
+		#define MAP_WIDTH				183
+		#define MAP_ASPECT_RATIO		(203/275)
+		#define MAP_HEIGHT				(MAP_WIDTH*MAP_ASPECT_RATIO)
+
+		PREPROC_SHADER_DRAW_VIS_EX( MAP_X_START MAP_Y_START MAP_WIDTH MAP_HEIGHT CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM, 
+									MAPIMAGE, 1 1 1 1, 
+									MAPINFOPRESENT, ; )
+
+		MAP_SELECTION_INFO( MAP_X_START, MAP_Y_START, MAP_WIDTH, MAP_HEIGHT, MAPNAME, GAMETYPENAME, MAPINFOPRESENT )
+
+
+		// ---------------------- locked hint -------------------------
+		//HINT_TEXT( 9, CHOICE_X_START, dvarString( ui_hint_text ), ( dvarBool( ui_show_arrow ) ) )
+		
+		#define PLAYER_COUNT_START_X			(-100+PC_X_SHIFT)
+		#define PLAYER_COUNT_START_Y			-63
+		#define PLAYER_COUNT_W					100
+		#define PLAYER_COUNT_H					15
+
+		// --------------------- lobby players count -----------------------		
+		PREPROC_TEXT_DRAW_VIS(	PLAYER_COUNT_START_X PLAYER_COUNT_START_Y PLAYER_COUNT_W PLAYER_COUNT_H HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM, 0 0,
+								dvarString( "party_lobbyPlayerCount" ),
+								TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_RIGHT, LOBBY_STATUS_COLOR, 
+								when( InLobby() ) )
+
+		// ---------------------- party status description -------------------------
+		#define STATUS_START_X			( PLAYER_COUNT_START_X - GetTextWidth( dvarString( "party_lobbyPlayerCount" ), CHOICE_TEXTFONT, TEXTSIZE_SMALL ) - 5 )
+		#define STATUS_START_Y			PLAYER_COUNT_START_Y
+		#define STATUS_START_W			PLAYER_COUNT_W
+		#define STATUS_START_H			PLAYER_COUNT_H
+
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	STATUS_START_X, 
+										STATUS_START_Y, 
+										STATUS_START_W, 
+										STATUS_START_H, 
+										HORIZONTAL_ALIGN_RIGHT, VERTICAL_ALIGN_BOTTOM, 
+										"@MENU_STATUS_OPEN_DESC_CAPS", 
+										TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_RIGHT, LOBBY_STATUS_COLOR, 
+										when( dvarint( "party_privacyStatus" ) == 0 && dvarString( "party_lobbyPlayerCount" ) != "" ), ; ) 
+		
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	STATUS_START_X, 
+										STATUS_START_Y, 
+										STATUS_START_W, 
+										STATUS_START_H, 
+										HORIZONTAL_ALIGN_RIGHT, VERTICAL_ALIGN_BOTTOM, 
+										"@MENU_STATUS_OPEN_FRIENDS_DESC_CAPS", 
+										TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_RIGHT, LOBBY_STATUS_COLOR, 
+										when( dvarint( "party_privacyStatus" ) == 1 && dvarString( "party_lobbyPlayerCount" ) != "" ), ; ) 
+		
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	STATUS_START_X, 
+										STATUS_START_Y, 
+										STATUS_START_W, 
+										STATUS_START_H, 
+										HORIZONTAL_ALIGN_RIGHT, VERTICAL_ALIGN_BOTTOM, 
+										"@MENU_STATUS_INVITE_ONLY_DESC_CAPS", 
+										TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_RIGHT, LOBBY_STATUS_COLOR, 
+										when( dvarint( "party_privacyStatus" ) == 2 && dvarString( "party_lobbyPlayerCount" ) != "" ), ; ) 
+		
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	STATUS_START_X, 
+										STATUS_START_Y, 
+										STATUS_START_W, 
+										STATUS_START_H, 
+										HORIZONTAL_ALIGN_RIGHT, VERTICAL_ALIGN_BOTTOM, 
+										"@MENU_STATUS_CLOSE_DESC_CAPS", 
+										TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_RIGHT, LOBBY_STATUS_COLOR, 
+										when( dvarint( "party_privacyStatus" ) == 3 && dvarString( "party_lobbyPlayerCount" ) != "" ), ; ) 
+		
+
+		// --------------------- recommended player count -----------------------
+		#define RECOMMENDED_COUNT_RECT \
+				((MAP_X_START+MAP_WIDTH+25)) (STATUS_Y+30) BUTTON_BG_WIDTH 20 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP			
+		//PREPROC_TEXT_DRAW_VIS( RECOMMENDED_COUNT_RECT, 0 0, ( locstring( "@MPUI_RECOMMENDEDPLAYERS", int( min( dvarint( party_maxplayers ), maxrecommendedplayers() ) ) ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, CHOICE_TEXTCOLOR, when( privatepartyhost() ); )
+
+
+		//=========================================================
+		//================= MENU SELECTION ACTIONS ================
+		//=========================================================
+
+		#define SETUP_ACTION_STARTMATCH \
+				if( aloneinlobbyignoresplitscreen( 1 ) ) { open startmatch_popup; } \
+				else { exec xpartygo; } 
+
+		#define SETUP_ACTION_STARTMATCH_CHEATS \
+				exec "xpartygo";
+
+		#define SETUP_ACTION_GAMESETUP \
+				open "settings";
+
+		//#define SETUP_ACTION_BARRACKS			\
+		//		open menu_xboxlive_barracks;
+
+		//=========================================================
+		//===================== MENU SELECTION ====================
+		//=========================================================
+		#define IS_LOBBY_HOST		( gameHost() && inLobby() && dvarBool( xblive_privatematch ) )
+		#define IS_NOT_LOBBY_HOST	( !gameHost() || !inLobby() || !dvarBool( xblive_privatematch ) )
+		
+		// HOST BUTTONS
+		TEMP_CHOICE_BUTTON_FOCUS_VIS(	1, "@MPUI_START_MATCH_CAPS", 
+										SETUP_ACTION_STARTMATCH, 
+										exec set ui_hint_text "@MPUI_START_MATCH_DESC"; exec set ui_show_arrow 1;,
+										CLEARUIHINT,
+										IS_LOBBY_HOST )
+
+		TEMP_CHOICE_BUTTON_FOCUS_VIS(	2, "@MPUI_CHANGE_MAP_CAPS", 
+										SETUP_ACTION_GAMESETUP,
+										exec set ui_hint_text "@MPUI_SETTINGS_DESC"; exec set ui_show_arrow 1;,
+										CLEARUIHINT,
+										IS_LOBBY_HOST )
+
+
+		// CLIENT BUTTONS -- ARE THERE GOING TO BE CLIENT BUTTONS IN COOP????
+		TEMP_CHOICE_DBUTTON_FOCUS_VIS_EX(	1, "@MPUI_START_MATCH_CAPS", 
+											exec set ui_hint_text "@MPUI_START_MATCH_DESC"; exec set ui_show_arrow 1;, 
+											CLEARUIHINT, 
+											IS_NOT_LOBBY_HOST, ; )
+
+		TEMP_CHOICE_DBUTTON_FOCUS_VIS_EX(	2, "@MPUI_CHANGE_MAP_CAPS", 
+											exec set ui_hint_text "@MPUI_SETTINGS_DESC"; exec set ui_show_arrow 1;, 
+											CLEARUIHINT, 
+											IS_NOT_LOBBY_HOST, ; )
+
+
+		// --------- buttons ----------
+		// OPEN FRIENDS LIST
+		FRIENDS_BUTTON_VIS( dvarbool( invite_visible ) )
+
+#ifdef PC
+		#include "ui_mp/newframe.inc"
+		NEW_FRAME_BACK_BUTTON_ACTION_PC_VIS( ON_ESC, when( dvarbool( invite_visible ) ) )		
+		// PREFERENCES
+		SIMPLE_CHOICE_BUTTON_SOUND_VIS_CENTERED_BOTTOM( "@PLATFORM_PREFERENCES_PRIVACY", open "popup_preferences_privacy";, when( dvarBool(menu_xboxlive_buttons_visible)); )
+#else //#ifdef PC
+		// PREFERENCES
+		GAMEPAD_BUTTON( -79 -15 200 17 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM, "@PLATFORM_PREFERENCES_PRIVACY", BUTTON_BACK{ open "popup_preferences_privacy"; }, when(  dvarbool( invite_visible ) ) )
+		
+		// Back button
+		PREPROC_TEXT_DRAW_VIS( CHOICE_X_START -15 100 17 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM, 0 0, "@PLATFORM_BACK", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1, when(  dvarbool( invite_visible ) ) )
+#endif //#ifdef PC
+
+		// ---------------------- player list -------------------------
+		#define	PLAYERLIST_SCOREVIS 1
+
+		#undef PLAYERLIST_SELECTED_ACTIONS
+#ifdef XENON
+		#define PLAYERLIST_SELECTED_ACTIONS																			\
+				doubleClick																							\
+				{																									\
+					if( !AloneInLobby() )																			\
+					{																								\
+						execNow set selectedPlayerXuid ( getfeederdata( "xuid" ) );									\
+						execNow set selectedFriendName ( getfeederdata( "name" ) );									\	
+						if( getfeederdata( "xuid" ) != getXuid() )													\
+						{																							\
+							execnow changemenuopenslidedirection menu_playercard MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;\
+							open menu_playercard;																	\
+						}																							\
+					}																								\
+				}																									\
+				PAD_LEFT
+#else //#ifdef XENON
+#ifdef PC
+		#define PLAYERLIST_SELECTED_ACTIONS																		\
+			mouseEnter																							\
+			{																									\
+				setdvar ui_selectlobby "1"																		\
+			}																									\
+			mouseExit																							\
+			{																									\
+				setdvar ui_selectlobby "0"																		\
+			}																									\
+			doubleClick																							\
+			{																									\
+				if( !AloneInLobby() )																			\
+				{																								\
+					if( getfeederdata( "xuid" ) != getXuid() )													\
+					{																							\
+						play CHOICE_FOCUS_SOUND;																\
+						execNow set selectedPlayerXuid ( getfeederdata( "xuid" ) );								\
+						execNow set selectedFriendName ( getfeederdata( "name" ) );								\
+						execnow changemenuopenslidedirection menu_playercard MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;\
+						execnow openMenu menu_playercard;														\
+					}																							\
+				}																								\
+			}
+#else //#ifdef PC
+		#define PLAYERLIST_SELECTED_ACTIONS PAD_LEFT
+#endif //#ifdef PC
+#endif // #ifdef XENON
+			
+		#define FEEDER_MENU_NAME		"menu_xboxlive_privatelobby"
+		#include "ui/playerlist.inc"
+		
+		FRAME_BG_ON_PARENT_MENU
+
+		#include "ui/safearea.menu"
+
+#ifdef PC
+		PREPROC_LOBBY_CHAT( -340, 115, 330, 160, 0.24, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1 )
+#endif // #ifdef PC
+	}
+
+
+	#include "ui_mp/popupstyle.inc"
+	#include "ui/choices_setup_popmenu.menu"
+	// private game lobby - leave lobby warning
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( leaveprivatelobbywarning, setfocus leaveprivatelobbywarning_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@XBOXLIVE_LEAVELOBBY", 1 )
+		
+			#define LOCAL_ACCEPT_HOST_LEAVELOBBY	\
+				close blackout_3d_tv;				\
+				close menu_xboxlive;				\
+				close menu_xboxlive_privatelobby;	\
+				exec onlinegame 0;					\
+				exec "xstopparty";					\
+				exec "xstopprivateparty";			\
+				exec xblive_privatematch 0;			\
+				setdvar invite_visible "1";			\
+				close leaveprivatelobbywarning;
+
+		#define LOCAL_ACCEPT_CLIENT_LEAVELOBBY		\
+				close blackout_3d_tv;				\
+				close menu_xboxlive;				\
+				close menu_xboxlive_privatelobby;	\
+				exec "xstopparty";					\
+				exec "xstopprivateparty";			\				
+				exec xblive_privatematch 0;			\
+				setdvar invite_visible "1";			\
+				close leaveprivatelobbywarning;
+		
+		// host
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MPUI_HOST_DISBAND_PRIVATE_LOBBY",	LOCAL_ACCEPT_HOST_LEAVELOBBY,	( IS_LOBBY_HOST && !AloneInLobby() ),		; )
+		
+		// client
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MPUI_LEAVE",				LOCAL_ACCEPT_CLIENT_LEAVELOBBY,	( IS_NOT_LOBBY_HOST && !AloneInLobby() ),	; )
+
+		// cancel button for host and client
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MPUI_CANCEL", close self, 1, name leaveprivatelobbywarning_2 )
+	}	
+}  

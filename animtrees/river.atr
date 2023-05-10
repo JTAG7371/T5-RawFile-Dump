@@ -1,0 +1,160 @@
+// river.atr - added 6/14/2010
+	
+	// aftermath vignettes
+	ch_creek_b02_epilog_interrogation_guy_1
+	ch_creek_b02_epilog_interrogation_guy_2
+	ch_creek_b02_epilog_interrogation_vc
+	ch_creek_b02_epilog_patrol_guy_1
+	ch_creek_b02_epilog_patrol_guy_2
+	ch_creek_b02_epilog_patrol_guy_3
+	ch_creek_b02_epilog_pushing_prisoner_guy_1
+	ch_creek_b02_epilog_pushing_prisoner_guy_2
+	ch_creek_b02_epilog_pushing_prisoner_vc
+	ch_creek_b02_epilog_soldiers_searching_house_guy_1
+	ch_creek_b02_epilog_soldiers_searching_house_guy_2
+	ch_creek_b02_epilog_soldiers_searching_house_guy_3
+	                                    
+	ch_creek_b02_epilog_interrogation_guy_1_loop
+	ch_creek_b02_epilog_interrogation_guy_2_loop
+	ch_creek_b02_epilog_interrogation_vc_loop
+	ch_creek_b02_epilog_patrol_guy_1_loop
+	ch_creek_b02_epilog_patrol_guy_2_loop
+	ch_creek_b02_epilog_patrol_guy_3_loop
+	ch_creek_b02_epilog_pushing_prisoner_guy_1_loop
+	ch_creek_b02_epilog_pushing_prisoner_guy_2_loop
+	ch_creek_b02_epilog_pushing_prisoner_vc_loop
+	ch_creek_b02_epilog_soldiers_searching_house_guy_1_loop
+	ch_creek_b02_epilog_soldiers_searching_house_guy_2_loop
+	ch_creek_b02_epilog_soldiers_searching_house_guy_3_loop
+	
+	ch_river_b01_intro_triagetent_guy1
+	ch_river_b01_intro_triagetent_guy2
+	ch_river_b01_intro_triagetent_woundedguy
+	                                    
+	ch_creek_b02_epilog_captured_guard_1
+	ch_creek_b02_epilog_captured_guard_2
+	ch_creek_b02_epilog_captured_vc_1
+	ch_creek_b02_epilog_captured_vc_2
+	ch_creek_b02_epilog_captured_vc_3
+	ch_creek_b02_epilog_captured_vc_4
+	
+	// attention guys
+	ch_river_b01_intro_activity_attentionguy_01_action
+	ch_river_b01_intro_activity_attentionguy_01_idle
+	ch_river_b01_intro_activity_attentionguy_02_action
+	ch_river_b01_intro_activity_attentionguy_02_idle
+	ch_river_b01_intro_activity_attentionguy_03_action
+	ch_river_b01_intro_activity_attentionguy_03_idle
+	
+	// photographer and his camera
+//	ch_river_b01_intro_activity_photographer
+//	ch_river_b01_intro_activity_photographer_idle_a
+//	ch_river_b01_intro_activity_photographer_idle_b
+	o_river_b01_intro_activity_camera
+	o_river_b01_intro_activity_camera_idle_a
+	o_river_b01_intro_activity_camera_idle_b
+	
+	// poser guys
+	ch_river_b01_intro_activity_poserguy_a_01
+	ch_river_b01_intro_activity_poserguy_a_01_idle
+	ch_river_b01_intro_activity_poserguy_a_02
+	ch_river_b01_intro_activity_poserguy_a_02_idle
+	ch_river_b01_intro_activity_poserguy_b_01
+	ch_river_b01_intro_activity_poserguy_b_01_idle
+	ch_river_b01_intro_activity_poserguy_b_02
+	ch_river_b01_intro_activity_poserguy_b_02_idle		
+
+	// usher guys	
+//	ch_river_b01_intro_activity_usher_01
+//	ch_river_b01_intro_activity_usher_02
+	ch_river_b01_intro_activity_usher_03
+
+	// injured group b
+	ch_river_b01_intro_activity_b_injured_dude
+	ch_river_b01_intro_activity_b_medic_1
+	ch_river_b01_intro_activity_b_medic_2
+	
+		// injured group c
+	ch_river_b01_intro_activity_c_injured_dude
+	ch_river_b01_intro_activity_c_medic_1
+	ch_river_b01_intro_activity_c_medic_2
+	
+		// limping guy group a
+	ch_river_b01_intro_activity_limpingguy_a
+	
+		// limping guy group b
+	ch_river_b01_intro_activity_limpingguy_b	
+	ch_river_b01_intro_activity_guyhelpinglimpingguy_01_b
+	ch_river_b01_intro_activity_guyhelpinglimpingguy_02_b
+	
+		// limping guy group c
+	ch_river_b01_intro_activity_limpingguy_c
+	ch_river_b01_intro_activity_guyhelpinglimpingguy_01_c
+	ch_river_b01_intro_activity_guyhelpinglimpingguy_02_c
+	
+		// guys in pain
+	ch_river_b01_intro_activity_guyinpain_01
+	ch_river_b01_intro_activity_guyinpain_02
+	ch_river_b01_intro_activity_guyinpain_03
+	ch_river_b01_intro_activity_guyinpain_04
+	ch_river_b01_intro_activity_guyinpain_05
+
+	
+	
+	// stretcher guys from khe sahn opening
+	ch_khe_opening_stretcher2huey_guy01					
+	ch_khe_opening_stretcher2huey_guy02
+	ch_khe_opening_stretcher2huey_guy03
+	
+	// boat drag - Creek GL anims
+	ch_upacreek_b03_landing_pbr_guy_1
+	ch_upacreek_b03_landing_pbr_guy_2
+	ch_upacreek_b03_landing_pbr_guy_3
+	ch_upacreek_b03_landing_pbr_guy_1_loop
+	ch_upacreek_b03_landing_pbr_guy_2_loop
+	ch_upacreek_b03_landing_pbr_guy_3_loop
+	ch_upacreek_b03_dragged_pbr_guy_1
+	ch_upacreek_b03_dragged_pbr_guy_2
+	ch_upacreek_b03_dragged_pbr_guy_3
+	ch_upacreek_b03_dragged_pbr_guy_4
+	ch_upacreek_b3_dragged_pbr_guy_5
+	ch_upacreek_b03_dragged_pbr_ply_stdin
+	
+
+// REFERENCE - targetname + village_animation_node	
+//depot/projects/cod/t5/xanim_export/scripted/river/ch_river_intro_activity_bowman_reassures.XANIM_EXPORT#1 add  -- GENERIC_HUMAN
+
+ch_river_intro_activity_helilandingguy_1
+ch_river_intro_activity_helilandingguy_2
+
+//ch_river_intro_activity_guard_1
+//ch_river_intro_activity_guard_2
+
+ch_river_intro_activity_platoon_leader
+
+ch_river_intro_activity_prisoner_1
+ch_river_intro_activity_prisoner_2
+ch_river_intro_activity_prisoner_3
+ch_river_intro_activity_prisoner_4
+ch_river_intro_activity_prisoner_5
+ch_river_intro_activity_prisoner_6
+
+ch_river_b01_intro_activity_a_injured_dude
+ch_river_b01_intro_activity_a_injured_medic_1
+ch_river_b01_intro_activity_a_injured_medic_2
+
+
+// plane_nose anim
+o_river_b03_nose_dive_nose
+
+// plane_crate anim
+o_river_b03_c130_blocker_loop
+o_river_b03_c130_blocker_open
+o_river_b03_c130_crate_base
+o_river_b03_c130_crate_lid_loop
+o_river_b03_c130_crate_lid_open
+o_river_b03_c130_map_loop
+o_river_b03_c130_map_pickup
+
+// plane capture
+o_river_b03_playerstruggle_apple

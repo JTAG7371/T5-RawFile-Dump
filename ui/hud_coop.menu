@@ -1,0 +1,303 @@
+// CONSOLE HUD - COOP
+
+#include "ui/menudef.h"
+
+{
+	assetGlobalDef
+	{
+		fadeClamp		1					// sets the fadeup alpha
+		fadeCycle		1					// how often fade happens in milliseconds
+		fadeAmount		0.1					// amount to adjust alpha per cycle
+	}
+
+	// Friendly indicators
+	menuDef
+	{
+		name			"Friendly_Arrows"
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+ 	   	fullScreen		0
+ 	   	hiddenDuringScope
+		hiddenDuringFlashbang
+ 	   	visible			when  ( dvarBool( #"cl_paused" ) == 0 );
+
+		itemDef
+		{
+			name			"friendlyarrowicons"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			0 0 640 480
+			forecolor		1 1 1 1
+			ownerdraw		CG_FRIENDLYARROWS
+			visible			1
+			decoration
+		}
+	}
+
+#ifdef PC
+	#define 	SCOREBAR_OFFSET 0 4
+#else
+	#define 	SCOREBAR_OFFSET 0 0
+#endif
+
+	menuDef  // Stub: the scoreboard is controlled by code
+	{
+		name			"missionsuccessbar_arcademode"
+		rect			0 0 640 480
+		visible			when ( !ui_active() && dvarBool( #"missionsuccessbar" ) == 1 && dvarint( #"arcademode" ) == 1 && !dvarInt( #"splitscreen" ));
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 0 640 2 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		1 1 1 1
+			visible			1
+			decoration
+		}
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 2 640 1 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		0 0 0 0.5
+			visible			1
+			decoration
+		}	
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 3 640 18 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"menu_white_line_faded"
+			forecolor		0 0 0 0.5
+			visible			1
+			decoration
+		}	
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 21 640 1 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		0 0 0 0.5
+			visible			1
+			decoration
+		}	
+		
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 22 640 2 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		1 1 1 1
+			visible			1
+			decoration
+		}
+		
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 20 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			exp text		( locString( "@MENU_MISSION_SUCCESS" ) );
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_CENTER
+			forecolor		0.95 0.72 0.21 1.0
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			visible			1
+			decoration 
+		}
+	}
+
+	#define SB_POS -50
+
+	menuDef
+	{
+		name			"arcademodebonus"
+		rect			0 0 640 480
+		visible			when ( !ui_active() && dvarBool( #"bonusbackground" ) == 1 && dvarint( #"arcademode" ) == 1 && !dvarInt( #"splitscreen" ));
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 SB_POS 640 2 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_CENTER
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		1 1 1 1
+			visible			1
+			decoration
+		}
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 (SB_POS+2) 640 1 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_CENTER
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		0 0 0 0.5
+			visible			1
+			decoration
+		}	
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 (SB_POS+3) 640 40 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_CENTER
+			origin			SCOREBAR_OFFSET
+			background		"menu_white_line_faded"
+			forecolor		0 0 0 0.8
+			visible			1
+			decoration
+		}	
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 (SB_POS+43) 640 145 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_CENTER
+			origin			SCOREBAR_OFFSET
+			background		"menu_white_line_faded"
+			forecolor		0 0 0 0.6
+			visible			1
+			decoration
+		}			
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 (SB_POS+188) 640 1 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_CENTER
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		0 0 0 0.5
+			visible			1
+			decoration
+		}	
+		
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 (SB_POS+189) 640 2 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_CENTER
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		1 1 1 1
+			visible			1
+			decoration
+		}		
+	}
+
+	//	Local Talking Status
+	menuDef
+	{
+    	name			"amitalking"
+		rect			-30 80 24 24 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
+    	fullScreen		0
+    	visible			when( ( dvarbool( #"systemlink" ) || dvarbool( #"onlinegame" ) ) && !ui_active() && dvarint( #"ui_hud_hardcore" ) == 0 && !dvarbool( #"zombietron" ) );
+
+		itemDef
+		{
+			name			"talkingRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 26 26
+			forecolor		1 1 1 1
+			textscale		0.4
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		UI_AMITALKING
+			visible			1
+			decoration
+		}
+	}
+
+	// Remote Talking Status
+	menuDef
+	{
+    	name			"talkers"
+		rect			-30 0 24 24 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
+    	fullScreen		0
+    	visible			when( ( dvarbool( #"systemlink" ) || dvarbool( #"onlinegame" ) ) && !ui_active() && dvarint( #"ui_hud_hardcore" ) == 0 && !dvarbool( #"zombietron" ) );
+
+		itemDef
+		{
+			name			"talker1Rect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 24 24
+			forecolor		1 1 1 1
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_EXTRABIG
+			ownerdraw		CG_TALKER1
+			visible			1
+			decoration
+		}
+
+		itemDef
+		{
+			name			"talker2Rect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 24 24 24
+			forecolor		1 1 1 1
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_EXTRABIG
+			ownerdraw		CG_TALKER2
+			visible			1
+			decoration
+		}
+
+		itemDef
+		{
+			name			"talker3Rect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 48 24 24
+			forecolor		1 1 1 1
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_EXTRABIG
+			ownerdraw		CG_TALKER3
+			visible			1
+			decoration
+		}
+		/*
+		itemDef
+		{
+			name			"talker4Rect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 72 24 24
+			forecolor		1 1 1 1
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_EXTRABIG
+			ownerdraw		CG_TALKER4
+			visible			1
+			decoration
+		}
+		*/
+	}
+
+	menuDef
+	{
+		name			"coopmessages"
+		rect			-8 -175 10 10 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
+		fullScreen		0
+		visible 		1
+	
+		itemDef
+		{			
+			origin				0 0
+			type				ITEM_TYPE_GAME_MESSAGE_WINDOW
+			gamemsgwindowindex	3
+			gamemsgwindowmode	MODE_BOTTOMUP_ALIGN_TOP
+			textfont			UI_FONT_DEFAULT
+			textstyle			ITEM_TEXTSTYLE_SHADOWEDMORE
+			textalign			ITEM_ALIGN_TOP_LEFT
+			textscale			TEXTSIZE_SMALL
+			forecolor			1 1 1 1
+			visible				when( dvarint( #"arcademode" ) == 1 );
+		}
+	}	
+
+}
