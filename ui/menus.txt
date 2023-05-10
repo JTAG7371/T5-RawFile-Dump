@@ -1,0 +1,67 @@
+// single player menu defs
+
+{	
+	loadMenu { "ui/main.menu" }
+	loadMenu { "ui/main_online.menu" }
+	loadMenu { "ui/main_popups.menu" }
+
+	loadMenu { "ui/levels.menu" }
+	loadMenu { "ui/difficulty.menu" }
+
+	loadMenu { "ui/connect.menu" }
+	loadMenu { "ui/pregame.menu" }
+
+	loadMenu { "ui/options_new_pc.menu" }
+	loadMenu { "ui/options_look_pc.menu" }
+	loadMenu { "ui/options_move_pc.menu" }
+	loadMenu { "ui/options_shoot_pc.menu" }
+	loadMenu { "ui/options_misc_pc.menu" }
+	loadMenu { "ui/options_gamepad_pc.menu" }
+	loadMenu { "ui/options_graphics_pc.menu" }
+	loadMenu { "ui/options_game_pc.menu" }
+	loadMenu { "ui/options_sound_pc.menu" }
+	loadMenu { "ui/options_coop_pc.menu" }
+	loadMenu { "ui/options_control_defaults.menu" }
+	loadMenu { "ui/options_graphics_defaults.menu" }
+	loadMenu { "ui_mp/options_multi.menu" }
+	loadMenu { "ui_mp/options_voice.menu" }
+	loadMenu { "ui_mp/cdkey.menu" }
+	loadMenu { "ui_mp/mods.menu" }
+	loadMenu { "ui/quit.menu" }
+	loadMenu { "ui/vid_restart_pc.menu" }
+	loadMenu { "ui/language_restart.menu" }
+	loadMenu { "ui/snd_restart.menu" }
+	loadMenu { "ui/save_load.menu" }
+
+
+	loadMenu { "ui/popup_gettinglb.menu" }
+	loadMenu { "ui/leaderboards.menu" }
+	loadMenu { "ui/leaderboard_level.menu" }
+
+	loadMenu { "ui/xboxlive.menu" }
+	loadMenu { "ui/xboxlive_lobby.menu" }
+	loadMenu { "ui/xboxlive_partyended.menu" }
+	loadMenu { "ui/xboxlive_privatelobby.menu" }
+	loadMenu { "ui/player_match_playlist.menu" }
+
+	//loadMenu { "ui/settings_quick_so.menu" }
+	//loadMenu { "ui/settings_quick_vs.menu" }
+	//loadMenu { "ui/settings_quick_zom.menu" }
+	loadMenu { "ui/settings.menu" }
+	
+	loadMenu { "ui/collectibles.menu" }
+	
+	//loadMenu { "ui/game_summary.menu" }
+
+	loadMenu { "ui/credits.menu" }
+
+	loadMenu { "ui/friends.menu" }
+	loadMenu { "ui/playercards.menu" }
+	
+	loadMenu { "ui/keyboard.menu" }
+
+	loadMenu { "ui/first_time_setup.menu" }
+	
+	// test menus
+	//loadMenu { "ui/cod5_levels_test.menu" }
+}

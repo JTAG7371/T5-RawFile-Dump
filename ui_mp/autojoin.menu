@@ -1,0 +1,116 @@
+#include "ui/menudef.h"
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/popupstyle.inc"	
+#include "ui/choices_setup_popmenu.menu"
+#include "ui_mp/common_macro.inc"
+
+
+#define FRIEND_AUTO_JOIN_ON						\
+		execNow "xblive_autojoin 1";			\
+		exec "party_autojoinfriend 1";			\
+		close menu_friends;						\
+		close menu_playercard;					\
+		close menu_xboxlive_lobby;				\		
+		close menu_xboxlive_privatelobby;		\
+		close menu_xboxlive_theaterlobby;		\
+		close autojoinfriend_popmenu;			\
+		setdvar com_errorMessage "";			\
+		setdvar	com_errorTitle "";				\
+		execNow "xblive_privatematch 0";		\
+		execNow "xblive_rankedmatch 0";			\
+		execNow "xblive_wagermatch 0";			\
+		execNow "xblive_clanmatch 0";			\
+		execNow "xblive_theater 0";				\
+		execNow "disableallclients";			\
+		execNow "setclientbeingusedandprimary";	\
+		execNow "systemlink 0";					\
+		execNow "splitscreen 0";				\
+		execNow "onlinegame 1";					\
+		execNow "party_timerVisible 0";			\
+		execNow "xstopparty";					\
+		execNow "xstopprivateparty";			\
+		close self;								\
+		open menu_xboxlive;
+
+#define FRIEND_AUTO_JOIN_OFF		\
+	exec "party_autojoinfriend 0";	\
+ 	close menu_xboxlive;			\
+	close self;
+	
+//Auto Join Confirm Dialog
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( "menu_autojoin_confirm", ;, setFocus menu_autojoin_confirm_2;, 1 )
+
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_AUTOJOIN_CONFIRM", 1 )
+	SYSTEM_POPUP_SUBTITLE_VIS( locString( "@MENU_AUTOJOIN_USER_MSG_1" ) + dvarString("selectedFriendName") + locString( "@MENU_AUTOJOIN_USER_MSG_2" ), 1 )						
+	
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_AUTOJOIN_CAPS",	FRIEND_AUTO_JOIN_ON,	1, ;							)
+	FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_CANCEL_CAPS",		close self;,			1, name menu_autojoin_confirm_2	) 		
+}
+
+
+//Auto Join - Join fail as game full
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( "menu_autojoin_join_gamefull", setFocus menu_autojoin_join_gamefull_2;, ;, 1 )
+
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_AUTOJOIN_CONFIRM", 1 )
+	SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_AUTOJOIN_JOIN_FAIL_GAME_FULL_MSG", 1 )		
+			
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_AUTOJOIN_CAPS",	FRIEND_AUTO_JOIN_ON,	1, ;									)
+	FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_CANCEL_CAPS",		FRIEND_AUTO_JOIN_OFF,	1, name menu_autojoin_join_gamefull_2	) 		
+}
+
+
+//Auto Join Switching Lobbies Dialog
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( "menu_autojoin_switch_lobbies", ;, ;, 1 )
+
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_SWITCH_LOBBIES_CAPS", 1 )
+	SYSTEM_POPUP_SUBTITLE_VIS( locString( "@MENU_AUTOJOIN_SWITCH_LOBBIES_MSG_1" ) + dvarString("selectedFriendName") + locString( "@MENU_AUTOJOIN_SWITCH_LOBBIES_MSG_2" ), 1 )		
+			                                                                                          
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_SWITCH_LOBBIES_CAPS",		close self; execNow openmenu switch_flyout_autojoin,	1, ; )
+	FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_AUTOJOIN_CONTINUE_TO",	close self,												1, ; ) 		
+}
+
+
+//Auto Join failed
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( "menu_autojoin_continue_to", setFocus menu_autojoin_continue_to_2;, ;, 1 )
+
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_AUTOJOIN_CAPS", 1 )
+	SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_AUTOJOIN_FAILED_MSG", 1 )		
+					
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_AUTOJOIN_CONTINUE_TO",	FRIEND_AUTO_JOIN_ON,	1, ;								)
+	FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_CANCEL_CAPS",				FRIEND_AUTO_JOIN_OFF,	1, name menu_autojoin_continue_to_2	) 		
+}
+
+//Auto Join no longer available as your friend has gone off line
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( "menu_autojoin_close", setFocus menu_autojoin_close_2;, ;, 1 )
+
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_AUTOJOIN_CAPS", 1 )
+	SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_AUTOJOIN_LEAVE_LOBBY", 1 )
+					
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	FRIEND_AUTO_JOIN_OFF; close xbox,	1, ;							)
+	FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self;,						1, name menu_autojoin_close_2	) 		
+}
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+//Auto Join no longer available as your friend has gone off line
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( "menu_autojoin_not_available", ;, ;, 1 )
+
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_AUTOJOIN_NOT_AVAILABLE", 1 )
+	SYSTEM_POPUP_SUBTITLE_VIS( dvarString("selectedFriendName") + locString( "@MENU_AUTOJOIN_NOT_AVAILABLE_MSG" ), 1 )
+					
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", FRIEND_AUTO_JOIN_OFF, 1, ; )
+}
+	

@@ -1,0 +1,490 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/newframe.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/popup_player_info.inc"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/overlaybg.inc"
+#include "ui/choices_setup_popmenu.menu"
+#include "ui_mp/item_listbox.inc"
+
+#include "ui_mp/fileshare.inc"
+
+
+#undef	CHOICE_TEXTSTYLE
+#define CHOICE_TEXTSTYLE			ITEM_TEXTSTYLE_NORMAL
+
+#define FRIENDS_MENU_HEIGHT			NEW_FRAME_DEFAULT_HEIGHT
+#define FRIENDS_MENU_WIDTH			( FRIENDS_MENU_HEIGHT * FRAME_ASPECT_RATIO )
+
+#define CHOICE_TAB_TEXTSIZE			TEXTSIZE_DEFAULT
+#define TAB_1_TEXT					(locString( "@MENU_FILESHARE_FILMS_CAPS"))
+#define TAB_2_TEXT					(locString( "@MENU_FILESHARE_CLIPS_CAPS" ))
+#define TAB_3_TEXT					(locString( "@MENU_FILESHARE_SCREENSHOTS_CAPS" ))
+#define TAB_4_TEXT					(locString( "@MENU_FILESHARE_CUSTOMGAMES_CAPS" ))
+
+#define TAB_BG_PAD					5
+#define TAB_1_WIDTH					( getTextWidth( TAB_1_TEXT, CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (TAB_BG_PAD*2) )
+#define TAB_2_WIDTH					( getTextWidth( TAB_2_TEXT, CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (TAB_BG_PAD*2) )
+#define TAB_3_WIDTH					( getTextWidth( TAB_3_TEXT, CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (TAB_BG_PAD*2) )
+#define TAB_4_WIDTH					( getTextWidth( TAB_4_TEXT, CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (TAB_BG_PAD*2) )
+#define TAB_HEIGHT					15
+
+#define FRIENDS_LIST_TAB_1_X		15
+#define FRIENDS_LIST_TAB_2_X		( FRIENDS_LIST_TAB_1_X + TAB_1_WIDTH )
+#define FRIENDS_LIST_TAB_3_X		( FRIENDS_LIST_TAB_1_X + TAB_1_WIDTH + TAB_2_WIDTH )
+#define FRIENDS_LIST_TAB_4_X		( FRIENDS_LIST_TAB_1_X + TAB_1_WIDTH + TAB_2_WIDTH + TAB_3_WIDTH )
+
+#define FRIENDS_LIST_TAB_Y			( ( -FRIENDS_MENU_HEIGHT / 2 ) + NEW_FRAME_HEADER_HEIGHT - TAB_HEIGHT )
+		
+#define FILESHARE_TAB_LEFTKEY( key )																	\
+	execKeyInt key																						\
+	{																									\
+			play CHOICE_FOCUS_SOUND;																	\
+			if ( dvarInt( fsSearchFileType ) == FILESHARE_FILETYPE_FILM )								\
+			{																							\
+				execnow set fsSearchFileType FILESHARE_FILETYPE_CUSTOMGAME;								\
+			}																							\
+			else																						\
+			{																							\
+				execnow set fsSearchFileType ( dvarInt( fsSearchFileType ) - 1 );						\
+			}																							\
+			execnow set fshSearchBusy 1;																\
+			execnow ui_animate menu_fileshare_community StateChanger Wait 0;							\	
+			execnow ui_animate menu_fileshare_community StateChanger Search 2000;						\
+	}
+
+#define FILESHARE_TAB_RIGHTKEY( key )																	\
+	execKeyInt key																						\		
+	{																									\
+			play CHOICE_FOCUS_SOUND;																	\
+			if ( dvarInt( fsSearchFileType ) == FILESHARE_FILETYPE_CUSTOMGAME )							\
+			{																							\
+				execnow set fsSearchFileType FILESHARE_FILETYPE_FILM;									\
+			}																							\
+			else																						\
+			{																							\
+				execnow set fsSearchFileType ( dvarInt( fsSearchFileType ) + 1 );						\
+			}																							\
+			execnow set fshSearchBusy 1;																\
+			execnow ui_animate menu_fileshare_community StateChanger Wait 0;							\
+			execnow ui_animate menu_fileshare_community StateChanger Search 2000;						\
+}
+		
+
+#define COMMUNITY_LIST_TAB_BG( px, pw, selected )															\
+		itemDef																								\
+		{																									\
+			style           WINDOW_STYLE_SHADER_FRAMED														\
+			frame           16 0.2 FRAME_OPEN_BOTTOM														\
+			rect            0 FRIENDS_LIST_TAB_Y 0 TAB_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER	\
+			exp				rect X( ( -FRIENDS_MENU_WIDTH / 2 + px ) )										\
+			exp				rect W(	pw )																	\
+			background      "menu_mp_tab_frame_inner"														\
+			forecolor       0.5 0.5 0.5 0.5																	\
+			visible         when( selected )																\
+			decoration																						\
+		}																									\
+		itemDef																								\
+		{																									\
+			style           WINDOW_STYLE_SHADER_FRAMED														\
+			frame           16 0.2 FRAME_OPEN_BOTTOM														\
+			rect            0 FRIENDS_LIST_TAB_Y 0 TAB_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER	\
+			exp				rect X( ( -FRIENDS_MENU_WIDTH / 2 + px ) )										\
+			exp				rect W(	pw )																	\
+			background      "menu_mp_tab_frame_inner"														\
+			forecolor       1 1 1 1																			\
+			visible         when( !selected )																\
+			decoration																						\
+		}
+
+#undef FILESHARE_TAB_PC
+#ifdef PC
+	#define FILESHARE_TAB_PC																					\
+		FILESHARE_TAB_LEFTKEY( K_LEFTARROW )																\
+		FILESHARE_TAB_RIGHTKEY( K_RIGHTARROW )
+
+#else //#ifdef PC
+	#define FILESHARE_TAB_PC
+#endif //#ifdef PC
+
+#define COMMUNITY_TAB_HEADERS																				\
+		/* Tab 1 */																							\
+		COMMUNITY_LIST_TAB_BG(			FRIENDS_LIST_TAB_1_X, TAB_1_WIDTH,									\
+										( dvarInt( fsSearchFileType ) == FILESHARE_FILETYPE_FILM )  )		\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_1_X ),					\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_1_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_1_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_ORANGE_RGB 1,												\
+										when( dvarInt( fsSearchFileType ) == FILESHARE_FILETYPE_FILM ), ; )	\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_1_X ),					\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_1_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_1_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_GRAY_TEXT_COLOR,											\
+										when( dvarInt( fsSearchFileType ) != FILESHARE_FILETYPE_FILM ), ; ) \
+		/* Tab 2 */																							\
+		COMMUNITY_LIST_TAB_BG(			FRIENDS_LIST_TAB_2_X, TAB_2_WIDTH,									\
+										( dvarInt( fsSearchFileType ) == FILESHARE_FILETYPE_CLIP )  )		\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_2_X ),					\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_2_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_2_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_ORANGE_RGB 1,												\
+										when( dvarInt( fsSearchFileType ) == FILESHARE_FILETYPE_CLIP ), ; )	\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_2_X ),					\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_2_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_2_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_GRAY_TEXT_COLOR,											\
+										when( dvarInt( fsSearchFileType ) != FILESHARE_FILETYPE_CLIP ), ; )	\
+		/* Tab 3 */																							\
+		COMMUNITY_LIST_TAB_BG(			FRIENDS_LIST_TAB_3_X, TAB_3_WIDTH,									\
+										( dvarInt( fsSearchFileType ) == FILESHARE_FILETYPE_SCREENSHOT )  ) \
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_3_X ),					\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_3_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_3_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_ORANGE_RGB 1,												\
+										when( dvarInt( fsSearchFileType ) == FILESHARE_FILETYPE_SCREENSHOT ), ; ) \
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_3_X ),					\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_3_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_3_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_GRAY_TEXT_COLOR,											\
+										when( dvarInt( fsSearchFileType ) != FILESHARE_FILETYPE_SCREENSHOT ), ; ) \
+		/* Tab 4 */																							\
+		COMMUNITY_LIST_TAB_BG(			FRIENDS_LIST_TAB_4_X, TAB_4_WIDTH,									\
+										( dvarInt( fsSearchFileType ) == FILESHARE_FILETYPE_CUSTOMGAME )  ) \
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_4_X ),					\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_4_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_4_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_ORANGE_RGB 1,												\
+										when( dvarInt( fsSearchFileType ) == FILESHARE_FILETYPE_CUSTOMGAME ), ; ) \
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_4_X ),					\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_4_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_4_TEXT, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,			\
+										NEW_FRAME_GRAY_TEXT_COLOR,											\
+										when( dvarInt( fsSearchFileType ) != FILESHARE_FILETYPE_CUSTOMGAME ), ; ) \
+		FILESHARE_TAB_LEFTKEY( DPAD_LEFT )																	\
+		FILESHARE_TAB_LEFTKEY( APAD_LEFT )																	\
+		FILESHARE_TAB_RIGHTKEY( DPAD_RIGHT )																\
+		FILESHARE_TAB_RIGHTKEY( APAD_RIGHT )																\
+		FILESHARE_TAB_PC
+
+#define COMMUNITY_TAB_ACTION( tabIndex )										\
+	if ( dvarInt( fsSearchFileType ) != tabIndex )								\
+	{																			\
+		execnow set fsSearchFileType tabIndex;									\
+		execnow set fshSearchBusy 1;											\
+		execnow ui_animate menu_fileshare_community StateChanger Wait 0;		\
+		execnow ui_animate menu_fileshare_community StateChanger Search 2000;	\
+	}
+
+#define COMMUNITY_TAB_BUTTONS																	\
+		/* Tab 1 */																				\
+		TAB_ACTION_BUTTON_ADV( 			( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_1_X ),		\
+										FRIENDS_LIST_TAB_Y,										\
+										TAB_1_WIDTH,											\
+										TAB_HEIGHT,												\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,			\
+										COMMUNITY_TAB_ACTION( 1 ) , 1, ; )						\
+		/* Tab 2 */																				\
+		TAB_ACTION_BUTTON_ADV( 			( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_2_X ),		\
+										FRIENDS_LIST_TAB_Y,										\
+										TAB_2_WIDTH,											\
+										TAB_HEIGHT,												\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,			\
+										COMMUNITY_TAB_ACTION( 2 ) , 1, ; )						\
+		/* Tab 3 */																				\
+		TAB_ACTION_BUTTON_ADV( 			( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_3_X ),		\
+										FRIENDS_LIST_TAB_Y,										\
+										TAB_3_WIDTH,											\
+										TAB_HEIGHT,												\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,			\
+										COMMUNITY_TAB_ACTION( 3 ) , 1, ; )						\
+		/* Tab 4 */																				\
+		TAB_ACTION_BUTTON_ADV( 			( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_4_X ),		\
+										FRIENDS_LIST_TAB_Y,										\
+										TAB_4_WIDTH,											\
+										TAB_HEIGHT,												\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,			\
+										COMMUNITY_TAB_ACTION( 4 ) , 1, ; )
+
+
+		
+#define FILESHARE_SHOWRESULTS																				\
+		getFeederData( fileShareCommunitySearch, count ) > 0 &&												\
+		FILESHARE_SEARCHPOPULATED( "fileShareCommunitySearch" ) &&											\
+		dvarInt( fshSearchBusy ) == 0
+
+#undef ON_ESC_ACTION
+#define ON_ESC_ACTION																														\
+	deactivateBlur;																															\
+																																			\
+	if ( dvarInt( ui_theater_shortcut ) == 1 )																								\
+	{																																		\
+		CHANGE_MENU_SLIDE_DIRECTION( menu_fileshare_community, MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT, MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM )		\
+		execnow ui_theater_shortcut 0;																										\
+	}																																		\
+	elseif( dvarInt( ui_theater_shortcut_pc ) == 1 )																						\
+	{																																		\
+		CHANGE_MENU_SLIDE_DIRECTION( menu_fileshare_community, MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT, MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM )		\
+		setdvar ui_theater_shortcut_pc 0;																									\
+		open main;																															\
+	}																																		\
+	else																																	\
+	{																																		\
+		CHANGE_MENU_SLIDE_DIRECTION( menu_fileshare_community, MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT, MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT )		\
+		if ( dvarInt( xblive_basictraining ) )																		\
+					{																											\
+						open menu_playercard_self_basictraining;																\
+					}																											\
+					else																										\
+					{																											\
+						open menu_playercard_self;																				\
+					}																										\
+	}																																		\
+	close self;
+	
+menuDef
+{
+	name					menu_fileshare_community
+	rect					0 0 640 480
+	focuscolor				COLOR_FOCUSED
+	style					WINDOW_STYLE_FILLED
+	priority				MENU_PRI_ONTOP
+	control					MENU_CONTROL_OPENER
+	soundloop 				MENU_MUSIC
+	openSlideSpeed			DEFAULT_SLIDE_IN_SPEED 
+	closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED 
+	openSlideDirection		MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT 
+	closeSlideDirection		MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT 
+	
+	onOpen	
+	{
+		activateBlur; 
+		execnow set fshSearchBusy 0;
+		if ( needToPerformCommunitySearch() )
+		{
+			execnow fileShareClearResults;
+			execnow fileSharePerformSearch;
+		}
+		execnow ui_animate menu_fileshare_community FileUpdater SetFile 0;
+	}
+
+	onFocus 
+	{
+	}
+	onClose	
+	{
+		deactivateBlur; 		
+	}
+	onESC	
+	{
+		ON_ESC_ACTION
+	}
+	
+	NEW_FRAME( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT )
+	NEW_FRAME_TITLE( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, "@MENU_FILESHARE_COMMUNITY_CAPS", 1 )
+
+	PLAYER_INFO_VIS( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, 1 )
+
+	COMMUNITY_TAB_HEADERS
+	COMMUNITY_TAB_BUTTONS
+	
+	FILESHARE_PROGRESS_INDICATOR_SIZE( 0, 0, 64, 64, 0, ( isTaskInProgress( "LiveFileShareSearch" ) == 1 || isTaskInProgress( "LiveFileShareTransfer" ) == 1 || dvarInt( "fshSearchBusy" ) == 1 ) )
+	
+	itemDef
+	{
+		type			ITEM_TYPE_TEXT
+		rect			0 30 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER 
+		text			"@MENU_FILESHARE_SEARCHING"
+		textfont		CHOICE_TEXTFONT  
+		textalign		ITEM_ALIGN_MIDDLE_CENTER
+		textscale		TEXTSIZE_SMALL  
+		forecolor		LIGHT_GRAY
+		visible			when ( isTaskInProgress( "LiveFileShareSearch" ) == 1 || dvarInt( "fshSearchBusy" ) == 1 ) 
+		decoration  
+	}
+
+	itemDef
+	{
+		name          "StateChanger"
+		type          ITEM_TYPE_TEXT
+		rect		  -32 -32 64 64 
+		forecolor     1 1 1 1
+		text          ""
+		visible       1
+		decoration
+		
+		state
+		{
+			name          "Search"
+			forecolor     0 1 0 1
+
+			onEnter
+			{
+				execnow fileShareClearResults;
+				execnow fileSharePerformSearch;
+				execnow set fshSearchBusy 0;
+				changeState Wait 0;
+			}			  
+		}	      
+
+		state
+		{
+			name	"Wait"
+		}
+	}
+
+	itemDef
+	{
+		name	"FileUpdater"
+		type	ITEM_TYPE_TEXT
+		rect	0 0 1 1
+		visible 1
+		decoration
+		text	""
+
+		state
+		{
+			name	"SetFile"
+			onEnter
+			{
+				execnow set fsSelectedFileID ( getFeederData( fileShareCommunitySearch, "fileID" ) );
+				changeState "Wait" 0;
+			}
+		}
+
+		state
+		{
+			name "Wait"
+			onEnter
+			{
+				changeState "SetFile" 500;
+			}
+		}
+	}
+
+#ifdef CONSOLE
+	#define FILESHARE_COMMUNITY_LIST_RECT_AND_SCROLL								\
+		rect -265 -127 250 280 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER		\
+		noscrollbars
+#else // #ifdef CONSOLE
+	#define FILESHARE_COMMUNITY_LIST_RECT_AND_SCROLL								\
+		/*Add scroll bars for PC*/													\
+		rect -265 -127 (250+16) 280 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER	\
+		usePaging
+#endif // #ifdef CONSOLE
+
+	itemDef
+	{ 
+		name						fileShareCommunitySearch
+		type						ITEM_TYPE_LISTBOX 
+		feeder						FEEDER_FILESHARE_SEARCHRESULTS
+		FILESHARE_COMMUNITY_LIST_RECT_AND_SCROLL
+		origin						0 0 
+		elementwidth				30 
+		elementheight				16
+		elementtype					LISTBOX_TEXT 
+		textstyle					ITEM_TEXTSTYLE_NORMAL 
+		textfont					UI_FONT_NORMAL 
+		textscale					TEXTSIZE_SMALL 
+		textalign					ITEM_ALIGN_TOP_LEFT
+		textalignx					12
+		textaligny					-2 
+		forecolor					CHOICE_TEXTCOLOR 
+		focusColor					CHOICE_TEXTCOLOR
+		disableColor				CHOICE_TEXTCOLOR 
+		#ifdef XENON
+			selectIcon				"ui_button_xenon_3d_a_32x32"
+		#endif
+		#ifdef PS3
+			selectIcon				"ui_button_ps3_x_32x32"
+		#endif
+		outlinecolor				1 1 1 1
+		elementHighlightColor		0 0 0 1
+		elementBackgroundColor		NEW_FRAME_TRANSPARENCY
+		noBlinkingHighlight 
+		modal
+		/*					x	y	w	h	len	horzAlign		vertAlign*/			
+		userarea	1		10	-1	200	18	50	ITEM_ALIGN_LEFT	ITEM_ALIGN_TOP		
+		visible		when( dvarInt( fshSearchBusy ) == 0 )
+		onListboxSelectionChange 
+		{ 
+			play CHOICE_FOCUS_SOUND; 
+			execnow set fsSelectedFileID ( getFeederData( "fileID" ) );
+		} 
+		onfocus
+		{
+			play CHOICE_FOCUS_SOUND; 
+			execnow set fsSelectedFileID ( getFeederData( "fileID" ) );
+		}
+		doubleclick		
+		{	
+			if ( FILESHARE_SEARCHPOPULATED( "fileShareCommunitySearch" ) && getFeederData( fileID ) != 0 )
+			{
+				execnow set fsSelectedFileName ( getFeederData( name ) );
+				execnow set fsIsSelectedFileNameModified ( getFeederData( isModifiedName ) );
+				execnow set fsSelectedFileDescription ( getFeederData( description ) );
+				execnow set fsIsSelectedFileDescriptionModified ( getFeederData( isModifiedDescription ) );
+				open menu_fileshare_community_choose;
+			}
+		}
+	}
+
+	FILESHARE_DETAILS_COMMUNITY(	35, (NEW_FRAME_CHOICE_Y_START-1), HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER, 
+									"menu_fileshare_community", "fileShareCommunitySearch", 
+									FILESHARE_SHOWRESULTS && getFeederData( fileShareCommunitySearch, fileID ) != 0 )
+
+	NEW_FRAME_BACK_BUTTON_ACTION( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, ON_ESC_ACTION )
+
+	#define FILTER_X		-262
+	#define FILTER_Y		175
+	#define FILTER_W ( getTextWidth( locString( "@MPUI_FILTER_SET" ), CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + 10 )
+	PREPROC_TEXT_DRAW_ADV_VIS_EX( FILTER_X, FILTER_Y, FILTER_W, 20, HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER, "@MPUI_FILTER_SET", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, 0 0 0 0.3, 1, ; )
+	PREPROC_TEXT_DRAW_ADV_VIS_EX( (FILTER_X+FILTER_W), FILTER_Y, 100, 20, HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER, getFileShareFilterList(), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, LIGHT_GRAY, 1, ; )
+
+	execKeyInt BUTTON_X
+	{
+		play CHOICE_FOCUS_SOUND; 
+		open fileshare_searchbox;
+	}
+
+	NEW_FRAME_FILTER_BUTTON_ACTION( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, "@PLATFORM_FILESHARE_SEARCH", open fileshare_searchbox; )
+	
+	itemDef 
+	{  
+		type			ITEM_TYPE_TEXT 
+		rect			0 0 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER 
+		text			"@MENU_FILESHARE_NORESULTS" 
+		textfont		CHOICE_TEXTFONT  
+		textalign		ITEM_ALIGN_MIDDLE_CENTER
+		textscale		TEXTSIZE_SMALL  
+		forecolor		LIGHT_GRAY
+		visible			when ( !( FILESHARE_TASKSINPROGRESS ) &&  getFeederData( fileShareCommunitySearch, count ) < 1 && dvarInt( fshSearchBusy ) == 0 )  
+		decoration  
+	}
+}

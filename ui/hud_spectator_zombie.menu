@@ -1,0 +1,315 @@
+// SPECTATOR HUD - ZOMBIE
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define HUD_ALPHA 0.65
+#define	BOTTOM_RECT_X 0
+#define	BOTTOM_RECT_Y -15
+#define SPEC_HUD_WIDTH 160
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+{
+	assetGlobalDef
+	{
+		fadeClamp		1					// sets the fadeup alpha
+		fadeCycle		1					// how often fade happens in milliseconds
+		fadeAmount		0.1					// amount to adjust alpha per cycle
+	}
+	
+	// game messages
+	menuDef
+	{
+		name			"spec_gamemessages"
+		rect			6 -135 10 10 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+		fullScreen		0
+		visible			1
+		visibilityBits	bits( BIT_SPECTATING_CLIENT )
+		
+		itemDef
+		{
+			rect				0 0 0 0
+			type				ITEM_TYPE_GAME_MESSAGE_WINDOW
+			gamemsgwindowindex	0
+			gamemsgwindowmode	MODE_BOTTOMUP_ALIGN_BOTTOM
+			textfont			UI_FONT_DEFAULT
+			textstyle			ITEM_TEXTSTYLE_SHADOWED
+			textalign			ITEM_ALIGN_LEFT
+			textscale			TEXTSIZE_SMALL
+			visible				1
+			visibilityBits		bits( !BIT_UI_ACTIVE )
+		}
+	}
+
+	menuDef
+	{
+		name			"hud_spectator"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+#ifdef CONSOLE
+		visible 		when( !dvarInt( #"splitscreen" ) );
+#else
+		visible 		1
+#endif
+		visibilityBits	bits( !BIT_UI_ACTIVE BIT_SPECTATING_CLIENT )
+		
+		#define SHOULD_SHOW_MAP 0
+		#define MAP_X -750
+		#define MAP_Y 0
+		#define MAP_WIDTH 168
+		#define MAP_HEIGHT 188
+		#define SHOW_TEXT_ON_MAP 0
+		#define MAP_ALPHA 0.7
+		#undef SHOW_TEXT_ON_MAP
+		#undef MAP_ALPHA
+		#define TEAM_SCORE_HORIZ_SPACING 5
+		#define TEAM_SCORE_VERT_SPACING 3
+		#define TEAM_SCORE_HEIGHT 32
+		#define TEAM_SCORE_BG_WIDTH (SPEC_HUD_WIDTH/2-TEAM_SCORE_HORIZ_SPACING/2)
+		#define TEAM_ICON_VERT_MARGIN 2
+		#define TEAM_ICON_HORIZ_MARGIN 5
+		#define TEAM_ICON_SIZE (TEAM_SCORE_HEIGHT-TEAM_ICON_VERT_MARGIN*2)
+		
+		#undef BACKGROUND_H
+		#define BACKGROUND_H			20
+		
+		#undef BACKGROUND_W
+		#define BACKGROUND_W			( 5 + BACKGROUND_H + GetTextWidth( player( name ), UI_FONT_SMALL, 0.25 ) + BACKGROUND_H + 5 )
+		
+		#undef BACKGROUND_X
+		#define BACKGROUND_X			(-(BACKGROUND_W/2))
+		
+		#undef BACKGROUND_Y
+		#define BACKGROUND_Y			-70
+		
+		// Spectator name bar
+		PREPROC_SHADER_DRAW_ADV(	BACKGROUND_X,
+									BACKGROUND_Y,
+									BACKGROUND_W,
+									BACKGROUND_H,
+									HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_USER_BOTTOM,
+									"white", 0 0 0 0.4 )
+
+//#ifdef CONSOLE
+		// Cycle Previous
+		itemDef
+		{
+			name			"CyclePrev"
+			type			ITEM_TYPE_TEXT
+			rect			0 BACKGROUND_Y BACKGROUND_H BACKGROUND_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect X( BACKGROUND_X + 5 )
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+#ifdef CONSOLE
+			textalign		ITEM_ALIGN_MIDDLE_LEFT
+			textfont		UI_FONT_SMALL
+			textscale		0.25
+			forecolor		1 1 1 HUD_ALPHA
+			text			"@PLATFORM_FOLLOWPREVPLAYER"
+#else
+			textalign		ITEM_ALIGN_RIGHT
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_SMALL
+			forecolor		1 1 1 HUD_ALPHA
+			text			"@PLATFORM_DEMO_FOLLOWPREVIOUSPLAYER"
+			exp				rect X( BACKGROUND_X - 4 - getTextWidth(locString("@PLATFORM_DEMO_FOLLOWPREVIOUSPLAYER"),UI_FONT_NORMAL,TEXTSIZE_SMALL) )
+			exp				rect W( getTextWidth(locString("@PLATFORM_DEMO_FOLLOWPREVIOUSPLAYER"),UI_FONT_NORMAL,TEXTSIZE_SMALL) )
+#endif
+			visible			when( canSpecCycle() );
+			decoration
+			
+			state
+			{
+				name		"Flash"
+				forecolor	1 1 1 1
+				onEnter
+				{
+					changeState Default 250;
+				}
+			}
+		}
+		
+		// Cycle Next
+		itemDef
+		{
+			name			"CycleNext"
+			type			ITEM_TYPE_TEXT
+			rect			0 BACKGROUND_Y BACKGROUND_H BACKGROUND_H HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect X( BACKGROUND_X+BACKGROUND_W-BACKGROUND_H-5 )
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+#ifdef CONSOLE
+			textalign		ITEM_ALIGN_MIDDLE_RIGHT
+			textfont		UI_FONT_SMALL
+			textscale		0.25
+			forecolor		1 1 1 HUD_ALPHA
+			text			"@PLATFORM_FOLLOWNEXTPLAYER"
+#else
+			textalign		ITEM_ALIGN_LEFT
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_SMALL
+			forecolor		1 1 1 HUD_ALPHA
+			text			"@PLATFORM_DEMO_FOLLOWNEXTPLAYER"
+			exp				rect X( BACKGROUND_X + BACKGROUND_W + 4)
+			exp				rect W( getTextWidth(locString("@PLATFORM_DEMO_FOLLOWNEXTPLAYER"),UI_FONT_NORMAL,TEXTSIZE_SMALL) )
+#endif
+			visible			when( canSpecCycle() );
+			decoration
+			
+			state
+			{
+				name		"Flash"
+				forecolor	1 1 1 1
+				onEnter
+				{
+					changeState Default 250;
+				}
+			}
+		}		
+//#endif // #ifdef CONSOLE
+
+		// "SPECTATING" title
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 (BACKGROUND_Y-4) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect X( BACKGROUND_X + BACKGROUND_W/2 )
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_BOTTOM_CENTER
+			textfont		UI_FONT_EXTRABIG
+			textscale		0.27
+			forecolor		1 1 1 0.9//HUD_ALPHA
+			text			"@MPUI_SPECTATING_CAPS"
+			visible			1
+			decoration
+		}
+
+		// Player name
+		itemDef
+		{
+			name			"SpectatorName"
+			type			ITEM_TYPE_TEXT
+			rect			0 BACKGROUND_Y SPEC_HUD_WIDTH 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect X( BACKGROUND_X )
+			exp				rect W( BACKGROUND_W )	
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_MIDDLE_CENTER
+			textfont		UI_FONT_SMALL
+			textscale		0.25
+			forecolor		1 1 1 HUD_ALPHA
+			exp text		( player( name ) );
+			visible			1
+			decoration
+			
+			state
+			{
+				name		"Flash"
+				forecolor	1 1 0 1
+				onEnter
+				{
+					changeState Default 500;
+				}
+			}
+		}
+
+//#ifdef CONSOLE
+		// 1st Person View Button
+		itemDef
+		{
+			name			"SpecViewToggle"
+			type			ITEM_TYPE_TEXT
+			rect			0 (BACKGROUND_Y+BACKGROUND_H+10) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect X( BACKGROUND_X+BACKGROUND_W/2 )
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_TOP_CENTER
+			textfont		UI_FONT_NORMAL
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+#ifdef CONSOLE
+			text			"@PLATFORM_FIRSTPERSON"
+			visible			when ( ( dvarInt( cg_thirdPerson ) == 1 ) && !dvarInt( #"splitscreen" ) );
+#else
+			text			"@PLATFORM_FIRSTPERSON_SPEC_PC"
+			visible			when ( dvarInt( cg_thirdPerson ) == 1 );
+#endif
+
+			decoration
+			
+			state
+			{
+				name		"Flash"
+				forecolor	1 1 0 1
+				onEnter
+				{
+					changeState Default 500;
+				}
+			}
+		}
+		
+		// 3rd Person View Button
+		itemDef
+		{
+			name			"SpecViewToggle"
+			type			ITEM_TYPE_TEXT
+			rect			0 (BACKGROUND_Y+BACKGROUND_H+10) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect X( BACKGROUND_X+BACKGROUND_W/2 )
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_TOP_CENTER
+			textfont		UI_FONT_NORMAL
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+#ifdef CONSOLE
+			text			"@PLATFORM_THIRDPERSON"
+			visible			when ( ( dvarInt( cg_thirdPerson ) == 0 ) && !dvarInt( #"splitscreen" ) && ( !isVisibilityBitSet( BIT_POF_SPEC_ALLOW_FREELOOK ) || !isVisibilityBitSet( BIT_POF_FOLLOW ) ) );
+#else
+			text			"@PLATFORM_THIRDPERSON_SPEC_PC"
+			visible			when ( ( dvarInt( cg_thirdPerson ) == 0 ) && ( !isVisibilityBitSet( BIT_POF_SPEC_ALLOW_FREELOOK ) || !isVisibilityBitSet( BIT_POF_FOLLOW ) ) );
+#endif
+
+			decoration
+			
+			state
+			{
+				name		"Flash"
+				forecolor	1 1 0 1
+				onEnter
+				{
+					changeState Default 500;
+				}
+			}
+		}
+		
+		// Free Cam Button
+		itemDef
+		{
+			name			"SpecViewToggle"
+			type			ITEM_TYPE_TEXT
+			rect			0 (BACKGROUND_Y+BACKGROUND_H+10) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect X( BACKGROUND_X+BACKGROUND_W/2 )
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_TOP_CENTER
+			textfont		UI_FONT_NORMAL
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+#ifdef CONSOLE
+			text			"@PLATFORM_SPEC_FREELOOK"
+#else
+			text			"@PLATFORM_FREELOOK_SPEC_PC"
+#endif
+			visible			when ( dvarInt( cg_thirdPerson ) == 0 );
+			visibilityBits	bits( BIT_POF_SPEC_ALLOW_FREELOOK BIT_POF_FOLLOW );
+			decoration
+			
+			state
+			{
+				name		"Flash"
+				forecolor	1 1 0 1
+				onEnter
+				{
+					changeState Default 500;
+				}
+			}
+		}
+//#endif // #ifdef CONSOLE
+	}
+}

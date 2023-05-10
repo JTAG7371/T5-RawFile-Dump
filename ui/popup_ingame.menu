@@ -1,0 +1,227 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SEP_OFFSET_Y			-2
+
+#define CHOICE_SEP_1				3
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+#undef POPUP_BG_OVERLAY_COLOR
+#define POPUP_BG_OVERLAY_COLOR		0 0 0 0.7//0.7
+
+#undef POPUP_BACKCOLOR
+#define POPUP_BACKCOLOR			0.2 0.2 0.2 0.9//0.6
+
+
+	#define ACTION_LOWER_DIFFICULTY( p_diff, difficulty )	\
+			setdvar g_gameskill p_diff;						\
+			execNow difficulty;								\
+			execNow "updategamerprofile";					\
+			open pausedmenu;								\
+			close self;
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( ingame_difficulty, focusfirst, close self; open pausedmenu, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LOWER_DIFFICULTY_CAPS", 1 )
+
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LOWER_DIFFICULTY_1_0", when( dvarInt( g_gameskill ) == 1 ) )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LOWER_DIFFICULTY_2_1", when( dvarInt( g_gameskill ) == 2 ) )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LOWER_DIFFICULTY_3_2", when( dvarInt( g_gameskill ) == 3 ) )
+
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_CANCEL_CAPS",	close self; open pausedmenu;,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_LOWER_DIFFICULTY_1_0_BUTTON", ACTION_LOWER_DIFFICULTY( 0, "difficultyeasy" ), dvarInt( g_gameskill ) == 1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_LOWER_DIFFICULTY_2_1_BUTTON", ACTION_LOWER_DIFFICULTY( 1, "difficultymedium" ), dvarInt( g_gameskill ) == 2, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_LOWER_DIFFICULTY_3_2_BUTTON", ACTION_LOWER_DIFFICULTY( 2, "difficultyhard" ), dvarInt( g_gameskill ) == 3, ; )
+	}
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_savegame_warning, focusFirst, close self; open "pausedmenu";, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_CONTINUE_SAVING", 1 )
+#ifdef XENON
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_SAVEQUIT_TEXT_WITH_DEVICE_CHANGE", 1 );
+#else
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_SAVEQUIT_TEXT_WITHOUT_DEVICE_CHANGE", 1 );
+#endif // #ifdef XENON
+		
+#ifdef XENON
+		#define ACTION_SAVEGAME_RESUME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";			\
+				uiScript saveRevert;
+#else
+		#define ACTION_SAVEGAME_RESUME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";			\
+				uiScript saveRevert; 
+#endif // #ifdef XENON
+
+		#define ACTION_SAVE_AND_QUIT_DEVICE_AVAILABLE	\
+				play CHOICE_FOCUS_SOUND;				\
+				close self;								\
+				close "pausedmenu";						\
+				setSaveExecOnSuccess "disconnect"		\
+				execNow "updategamerprofile";			\
+				open "savegameinfo";					\
+				setdvar ui_skipMainLockout "1";	
+
+		#define ACTION_SAVE_AND_QUIT_DEVICE_NOT_AVAILABLE	\
+				play CHOICE_FOCUS_SOUND;					\
+				close self;									\
+				close "pausedmenu";							\
+				open "popup_savegame_error";				\
+				setdvar ui_skipMainLockout "1";
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RESUMEGAME_CAPS",		ACTION_SAVEGAME_RESUME,						1,											; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_SAVE_AND_QUIT_CAPS",	ACTION_SAVE_AND_QUIT_DEVICE_AVAILABLE,		( dvarbool( sv_saveDeviceAvailable ) ),		; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_SAVE_AND_QUIT_CAPS",	ACTION_SAVE_AND_QUIT_DEVICE_NOT_AVAILABLE,	( !dvarbool( sv_saveDeviceAvailable ) ),	; )
+	}				
+
+	
+	menuDef
+	{
+		blurWorld		4.8
+
+#ifndef PC
+		#define RESTART_WARNING_ONOPEN	\
+				focusFirst;				\
+				exec "fullscreenview";
+#else // #ifndef PC
+		#define RESTART_WARNING_ONOPEN \
+				focusFirst;
+#endif	// #ifndef PC
+
+		SYSTEM_POPUP_SETUP_VIS( popup_restart_warning, RESTART_WARNING_ONOPEN, close self; open "pausedmenu";, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_CONTINUE_RESTART", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_RESTART_LEVEL_TEXT", 1 );
+		
+#ifndef PC
+		#define ACTION_RESTART_LEVEL_RESUME	\
+			play CHOICE_FOCUS_SOUND;		\
+			exec "splitscreenview";			\
+			close self;						\
+			close "pausedmenu";
+			
+		#define STOP_CONTROLLER_RUMBLE exec "stopControllerRumble";
+#else
+		#define ACTION_RESTART_LEVEL_RESUME	\
+			play CHOICE_FOCUS_SOUND;		\
+			close self;						\
+			close "pausedmenu";
+			
+		#define STOP_CONTROLLER_RUMBLE
+#endif // #ifdef XENON
+
+		#define ACTION_RESTART_LEVEL					\
+				play CHOICE_FOCUS_SOUND;				\
+				close self;								\
+				STOP_CONTROLLER_RUMBLE					\
+				exec "fade 0 0 0 255 0 0 1";			\
+				exec "silence";							\
+				if( dvarString( mapname ) != "wmd" )	\
+				{										\
+					exec "fast_restart";				\
+				}										\
+				else									\
+				{										\
+					exec "devmap wmd_sr71";				\
+				}										\
+				close "pausedmenu";
+	
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RESUMEGAME_CAPS",		ACTION_RESTART_LEVEL_RESUME,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_RESTART_LEVEL_CAPS",	ACTION_RESTART_LEVEL,			1, ; )
+	}
+
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_checkpoint_restart_warning, focusFirst;, close self; open "pausedmenu";, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_CONTINUE_RESTART_CHECKPOINT", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_CHECKPOINT_RESTART_TEXT", 1 );
+		
+		#define ACTION_CHECKPOINT_RESTART_RESUME	\
+				play CHOICE_FOCUS_SOUND;				\
+				close self;								\
+				close "pausedmenu";
+
+		#define ACTION_CHECKPOINT_RESTART	\
+				play CHOICE_FOCUS_SOUND;		\
+				close self;						\
+				close "pausedmenu";				\
+				STOP_CONTROLLER_RUMBLE			\
+				exec "checkpoint_restart"
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RESUMEGAME_CAPS",			ACTION_CHECKPOINT_RESTART_RESUME,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_RESTART_CHECKPOINT_CAPS",	ACTION_CHECKPOINT_RESTART,			1, ; )
+	}				
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		3
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_savegame_error, focusFirst; close "savegameinfo"; close "savegameloading", setdvar cl_paused "0";, 1 )
+
+		SYSTEM_POPUP_TITLE_VIS( "@PLATFORM_SAVE_ERROR", when( !dvarbool( sv_saveDeviceAvailable ) ) )
+		SYSTEM_POPUP_TITLE_VIS( "@PLATFORM_SAVE_ERROR_NOW_OKAY", when( dvarbool( sv_saveDeviceAvailable ) ) )
+		
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_NO_SAVE_DEVICE_WARNING", when( !dvarbool( sv_saveDeviceAvailable ) ) );
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_NO_SAVE_DEVICE_WARNING_NOW_OKAY", when( dvarbool( sv_saveDeviceAvailable ) ) );
+
+		#define ACTION_SELECT_SAVE_DEVICE		\
+				play CHOICE_FOCUS_SOUND;		\
+				execnow "force_select_save_device";
+
+		#define ACTION_RETRY_SAVE			\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				setdvar cl_paused "0";		\
+				open "savegameinfo";
+
+		#define ACTION_RESUMEGAME_NOSAVE	\
+				uiScript saveRevert;		\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;
+
+		#define ACTION_QUIT_NOSAVE		\
+				uiScript saveRevert;	\
+				close self;				\
+				setdvar cl_paused "1"	\
+				open "popup_storage_quit";
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@PLATFORM_SELECT_SAVE_DEVICE_CAPS",	open popup_selectsavedevice_warning,	( !dvarbool( sv_saveDeviceAvailable ) ),	; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RETRY_SAVE",					ACTION_RETRY_SAVE,						( dvarbool( sv_saveDeviceAvailable ) ),		; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_RESUMEGAME_NOSAVE",			ACTION_RESUMEGAME_NOSAVE,				1,											; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 3, "@MENU_QUIT_NO_SAVE",				ACTION_QUIT_NOSAVE,						1,											; )
+	}				
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_selectsavedevice_warning, ;, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_NOTICE", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_WARNING_SELECTSAVEDEVICE", 1 );
+		
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self; exec "force_select_save_device", 1, ; )
+	}				

@@ -1,0 +1,17 @@
+rawfile,character/c_usa_jungmar_gib_arm.gsc
+xmodel,c_usa_jungmar_body_drab
+xmodel,c_usa_jungmar_head1_nc
+xmodel,c_usa_jungmar_gear1
+xmodel,c_usa_jungmar_body_g_rarmoff
+xmodel,c_usa_jungmar_body_g_rarmoff
+xmodel,c_usa_jungmar_body_g_rarmoff
+xmodel,c_usa_jungmar_body_g_rarmoff
+xmodel,c_usa_jungmar_body_g_lowclean
+xmodel,c_usa_jungmar_body_g_lowclean
+xmodel,c_usa_jungmar_body_g_lowclean
+xmodel,c_usa_jungmar_body_g_lowclean
+xmodel,c_usa_jungmar_body_g_rarmspawn
+xmodel,c_usa_jungmar_body_g_rarmspawn
+xmodel,c_usa_jungmar_body_g_rarmspawn
+xmodel,c_usa_jungmar_body_g_rarmspawn
+rawfile,character/clientscripts/c_usa_jungmar_gib_arm.csc

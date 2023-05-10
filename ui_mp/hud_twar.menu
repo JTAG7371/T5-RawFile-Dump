@@ -1,0 +1,181 @@
+// CONSOLE HUD - MP
+
+#include "ui/menudef.h"
+#include "ui_mp/hud_gametypes.inc"
+
+{
+	// Bottom bar
+	menuDef
+	{
+		name			"teamiconbar"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible 		1
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_UI_ACTIVE SHOULD_DISPLAY_SCOREBAR )
+
+		// grey background
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 -45 210 64 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect Y( -45 + (TEAM_IS_LOSING*20) );
+			exp				rect H( 64 - (TEAM_IS_LOSING2*128) );
+			forecolor		1 1 1 HUD_ALPHA
+			background		"scorebar_backdrop"
+			visible			1
+			decoration
+		}
+
+		// allies icon
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			0 -55 56 56 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			origin			5 -5
+			exp				material( dvarString( "g_TeamIcon_Axis" ) );
+			visible			when ( team( name ) == "TEAM_AXIS" );
+			forecolor		1 1 1 1
+			decoration
+		}
+
+		// axis icon
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			0 -55 56 56 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			origin			5 -5
+			exp				material( dvarString( "g_TeamIcon_Allies" ) );
+			visible			when ( team( name ) == "TEAM_ALLIES" ); 
+			forecolor		1 1 1 1
+			decoration
+		}
+
+		// momentum progress
+		// version 1
+//		itemDef
+//		{
+//			type			ITEM_TYPE_OWNERDRAW
+//			rect			65 -43 90 40 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+//			forecolor		1 1 1 1
+//			background		"hud_momentum"
+//			ownerdraw		CG_HUD_WAR_MOMENTUM_PROGRESS
+//			visible			1
+//			decoration
+//		}
+		// version 2
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			65 -43 90 40 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		1 1 1 1
+			background		"hud_momentum_progress_bar_empty"
+			ownerdraw		CG_HUD_WAR_MOMENTUM_PROGRESS_BAR_EMPTY
+			visible			1
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			65 -43 90 40 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		1 1 1 1
+			background		"hud_momentum_progress_bar_full"
+			ownerdraw		CG_HUD_WAR_MOMENTUM_PROGRESS_BAR_FULL
+			visible			1
+			decoration
+		}
+//		itemDef
+//		{
+//			type			ITEM_TYPE_OWNERDRAW
+//			rect			65 -43 90 40 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+//			forecolor		1 1 1 1
+//			background		"hud_momentum_progress_bar_outline"
+//			ownerdraw		CG_HUD_WAR_MOMENTUM_PROGRESS_BAR_OUTLINE
+//			visible			1
+//			decoration
+//		}
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			65 -43 90 40 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		1 1 1 1
+			background		"hud_blitzkrieg_progress_bar_full"
+			ownerdraw		CG_HUD_WAR_BLITZKRIEG_PROGRESS_BAR_FULL
+			visible			1
+			decoration
+		}
+
+		// momentum multiplier
+//		itemDef
+//		{
+//			type			ITEM_TYPE_OWNERDRAW
+//			rect			65 -43 90 40 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+//			forecolor		1 1 1 1
+//			background		"hud_momentum_bonus"
+//			ownerdraw		CG_HUD_WAR_MOMENTUM_MULTIPLIER_DETAIL
+//			visible			1
+//			decoration
+//		}
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			65 -43 90 40 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		1 1 1 1
+			background		"hud_momentum_progress_bar_outline"
+			ownerdraw		CG_HUD_WAR_MOMENTUM_PROGRESS_BAR_OUTLINE
+			visible			1
+			decoration
+		}
+
+		// momentum blitzkrieg icon
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			rect			150 -55 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		1 1 1 1
+			background		"hud_momentum_blitzkrieg"
+			ownerdraw		CG_HUD_WAR_MOMENTUM_MULTIPLIER_BLITZKRIEG
+			visible			1
+			decoration
+		}
+	}
+
+	// War flag-status bar
+	menuDef
+	{
+		name			"war_statusbar"
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible 		when ( dvarstring( "war_sb" ) != "" );
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_SPECTATING_CLIENT !BIT_SCOREBOARD_OPEN )
+		
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			(-BARWIDTH/2) 3 BARWIDTH 18 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP
+			background		"line_horizontal"
+			forecolor		0 0 0 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name			war_text
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			dvar			"war_sb"
+			rect			-500 0 1000 1 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP
+			origin			0 20
+			textfont		UI_FONT_NORMAL
+			textscale		0.35
+			textalign		ITEM_ALIGN_CENTER
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor		0.3 1 0.3 1
+			ownerdraw		CG_WAR_TEXT
+			visible			1
+			decoration 
+		}
+	}
+}

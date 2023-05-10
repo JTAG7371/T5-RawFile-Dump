@@ -1,0 +1,63 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_X_START			0
+#define CHOICE_Y_START			34
+
+#define CHOICE_SEP_1			1
+#define CHOICE_SEP_2			5
+#define CHOICE_SEP_3			8
+
+#define CHOICE_Y_COUNT			3
+#define CHOICE_GROUP			"joinserver"
+
+#define STYLE_PC	1
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+// some names are too long
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X 264
+
+
+
+{
+	menuDef
+	{
+		name			pc_join_unranked
+		fullscreen		0
+		rect			0 0 640 480
+		focuscolor		COLOR_FOCUSED
+		style			1
+		onOpen	{
+			uiScript UpdateFilter ;
+			/*hide accept_alt ;
+			show accept ;
+			hide back_alt ;
+			show back ;
+			hide grpmessage
+			setdvar ui_logo_show "0";
+			setdvar ui_version_show "0";
+			setdvar ui_separator_show "0";
+			setdvar ui_background_gradient_show "0";
+			setlocalVarInt ui_hideBack 0;*/
+		}
+		onEsc	{
+			uiScript closeJoin
+			close self;
+			open main_text;
+		}
+		#include "ui/blurredbg.inc"
+
+		#undef		BACK_ENABLE
+		#define BACK_ENABLE 0
+		#include "ui_mp/navcontrols.inc"
+		
+		CHOICE_MENU_TITLE( "@MENU_JOIN_SERVER_CAPS" )
+		#undef RANKED_SERVER	
+		
+		#undef BACK_OPEN
+		#define BACK_OPEN open main_text;
+		#include "ui_mp/joinserver.inc";
+	}
+}

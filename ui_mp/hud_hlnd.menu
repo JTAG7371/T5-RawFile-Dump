@@ -1,0 +1,34 @@
+// CONSOLE HUD - MP
+
+#include "ui/menudef.h"
+#include "ui_mp/hud_gametypes.inc"
+#include "ui_mp/hud_wager_summary.inc"
+
+{
+	// game messages
+	menuDef
+	{
+		name			"hlnd_gamemessages"
+		rect			6 -120 10 10 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+		fullScreen		0
+		visible			1
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_DEMO_ALL_GAME_HUD_HIDDEN )
+		
+		itemDef
+		{
+			rect				0 0 0 0
+			exp					rect Y( 0 - (ONLINEGAME * ONLINEGAME_OFFSET) );
+			type				ITEM_TYPE_GAME_MESSAGE_WINDOW
+			gamemsgwindowindex	0
+			gamemsgwindowmode	MODE_BOTTOMUP_ALIGN_BOTTOM
+			textfont			UI_FONT_DEFAULT
+			textstyle			ITEM_TEXTSTYLE_SHADOWED
+			textalign			ITEM_ALIGN_LEFT
+			textscale			TEXTSIZE_SMALL
+			visible				1
+			visibilityBits		bits( !BIT_UI_ACTIVE BIT_HUD_OBITUARIES )
+		}
+	}
+	
+	HUD_WAGER_FFA( "hlnd_hud", exp text( player( score ) ), exp text( "" ) )
+}

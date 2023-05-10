@@ -1,0 +1,832 @@
+// CONSOLE HUD POPUPS - MP
+
+#include "ui/menudef.h"
+#include "ui/framestyle.inc"
+
+// BETA DROCHE SPLITSCREEN 
+#define POPUP_VISIBILITY_CLIENT_0 ( IsVisibilityBitSet( BIT_POPUPS_VISIBLE ) && getlocalclientnum() == 0 )
+#define POPUP_VISIBILITY_CLIENT_1 ( IsVisibilityBitSet( BIT_POPUPS_VISIBLE ) && getlocalclientnum() == 1 )
+
+
+#define COLOR_LIGHT_GREY	0.65 0.65 0.65
+#define COLOR_DARK_GREY		0.2 0.2 0.2
+#define COLOR_GREY			0.5 0.5 0.5
+#define COLOR_WHITE			1 1 1
+#define COLOR_BLACK			0.05 0.05 0.05
+#define COLOR_BLUE_BLACK	0.05 0.05 0.1
+#define COLOR_RED			NEW_FRAME_RED_RGB
+#define COLOR_GREEN			NEW_FRAME_GREEN_RGB
+#define COLOR_BLUE			0 0 0.5
+#define COLOR_YELLOW		NEW_FRAME_YELLOW_RGB
+#define COLOR_LIGHT_GREEN	NEW_FRAME_GREEN_RGB
+#define COLOR_LIGHT_RED		NEW_FRAME_RED_RGB
+#define COLOR_DARK_GREEN	0.3 0.5 0.3
+#define COLOR_DARK_RED		NEW_FRAME_RED_RGB
+#define COLOR_CP_GREEN		NEW_FRAME_GREEN_RGB
+
+#define COLOR_CONTRCT_RED		0.25 0.19 0.19
+#define COLOR_CONTRCT_GREEN		0.3 0.4 0.3 
+#define COLOR_CHALLENGE_BLUE	0.65 0.65 0.65
+
+#define EMBLEM_SIZE							36
+#define PLAYER_CARD_BACKGROUND_ALPHA		1
+#define PLAYER_CARD_HEIGHT					40
+#define PLAYER_CARD_WIDTH					200
+#define PLAYERCARD_CARD_LEFT_X 				-100
+#define PLAYERCARD_CARD_EMBLEM_X 			-98
+#define PLAYERCARD_TEXT_LEFT_X 				-56
+#define PLAYERCARD_BOTTOM_TEXT_LEFT_X		( PLAYERCARD_TEXT_LEFT_X + 45 )
+#define PLAYERCARD_RANK_LEFT_X 				( PLAYERCARD_BOTTOM_TEXT_LEFT_X + 13 )
+#define PLAYERCARD_CARD_BOTTOM_Y 			20
+#define PLAYERCARD_CARD_EMBLEM_Y 			22
+#define PLAYERCARD_CARD_ROW_1_Y 			38
+#define PLAYERCARD_CARD_ROW_2_Y 			( PLAYERCARD_CARD_ROW_1_Y + 4 )
+#define PLAYERCARD_CARD_ROW_TEXT_Y 			( PLAYERCARD_CARD_ROW_1_Y + 18 )
+#define PLAYER_CARD_SHADOW_COLOR			0.05 0.05 0.05
+#define PLAYER_CARD_SHADOW_ALPHA			0.5
+#define PLAYER_CARD_SHADOW_HEIGHT			55
+#define PLAYER_CARD_SHADOW_WIDTH			215
+#define PLAYERCARD_CARD_SHADOW_LEFT_X 		-107.5
+#define PLAYERCARD_CARD_SHADOW_BOTTOM_Y 	12.5
+#define PLAYERCARD_PLATE_SHADOW				"menu_mp_lobby_gamercard_shadow"
+
+#define RANKUP_MATERIAL_START_TIME 200
+#define RANKUP_MATERIAL_DISPLAY_TIME 2000
+#define RANKUP_MATERIAL_PAUSE_TIME 100
+#define RANKUP_MATERIAL_HIDE_TIME 200
+#define RANKUP_TEXT_START_TIME 200
+#define RANKUP_TEXT_DISPLAY_TIME 2000
+#define RANKUP_TEXT_PAUSE_TIME 100
+#define RANKUP_TEXT_HIDE_TIME 200
+#define COLOR_RANK_BACKING	1 1 1
+#define RANK_BACKING_ALPHA	0.4
+
+#define CHALLENGE_START_TIME 200
+#define CHALLENGE_POP_TIME 100
+#define CHALLENGE_DISPLAY_TIME 2000
+#define CHALLENGE_MATERIAL_PAUSE_TIME 150
+#define CHALLENGE_PAUSE_TIME 150
+#define CHALLENGE_HIDE_TIME 200
+#define CHALLENGE_MATERIAL_HIDE_TIME 200
+#define CHALLENGE_FRONT_ALPHA 0.7
+#define CHALLENGE_BACKING_ALPHA 0.4
+
+#define PERK_CHALLENGE_FRONT_ALPHA 0.6
+#define PERK_CHALLENGE_BACKING_ALPHA 0.4
+
+
+#define KILLSTREAK_START_TIME 200
+#define KILLSTREAK_DISPLAY_TIME 2000
+#define KILLSTREAK_PAUSE_TIME 100
+#define KILLSTREAK_HIDE_TIME 0
+#define KILLSTREAK_BLOOD_ALPHA 0.5
+
+#define CONTRACT_START_TIME 200
+#define CONTRACT_POP_TIME 100
+#define CONTRACT_DISPLAY_TIME 2000
+#define CONTRACT_PAUSE_TIME 10
+#define CONTRACT_HIDE_TIME 200
+#define CONTRACT_BACKING_ALPHA 1
+
+#define CONTRACT_MATERIAL_WAIT_TIME 1500
+#define CONTRACT_MATERIAL_START_TIME 100
+#define CONTRACT_MATERIAL_DISPLAY_TIME 700
+#define CONTRACT_MATERIAL_PAUSE_TIME 200
+#define CONTRACT_MATERIAL_HIDE_TIME 10
+
+#define MEDAL_START_TIME 200
+#define MEDAL_DISPLAY_TIME 2000
+#define MEDAL_PAUSE_TIME 100
+#define MEDAL_HIDE_TIME 200
+#define MEDAL_BLOOD_ALPHA 0.3
+
+#define WAGER_START_TIME 200
+#define WAGER_DISPLAY_TIME 2000
+#define WAGER_PAUSE_TIME 100
+#define WAGER_HIDE_TIME 200
+
+#define ITEMDEF_COLOR_POPUP_HIDE_SCOPE( xPos, yPos, widthArg, heightArg, nameArg, colorArg, nextNameArg, timeArg, alphaArg, hideScope )\
+    state \
+    { \
+    		name			nameArg \
+			forecolor     	colorArg alphaArg \
+			rect			xPos yPos widthArg heightArg  \
+    		onEnter \
+    		{   \
+    			setdvar cg_drawHoldBreathHint hideScope; \
+    			changeState nextNameArg timeArg; \
+			} \
+	} 
+	
+#define ITEMDEF_POPUP_TEXT_HIDE_SCOPE( xPos, yPos, widthArg, heightArg, textScaleArg, nameArg, nextNameArg, timeArg, alphaArg, hideScope )\
+    state \
+    { \
+    		name			nameArg \
+			forecolor     	1 1 1 alphaArg \
+			rect			xPos yPos widthArg heightArg  \
+			textScale 		textScaleArg \
+    		onEnter \
+    		{   \
+    			setdvar cg_drawHoldBreathHint hideScope; \    		
+    			changeState nextNameArg timeArg; \
+			} \
+	} 
+
+
+#define ITEMDEF_POPUP( xPos, yPos, widthArg, heightArg, nameArg, nextNameArg, timeArg, alphaArg )\
+    state \
+    { \
+    		name			nameArg \
+			forecolor     	1 1 1 alphaArg \
+			rect			xPos yPos widthArg heightArg  \
+    		onEnter \
+    		{   \
+    			changeState nextNameArg timeArg; \
+			} \
+	} 
+
+#define ITEMDEF_POPUP_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, nameArg, nextNameArg, timeArg, alphaArg )\
+    state \
+    { \
+    		name			nameArg \
+			forecolor     	1 1 1 alphaArg \
+			rect			xPos yPos widthArg heightArg  \
+			textScale 		textScaleArg \
+    		onEnter \
+    		{   \
+    			changeState nextNameArg timeArg; \
+			} \
+	} 
+	
+#define ITEMDEF_POPUP_COLOR_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, nameArg, colorArg, nextNameArg, timeArg, alphaArg )\
+    state \
+    { \
+    		name			nameArg \
+			forecolor     	colorArg alphaArg \
+			rect			xPos yPos widthArg heightArg  \
+			textScale 		textScaleArg \
+    		onEnter \
+    		{   \
+    			changeState nextNameArg timeArg; \
+			} \
+	} 
+#define ITEMDEF_COLOR_POPUP( xPos, yPos, widthArg, heightArg, nameArg, nextNameArg, timeArg, colorArg, alphaArg )\
+    state \
+    { \
+    		name			nameArg \
+			forecolor     	colorArg alphaArg \
+			rect			xPos yPos widthArg heightArg  \
+    		onEnter \
+    		{   \
+    			changeState nextNameArg timeArg; \
+			} \
+	} 
+
+#define BASE_COLOR_TEXT_POPUP( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, colorArg, startTime, DisplayTime, PauseTime, HideTime, textArg, startAlpha, ownerdrawArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+        name          	nameArg \
+        type			ITEM_TYPE_OWNERDRAW_TEXT \
+		rect			xPosStart yPosStart widthArg heightArg horzAlign vertAlign \
+		background		"white" \
+        forecolor     	colorArg 0 \
+        exp text      	textArg; \
+        textalign		ITEM_ALIGN_CENTER \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textScale		textScaleStartArg \
+		textFont		textFontArg \
+        visible       	when ( visArg ) \
+		ownerdraw		ownerdrawArg \
+        decoration \
+		 \
+		ITEMDEF_POPUP_COLOR_TEXT( xPosStart, yPosStart, widthArg, heightArg, textScaleStartArg, "Start", colorArg, "Display", startTime, startAlpha ) \
+		ITEMDEF_POPUP_COLOR_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, "Display", colorArg, "Pause", DisplayTime, 1 ) \
+		ITEMDEF_POPUP_COLOR_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, "Pause", colorArg, "Hide", PauseTime, 1 ) \
+		ITEMDEF_POPUP_COLOR_TEXT( xPosEnd, yPosEnd, widthArg, heightArg, textScaleEndArg, "Hide", colorArg, "", HideTime, 0 ) \
+  }   
+  
+#define BASE_POP_TEXT_POPUP( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, popAmount,horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, startTime, DisplayTime, PopTime, PauseTime, HideTime, textArg, startAlpha, ownerdrawArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+        name          	nameArg \
+        type			ITEM_TYPE_OWNERDRAW_TEXT \
+		rect			xPosStart yPosStart widthArg heightArg horzAlign vertAlign \
+		background		"white" \
+        forecolor     	1 1 1 0 \
+        exp text      	textArg; \
+        textalign		ITEM_ALIGN_CENTER \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textScale		textScaleStartArg \
+		textFont		textFontArg \
+        visible       	when ( visArg ) \
+		ownerdraw		ownerdrawArg \
+        decoration \
+		 \
+		ITEMDEF_POPUP_TEXT( xPosStart, yPosStart, widthArg, heightArg, textScaleStartArg, "Start", "Pop", startTime, startAlpha ) \
+		ITEMDEF_POPUP_TEXT( xPos, yPos, widthArg, heightArg, (textScaleArg+popAmount), "Pop", "Display", PopTime, 1 ) \
+		ITEMDEF_POPUP_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, "Display", "Pause", DisplayTime, 1 ) \
+		ITEMDEF_POPUP_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, "Pause", "Hide", PauseTime, 1 ) \
+		ITEMDEF_POPUP_TEXT( xPosEnd, yPosEnd, widthArg, heightArg, textScaleEndArg, "Hide", "", HideTime, 0 ) \
+  }   
+
+#define BASE_POP_TEXT_POPUP_BOTTOM( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, colorStartArg, colorEndArg, popAmount,horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, startTime, PopTime, DisplayTime, HideTime, textArg, startAlpha, ownerdrawArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+        name          	nameArg \
+        type			ITEM_TYPE_OWNERDRAW_TEXT \
+		rect			xPosStart yPosStart widthArg heightArg horzAlign vertAlign \
+		background		"white" \
+        forecolor     	colorStartArg 0 \
+        exp text      	textArg; \
+        textalign		ITEM_ALIGN_CENTER \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textScale		textScaleStartArg \
+		textFont		textFontArg \
+        visible       	when ( visArg ) \
+		ownerdraw		ownerdrawArg \
+        decoration \
+		 \
+		ITEMDEF_POPUP_COLOR_TEXT( xPosStart, yPosStart, widthArg, heightArg, textScaleStartArg, "Start", colorStartArg, "Pop", startTime, startAlpha ) \
+		ITEMDEF_POPUP_COLOR_TEXT( xPos, yPos, widthArg, heightArg, (textScaleArg+popAmount), "Pop", colorStartArg, "Display", PopTime, 1 ) \
+		ITEMDEF_POPUP_COLOR_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, "Display", colorStartArg, "DisplayEnd", DisplayTime, 1 ) \
+		ITEMDEF_POPUP_COLOR_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, "DisplayEnd", colorEndArg, "Hide", HideTime, 1 ) \
+		ITEMDEF_POPUP_COLOR_TEXT( xPosEnd, yPosEnd, widthArg, heightArg, textScaleEndArg, "Hide", colorEndArg, "", 0, 0 ) \
+  }   
+
+#define BASE_TEXT_POPUP( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, startTime, DisplayTime, PauseTime, HideTime, textArg, startAlpha, ownerdrawArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+        name          	nameArg \
+        type			ITEM_TYPE_OWNERDRAW_TEXT \
+		rect			xPosStart yPosStart widthArg heightArg horzAlign vertAlign \
+		background		"white" \
+        forecolor     	1 1 1 0 \
+        exp text      	textArg; \
+        textalign		ITEM_ALIGN_CENTER \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textScale		textScaleStartArg \
+		textFont		textFontArg \
+        visible       	when ( visArg ) \
+		ownerdraw		ownerdrawArg \
+        decoration \
+		 \
+		ITEMDEF_POPUP_TEXT( xPosStart, yPosStart, widthArg, heightArg, textScaleStartArg, "Start", "Display", startTime, startAlpha ) \
+		ITEMDEF_POPUP_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, "Display", "Pause", DisplayTime, 1 ) \
+		ITEMDEF_POPUP_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, "Pause", "Hide", PauseTime, 1 ) \
+		ITEMDEF_POPUP_TEXT( xPosEnd, yPosEnd, widthArg, heightArg, textScaleEndArg, "Hide", "", HideTime, 0 ) \
+  }   
+
+#define BASE_TEXT_POPUP_NO_ALIGN( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, textScaleArg, textFontArg, nameArg, startTime, DisplayTime, PauseTime, HideTime, textArg, ownerdrawArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+        name          	nameArg \
+        type			ITEM_TYPE_OWNERDRAW_TEXT \
+		rect			xPosStart yPosStart widthArg heightArg \
+		background		"white" \
+        forecolor     	1 1 1 0 \
+        exp text      	textArg; \
+        textalign		ITEM_ALIGN_CENTER \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textScale		textScaleArg \
+		textFont		textFontArg \
+        visible       	when ( visArg ) \
+		ownerdraw		ownerdrawArg \
+        decoration \
+		 \
+		ITEMDEF_POPUP( xPosStart, yPosStart, widthArg, heightArg, "Start", "Display", startTime, 1 ) \
+		ITEMDEF_POPUP( xPos, yPos, widthArg, heightArg, "Display", "Pause", DisplayTime, 1 ) \
+		ITEMDEF_POPUP( xPos, yPos, widthArg, heightArg, "Pause", "Hide", PauseTime, 1 ) \
+		ITEMDEF_POPUP( xPosEnd, yPosEnd, widthArg, heightArg, "Hide", "", HideTime, 0 ) \
+  }     
+
+#define BASE_TEXT_POPUP_TEXT_ALIGN( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, textAlignArg, textScaleArg, textFontArg, nameArg, startTime, DisplayTime, PauseTime, HideTime, textArg, ownerdrawArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+        name          	nameArg \
+        type			ITEM_TYPE_OWNERDRAW_TEXT \
+		rect			xPosStart yPosStart widthArg heightArg \
+		background		"white" \
+        forecolor     	1 1 1 0 \
+        exp text      	textArg; \
+        textalign		textAlignArg \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textScale		textScaleArg \
+		textFont		textFontArg \
+        visible       	when ( visArg ) \
+		ownerdraw		ownerdrawArg \
+        decoration \
+		 \
+		ITEMDEF_POPUP( xPosStart, yPosStart, widthArg, heightArg, "Start", "Display", startTime, 1 ) \
+		ITEMDEF_POPUP( xPos, yPos, widthArg, heightArg, "Display", "Pause", DisplayTime, 1 ) \
+		ITEMDEF_POPUP( xPos, yPos, widthArg, heightArg, "Pause", "Hide", PauseTime, 1 ) \
+		ITEMDEF_POPUP( xPosEnd, yPosEnd, widthArg, heightArg, "Hide", "", HideTime, 0 ) \
+  }    
+
+#define BASE_SIMPLE_TEXT_POPUP( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textFontArg, nameArg, startTime, DisplayTime, PauseTime, HideTime, textArg, ownerdrawArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+        name          	nameArg \
+        type			ITEM_TYPE_OWNERDRAW_TEXT \
+		rect			xPosStart yPosStart widthArg heightArg horzAlign vertAlign \
+		background		"white" \
+        forecolor     	1 1 1 0 \
+        text      		textArg \
+        textalign		ITEM_ALIGN_CENTER \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textScale		textScaleArg \
+		textFont		textFontArg \
+        visible       	when ( visArg ) \
+        decoration \
+		 \
+		ITEMDEF_POPUP( xPosStart, yPosStart, widthArg, heightArg, "Start", "Display", startTime, 1 ) \
+		ITEMDEF_POPUP( xPos, yPos, widthArg, heightArg, "Display", "Pause", DisplayTime, 1 ) \
+		ITEMDEF_POPUP( xPos, yPos, widthArg, heightArg, "Pause", "Hide", PauseTime, 1 ) \
+		ITEMDEF_POPUP( xPosEnd, yPosEnd, widthArg, heightArg, "Hide", "", HideTime, 0 ) \
+  }     
+
+#define BASE_MATERIAL_POPUP( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, nameArg, startTime, DisplayTime, PauseTime, HideTime, materialArg, colorArg, alphaArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+		name          	nameArg \
+		style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_IMAGE \
+		rect			xPosStart yPosStart widthArg heightArg  \
+		origin			(widthArg/2) (-heightArg/2) \
+		exp				material( materialArg ); \
+	    visible       	when( visArg ); \
+		forecolor		colorArg 0 \
+		decoration \
+		\
+		ITEMDEF_COLOR_POPUP( xPosStart, yPosStart, widthArg, heightArg, "Start", "Display", startTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP( xPos, yPos, widthArg, heightArg, "Display", "Pause", DisplayTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP( xPos, yPos, widthArg, heightArg, "Pause", "Hide", PauseTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP( xPosEnd, yPosEnd, widthArg, heightArg, "Hide", "", HideTime, colorArg, 0 ) \
+	} 
+	
+#define BASE_POP_MATERIAL_POPUP( xPos, yPos, popWidth, popHeight, widthArg, heightArg, nameArg, startTime, PopTime, DisplayTime, PauseTime, HideTime, materialArg, colorArg, alphaArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+		name          	nameArg \
+		style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_IMAGE \
+		rect			xPos yPos 0 0  \
+		origin			0 0 \
+		exp				material( materialArg ); \
+		visible       	when( visArg ); \
+		forecolor		colorArg 0 \
+		decoration \
+		\
+		ITEMDEF_COLOR_POPUP( (xPos+(widthArg/2)), (yPos+(heightArg/2)), 0, 0, "Start", "Pop", startTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP((xPos-(popWidth/2)), (yPos-(popHeight/2)), (widthArg+popWidth), (heightArg+popHeight), "Pop", "Display", PopTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP( xPos, yPos, widthArg, heightArg, "Display", "Pause", DisplayTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP( xPos, yPos, widthArg, heightArg, "Pause", "Hide", PauseTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP( (xPos+(widthArg/2)), (yPos+(heightArg/2)), 0, 0, "Hide", "", hideTime, colorArg, 0 ) \
+	} 
+
+#define BASE_COLOR_MATERIAL_POPUP_HIDE_SCOPE( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, nameArg, colorArg, alphaArg, startTime, DisplayTime, PauseTime, HideTime, materialArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+		name          	nameArg \
+		style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_IMAGE \
+		rect			xPosStart yPosStart widthArg heightArg  \
+		origin			(widthArg/2) (-heightArg/2) \
+		exp				material( materialArg ); \
+	    visible       	when( visArg ); \
+		forecolor		colorArg 0 \
+		decoration \
+		\
+		ITEMDEF_COLOR_POPUP_HIDE_SCOPE( xPosStart, yPosStart, widthArg, heightArg, "Start", colorArg, "Display", startTime, alphaArg, "0" ) \
+		ITEMDEF_COLOR_POPUP( xPos, yPos, widthArg, heightArg, "Display", "Pause", DisplayTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP( xPos, yPos, widthArg, heightArg, "Pause", "Hide", PauseTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP_HIDE_SCOPE( xPosEnd, yPosEnd, widthArg, heightArg, "Hide", colorArg, "", HideTime, 0, "1" ) \
+	} 
+	
+#define BASE_TEXT_POPUP_HIDE_SCOPE( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, startTime, DisplayTime, PauseTime, HideTime, textArg, startAlpha, ownerdrawArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+        name          	nameArg \
+        type			ITEM_TYPE_OWNERDRAW_TEXT \
+		rect			xPosStart yPosStart widthArg heightArg horzAlign vertAlign \
+		background		"white" \
+        forecolor     	1 1 1 0 \
+        exp text      	textArg; \
+        textalign		ITEM_ALIGN_CENTER \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textScale		textScaleStartArg \
+		textFont		textFontArg \
+        visible       	when ( visArg ) \
+		ownerdraw		ownerdrawArg \
+        decoration \
+		 \
+		ITEMDEF_POPUP_TEXT_HIDE_SCOPE( xPosStart, yPosStart, widthArg, heightArg, textScaleStartArg, "Start", "Display", startTime, startAlpha, "0" ) \
+		ITEMDEF_POPUP_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, "Display", "Pause", DisplayTime, 1 ) \
+		ITEMDEF_POPUP_TEXT( xPos, yPos, widthArg, heightArg, textScaleArg, "Pause", "Hide", PauseTime, 1 ) \
+		ITEMDEF_POPUP_TEXT_HIDE_SCOPE( xPosEnd, yPosEnd, widthArg, heightArg, textScaleEndArg, "Hide", "", HideTime, 0, "1" ) \
+  }   
+
+#define BASE_EMBLEM_POPUP( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, nameArg, startTime, DisplayTime, PauseTime, HideTime, dataArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+		name          	nameArg \
+		type			ITEM_TYPE_OWNERDRAW \
+		ownerdraw       UI_PLAYER_EMBLEM_SERVER \
+		rect			xPosStart yPosStart widthArg heightArg  \
+		origin			(widthArg/2) (-heightArg/2) \
+		exp				ownerdata( dataArg ); \
+	    visible       	when( visArg ); \
+		forecolor		1 1 1 0 \
+		decoration \
+		\
+		ITEMDEF_POPUP( xPosStart, yPosStart, widthArg, heightArg, "Start", "Display", startTime, 1 ) \
+		ITEMDEF_POPUP( xPos, yPos, widthArg, heightArg, "Display", "Pause", DisplayTime, 1 ) \
+		ITEMDEF_POPUP( xPos, yPos, widthArg, heightArg, "Pause", "Hide", PauseTime, 1 ) \
+		ITEMDEF_POPUP( xPosEnd, yPosEnd, widthArg, heightArg, "Hide", "", HideTime, 0 ) \
+	} 
+
+#define OWNERDRAW_COLOR COLOR_GREY
+
+#define BASE_MATERIAL_OWNERDRAW_POPUP( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, widthArg, heightArg, nameArg, startTime, DisplayTime, PauseTime, HideTime, materialArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+		name          	nameArg \
+		type			ITEM_TYPE_OWNERDRAW \
+		rect			xPosStart yPosStart widthArg heightArg  \
+		origin			(widthArg/2) (-heightArg/2) \
+		ownerdraw		CG_PLAYER_SWING_RANK_IMAGE \
+		background 		"white" \
+	    visible       	when( visArg ); \
+		forecolor		OWNERDRAW_COLOR 0 \
+		decoration \
+		\
+		ITEMDEF_COLOR_POPUP( xPosStart, yPosStart, widthArg, heightArg, "Start", "Display", startTime, OWNERDRAW_COLOR, 1 ) \
+		ITEMDEF_COLOR_POPUP( xPos, yPos, widthArg, heightArg, "Display", "Pause", DisplayTime, OWNERDRAW_COLOR, 1 ) \
+		ITEMDEF_COLOR_POPUP( xPos, yPos, widthArg, heightArg, "Pause", "Hide", PauseTime, OWNERDRAW_COLOR, 1 ) \
+		ITEMDEF_COLOR_POPUP( xPosEnd, yPosEnd, widthArg, heightArg, "Hide", "", HideTime, OWNERDRAW_COLOR, 0 ) \
+	} 
+	
+#define BASE_COLOR_MATERIAL_POPUP( xPos, yPos, xPosStart, yPosStart, xPosEnd, yPosEnd, colorArg, alphaArg, widthArg, heightArg, nameArg, startTime, DisplayTime, PauseTime, HideTime, visArg, extraArg ) \
+	itemDef \
+	{ \
+	    name          	nameArg \
+        style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_IMAGE \
+		rect			xPosStart yPosStart widthArg heightArg  \
+		background		"white" \
+        forecolor     	0 0 0 0 \
+        visible			when( visArg ); \
+		decoration \
+		\
+		ITEMDEF_COLOR_POPUP( xPosStart, yPosStart, widthArg, heightArg, "Start", "Display", startTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP( xPos, yPos, widthArg, heightArg, "Display", "Pause", DisplayTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP( xPos, yPos, widthArg, heightArg, "Pause", "Hide", PauseTime, colorArg, alphaArg ) \
+		ITEMDEF_COLOR_POPUP( xPosEnd, yPosEnd, widthArg, heightArg, "Hide", "", HideTime, colorArg, 0 ) \
+	} 
+
+#define POPUP_TEXT_POPUP( xPos, yPos, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_TEXT_POPUP( xPos, yPos, xPos, (yPos - 128), xPos, (yPos - 128), widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textScaleArg, textScaleArg, textFontArg, nameArg, 200, 2000, 100, 200, textArg, 1, ownerdrawArg, visArg, extraArg ) 
+
+#define KILLSTREAK_X_START_OFFSET -500
+#define KILLSTREAK_Y_START_OFFSET 0
+#define KILLSTREAK_X_END_OFFSET 600
+#define KILLSTREAK_Y_END_OFFSET 0
+
+
+#define KILLSTREAK_TEXT_POPUP( xPos, yPos, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_TEXT_POPUP_HIDE_SCOPE( xPos, yPos, ( xPos + KILLSTREAK_X_START_OFFSET ), (yPos + KILLSTREAK_Y_START_OFFSET), ( xPos + KILLSTREAK_X_END_OFFSET ), (yPos + KILLSTREAK_Y_END_OFFSET), widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textScaleArg, textScaleArg, textFontArg, nameArg, KILLSTREAK_START_TIME , KILLSTREAK_DISPLAY_TIME , KILLSTREAK_PAUSE_TIME , KILLSTREAK_HIDE_TIME , textArg, 1, ownerdrawArg, visArg, extraArg ) 
+
+#define KILLSTREAK_COLOR_MATERIAL_POPUP( xPos, yPos, widthArg, heightArg, nameArg, materialArg, colorArg, alphaArg, visArg, extraArg ) \
+	BASE_COLOR_MATERIAL_POPUP_HIDE_SCOPE( xPos, yPos, ( xPos + KILLSTREAK_X_START_OFFSET ), (yPos + KILLSTREAK_Y_START_OFFSET), ( xPos + KILLSTREAK_X_END_OFFSET ), (yPos + KILLSTREAK_Y_END_OFFSET), widthArg, heightArg,  nameArg, colorArg, alphaArg, KILLSTREAK_START_TIME , KILLSTREAK_DISPLAY_TIME , KILLSTREAK_PAUSE_TIME , KILLSTREAK_HIDE_TIME , materialArg, visArg, extraArg ) 	
+
+#define RANKUP_X_START_OFFSET 0
+#define RANKUP_Y_START_OFFSET 0
+#define RANKUP_X_END_OFFSET 0
+#define RANKUP_Y_END_OFFSET -128
+
+#define RANK_TEXT_POPUP( xPos, yPos, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textFontArg, nameArg, colorArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_COLOR_TEXT_POPUP( xPos, yPos, ( xPos + RANKUP_X_START_OFFSET ), (yPos + RANKUP_Y_START_OFFSET), ( xPos + RANKUP_X_END_OFFSET ), (yPos + RANKUP_Y_END_OFFSET), widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textScaleArg, textScaleArg, textFontArg, nameArg, colorArg, RANKUP_TEXT_START_TIME , RANKUP_TEXT_DISPLAY_TIME , RANKUP_TEXT_PAUSE_TIME , RANKUP_TEXT_HIDE_TIME , textArg, 1, ownerdrawArg, visArg, extraArg ) 
+
+#define RANKUP_X_DANGLE_START_OFFSET 0
+#define RANKUP_Y_DANGLE_START_OFFSET 0
+#define RANKUP_X_DANGLE_END_OFFSET 0
+#define RANKUP_Y_DANGLE_END_OFFSET -128
+
+//#define RANK_TEXT_DANGLE_POPUP( xPos, yPos, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+//	BASE_TEXT_POPUP( xPos, yPos, ( xPos + RANKUP_X_DANGLE_START_OFFSET ), (yPos + RANKUP_Y_DANGLE_START_OFFSET), ( xPos + RANKUP_X_DANGLE_END_OFFSET ), (yPos + RANKUP_Y_DANGLE_END_OFFSET), widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textScaleArg, textScaleArg, textFontArg, nameArg, 800, 1400, 100, 200, textArg, 1, ownerdrawArg, visArg, extraArg ) 
+
+#define RANK_MATERIAL_DANGLE_POPUP( xPos, yPos, widthArg, heightArg, nameArg, materialArg, visArg, extraArg ) \
+	BASE_MATERIAL_OWNERDRAW_POPUP( xPos, yPos, ( xPos + RANKUP_X_DANGLE_START_OFFSET ), (yPos + RANKUP_Y_DANGLE_START_OFFSET), ( xPos + RANKUP_X_DANGLE_END_OFFSET ), (yPos + RANKUP_Y_DANGLE_END_OFFSET), widthArg, heightArg,  nameArg, RANKUP_MATERIAL_START_TIME , RANKUP_MATERIAL_DISPLAY_TIME , RANKUP_MATERIAL_PAUSE_TIME  , RANKUP_MATERIAL_HIDE_TIME , materialArg, visArg, extraArg ) 	
+
+#define RANK_MATERIAL_POPUP( xPos, yPos, widthArg, heightArg, nameArg, materialArg, colorArg, alphaArg, visArg, extraArg ) \
+	BASE_MATERIAL_POPUP( xPos, yPos, ( xPos + RANKUP_X_DANGLE_START_OFFSET ), (yPos + RANKUP_Y_DANGLE_START_OFFSET), ( xPos + RANKUP_X_DANGLE_END_OFFSET ), (yPos + RANKUP_Y_DANGLE_END_OFFSET), widthArg, heightArg,  nameArg, MEDAL_START_TIME , MEDAL_DISPLAY_TIME , MEDAL_PAUSE_TIME , MEDAL_HIDE_TIME , materialArg, colorArg, alphaArg, visArg, extraArg ) 	
+	
+#define MEDAL_TEXT_POPUP( xPos, yPos, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_TEXT_POPUP( xPos, yPos, xPos, yPos, xPos, yPos, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, MEDAL_START_TIME , MEDAL_DISPLAY_TIME , MEDAL_PAUSE_TIME , MEDAL_HIDE_TIME , textArg, 0, ownerdrawArg, visArg, extraArg ) 	
+	
+#define MEDAL_MATERIAL_POPUP( xPos, yPos, widthArg, heightArg, nameArg, materialArg, colorArg, alphaArg, visArg, extraArg ) \
+	BASE_MATERIAL_POPUP( xPos, yPos, xPos, yPos, xPos, yPos, widthArg, heightArg,  nameArg, MEDAL_START_TIME , MEDAL_DISPLAY_TIME , MEDAL_PAUSE_TIME , MEDAL_HIDE_TIME , materialArg, colorArg, alphaArg, visArg, extraArg ) 	
+
+#define WAGER_TEXT_POPUP( xPos, yPos, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_TEXT_POPUP( xPos, yPos, xPos, yPos, xPos, yPos, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, WAGER_START_TIME , WAGER_DISPLAY_TIME , WAGER_PAUSE_TIME , WAGER_HIDE_TIME , textArg, 0, ownerdrawArg, visArg, extraArg )
+	
+#define WAGER_MATERIAL_POPUP( xPos, yPos, widthArg, heightArg, nameArg, materialArg, colorArg, alphaArg, visArg, extraArg ) \
+	BASE_MATERIAL_POPUP( xPos, yPos, xPos, yPos, xPos, yPos, widthArg, heightArg,  nameArg, WAGER_START_TIME , WAGER_DISPLAY_TIME , WAGER_PAUSE_TIME , WAGER_HIDE_TIME , materialArg, colorArg, alphaArg, visArg, extraArg ) 	
+
+#define CHALLENGE_TEXT_POPUP( xPos, yPos, widthArg, heightArg, horzAlign, vertAlign, textScaleArg, popAmount, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_POP_TEXT_POPUP( xPos, yPos, xPos, yPos, xPos, yPos, widthArg, heightArg, popAmount, horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, CONTRACT_START_TIME, CHALLENGE_DISPLAY_TIME, CHALLENGE_POP_TIME, CHALLENGE_PAUSE_TIME, CHALLENGE_HIDE_TIME, textArg, 0, ownerdrawArg, visArg, extraArg ) 	
+
+#define CHALLENGE_TEXT_POPUP_BOTTOM( xPos, yPos, widthArg, heightArg, horzAlign, vertAlign, colorStartArg, colorEndArg, textScaleArg, popAmount, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_POP_TEXT_POPUP_BOTTOM( xPos, yPos, xPos, yPos, xPos, yPos, widthArg, heightArg, colorStartArg, colorEndArg, popAmount, horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, CHALLENGE_START_TIME, CHALLENGE_POP_TIME, CHALLENGE_DISPLAY_TIME, CHALLENGE_HIDE_TIME, textArg, 0, ownerdrawArg, visArg, extraArg ) 	
+	
+#define CONTRACT_TEXT_POPUP_BOTTOM( xPos, yPos, widthArg, heightArg, textHeightIncrease, horzAlign, vertAlign, colorStartArg, colorEndArg, textScaleArg, popAmount, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_POP_TEXT_POPUP_BOTTOM( xPos, yPos, xPos, (yPos-textHeightIncrease), xPos,(yPos-textHeightIncrease), widthArg, heightArg, colorStartArg, colorEndArg, popAmount, horzAlign, vertAlign, textScaleArg, textScaleStartArg, textScaleEndArg, textFontArg, nameArg, CONTRACT_START_TIME, CONTRACT_POP_TIME, CONTRACT_DISPLAY_TIME, CONTRACT_HIDE_TIME, textArg, 0, ownerdrawArg, visArg, extraArg ) 	
+
+#define CHALLENGE_MATERIAL_POPUP( xPos, yPos, popWidth, popHeight, widthArg, heightArg, nameArg, materialArg, colorArg, alphaArg, visArg, extraArg ) \
+	BASE_POP_MATERIAL_POPUP( xPos, yPos, popWidth, popHeight, widthArg, heightArg, nameArg, CHALLENGE_START_TIME, CHALLENGE_POP_TIME, CHALLENGE_DISPLAY_TIME, CHALLENGE_MATERIAL_PAUSE_TIME, CHALLENGE_MATERIAL_HIDE_TIME, materialArg, colorArg, alphaArg, visArg, extraArg ) 	
+	
+#define CONTRACT_MATERIAL_POPUP( xPos, yPos, widthArg, heightArg, widthArgStart, heightArgStart, nameArg, materialArg, waitTime, startTime, DisplayTime, PauseTime, HideTime, visArg, extraArg ) \
+	itemDef \
+	{ \
+		name          	nameArg \
+		style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_IMAGE \
+		rect			xPos yPos widthArgStart heightArgStart HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP \
+		exp				material( materialArg ); \
+		rotation		345 \
+	    visible       	when( visArg ); \
+		forecolor		1 1 1 0 \
+		decoration \
+		\
+		ITEMDEF_POPUP( xPos, yPos, widthArgStart, heightArgStart, "Start", "Large", waitTime, 0 ) \
+		ITEMDEF_POPUP( xPos, yPos, widthArgStart, heightArgStart, "Large", "Display", startTime, 0) \
+		ITEMDEF_POPUP( (xPos + ( ( widthArgStart - widthArg ) / 2) ), (yPos  + ( ( heightArgStart - heightArg ) / 2 ) ), widthArg, heightArg, "Display", "Pause", DisplayTime, 1 ) \
+		ITEMDEF_POPUP( (xPos + ( ( widthArgStart - widthArg ) / 2) ), (yPos  + ( ( heightArgStart - heightArg ) / 2 ) ), widthArg, heightArg, "Pause", "Hide", PauseTime, 1 ) \
+		ITEMDEF_POPUP( (xPos + ( ( widthArgStart ) / 2) ), (yPos  + ( ( heightArgStart + heightArg ) / 2 ) ), 0, 0, "Hide", "", HideTime, 0 ) \
+	} 
+	
+
+#define TEXTSIZE_HUGE 3
+
+
+#define PLAYER_KILLED_TEXT_POPUP( xPos, yPos, widthArg, heightArg, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_TEXT_POPUP_NO_ALIGN( xPos, yPos, xPos, (yPos + 120),xPos, (yPos + 120), widthArg, heightArg, textScaleArg, textFontArg, nameArg, 200, 2000, 100, 200, textArg, ownerdrawArg, visArg, extraArg ) 
+
+#define PLAYER_KILLED_TEXT_ALIGN_POPUP( xPos, yPos, widthArg, heightArg, textAlignArg, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_TEXT_POPUP_TEXT_ALIGN( xPos, yPos, xPos, (yPos + 120),xPos, (yPos + 120), widthArg, heightArg, textAlignArg, textScaleArg, textFontArg, nameArg, 200, 2000, 100, 200, textArg, ownerdrawArg, visArg, extraArg ) 
+	
+#define PLAYER_KILLED_MATERIAL_POPUP( xPos, yPos, widthArg, heightArg, nameArg, materialArg, colorArg, alphaArg, visArg, extraArg ) \
+	BASE_MATERIAL_POPUP( xPos, yPos, xPos, (yPos + 120), xPos, (yPos + 120), widthArg, heightArg,  nameArg, 200, 2000, 100, 200, materialArg, colorArg, alphaArg, visArg, extraArg ) 	
+
+#define PLAYER_KILLED_EMBLEM_POPUP( xPos, yPos, widthArg, heightArg, nameArg, xuidArg, visArg, extraArg ) \
+	BASE_EMBLEM_POPUP( xPos, yPos, xPos, (yPos + 120), xPos, (yPos + 120), widthArg, heightArg,  nameArg, 200, 2000, 100, 200, xuidArg, visArg, extraArg ) 	
+
+#define PLAYER_CARD_POPUP_VISIBILITY_0 ( POPUP_VISIBILITY_CLIENT_0 && !inKillCam() && getlocalclientnum() == 0 )
+#define PLAYER_CARD_POPUP_VISIBILITY_1 ( POPUP_VISIBILITY_CLIENT_1 && !inKillCam() && getlocalclientnum() == 1 )
+#define PLAYER_CARD_OFFSET -86
+
+
+#define PLAYER_CARD_POPUP( nameArg, color, playerCardXuidVar, visArg ) \
+menuDef \
+{ \
+	name 			nameArg \
+	rect			0 0 640 480 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_BOTTOM \
+	fullScreen		0 \
+	visible			when( !isDemoPlaying() || IsVisibilityBitSet( BIT_DEMO_HUD_HIDDEN ) ) \
+	visibilityBits  bits( BIT_ENABLE_POPUPS ) \
+	\
+	PLAYER_KILLED_MATERIAL_POPUP( PLAYERCARD_CARD_LEFT_X, (PLAYERCARD_CARD_BOTTOM_Y+PLAYER_CARD_OFFSET), PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT, "playerCardPopUp", emblemPlayerBackgroundMaterial( dvarString( playerCardXuidVar ), 1 ), color, PLAYER_CARD_BACKGROUND_ALPHA, visArg, extraArg ) \
+	PLAYER_KILLED_MATERIAL_POPUP( PLAYERCARD_CARD_SHADOW_LEFT_X, (PLAYERCARD_CARD_SHADOW_BOTTOM_Y+PLAYER_CARD_OFFSET), PLAYER_CARD_SHADOW_WIDTH, PLAYER_CARD_SHADOW_HEIGHT, "playerCardPopUp", PLAYERCARD_PLATE_SHADOW, PLAYER_CARD_SHADOW_COLOR, PLAYER_CARD_SHADOW_ALPHA, visArg, extraArg ) \
+	PLAYER_KILLED_EMBLEM_POPUP( PLAYERCARD_CARD_EMBLEM_X, (PLAYERCARD_CARD_EMBLEM_Y+PLAYER_CARD_OFFSET), EMBLEM_SIZE, EMBLEM_SIZE, "playerCardPopUp", dvarString( playerCardXuidVar ), visArg, extraArg ) \
+  	PLAYER_KILLED_TEXT_ALIGN_POPUP( PLAYERCARD_TEXT_LEFT_X, (PLAYERCARD_CARD_ROW_1_Y+PLAYER_CARD_OFFSET), 128, 32, ITEM_ALIGN_LEFT, TEXTSIZE_SMALL, UI_FONT_DEFAULT, "playerCardPopUp", localVarString( "namePopUp" ), CG_PLAYER_POPUPS, visArg, extraArg ) \
+	PLAYER_KILLED_MATERIAL_POPUP( PLAYERCARD_RANK_LEFT_X, (PLAYERCARD_CARD_ROW_2_Y+PLAYER_CARD_OFFSET), 16, 16, "playerCardPopUp", localVarString( "rankIconPopUp" ), COLOR_WHITE, 1, visArg, extraArg ) \
+	PLAYER_KILLED_TEXT_ALIGN_POPUP( PLAYERCARD_TEXT_LEFT_X, (PLAYERCARD_CARD_ROW_TEXT_Y+PLAYER_CARD_OFFSET), 128, 32, ITEM_ALIGN_LEFT, TEXTSIZE_SMALL, UI_FONT_DEFAULT, "playerCardPopUp", localVarString( "clanTagPopUp" ), CG_PLAYER_POPUPS, visArg, extraArg ) \
+  	PLAYER_KILLED_TEXT_POPUP( PLAYERCARD_BOTTOM_TEXT_LEFT_X, (PLAYERCARD_CARD_ROW_TEXT_Y+PLAYER_CARD_OFFSET), 16, 16, TEXTSIZE_SMALL, UI_FONT_DEFAULT, "playerCardPopUp", localVarString( "rankPopUp" ), CG_PLAYER_POPUPS, visArg, extraArg ) \
+}
+
+
+#define GAME_MESSAGE_TEXT_POPUP( xPos, yPos, widthArg, heightArg, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_TEXT_POPUP_NO_ALIGN( xPos, yPos, (xPos + 500), yPos, (xPos + 500), yPos, widthArg, heightArg, textScaleArg, textFontArg, nameArg, 200, 2000, 100, 200, textArg, ownerdrawArg, visArg, extraArg ) 
+
+
+#define TEAM_MESSAGE_Y_OFFSET 5
+#define TEAM_MESSAGE_X_OFFSET -119
+
+#define TEAM_MESSAGE_TEXT_POPUP( xPos, yPos, widthArg, heightArg, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_TEXT_POPUP_NO_ALIGN( xPos, yPos, (xPos + 400), yPos, (xPos + 400), yPos, widthArg, heightArg, textScaleArg, textFontArg, nameArg, 200, 2000, 100, 200, textArg, ownerdrawArg, visArg, extraArg ) 
+	
+#define TEAM_MESSAGE_TEXT_ALIGN_POPUP( xPos, yPos, widthArg, heightArg, textAlignArg, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	BASE_TEXT_POPUP_TEXT_ALIGN( xPos, yPos, (xPos + 400), yPos, (xPos + 400), yPos, widthArg, heightArg, textAlignArg, textScaleArg, textFontArg, nameArg, 200, 2000, 100, 200, textArg, ownerdrawArg, visArg, extraArg ) 
+
+#define TEAM_MESSAGE_MATERIAL_POPUP( xPos, yPos, widthArg, heightArg, nameArg, materialArg, colorArg, alphaArg, visArg, extraArg ) \
+	BASE_MATERIAL_POPUP( xPos, yPos, (xPos + 400), yPos, (xPos + 400), yPos, widthArg, heightArg,  nameArg, 200, 2000, 100, 200, materialArg, colorArg, alphaArg, visArg, extraArg ) 	
+
+#define TEAM_MESSAGE_EMBLEM_POPUP( xPos, yPos, widthArg, heightArg, nameArg, xuidArg, visArg, extraArg ) \
+	BASE_EMBLEM_POPUP(  xPos, yPos, (xPos + 400), yPos, (xPos + 400), yPos, widthArg, heightArg,  nameArg, 200, 2000, 100, 200, xuidArg, visArg, extraArg ) 	
+
+#define TEAM_MESSAGE_SLIDE_OUT( nameArg, color, teamMessageVar, teamMessageXuidVar, teamMessageNameVar, teamMessageRankIconVar, teamMessageRankVar, visArg ) \	
+menuDef \
+{ \
+	name 			nameArg \
+	rect			0 0 640 480 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP \
+	fullScreen		0 \
+	visibilityBits	bits( BIT_ENABLE_POPUPS ) \
+	\
+	TEAM_MESSAGE_TEXT_ALIGN_POPUP( (PLAYERCARD_CARD_LEFT_X+TEAM_MESSAGE_X_OFFSET), (PLAYERCARD_CARD_BOTTOM_Y+60), 128, 64, ITEM_ALIGN_LEFT, TEXTSIZE_SMALL, UI_FONT_DEFAULT, "slideout", localVarString( teamMessageVar ), CG_PLAYER_POPUPS, visArg, extraArg ) \
+	\
+	TEAM_MESSAGE_MATERIAL_POPUP( (PLAYERCARD_CARD_LEFT_X+TEAM_MESSAGE_X_OFFSET), (PLAYERCARD_CARD_BOTTOM_Y+TEAM_MESSAGE_Y_OFFSET), PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT, "slideout", emblemPlayerBackgroundMaterial( dvarString( teamMessageXuidVar ), 1 ), color, PLAYER_CARD_BACKGROUND_ALPHA, visArg, extraArg ) \
+	TEAM_MESSAGE_MATERIAL_POPUP( (PLAYERCARD_CARD_SHADOW_LEFT_X+TEAM_MESSAGE_X_OFFSET), (PLAYERCARD_CARD_SHADOW_BOTTOM_Y+TEAM_MESSAGE_Y_OFFSET), PLAYER_CARD_SHADOW_WIDTH, PLAYER_CARD_SHADOW_HEIGHT, "slideout", PLAYERCARD_PLATE_SHADOW, PLAYER_CARD_SHADOW_COLOR, PLAYER_CARD_SHADOW_ALPHA, visArg, extraArg ) \
+ 	TEAM_MESSAGE_EMBLEM_POPUP( (PLAYERCARD_CARD_EMBLEM_X+TEAM_MESSAGE_X_OFFSET), (PLAYERCARD_CARD_EMBLEM_Y+TEAM_MESSAGE_Y_OFFSET), EMBLEM_SIZE, EMBLEM_SIZE, "slideout", dvarString( teamMessageXuidVar ), visArg, extraArg ) \
+	TEAM_MESSAGE_TEXT_ALIGN_POPUP( (PLAYERCARD_TEXT_LEFT_X+TEAM_MESSAGE_X_OFFSET), (PLAYERCARD_CARD_ROW_1_Y+TEAM_MESSAGE_Y_OFFSET), 128, 32, ITEM_ALIGN_LEFT, TEXTSIZE_SMALL, UI_FONT_DEFAULT,"slideout", localVarString( teamMessageNameVar ), CG_PLAYER_POPUPS, visArg, extraArg ) \
+   	TEAM_MESSAGE_MATERIAL_POPUP( (PLAYERCARD_RANK_LEFT_X+TEAM_MESSAGE_X_OFFSET), (PLAYERCARD_CARD_ROW_2_Y+TEAM_MESSAGE_Y_OFFSET), 16, 16, "slideout", localVarString( teamMessageRankIconVar ), COLOR_WHITE, 1, visArg, extraArg ) \
+   	TEAM_MESSAGE_TEXT_ALIGN_POPUP( (PLAYERCARD_TEXT_LEFT_X+TEAM_MESSAGE_X_OFFSET), (PLAYERCARD_CARD_ROW_TEXT_Y+TEAM_MESSAGE_Y_OFFSET), 128, 32, ITEM_ALIGN_LEFT, TEXTSIZE_SMALL, UI_FONT_DEFAULT, "slideout", localVarString( "teamClanTagPopUp" ), CG_PLAYER_POPUPS, visArg, extraArg ) \
+	TEAM_MESSAGE_TEXT_POPUP( (PLAYERCARD_BOTTOM_TEXT_LEFT_X+TEAM_MESSAGE_X_OFFSET), (PLAYERCARD_CARD_ROW_TEXT_Y+TEAM_MESSAGE_Y_OFFSET), 16, 16, TEXTSIZE_SMALL, UI_FONT_DEFAULT, "slideout", localVarString( teamMessageRankVar ), CG_PLAYER_POPUPS, visArg, extraArg ) \
+} 
+	
+
+#define KILLCAM_TEXT_POPUP_NO_ALIGN( xPos, yPos, widthArg, heightArg, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+        name          	nameArg \
+        type			ITEM_TYPE_OWNERDRAW_TEXT \
+		rect			xPos yPos widthArg heightArg \
+		background		"white" \
+        forecolor     	1 1 1 1 \
+        exp text      	textArg; \
+        textalign		ITEM_ALIGN_CENTER \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textScale		textScaleArg \
+		textFont		textFontArg \
+        visible       	when ( visArg ) \
+		ownerdraw		ownerdrawArg \
+        decoration \
+  }  
+  
+ #define KILLCAM_TEXT_POPUP_TEXT_ALIGN( xPos, yPos, widthArg, heightArg, textAlignArg, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+        name          	nameArg \
+        type			ITEM_TYPE_OWNERDRAW_TEXT \
+		rect			xPos yPos widthArg heightArg \
+		background		"white" \
+        forecolor     	1 1 1 1 \
+        exp text      	textArg; \
+        textalign		textAlignArg \
+		textstyle		ITEM_TEXTSTYLE_SHADOWED \
+		textScale		textScaleArg \
+		textFont		textFontArg \
+        visible       	when ( visArg ) \
+		ownerdraw		ownerdrawArg \
+        decoration \
+  }    
+  
+#define KILLCAM_COLOR_MATERIAL_POPUP( xPos, yPos, colorArg, alphaArg, widthArg, heightArg, nameArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+	    name          	nameArg \
+	    style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_IMAGE \
+		rect			xPos yPos widthArg heightArg  \
+		background		"white" \
+	    forecolor     	colorArg alphaArg \
+	    visible			when( visArg ); \
+		decoration \
+	} 
+	
+#define KILLCAM_MATERIAL_POPUP( xPos, yPos, widthArg, heightArg, nameArg, materialArg, colorArg, alphaArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+		name          	nameArg \
+		style			WINDOW_STYLE_SHADER \
+		type			ITEM_TYPE_IMAGE \
+		rect			xPos yPos widthArg heightArg  \
+		exp				material( materialArg ); \
+	    visible       	when( visArg ); \
+		forecolor		colorArg alphaArg \
+		decoration \
+	} 
+	
+#define KILLCAM_EMBLEM_POPUP( xPos, yPos, widthArg, heightArg, nameArg, dataArg, visArg, extraArg ) \
+	itemDef \
+	{ \
+		name          	nameArg \
+		type			ITEM_TYPE_OWNERDRAW \
+		ownerdraw       UI_PLAYER_EMBLEM_SERVER \
+		rect			xPos yPos widthArg heightArg  \
+		exp				ownerdata( dataArg ); \
+	    visible       	when( visArg ); \
+		forecolor		1 1 1 1 \
+		decoration \
+	} 
+
+  
+#define KILLCAM_PLAYER_TEXT_POPUP( xPos, yPos, widthArg, heightArg, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	KILLCAM_TEXT_POPUP_NO_ALIGN( xPos, yPos, widthArg, heightArg, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) 
+
+#define KILLCAM_PLAYER_TEXT_ALIGN_POPUP( xPos, yPos, widthArg, heightArg, textAlignArg, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) \
+	KILLCAM_TEXT_POPUP_TEXT_ALIGN( xPos, yPos, widthArg, heightArg, textAlignArg, textScaleArg, textFontArg, nameArg, textArg, ownerdrawArg, visArg, extraArg ) 
+	
+#define KILLCAM_PLAYER_COLOR_MATERIAL_POPUP( xPos, yPos, colorArg, alphaArg, widthArg, heightArg, nameArg, visArg, extraArg ) \
+	KILLCAM_COLOR_MATERIAL_POPUP( xPos, yPos, colorArg, alphaArg, widthArg, heightArg, nameArg,visArg, extraArg )
+
+#define KILLCAM_PLAYER_MATERIAL_POPUP( xPos, yPos, widthArg, heightArg, nameArg, materialArg, colorArg, alphaArg, visArg, extraArg ) \
+	KILLCAM_MATERIAL_POPUP( xPos, yPos, widthArg, heightArg,  nameArg, materialArg, colorArg, alphaArg, visArg, extraArg ) 	
+	
+#define KILLCAM_PLAYER_EMBLEM_POPUP( xPos, yPos, widthArg, heightArg, nameArg, xuidArg, visArg, extraArg ) \
+	KILLCAM_EMBLEM_POPUP( xPos, yPos, widthArg, heightArg,  nameArg, xuidArg, visArg, extraArg ) 	
+
+
+#define KILLCAM_VISIBILITY !BIT_UI_ACTIVE BIT_IN_KILLCAM 
+
+
+#define KILLCAM_CARD_POPUP( nameArg, color, visArg ) \
+menuDef \
+{ \
+	name 			nameArg \
+	rect			0 0 640 480 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_BOTTOM \
+	fullScreen		0 \
+	visible			1	\
+	visibilityBits	bits( KILLCAM_VISIBILITY ) \
+	\
+	KILLCAM_PLAYER_MATERIAL_POPUP( PLAYERCARD_CARD_LEFT_X, (PLAYERCARD_CARD_BOTTOM_Y+PLAYER_CARD_OFFSET), PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT, "playerCardPopUp", emblemPlayerBackgroundMaterial( player( xuid ), 1 ), color, PLAYER_CARD_BACKGROUND_ALPHA, visArg, extraArg ) \
+	KILLCAM_PLAYER_MATERIAL_POPUP( PLAYERCARD_CARD_SHADOW_LEFT_X, (PLAYERCARD_CARD_SHADOW_BOTTOM_Y+PLAYER_CARD_OFFSET), PLAYER_CARD_SHADOW_WIDTH, PLAYER_CARD_SHADOW_HEIGHT, "playerCardPopUp", PLAYERCARD_PLATE_SHADOW, PLAYER_CARD_SHADOW_COLOR, PLAYER_CARD_SHADOW_ALPHA, visArg, extraArg ) \
+	KILLCAM_PLAYER_EMBLEM_POPUP( PLAYERCARD_CARD_EMBLEM_X, (PLAYERCARD_CARD_EMBLEM_Y+PLAYER_CARD_OFFSET), EMBLEM_SIZE, EMBLEM_SIZE, "killcamPlayerPopUp", player( xuid ), visArg, extraArg ) \
+  	KILLCAM_PLAYER_TEXT_ALIGN_POPUP( PLAYERCARD_TEXT_LEFT_X, (PLAYERCARD_CARD_ROW_1_Y+PLAYER_CARD_OFFSET), 128, 32, ITEM_ALIGN_LEFT, TEXTSIZE_SMALL, UI_FONT_DEFAULT, "killcamPlayerPopUp", player( tag ), CG_PLAYER_POPUPS, visArg, extraArg ) \
+ 	KILLCAM_PLAYER_MATERIAL_POPUP( PLAYERCARD_RANK_LEFT_X, (PLAYERCARD_CARD_ROW_2_Y+PLAYER_CARD_OFFSET), 16, 16, "killcamPlayerPopUp", player( rankIcon ), COLOR_WHITE, 1, visArg, extraArg ) \
+ 	KILLCAM_PLAYER_TEXT_ALIGN_POPUP( PLAYERCARD_TEXT_LEFT_X, (PLAYERCARD_CARD_ROW_TEXT_Y+PLAYER_CARD_OFFSET), 128, 32, ITEM_ALIGN_LEFT, TEXTSIZE_SMALL, UI_FONT_DEFAULT, "killcamPlayerPopUp", player( clan ), CG_PLAYER_POPUPS, visArg, extraArg ) \
+  	KILLCAM_PLAYER_TEXT_POPUP( PLAYERCARD_BOTTOM_TEXT_LEFT_X, (PLAYERCARD_CARD_ROW_TEXT_Y+PLAYER_CARD_OFFSET), 16, 16, TEXTSIZE_SMALL, UI_FONT_DEFAULT, "killcamPlayerPopUp", player( rank ), CG_PLAYER_POPUPS, visArg, extraArg ) \
+}
+
+#define KILLCAM_OTHERPLAYER ( ( dvarBool( killcam_final ) || ( player( name ) != player( localName ) ) ) ) 
+
+KILLCAM_CARD_POPUP( "killcamCard0", COLOR_WHITE, ( getlocalclientnum() == 0 && KILLCAM_OTHERPLAYER ) )
+
+TEAM_MESSAGE_SLIDE_OUT( "teamMessageSlideOut0", COLOR_WHITE, "teamMessage", "teamMessageXuid0",  "teamMessageName", "teamMessageRankIcon",  "teamMessageRank", POPUP_VISIBILITY_CLIENT_0 )
+
+menuDef
+{
+	name 			"GameMessageSlideOut0"
+	rect			0 0 640 480 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP
+	fullScreen		0
+	visible       	when ( POPUP_VISIBILITY_CLIENT_0 ) 
+
+ 	GAME_MESSAGE_TEXT_POPUP( -275, 16, 64, 64, TEXTSIZE_SMALL, UI_FONT_DEFAULT, "SlideOut", localVarString( "gameModeMessage0" ), CG_PLAYER_POPUPS, POPUP_VISIBILITY_CLIENT_0, extraArg ) 
+}
+
+
+#define INGAME_MENU_MACRO( menuNameArg, popupString1Arg, popupString2Arg, popupString3Arg, popupMaterialArg, popupBackingMaterialArg, popupVisArg ) \
+menuDef \
+{ \
+	name 			menuNameArg \
+	rect			0 0 640 480 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP \
+	fullScreen		0 \
+	visibilityBits	bits( BIT_ENABLE_POPUPS ) \
+ \
+	MEDAL_MATERIAL_POPUP( -192, -28, 384, 128, "MedalPopUp", "hud_notification_medal_backing", COLOR_RED, MEDAL_BLOOD_ALPHA, popupVisArg, extraArg )  \
+	MEDAL_TEXT_POPUP( -32, 42, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_TITLE, TEXTSIZE_HUGE, TEXTSIZE_HUGE, UI_FONT_BOLD, "MedalPopUp", localVarString( popupString1Arg ),  CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+	MEDAL_TEXT_POPUP( -32, 58, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_DEFAULT, TEXTSIZE_HUGE, TEXTSIZE_HUGE, UI_FONT_DEFAULT, "MedalPopUp", localVarString( popupString2Arg ), CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+ \
+	WAGER_MATERIAL_POPUP( -192, -28, 384, 128, "WagerPopUp", "hud_notification_medal_backing", COLOR_RED, MEDAL_BLOOD_ALPHA, popupVisArg, extraArg )  \
+	WAGER_TEXT_POPUP( -32, 42, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_TITLE, TEXTSIZE_HUGE, TEXTSIZE_HUGE, UI_FONT_BOLD, "WagerPopUp", localVarString( popupString1Arg ),  CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+	WAGER_TEXT_POPUP( -32, 58, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_DEFAULT, TEXTSIZE_HUGE, TEXTSIZE_HUGE, UI_FONT_DEFAULT, "WagerPopUp", localVarString( popupString2Arg ), CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+	WAGER_TEXT_POPUP( -32, 58, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_DEFAULT, TEXTSIZE_HUGE, TEXTSIZE_HUGE, UI_FONT_DEFAULT, "WagerPopUp", localVarString( popupString2Arg ), CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+ \
+  	CHALLENGE_MATERIAL_POPUP( -157, -51, 10, 10, 320, 192, "challengePopUp", localVarString( popupBackingMaterialArg ), COLOR_WHITE, PERK_CHALLENGE_BACKING_ALPHA, popupVisArg, extraArg )  \
+	CHALLENGE_MATERIAL_POPUP( -48, 6, 10, 10, 96, 96, "challengePopUp", localVarString( popupMaterialArg ), COLOR_LIGHT_GREY, PERK_CHALLENGE_FRONT_ALPHA, popupVisArg, extraArg )  \
+	CHALLENGE_TEXT_POPUP( -32, 55, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_TITLE, 0.05, 0.01, 0.01, UI_FONT_DEFAULT, "challengePopUp", localVarString( popupString1Arg ),  CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+	CHALLENGE_TEXT_POPUP( -32, 70, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_DEFAULT, 0.05, 0.01, 0.01, UI_FONT_DEFAULT, "challengePopUp", localVarString( popupString2Arg ),  CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+	CHALLENGE_TEXT_POPUP_BOTTOM( -32, 89, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, COLOR_WHITE, COLOR_WHITE, TEXTSIZE_DEFAULT, 0.05, 0.01, 0.01, UI_FONT_DEFAULT, "ChallengePopUp", localVarString( popupString3Arg ),  CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+ \
+	KILLSTREAK_COLOR_MATERIAL_POPUP( -25, 8, 50, 50, "KillstreakPopUp", localVarString( popupMaterialArg ), COLOR_WHITE, 1, popupVisArg, extraArg ) \
+	KILLSTREAK_COLOR_MATERIAL_POPUP( -96, 10, 192, 128, "KillstreakPopUp", "hud_notification_ks_backing", COLOR_RED, KILLSTREAK_BLOOD_ALPHA, popupVisArg, extraArg ) \
+	KILLSTREAK_TEXT_POPUP( -32, 84, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_TITLE, UI_FONT_DEFAULT, "KillstreakPopUp", localVarString( popupString1Arg ), CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+	KILLSTREAK_TEXT_POPUP( -32, 100, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_DEFAULT, UI_FONT_DEFAULT, "KillstreakPopUp", localVarString( popupString2Arg ), CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+ \
+	RANK_MATERIAL_POPUP(  -128, -56, 256, 256, "RankPopUp", "hud_notification_rank_backing", COLOR_RANK_BACKING, RANK_BACKING_ALPHA, popupVisArg, extraArg )  \
+	RANK_TEXT_POPUP( -32, 90, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_SUBTITLE, UI_FONT_DEFAULT, "RankPopUp", COLOR_WHITE, localVarString( popupString1Arg ), CG_PLAYER_POP_IN_TEXT, popupVisArg, extraArg )	 \
+	RANK_TEXT_POPUP( -32, 112, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_SUBTITLE, UI_FONT_NORMAL, "RankPopUp", COLOR_CP_GREEN, localVarString( popupString2Arg ), CG_PLAYER_POPUPS, popupVisArg, extraArg )	 \
+	RANK_MATERIAL_DANGLE_POPUP( -60, 6, 60, 60, "RankPopUp", localVarString( popupMaterialArg ), popupVisArg, extraArg )  \
+ \
+ 	CHALLENGE_MATERIAL_POPUP( -160, -51, 10, 10, 320, 192, "ContractPopUp", localVarString( popupBackingMaterialArg ), COLOR_WHITE, (0.55), popupVisArg, extraArg )  \
+	CHALLENGE_MATERIAL_POPUP( -48, -6, 10, 10, 96, 96, "ContractPopUp", "menu_mp_lobby_aar_award_ccontract", COLOR_LIGHT_GREY, CHALLENGE_FRONT_ALPHA, popupVisArg, extraArg )  \
+	CHALLENGE_TEXT_POPUP( -32, 55, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_TITLE, 0.05, 0.01, 0.01, UI_FONT_NORMAL, "ContractPopUp", localVarString( popupString1Arg ),  CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+	CHALLENGE_TEXT_POPUP( -32, 70, 64, 64, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, TEXTSIZE_DEFAULT, 0.05, 0.01, 0.01, UI_FONT_NORMAL, "ContractPopUp", localVarString( popupString2Arg ),  CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+	CONTRACT_TEXT_POPUP_BOTTOM( -32, 110, 64, 64, 40, HORIZONTAL_ALIGN_USER_CENTER, VERTICAL_ALIGN_USER_TOP, COLOR_CP_GREEN, COLOR_CP_GREEN, TEXTSIZE_TITLE, 0.05, 0.01, 0.01, UI_FONT_NORMAL, "ContractPopUp", localVarString( popupString3Arg ),  CG_PLAYER_POPUPS, popupVisArg, extraArg ) \
+	CONTRACT_MATERIAL_POPUP( -256, -214, 128, 64, 512, 512, "ContractPopUp", localVarString( popupMaterialArg ), CONTRACT_MATERIAL_WAIT_TIME, CONTRACT_MATERIAL_START_TIME , CONTRACT_MATERIAL_DISPLAY_TIME , CONTRACT_MATERIAL_PAUSE_TIME , CONTRACT_MATERIAL_HIDE_TIME , popupVisArg, extraArg )  \
+} 
+
+INGAME_MENU_MACRO( "InGamePopUps0", "popUpCenterStringA", "popUpCenterStringB" , "popUpCenterStringC" , "popUpCenterMaterial", "popUpCenterMaterialBacking", POPUP_VISIBILITY_CLIENT_0 ) 
+
+#define PLAYER_KILLED_TEXT_MENU_MACRO( menuNameArg, popupVisArg ) \
+menuDef \
+{ \
+	name 			menuNameArg \
+	rect			0 0 640 480 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_BOTTOM \
+	fullScreen		0 \
+	visible			when( !isDemoPlaying() || IsVisibilityBitSet( BIT_DEMO_HUD_HIDDEN ) ) \
+	visibilityBits  bits( BIT_ENABLE_POPUPS )	 \
+	 \
+	PLAYER_KILLED_TEXT_POPUP( -64, -66, 128, 32, TEXTSIZE_SMALL, UI_FONT_DEFAULT, "playerCardPopUp", localVarString( "killStringPopUp" ), CG_PLAYER_POPUPS, popupVisArg, extraArg )  \
+}  
+
+PLAYER_CARD_POPUP( "playerCard0", COLOR_WHITE, "playerCardXuid0",PLAYER_CARD_POPUP_VISIBILITY_0 )
+PLAYER_KILLED_TEXT_MENU_MACRO( "playerKilled0", PLAYER_CARD_POPUP_VISIBILITY_0 ) 

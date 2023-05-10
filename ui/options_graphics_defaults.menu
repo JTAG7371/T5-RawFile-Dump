@@ -1,0 +1,74 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#define OPTIONS_STYLE			1
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/framestyle.inc"
+#include "ui/frame.inc"
+
+
+#undef	CHOICE_SIZE_X
+#define CHOICE_SIZE_X		224
+
+{
+	menuDef 
+	{
+		name options_graphics_defaults
+		fullScreen 0				
+		rect 0 0 640 480				// Size and position of the menu
+		focusColor COLOR_FOCUSED			// Menu focus color for text and items
+		soundloop ""
+		onOpen
+		{
+			setLocalVarBool ui_hideBack 1;
+			open reset_graphics_popmenu;
+		}
+		onClose
+		{
+			setLocalVarBool ui_hideBack 0;
+		}
+		onESC 
+		{ 
+			close options_graphics_defaults;		
+		}
+		PC_TAB_SWITCH_ACTIONS( options_new_pc, options_controls_new_pc, options_controls_new_pc )
+
+		#include "ui_mp/leftside_options.inc"
+		
+		//CHOICE_SECTION_TITLE( 21, "@MENU_RESET_SYSTEM_DEFAULTS" )
+		
+		//PREPROC_TEXT_DRAW_VIS_EX( CHOICE_ORIGIN( 23 ) 300 80 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0, "@PLATFORM_RESTORE_GRAPHICS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_CENTER, CHOICE_TEXTCOLOR, 1, autowrapped )
+
+		#define LOCAL_MP_ACTION \
+			play CHOICE_FOCUS_SOUND; \
+			exec "exec default_options.cfg"; \
+			uiScript "setRecommended"; \
+			exec "wait; wait; r_applyPicmip;"; \
+			close self; \
+			close options_graphics_defaults;
+			
+		//FRAME_CHOICE_BUTTON_VIS_EX( 26, "@MENU_YES",	LOCAL_MP_ACTION,					1, ; )
+		//FRAME_CHOICE_BUTTON_VIS_EX( 27, "@MENU_NO",	close self; open options_graphics;,	1, ; )
+		
+	}
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+#undef CHOICE_TEXTALIGN
+#define CHOICE_TEXTALIGN	ITEM_ALIGN_MIDDLE_LEFT
+#undef CHOICE_TEXT_OFFSET_X
+#define CHOICE_TEXT_OFFSET_X	18
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( reset_graphics_popmenu, setFocus reset_graphics_popmenu_2, close self; close options_graphics_defaults;, 1 )
+		
+		SYSTEM_POPUP_TITLE_VIS( "@PLATFORM_DEFAULT_SYSTEM_SETTINGS", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@PLATFORM_RESTORE_GRAPHICS", 1 )
+	
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_MP_ACTION,								1, ;								)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self; close options_graphics_defaults;,	1, name reset_graphics_popmenu_2	)
+	}
+
+}

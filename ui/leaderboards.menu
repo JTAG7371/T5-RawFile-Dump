@@ -1,0 +1,88 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/newframe.inc"
+#include "ui/frame.inc"
+
+#define CHOICE_GROUP					"menu_leaderboards"
+
+#include "ui/framestyle.inc"
+#include "ui/choices_setup_common.menu"
+
+
+#undef CHOICE_Y_START
+#define CHOICE_Y_START					-125
+
+#undef CHOICE_TEXT_OFFSET_X
+#define CHOICE_TEXT_OFFSET_X			18
+
+
+#undef ON_ESC
+#define ON_ESC												\
+	execnow ui_animate menu_xboxlive frame_bg default 20;   \
+	play uin_navigation_menu_lg_close;						\
+	setdvar invite_visible "1";								\
+	FRAME_SLIDE_RESET_TOP_TO_BOTTOM( menu_leaderboards );	\
+	exec set menu_xboxlive_buttons_visible 1;			    \
+	close self;
+
+{
+	menuDef	
+	{
+		name					menu_leaderboards
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+
+		onOpen	
+		{
+			play uin_navigation_menu_lg_open;
+			setdvar invite_visible "0";
+			execnow ui_animate menu_xboxlive frame_bg on 100;
+#ifdef PC
+			exec set menu_xboxlive_buttons_visible 0;
+#endif //#ifdef PC
+		}
+		onFocus { }
+		onClose	
+		{ 
+		}
+		onESC	
+		{
+			ON_ESC
+		}
+		
+		// ------------------ statics ------------------------
+		FRAME_ZOMBIE_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MENU_LEADERBOARDS_CAPS", 1 )
+
+		#define LEADERBOARD_LEVEL_ACTION( mapname, leaderboard_type )	\
+				setdvar lb_filter "friends";							\
+				exec set lb_type leaderboard_type;						\
+				exec set lb_gametype zom;								\
+				exec set lb_mapname mapname;							\
+				FRAME_TO_NEXT_FRAME_SLIDE_ACTION( menu_leaderboards, menu_leaderboard_waves );
+
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_ZOMBIE_THEATER_CAPS",         LEADERBOARD_LEVEL_ACTION( "zombie_theater",     zombie_theater_waves ),     1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_ZOMBIE_PENTAGON_CAPS",        LEADERBOARD_LEVEL_ACTION( "zombie_pentagon",    zombie_pentagon_waves ),    dvarInt( #"zombiefive_discovered" ) == 1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 3, "@MENU_ZOMBIETRON_CAPS",             LEADERBOARD_LEVEL_ACTION( "zombietron",         zombietron_waves ),         dvarInt( #"zombietron_discovered" ) == 1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 4, "@MENU_ZOMBIE_COSMODROME_CAPS",      LEADERBOARD_LEVEL_ACTION( "zombie_cosmodrome",  zombie_cosmodrome_waves ),  1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 5, "@MENU_ZOMBIE_COAST_CAPS",			LEADERBOARD_LEVEL_ACTION( "zombie_coast",		zombie_coast_waves ),		1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 6, "@MENU_ZOMBIE_TEMPLE_CAPS",			LEADERBOARD_LEVEL_ACTION( "zombie_temple",		zombie_temple_waves ),		1, ; )
+
+		// --------- buttons ----------
+#ifdef PC
+		FRAME_BACK_BUTTON_DEFAULT_ACTION( ON_ESC )
+#else //#ifdef PC
+		FRAME_BACK_BUTTON_DEFAULT
+#endif //#ifdef PC
+
+		#include "ui/safearea.menu"
+	}
+

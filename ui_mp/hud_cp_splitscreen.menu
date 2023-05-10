@@ -1,0 +1,88 @@
+// CONSOLE HUD - MP
+
+#define SPLITSCREEN_ENABLED	1
+#include "ui/menudef.h"
+#include "ui_mp/hud_gametypes.inc"
+#include "ui_mp/hud_wager_summary.inc"
+
+#define CASH_COLOR		0 1 0 
+#define POT_RECT		(-240*SPLITSCREEN_MULTIPLIER) (170*SPLITSCREEN_MULTIPLIER) (40*SPLITSCREEN_MULTIPLIER) (40*SPLITSCREEN_MULTIPLIER) 
+
+
+{
+
+	menuDef
+	{
+		name			"scorebars_cp_background_ss"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible 		1
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_UI_ACTIVE SHOULD_DISPLAY_SCOREBAR )
+		// TOP team background highlight for score
+		itemDef
+		{
+			style			ITEM_TYPE_TEXT
+			rect			(75*SPLITSCREEN_MULTIPLIER) (-41*SPLITSCREEN_MULTIPLIER) (70*SPLITSCREEN_MULTIPLIER) (15*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			background		"white"
+			forecolor		1 1 1 0.1
+			visible			1
+			decoration
+		}
+
+	}
+
+	menuDef
+	{
+		name			"cpHudAnims_ss"
+		rect			0 0 (40*SPLITSCREEN_MULTIPLIER) (40*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_CENTER
+		fullScreen		0
+		visible 		1
+
+		itemDef
+		{
+			name			"cpText"
+			type			ITEM_TYPE_TEXT
+			rect			0 0 (40*SPLITSCREEN_MULTIPLIER) (40*SPLITSCREEN_MULTIPLIER) HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_CENTER
+			exp				text( dvarString( "ui_cp_text_string" ) );
+			textfont		UI_FONT_DEFAULT
+			textscale		TEXTSIZE_SUBTITLE
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			textalign		ITEM_ALIGN_CENTER
+			forecolor		CASH_COLOR 0
+			visible			1
+			decoration
+			
+			state
+			{
+    				name			"Start"
+    				forecolor     	CASH_COLOR 1
+					textScale		(1.625*SPLITSCREEN_MULTIPLIER)
+					rect			0 0 (40*SPLITSCREEN_MULTIPLIER) (40*SPLITSCREEN_MULTIPLIER)
+    				onEnter
+    				{  
+    					changeState MoveToPot 1000;
+    				}
+			}
+			state
+			{
+    				name			"MoveToPot"
+    				forecolor     	CASH_COLOR 1
+					textScale		0.0
+					rect			POT_RECT
+    				onEnter
+    				{  
+    					changeState Hide 500;
+    				}
+			}
+			state
+			{
+					name			"Hide"
+					forecolor     	CASH_COLOR 0
+					textScale		0.0
+					rect			POT_RECT
+			} 
+		}
+	}
+	
+	HUD_WAGER_FFA( "cp_hud_ss", exp text( locString( "@MENU_POINTS", player( score ) ) ), exp text( locString( "@MP_CP_POT", marinesfield( score ) ) ) )
+}

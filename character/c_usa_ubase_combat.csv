@@ -1,0 +1,5 @@
+rawfile,character/c_usa_ubase_combat.gsc
+xmodel,c_usa_ubase_body1
+xmodelalias,c_usa_ubase_headalias
+xmodelalias,c_usa_ubase_hatalias
+xmodel,c_usa_ubase_gear_combat

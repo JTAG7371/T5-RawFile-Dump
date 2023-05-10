@@ -1,0 +1,214 @@
+#define PLAYERSTATS_WIDTH 		270
+
+#ifdef PC
+	#define PLAYERSTATS_X			(-(PLAYERSTATS_WIDTH - RIGHTITEM_OFFSET)-24)
+	#define PLAYERSTATS_Y			38
+	#define FRAME_BG_COLOR			0.175 0.175 0.2 0.55
+#else
+	#define PLAYERSTATS_X			(-(PLAYERSTATS_WIDTH - RIGHTITEM_OFFSET)-4)
+	#define PLAYERSTATS_Y			29
+	#define FRAME_BG_COLOR			1 1 1 0
+#endif	
+
+#define ORIGIN_PLAYERSTATS 		PLAYERSTATS_X PLAYERSTATS_Y
+	
+#define LABEL_ITEM_SPACING		18
+#define SUB_LABEL_INDENT		16
+	
+#define LABEL_START_X			12
+#define LABEL_START_Y			LABEL_ITEM_SPACING
+#define ORIGIN_LABEL			LABEL_START_X LABEL_START_Y
+
+#define LABEL_TEXTCOLOR			CHOICE_TEXTCOLOR
+#define LABEL_TITLECOLOR		CHOICE_TEXTCOLOR
+
+#define ORIGIN_LABEL_ITEM( itemNumber ) \
+		LABEL_START_X (LABEL_START_Y+(LABEL_ITEM_SPACING*(itemNumber-1))) 
+
+#define ORIGIN_SUB_LABEL_ITEM( itemNumber ) \
+		(LABEL_START_X+SUB_LABEL_INDENT) (LABEL_START_Y+(LABEL_ITEM_SPACING*(itemNumber-1))) 
+		
+#define ORIGIN_DIVIDER( itemNumber ) \
+		0 (LABEL_START_Y+(LABEL_ITEM_SPACING/2)+(LABEL_ITEM_SPACING*(itemNumber-1))) 
+
+#define LOADOUT_ALIGN 	HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
+
+#define PREPROC_LABEL( prect, ptext ) \
+		PREPROC_LABEL_VIS( prect, ptext, 1 )
+
+#define PREPROC_LABEL_VIS( prect, ptext, visArg )	\
+		itemDef										\
+		{											\
+			type			ITEM_TYPE_TEXT			\
+			text			ptext					\
+			rect			prect LOADOUT_ALIGN		\
+			origin			ORIGIN_PLAYERSTATS		\
+			textfont		CHOICE_TEXTFONT			\
+			textscale		TEXTSIZE_SMALL			\
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED	\
+			textalign		ITEM_ALIGN_MIDDLE_LEFT	\
+			forecolor		LABEL_TITLECOLOR		\
+			visible			visArg					\
+			decoration								\
+		 }
+	
+#define PREPROC_DIVIDER( itemNumber )	\
+		PREPROC_SHADER_DRAW(	ORIGIN_DIVIDER( itemNumber ) (PLAYERSTATS_WIDTH) 1 RIGHTITEM_ALIGN VERTICAL_ALIGN_TOP, "white", 1 1 1 0.1 )
+
+#define PREPROC_SUB_LABEL( ptext, itemNumber ) \
+	PREPROC_SUB_LABEL_VIS( ptext, itemNumber, 1 )
+	
+#define PREPROC_SUB_LABEL_VIS( ptext, itemNumber, visArg ) \
+itemDef { \
+	type			ITEM_TYPE_TEXT \
+	text			ptext \
+	rect			ORIGIN_SUB_LABEL_ITEM( itemNumber ) (PLAYERSTATS_WIDTH) LABEL_ITEM_SPACING RIGHTITEM_ALIGN VERTICAL_ALIGN_TOP \
+	origin			ORIGIN_PLAYERSTATS \
+	textfont		CHOICE_TEXTFONT \
+	textscale		TEXTSIZE_SMALL \
+	textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+	textalign		ITEM_ALIGN_MIDDLE_LEFT \
+	forecolor		LABEL_TEXTCOLOR \
+	visible			visArg \
+	decoration }
+	
+#define PREPROC_VALUE_TEXT( prect, ptext, px_offset, pcolor ) \
+		PREPROC_VALUE_TEXT_VIS( prect, ptext, px_offset, pcolor, 1, ITEM_ALIGN_MIDDLE_RIGHT )
+
+#define PREPROC_VALUE_TEXT_LEFT_ALIGNED( prect, ptext, px_offset, pcolor ) \
+		PREPROC_VALUE_TEXT_VIS( prect, ptext, px_offset, pcolor, 1, ITEM_ALIGN_MIDDLE_LEFT )
+		
+#define PREPROC_VALUE_TEXT_VIS( prect, ptext, px_offset, pcolor, visArg, alignment ) \
+itemDef { \
+	type			ITEM_TYPE_TEXT \
+	exp				text( ptext ); \
+	rect			prect LOADOUT_ALIGN \
+	textstyle 		ITEM_TEXTSTYLE_SHADOWED \
+	origin			ORIGIN_PLAYERSTATS \
+	textalignx		px_offset \
+	textfont		UI_FONT_NORMAL \
+	textscale		TEXTSIZE_SMALL \
+	forecolor		pcolor \
+	textalign		alignment \
+	visible			visArg \
+	decoration }
+	
+	
+	// UI art
+#ifdef PC
+	#define FRAME_HEIGHT	358
+#else
+	#define FRAME_HEIGHT	342
+#endif
+
+	// PLAYER NAME WITH CLAN TAG
+#ifndef PC
+	itemDef 
+	{
+		type			ITEM_TYPE_OWNERDRAW_TEXT
+		rect			ORIGIN_PLAYERSTATS 270 28 LOADOUT_ALIGN
+		origin			10 20
+		textfont		CHOICE_TEXTFONT
+		textscale		CHOICE_TEXTSIZE
+		textstyle 		ITEM_TEXTSTYLE_SHADOWED
+		textalign		ITEM_ALIGN_MIDDLE_LEFT
+		forecolor		COLOR_INFO_YELLOW
+		ownerdraw		UI_USERNAME
+		visible			1
+		decoration 
+	}
+#else
+	itemDef 
+	{
+		type			ITEM_TYPE_TEXT
+		rect			0 0 270 20 LOADOUT_ALIGN
+		origin			ORIGIN_PLAYERSTATS
+		textfont		CHOICE_TEXTFONT
+		textscale		CHOICE_TEXTSIZE
+		textstyle 		ITEM_TEXTSTYLE_SHADOWED
+		textalign		ITEM_ALIGN_MIDDLE_CENTER
+		exp				text( dvarString( "name" ) );
+		visible			1
+		decoration 
+	}
+#endif
+	PREPROC_SHADER_DRAW( 0 22 (PLAYERSTATS_WIDTH+8) 1 LOADOUT_ALIGN, ORIGIN_PLAYERSTATS, "white", 1 1 1 0.1 )
+
+	//center vertical
+	PREPROC_SHADER_DRAW( ((PLAYERSTATS_WIDTH+8)/2) 22 1 142 LOADOUT_ALIGN, ORIGIN_PLAYERSTATS, "white", 1 1 1 0.1 )
+
+#define LEVEL_NAME_X			10
+#define LEVEL_NAME_Y			(164-30)
+
+#define NEXT_LEVEL_NAME_X		(LEVEL_NAME_X+((PLAYERSTATS_WIDTH+8)/2))
+#define NEXT_LEVEL_NAME_Y		LEVEL_NAME_Y
+
+#define Y_OFFSET			15
+
+
+#define PREPROC_RANK_ICON( x_offset, y_offset, pshader ) \
+		PREPROC_RANK_ICON_VIS( x_offset, y_offset, pshader, 1 )
+
+#define PREPROC_RANK_ICON_VIS( x_offset, y_offset, pshader, visArg )					\
+		PREPROC_SHADER_DRAW_VIS_EX( (30+x_offset) (y_offset-75) 64 64 LOADOUT_ALIGN,	\
+									pshader, 1 1 1 1,									\
+									visArg, ; )
+	
+	#define PLAYER_RANK GetStatByName( "RANK" )
+
+	// LEFT SIDE
+	/* rank icon */
+	PREPROC_RANK_ICON( LEVEL_NAME_X, LEVEL_NAME_Y, tablelookup( "mp/rankIconTable.csv", 0, PLAYER_RANK, getPrestige()+1 ) )
+	/* rank label */
+	PREPROC_TEXT_DRAW( 10 30 ((PLAYERSTATS_WIDTH+8)/2) 10 LOADOUT_ALIGN,								ORIGIN_PLAYERSTATS, "@MPUI_RANK_PRE",																		TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR )
+	/* rank level */
+	PREPROC_TEXT_DRAW( LEVEL_NAME_X (LEVEL_NAME_Y+Y_OFFSET) ((PLAYERSTATS_WIDTH+8)/2) 10 LOADOUT_ALIGN,	ORIGIN_PLAYERSTATS, locString( "@MPUI_LEVEL_N", int(tablelookup("mp/ranktable.csv",0, PLAYER_RANK,14)) ),	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR )
+	/* rank name */
+	PREPROC_TEXT_DRAW( LEVEL_NAME_X LEVEL_NAME_Y ((PLAYERSTATS_WIDTH+8)/2) 10 LOADOUT_ALIGN,			ORIGIN_PLAYERSTATS, "@"+tablelookup("mp/ranktable.csv",0, PLAYER_RANK,5),									TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR )
+
+	// RIGHT SIDE
+	/* rank icon */
+	PREPROC_RANK_ICON_VIS( NEXT_LEVEL_NAME_X, NEXT_LEVEL_NAME_Y, tablelookup( "mp/rankIconTable.csv", 0, PLAYER_RANK + 1, GetPrestige() + 1 ), when( CAN_RANK_UP && PRESTIGE_NEXT==0 ) )
+	PREPROC_RANK_ICON_VIS( NEXT_LEVEL_NAME_X, NEXT_LEVEL_NAME_Y, tablelookup( "mp/rankIconTable.csv", 0, 0, GetPrestige() + 2 ), when( CAN_RANK_UP && PRESTIGE_NEXT ) )
+	/* rank label */
+	PREPROC_TEXT_DRAW( (((PLAYERSTATS_WIDTH+8)/2)+10) 30 ((PLAYERSTATS_WIDTH+8)/2) 10 LOADOUT_ALIGN, ORIGIN_PLAYERSTATS, "@MPUI_NEXT_RANK_PRE", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR )
+	/* rank level */
+	PREPROC_TEXT_DRAW_VIS( NEXT_LEVEL_NAME_X (NEXT_LEVEL_NAME_Y+Y_OFFSET) (PLAYERSTATS_WIDTH/2) 10 LOADOUT_ALIGN, ORIGIN_PLAYERSTATS, locString( "@MPUI_LEVEL_N", int(tablelookup("mp/ranktable.csv",0, PLAYER_RANK + 1,14)) ),	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR, when( CAN_RANK_UP && PRESTIGE_NEXT==0 ) )
+	PREPROC_TEXT_DRAW_VIS( NEXT_LEVEL_NAME_X (NEXT_LEVEL_NAME_Y+Y_OFFSET) (PLAYERSTATS_WIDTH/2) 10 LOADOUT_ALIGN, ORIGIN_PLAYERSTATS, locString( "@MPUI_LEVEL_N", 1 ),															TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR, when( CAN_RANK_UP && PRESTIGE_NEXT ) )
+	/* rank name */
+	PREPROC_TEXT_DRAW_VIS( NEXT_LEVEL_NAME_X NEXT_LEVEL_NAME_Y ((PLAYERSTATS_WIDTH+8)/2) 10 LOADOUT_ALIGN, ORIGIN_PLAYERSTATS, "@"+tablelookup("mp/ranktable.csv",0, PLAYER_RANK + 1,5),	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR, when( CAN_RANK_UP && PRESTIGE_NEXT==0 ) )
+	PREPROC_TEXT_DRAW_VIS( NEXT_LEVEL_NAME_X NEXT_LEVEL_NAME_Y ((PLAYERSTATS_WIDTH+8)/2) 10 LOADOUT_ALIGN, ORIGIN_PLAYERSTATS, "@MPUI_PRESTIGE",											TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR, when( CAN_RANK_UP && PRESTIGE_NEXT ) )
+	PREPROC_TEXT_DRAW_VIS( NEXT_LEVEL_NAME_X NEXT_LEVEL_NAME_Y ((PLAYERSTATS_WIDTH+8)/2) 10 LOADOUT_ALIGN, ORIGIN_PLAYERSTATS, "@MPUI_NONE",												TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, CHOICE_TEXTCOLOR, when( CAN_RANK_UP==0 ) )
+
+
+	// second half
+#define SECOND_SEC_Y		(164+5) 
+
+#undef Y_OFFSET
+#define Y_OFFSET			17
+
+	//center horizontal
+	PREPROC_SHADER_DRAW( 0 164 (PLAYERSTATS_WIDTH+8) 1 LOADOUT_ALIGN, ORIGIN_PLAYERSTATS, "white", 1 1 1 0.1, )
+
+	/* current xp*/
+	PREPROC_LABEL( LEVEL_NAME_X SECOND_SEC_Y (PLAYERSTATS_WIDTH+8) LABEL_ITEM_SPACING, "@MPUI_XP_PRE" )
+	PREPROC_VALUE_TEXT( LEVEL_NAME_X SECOND_SEC_Y (PLAYERSTATS_WIDTH+8) LABEL_ITEM_SPACING, GetStatByName( "RANKXP" ), -24, LABEL_TEXTCOLOR )
+	/* xp required*/
+	PREPROC_LABEL_VIS( LEVEL_NAME_X (SECOND_SEC_Y+Y_OFFSET) (PLAYERSTATS_WIDTH+8) LABEL_ITEM_SPACING, "@MPUI_XP_REQUIRED_PRE", when( CAN_RANK_UP ) )
+	PREPROC_VALUE_TEXT_VIS( LEVEL_NAME_X (SECOND_SEC_Y+Y_OFFSET) (PLAYERSTATS_WIDTH+8) LABEL_ITEM_SPACING, int(tableLookup( "mp/rankTable.csv", 0, PLAYER_RANK, 7)), -24, LABEL_TEXTCOLOR, when( CAN_RANK_UP ), ITEM_ALIGN_MIDDLE_RIGHT )
+	/* xp to next level */
+	PREPROC_LABEL_VIS( LEVEL_NAME_X (SECOND_SEC_Y+Y_OFFSET*2) (PLAYERSTATS_WIDTH+8) LABEL_ITEM_SPACING, "@MPUI_XP_NEEDED", when( CAN_RANK_UP ) forecolor COLOR_FOCUSED )
+	PREPROC_VALUE_TEXT_VIS( LEVEL_NAME_X (SECOND_SEC_Y+Y_OFFSET*2) (PLAYERSTATS_WIDTH+8) LABEL_ITEM_SPACING, int(tableLookup( "mp/rankTable.csv", 0, PLAYER_RANK, 7) - GetStatByName( "RANKXP" ) ), -24, COLOR_FOCUSED, when( CAN_RANK_UP ), ITEM_ALIGN_MIDDLE_RIGHT )
+	/* xp background bar*/
+	PREPROC_SHADER_DRAW_VIS_EX(	LEVEL_NAME_X (SECOND_SEC_Y+Y_OFFSET*3) (PLAYERSTATS_WIDTH+8-24) 14 LOADOUT_ALIGN,	
+								"white", 0.2 0.2 0.2 0.8, 
+								when( CAN_RANK_UP ), ; )
+	/* xp filling bar*/
+	PREPROC_SHADER_DRAW_ADV_VIS_EX(	LEVEL_NAME_X,
+									(SECOND_SEC_Y+Y_OFFSET*3),
+									((-(PLAYERSTATS_WIDTH+8-24)*((int(tableLookup( "mp/rankTable.csv", 0, PLAYER_RANK, 2 )) - GetStatByName( "RANKXP" ) ) / int(tableLookup( "mp/rankTable.csv", 0, PLAYER_RANK, 3 ))))),
+									14,
+									LOADOUT_ALIGN, 
+									"white", 1 0.9 0.5 0.6,
+									when( CAN_RANK_UP ), ; )
+	

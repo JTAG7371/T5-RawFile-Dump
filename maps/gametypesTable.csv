@@ -1,0 +1,9 @@
+#Gametypes Table,,,,,,,
+a0,b1,c2,d3,e4,f5,g6,h7
+maxnum_gametype,3,,,,,,
+#gametype reference,#gametype names,#gametype description,#gametype name without arcade,#gametype description without arcade,#image,#index,#gametype display name
+#cmp,MENU_ARCADE_MODE_CAPS,MENU_ARCADE_MODE_DESC,MENU_CAMPAIGN_MODE_CAPS,MENU_CAMPAIGN_MODE_DESC,playlist_coop_generic,0,MENU_CAMPAIGN_CAPS
+zom,MENU_ZOMBIE_MODE_CAPS,MENU_ZOMBIE_MODE_DESC,MENU_ZOMBIE_MODE_CAPS,MENU_ZOMBIE_MODE_DESC,playlist_coop_zombie,0,MENU_ZOMBIE_CAPS
+so,MENU_SO_MODE_CAPS,MENU_SO_MODE_DESC,MENU_SO_MODE_CAPS,MENU_SO_MODE_DESC,playlist_coop_so,1,MENU_SO_CAPS
+vs,MENU_VS_MODE_CAPS,MENU_VS_MODE_DESC,MENU_VS_MODE_CAPS,MENU_VS_MODE_DESC,playlist_coop_vs,2,MENU_VS_CAPS
+locked,MENU_LOCKED_MODE_CAPS,MENU_LOCKED_MODE_DESC,MENU_LOCKED_MODE_CAPS,MENU_LOCKED_MODE_DESC,specialty_locked_big,,MENU_LOCKED_MODE_CAPS

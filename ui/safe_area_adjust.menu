@@ -1,0 +1,31 @@
+#include "ui/menudef.h"
+{
+	#include "ui_mp/common_macro.inc"
+	#include "ui/safe_area_adjust.inc"
+
+	menuDef
+	{
+		name safe_area_adjust
+		priority MENU_PRI_POPUP 
+
+		onOpen
+		{
+			execNow setupviewport;
+		}
+		onEsc
+		{
+			close self;
+		}
+
+		SAFE_AREA_BG_RECT( 1 )
+		SAFE_AREA_ARROWS( 1 )
+		
+		itemDef
+		{
+			visible 1
+			type ITEM_TYPE_BUTTON_NO_TEXT
+		
+			SAFE_AREA_DPAD_CONTROLS
+		}
+	}	
+}

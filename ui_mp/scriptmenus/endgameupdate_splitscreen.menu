@@ -1,0 +1,158 @@
+
+
+#define SPLITSCREEN_ENABLED	1
+#include "ui/menudef.h"
+
+{
+	menuDef
+	{
+		name			"endgameupdate_splitscreen"
+		rect			0 0 ( 640 * SPLITSCREEN_MULTIPLIER ) ( 480 * SPLITSCREEN_MULTIPLIER ) HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			( -250 * SPLITSCREEN_MULTIPLIER ) 0 ( 500 * SPLITSCREEN_MULTIPLIER ) ( 480 * SPLITSCREEN_MULTIPLIER ) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_FULLSCREEN;
+			forecolor		0 0 0 1
+			background		"line_horizontal_scorebar"
+			visible			1
+			decoration
+		}		
+		
+		#define TITLE_HEIGHT						( 20 * SPLITSCREEN_MULTIPLIER )
+		#define HEADER_HEIGHT						( 15 * SPLITSCREEN_MULTIPLIER )
+		#define	TITLE_WIDTH							( 300 * SPLITSCREEN_MULTIPLIER )
+		#define END_GAME_RECT( ph )					(-TITLE_WIDTH / 2 ) 0 TITLE_WIDTH ph HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		#define	PROMOTED_Y_START					20
+
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			END_GAME_RECT( TITLE_HEIGHT )
+			exp				rect Y( PROMOTED_Y_START )
+			text			"@RANK_PROMOTED_TITLE"
+			forecolor		1 1 1 1
+			textfont		UI_FONT_EXTRABIG
+			textscale		TEXTSIZE_SUBTITLE
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			when( localVarBool( "promoted" ) )
+			decoration
+		}	
+
+		#define RANK_Y_START						( PROMOTED_Y_START + ( TITLE_HEIGHT * localVarBool( "promoted" ) ) )
+		
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT			
+			rect			END_GAME_RECT( HEADER_HEIGHT )
+			exp				rect Y( RANK_Y_START )
+			exp				text ( locString( "@MPUI_LEVEL_N_CAPS", GetStatByName( "RANK" ) + 1 ) )
+			forecolor		1 1 1 1
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			when( localVarBool( "promoted" ) )
+			decoration
+		}			
+	
+		#define CONTRACT_ACTIVE( contractInt )		( contractInt != -1 )
+		#define CONTRACT_0_ACTIVE					CONTRACT_ACTIVE( localVarInt( "contract0" ) )
+		#define CONTRACT_1_ACTIVE					CONTRACT_ACTIVE( localVarInt( "contract1" ) )
+		#define CONTRACT_2_ACTIVE					CONTRACT_ACTIVE( localVarInt( "contract2" ) )
+		#define CONTRACT_ANY_ACTIVE					( CONTRACT_0_ACTIVE || CONTRACT_1_ACTIVE || CONTRACT_2_ACTIVE )
+		
+		#define GROUP_OFFSET						( 5 * SPLITSCREEN_MULTIPLIER )
+		#define CONTRACTS_TITLE_Y_START				( RANK_Y_START + ( ( HEADER_HEIGHT + GROUP_OFFSET ) * localvarBool( "promoted" ) ) )
+		
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			END_GAME_RECT( TITLE_HEIGHT )
+			exp rect		y ( CONTRACTS_TITLE_Y_START ) 
+			text			"@MPUI_CONTRACTS_PAID_CAPS"
+			forecolor		0.42 0.68 0.46 1
+			textfont		UI_FONT_EXTRABIG
+			textscale		TEXTSIZE_SUBTITLE
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			when( CONTRACT_ANY_ACTIVE )
+			decoration
+		}
+
+		#define CONTRACT_INFO( yOffset, contractInt )						\
+				itemDef														\
+				{															\
+					type			ITEM_TYPE_TEXT							\	
+					rect			END_GAME_RECT( HEADER_HEIGHT )			\
+					exp				rect Y( yOffset )						\
+					exp				text GetContractName( contractInt )		\
+					forecolor		1 1 1 1									\
+					textfont		UI_FONT_NORMAL							\
+					textscale		TEXTSIZE_DEFAULT						\
+					textstyle 		ITEM_TEXTSTYLE_SHADOWED					\
+					textalign		ITEM_ALIGN_TOP_CENTER					\
+					visible			when( CONTRACT_ACTIVE( contractInt ) )	\
+					decoration												\
+				} 
+
+		#define CONTRACT_0_Y_START					( CONTRACTS_TITLE_Y_START + ( TITLE_HEIGHT * CONTRACT_ANY_ACTIVE ) )
+		#define CONTRACT_1_Y_START					( CONTRACT_0_Y_START + ( HEADER_HEIGHT * CONTRACT_0_ACTIVE ) )
+		#define CONTRACT_2_Y_START					( CONTRACT_1_Y_START + ( HEADER_HEIGHT * CONTRACT_1_ACTIVE ) )
+		
+		CONTRACT_INFO( CONTRACT_0_Y_START, localVarInt( "contract0" ) ) // endgame contract 0
+		CONTRACT_INFO( CONTRACT_1_Y_START, localVarInt( "contract1" ) ) // endgame contract 3
+		CONTRACT_INFO( CONTRACT_2_Y_START, localVarInt( "contract2" ) ) // endgame contract 2
+		
+		
+		#define MILESTONE_ACTIVE( milestone )		( milestone != "" )
+		#define MILESTONE_0_ACTIVE					MILESTONE_ACTIVE( localVarString( "milestoneEndGameNameString0" ) )
+		#define MILESTONE_1_ACTIVE					MILESTONE_ACTIVE( localVarString( "milestoneEndGameNameString1" ) )
+		#define MILESTONE_2_ACTIVE					MILESTONE_ACTIVE( localVarString( "milestoneEndGameNameString2" ) )
+		#define MILESTONE_ANY_ACTIVE				( MILESTONE_0_ACTIVE || MILESTONE_1_ACTIVE || MILESTONE_2_ACTIVE )
+
+		#define MILESTONE_TITLE_Y_START				( CONTRACT_2_Y_START + ( ( HEADER_HEIGHT + GROUP_OFFSET ) * CONTRACT_2_ACTIVE ) )
+		
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			END_GAME_RECT( TITLE_HEIGHT )
+			exp				rect Y( MILESTONE_TITLE_Y_START ) 
+			text			"@MPUI_MILESTONES_COMPLETED_CAPS"
+			forecolor		0.29 0.61 0.7 1
+			textfont		UI_FONT_EXTRABIG
+			textscale		TEXTSIZE_SUBTITLE
+			textstyle 		ITEM_TEXTSTYLE_SHADOWED								
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			when( MILESTONE_ANY_ACTIVE )
+			decoration
+		}		
+
+		#define END_STATS_MILESTONE_INFO( yOffset, name, desc )			\
+				itemDef													\
+				{														\
+					type			ITEM_TYPE_TEXT						\
+					rect			END_GAME_RECT( HEADER_HEIGHT )		\
+					exp				rect Y( yOffset )					\
+					exp				text( name )						\
+					forecolor		1 1 1 1								\
+					textfont		UI_FONT_NORMAL						\
+					textscale		TEXTSIZE_DEFAULT					\
+					textstyle 		ITEM_TEXTSTYLE_SHADOWED				\
+					textalign		ITEM_ALIGN_TOP_CENTER				\
+					visible			when( MILESTONE_ACTIVE( name ) )	\
+					decoration											\
+				}
+
+		#define MILESTONE_0_Y_START					( MILESTONE_TITLE_Y_START + ( TITLE_HEIGHT * MILESTONE_ANY_ACTIVE ) )
+		#define MILESTONE_1_Y_START					( MILESTONE_0_Y_START + ( HEADER_HEIGHT * MILESTONE_0_ACTIVE ) )
+		#define MILESTONE_2_Y_START					( MILESTONE_1_Y_START + ( HEADER_HEIGHT * MILESTONE_1_ACTIVE ) )
+		
+		END_STATS_MILESTONE_INFO( MILESTONE_0_Y_START, localVarString( "milestoneEndGameNameString0" ), localVarString( "milestoneEndGameDescString0" ) )
+		END_STATS_MILESTONE_INFO( MILESTONE_1_Y_START, localVarString( "milestoneEndGameNameString1" ), localVarString( "milestoneEndGameDescString1" ) )
+		END_STATS_MILESTONE_INFO( MILESTONE_2_Y_START, localVarString( "milestoneEndGameNameString2" ), localVarString( "milestoneEndGameDescString2" ) )
+
+}
+

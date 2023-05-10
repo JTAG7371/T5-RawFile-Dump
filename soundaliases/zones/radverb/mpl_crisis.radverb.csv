@@ -1,0 +1,7 @@
+name,loadspec,smoothing,earlyTime,lateTime,earlyGain,lateGain,returnGain,earlyLpf,lateLpf,inputLpf,dampLpf,wallReflect,dryGain,earlySize,lateSize,diffusion
+crisis_outside,mpl_crisis,0.5,0.425,0.48,0.3315235,0.1151112,1.285037,0.5949999,0,0.635,0.6000001,0.2099999,0,5,11.7575,0.16
+crisis_bunker_int,mpl_crisis,0.5,0.705,0.47,0.805,0.66,0.7930958,0.385,0.72,0.57,0.595,0.82,0,3.1715,4.364,0.5
+crisis_computer_room,mpl_crisis,0.5,0.705,0.595,0.805,0.66,0.7930958,0.385,0.72,0.035,0.4,0.35,0,3.1715,3.6485,0.305
+crisis_cave,mpl_crisis,0.5,0.44,0.4,1.095698,0.5788479,0.7941554,0.385,0.6950001,0.485,0.465,0.71,0,3.728,5.2385,0.5
+crisis_stone_room,mpl_crisis,0.5,0.565,0.635,0.5622616,0.66,0.8452919,0.385,0.72,0.48,0.43,0.82,0,3.1715,3.1715,0.5
+crisis_small_room,mpl_crisis,0.525,0.48,0.42,0.755305,0.8158321,1,0.13,0.075,0.455,0.4949999,0.6750001,0,5.664999,3.8365,0.16

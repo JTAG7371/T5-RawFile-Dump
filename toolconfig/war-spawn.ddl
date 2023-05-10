@@ -1,0 +1,6 @@
+name, default, minimum, maximum
+scr_spawn_twar_linked_flag_influencer_score,200,-500,500
+scr_spawn_twar_linked_flag_near_objective_bonus,15,-100,100
+scr_spawn_twar_linked_flag_influencer_score_falloff_percentage,0.20,0,1
+scr_spawn_twar_contested_flag_influencer_score,-100,-500,500
+scr_spawn_twar_contested_flag_influencer_radius,1400,200,5000

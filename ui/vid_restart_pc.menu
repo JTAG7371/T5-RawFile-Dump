@@ -1,0 +1,51 @@
+//====================================
+// Vid restart for single player only
+//====================================
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_GROUP			"vid_restart"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/popupstyle.inc"	
+#include "ui/choices_setup_popmenu.menu"
+
+{
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( vid_restart_popmenu, setFocus vid_restart_popmenu_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_APPLY_SETTINGS", 1 )
+
+		#define	APPLY_SETTINGS								\
+				exec "exec ui/options_graphics_set.cfg";	\
+				close self;									\
+				setLocalVarBool ui_showApply 0;				\
+				exec "vid_restart";	\
+				exec "wait; wait; r_applyPicmip";
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	APPLY_SETTINGS,	1, ;							)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,		1, name vid_restart_popmenu_2	)
+	}
+
+
+	menuDef 
+	{
+		SYSTEM_POPUP_SETUP_VIS( vid_restart_popmenu_listen, setFocus vid_restart_popmenu_listen_2;, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_APPLY_SETTINGS", 1 )
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	APPLY_SETTINGS,	1, ;									)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,		1, name vid_restart_popmenu_listen_2	)
+	}
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+	menuDef 
+	{
+		SYSTEM_POPUP_SETUP_VIS( vid_restart_popmenu_dead, ;, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_CANT_CHANGE_SETTINGS_WHILE_DEAD", 1 )
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self, 1, ; )
+	}
+}

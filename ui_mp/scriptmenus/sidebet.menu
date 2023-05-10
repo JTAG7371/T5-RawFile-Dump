@@ -1,0 +1,986 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/overlaybg.inc"
+
+#define WAGER_BET_X_OFFSET 200
+
+#define WAGER_BET_RECT( itemIndex ) ( CHOICE_X( itemIndex ) + WAGER_BET_X_OFFSET ) CHOICE_Y( itemIndex ) CHOICE_SIZE_X CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+
+#define WAGER_DBUTTON_NO_BG_VIS( itemIndex, textArg, visArg, color ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			CHOICE_RECT( itemIndex ) \
+			exp				text( textArg ); \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		color \
+			visible			visArg \
+			decoration \
+		} \
+		
+#define WAGER_BET_DBUTTON_NO_BG_VIS( itemIndex, textArg, visArg, color ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			WAGER_BET_RECT( itemIndex ) \
+			exp				text( textArg ); \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		color \
+			visible			visArg \
+			decoration \
+		} \
+
+#define WAGER_BET( itemIndex, textArg, visArg, color ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			WAGER_BET_RECT( itemIndex ) \
+			exp				text( textArg ); \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textAlign		CHOICE_TEXTALIGN \
+			textAlignX		CHOICE_TEXT_OFFSET_X \
+			forecolor		color \
+			visible			visArg \
+			decoration \
+		} \
+		
+#define WAGER_OVERLAY_STATUS_VIS( titleArg, visArg, color ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			22 300 100 100 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			origin			ORIGIN_TITLE \
+			forecolor		color \
+			exp				text( titleArg ) \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textalign		ITEM_ALIGN_TOP_LEFT \
+			textaligny		TITLE_Y_OFFSET \
+			textalignx		TITLE_X_OFFSET \
+			visible			visArg \
+			decoration \
+		}
+		
+#define WAGER_LOCAL_CODPOINTS( textArg ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			22 350 100 100 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP \
+			origin			ORIGIN_TITLE \
+			forecolor		CHOICE_TEXTCOLOR \
+			exp				text( textArg ) \
+			textfont		CHOICE_TEXTFONT \
+			textscale		CHOICE_TEXTSIZE \
+			textstyle		CHOICE_TEXTSTYLE \
+			textalign		ITEM_ALIGN_TOP_LEFT \
+			textaligny		TITLE_Y_OFFSET \
+			textalignx		TITLE_X_OFFSET \
+			visible			1 \
+			decoration \
+		}
+		
+#define WAGER_STATUS_COLOR 1 1 0 1
+#define WAGER_STATUS_ERROR_COLOR 1 0 0 1
+#define WAGER_COL_HEADER_COLOR 1 0.5 0 1
+
+#define WAGER_IS_PLAYER_1 ( player( localname ) == dvarString( sidebet_p1 ) )
+#define WAGER_IS_PLAYER_2 ( player( localname ) == dvarString( sidebet_p2 ) )
+#define WAGER_IS_PLAYER_3 ( player( localname ) == dvarString( sidebet_p3 ) )
+#define WAGER_RESTRICTED ( WAGER_IS_PLAYER_1 || WAGER_IS_PLAYER_2 || WAGER_IS_PLAYER_3 )
+
+#define WAGER_SUFFICIENT_FUNDS ( GetStatByName( "CODPOINTS" ) >= dvarInt( "scr_wagerSideBet" ) )
+#define WAGER_HAS_BET ( dvarString( sidebet_made ) != "" )
+#define WAGER_CAN_BET ( !WAGER_HAS_BET && WAGER_SUFFICIENT_FUNDS )
+#define WAGER_HAS_BET_ON_1 ( dvarString( sidebet_made ) == dvarString( sidebet_p1 ) )
+#define WAGER_HAS_BET_ON_2 ( dvarString( sidebet_made ) == dvarString( sidebet_p2 ) )
+#define WAGER_HAS_BET_ON_3 ( dvarString( sidebet_made ) == dvarString( sidebet_p3 ) )
+
+#define SIDEBET_WIDTH 480
+#define SIDEBET_HEIGHT 360
+
+#define SET_PROPER_INITIAL_FOCUS \
+			if ( WAGER_IS_PLAYER_1 ){ setFocus p1_betpad; } \
+			if ( WAGER_IS_PLAYER_2 ){ setFocus p2_betpad; } \
+			if ( WAGER_IS_PLAYER_3 ){ setFocus p3_betpad; } \
+			if ( !WAGER_RESTRICTED ){ setFocus p1_betpad; }
+
+{
+	menuDef
+	{
+		name		"sidebet"
+		rect		(320-(SIDEBET_WIDTH/2)) (240-(SIDEBET_HEIGHT/2)) (320+(SIDEBET_WIDTH/2)) (240+(SIDEBET_WIDTH/2))
+		focuscolor	COLOR_FOCUSED
+		style		WINDOW_STYLE_EMPTY
+		blurWorld	7.0
+		
+		#define PLAYER_NAME_FADE_TIME 600
+		#define DETAILS_PULLDOWN_TIME 250
+		#define DETAILS_ROLLUP_TIME 250
+		#define	BET_FADEIN_TIME 200
+		#define BET_FADEOUT_TIME 100
+		#define BET_PLACED_FADEIN_TIME 250
+		
+		onFocus
+		{
+			execNow ui_animate sidebet background Default 0;
+			execNow ui_animate sidebet title Default 0;
+			execNow ui_animate sidebet question Default 0;
+			execNow ui_animate sidebet timer Default 0;
+			execNow ui_animate sidebet p1_background Default 0;
+			execNow ui_animate sidebet p2_background Default 0;
+			execNow ui_animate sidebet p3_background Default 0;
+			execNow ui_animate sidebet p1_details_bg Default 0;
+			execNow ui_animate sidebet p2_details_bg Default 0;
+			execNow ui_animate sidebet p3_details_bg Default 0;
+			execNow ui_animate sidebet p1_name Default 0;
+			execNow ui_animate sidebet p2_name Default 0;
+			execNow ui_animate sidebet p3_name Default 0;
+			execNow ui_animate sidebet p1_betpad Default 0;
+			execNow ui_animate sidebet p2_betpad Default 0;
+			execNow ui_animate sidebet p3_betpad Default 0;
+			execNow ui_animate sidebet p1_betpad_highlight Default 0;
+			execNow ui_animate sidebet p2_betpad_highlight Default 0;
+			execNow ui_animate sidebet p3_betpad_highlight Default 0;
+			execNow ui_animate sidebet p1_betpad_placebet Default 0;
+			execNow ui_animate sidebet p2_betpad_placebet Default 0;
+			execNow ui_animate sidebet p3_betpad_placebet Default 0;
+			execNow ui_animate sidebet p1_betpad_button Default 0;
+			execNow ui_animate sidebet p2_betpad_button Default 0;
+			execNow ui_animate sidebet p3_betpad_button Default 0;
+			execNow ui_animate sidebet p1_betpad_bets Default 0;
+			execNow ui_animate sidebet p2_betpad_bets Default 0;
+			execNow ui_animate sidebet p3_betpad_bets Default 0;
+			execNow ui_animate sidebet background expand 250;
+			setdvar sidebet_made "";
+			setdvar sidebet_p1_bets 0;
+			setdvar sidebet_p2_bets 0;
+			setdvar sidebet_p3_bets 0;
+			setFocus invis_button;
+		}
+		
+		// invisible useless button for initial focus
+		itemDef
+		{
+			name		invis_button
+			type		ITEM_TYPE_BUTTON_NO_TEXT
+			rect		0 0 0 0
+			visible		1
+		}		
+		//background
+		itemDef
+		{
+			name 		background
+			rect		(SIDEBET_WIDTH/2) (SIDEBET_HEIGHT/2) 0 0 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+			style		WINDOW_STYLE_FILLED
+			backcolor	0.3 0.3 0.3 0.9
+			bordercolor	0.1 0.1 0.1 0.9
+			border 		1
+			bordersize	1
+			visible		1
+			decoration
+			
+			state
+			{
+				name	expand
+				rect	0 0 SIDEBET_WIDTH SIDEBET_HEIGHT HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+				
+				onEnter
+				{
+					execNow ui_animate sidebet title expand 100;
+					execNow ui_animate sidebet p1_background expand 100;
+					execNow ui_animate sidebet p2_background expand 100;
+					execNow ui_animate sidebet p3_background expand 100;
+					execNow ui_animate sidebet p1_betpad expand 100;
+					execNow ui_animate sidebet p2_betpad expand 100;
+					execNow ui_animate sidebet p3_betpad expand 100;
+				}
+			}
+		}
+		
+		// title
+		itemDef
+		{
+			name			title
+			type			ITEM_TYPE_TEXT
+			rect			0 10 SIDEBET_WIDTH 100
+			forecolor		1 1 1 1
+			exp				text( locString( "@MPUI_WAGER_SIDEBET" ) )
+			textfont		UI_FONT_NORMAL
+			textscale		0
+			textstyle		CHOICE_TEXTSTYLE
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			1
+			decoration
+			
+			state
+			{
+				name		expand
+				textscale	TEXTSIZE_TITLE
+				
+				onEnter
+				{
+					execNow ui_animate sidebet question expand 250;
+				}
+			}
+		}
+		// question
+		itemDef
+		{
+			name			question
+			type			ITEM_TYPE_TEXT
+			rect			0 40 SIDEBET_WIDTH 100
+			forecolor		1 1 1 1
+			exp				text( locString( "@MPUI_WAGER_WHOLASTSTANDING" ) )
+			textfont		UI_FONT_NORMAL
+			textscale		0
+			textstyle		CHOICE_TEXTSTYLE
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			when( !WAGER_RESTRICTED );
+			decoration
+			
+			state
+			{
+				name		expand
+				textscale	0.45
+				
+				onEnter
+				{
+					execNow ui_animate sidebet p1_name Delay 1000;
+				}
+			}
+		}
+		itemDef
+		{
+			name			question
+			type			ITEM_TYPE_TEXT
+			rect			0 40 SIDEBET_WIDTH 100
+			forecolor		1 1 1 1
+			exp				text( locString( "@MPUI_WAGER_LASTSTANDING" ) )
+			textfont		UI_FONT_NORMAL
+			textscale		0
+			textstyle		CHOICE_TEXTSTYLE
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			when( WAGER_RESTRICTED );
+			decoration
+			
+			state
+			{
+				name		expand
+				textscale	0.45
+				
+				onEnter
+				{
+					execNow ui_animate sidebet p1_name Delay 1000;
+				}
+			}
+		}
+		// timer
+		itemDef
+		{
+			name			timer
+			type			ITEM_TYPE_TEXT
+			rect			(-SIDEBET_WIDTH/2) (-SIDEBET_HEIGHT/2) 100 90 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			forecolor		1 1 0.5 1
+			exp				text( locString( "@MPUI_WAGER_PLAY_RESUMING_IN", int( ( dvarInt( sidebet_endTime ) - getTime() ) / 1000.0 ) ) )
+			textfont		UI_FONT_NORMAL
+			textscale		0
+			textstyle		CHOICE_TEXTSTYLE
+			textalign		ITEM_ALIGN_BOTTOM_RIGHT
+			visible			1
+			decoration
+			
+			state
+			{
+				name		expand
+				textscale	0.45
+			}
+		}
+		// local CP
+		itemDef
+		{
+			name			localcp
+			type			ITEM_TYPE_TEXT
+			rect			(320-(SIDEBET_WIDTH/2)-100) (-SIDEBET_HEIGHT/2) 100 90 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
+			forecolor		1 1 1 1
+			exp				text( locString( "@MPUI_WAGER_YOUR_CP", GetStatByName( "CODPOINTS" ) ) )
+			textfont		UI_FONT_NORMAL
+			textscale		0
+			textstyle		CHOICE_TEXTSTYLE
+			textalign		ITEM_ALIGN_BOTTOM_LEFT
+			visible			1
+			decoration
+			
+			state
+			{
+				name		expand
+				textscale	0.45
+			}
+		}
+		// stats toggle help text
+		itemDef
+		{
+			name			localcp
+			type			ITEM_TYPE_TEXT
+			rect			((SIDEBET_WIDTH/2)-50) (-SIDEBET_HEIGHT/2) 100 90 HORIZONTAL_ALIGN_SUBLEFT VERTICAL_ALIGN_BOTTOM
+			forecolor		1 1 1 1
+			exp				text( locString( "@MPUI_WAGER_SIDEBET_PAYOUT" ) )
+			textfont		UI_FONT_NORMAL
+			textscale		0
+			textstyle		CHOICE_TEXTSTYLE
+			textalign		ITEM_ALIGN_BOTTOM_CENTER
+			visible			1
+			decoration
+			
+			state
+			{
+				name		expand
+				textscale	0.42
+			}
+		}
+		
+		#define PLAYER_BUTTON_WIDTH 170
+		#define PLAYER_BUTTON_HEIGHT 30
+		#define PLAYER_BUTTON_ALIGN_HEIGHT 70
+		#define PLAYER_BUTTON_SPACING 30
+		#define PLAYER_BUTTON_BG_COLOR 0.25 0.25 0.25 1
+		#define PLAYER_DETAILS_BG_COLOR 0.25 0.25 0.25 1
+		
+		#define BET_PAD_WIDTH PLAYER_BUTTON_WIDTH
+		#define BET_PAD_HEIGHT 30
+		#define BET_PAD_ALIGN_HEIGHT 200
+		#define BET_PAD_SPACING PLAYER_BUTTON_SPACING
+		#define BET_PAD_BG_COLOR PLAYER_BUTTON_BG_COLOR
+		#define BET_PAD_BORDER_COLOR 0.1 0.1 0.1 0.9
+		
+		#define BET_PLACED_COLOR 0 0.5 0 1
+		
+		#define PLAYER_LIFE_SIZE 28
+		#define PLAYER_LIFE_WIDTH 18
+		
+		#define PLAYER_NAME_BG( itemNumber ) \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_background" \
+					rect		((SIDEBET_WIDTH/2)+(PLAYER_BUTTON_WIDTH*(itemNumber-2))+(PLAYER_BUTTON_SPACING*(itemNumber-2))) (PLAYER_BUTTON_ALIGN_HEIGHT+(PLAYER_BUTTON_HEIGHT/2)) 0 0 \
+					style		WINDOW_STYLE_FILLED \
+					backcolor	PLAYER_BUTTON_BG_COLOR \
+					visible		1 \
+					decoration \
+					\
+					state \
+					{ \
+						name		expand \
+						rect		((SIDEBET_WIDTH/2)+(PLAYER_BUTTON_WIDTH*(itemNumber-2))+(PLAYER_BUTTON_SPACING*(itemNumber-2))-(PLAYER_BUTTON_WIDTH/2)) PLAYER_BUTTON_ALIGN_HEIGHT PLAYER_BUTTON_WIDTH PLAYER_BUTTON_HEIGHT \
+					} \
+					\
+					state \
+					{ \
+						name		bet_placed \
+						rect		((SIDEBET_WIDTH/2)+(PLAYER_BUTTON_WIDTH*(itemNumber-2))+(PLAYER_BUTTON_SPACING*(itemNumber-2))-(PLAYER_BUTTON_WIDTH/2)) PLAYER_BUTTON_ALIGN_HEIGHT PLAYER_BUTTON_WIDTH PLAYER_BUTTON_HEIGHT \
+						backcolor	BET_PLACED_COLOR \
+					} \
+				}
+				
+		#define PLAYER_DETAILS_BG( itemNumber ) \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_details_bg" \
+					rect		((SIDEBET_WIDTH/2)+(PLAYER_BUTTON_WIDTH*(itemNumber-2))+(PLAYER_BUTTON_SPACING*(itemNumber-2))-(PLAYER_BUTTON_WIDTH/2)) (PLAYER_BUTTON_ALIGN_HEIGHT+PLAYER_BUTTON_HEIGHT) PLAYER_BUTTON_WIDTH 0 \
+					style		WINDOW_STYLE_FILLED \
+					backcolor	PLAYER_DETAILS_BG_COLOR \
+					visible		1 \
+					decoration \
+					\
+					state \
+					{ \
+						name	PullDown \
+						rect	((SIDEBET_WIDTH/2)+(PLAYER_BUTTON_WIDTH*(itemNumber-2))+(PLAYER_BUTTON_SPACING*(itemNumber-2))-(PLAYER_BUTTON_WIDTH/2)) (PLAYER_BUTTON_ALIGN_HEIGHT+PLAYER_BUTTON_HEIGHT) PLAYER_BUTTON_WIDTH (BET_PAD_ALIGN_HEIGHT-(PLAYER_BUTTON_ALIGN_HEIGHT+PLAYER_BUTTON_HEIGHT)) \
+					} \
+					\
+					state \
+					{ \
+						name		bet_placed \
+						rect		((SIDEBET_WIDTH/2)+(PLAYER_BUTTON_WIDTH*(itemNumber-2))+(PLAYER_BUTTON_SPACING*(itemNumber-2))-(PLAYER_BUTTON_WIDTH/2)) (PLAYER_BUTTON_ALIGN_HEIGHT+PLAYER_BUTTON_HEIGHT) PLAYER_BUTTON_WIDTH (BET_PAD_ALIGN_HEIGHT-(PLAYER_BUTTON_ALIGN_HEIGHT+PLAYER_BUTTON_HEIGHT)) \
+						backcolor	BET_PLACED_COLOR \
+					} \
+				}
+				
+		#define	PLAYER_NAME( itemNumber, enterArgs ) \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_name" \
+					type		ITEM_TYPE_TEXT \
+					rect		((SIDEBET_WIDTH/2)+(PLAYER_BUTTON_WIDTH*(itemNumber-2))+(PLAYER_BUTTON_SPACING*(itemNumber-2))-(PLAYER_BUTTON_WIDTH/2)+5) (PLAYER_BUTTON_ALIGN_HEIGHT+(PLAYER_BUTTON_HEIGHT/2)-(PLAYER_BUTTON_HEIGHT/2)) PLAYER_BUTTON_WIDTH PLAYER_BUTTON_HEIGHT \
+					forecolor	1 1 1 0 \
+					exp			text( dvarString( "sidebet_p"#itemNumber ) ) \
+					textfont	UI_FONT_NORMAL \
+					textscale	0.45 \
+					textstyle	CHOICE_TEXTSTYLE \
+					textalign	ITEM_ALIGN_MIDDLE_LEFT \
+					visible		1 \
+					decoration \
+					\
+					state \
+					{ \
+						name		FadeIn \
+						forecolor	1 1 1 1 \
+						\
+						onEnter \
+						{ \
+							enterArgs \
+						} \
+					} \
+					\
+					state \
+					{ \
+						name		Delay \
+						\
+						onEnter \
+						{ \
+							changeState FadeIn PLAYER_NAME_FADE_TIME; \
+						} \
+					} \
+				}
+				
+		#define PLAYER_LIVES( itemNumber, lifeNumber ) \
+				itemDef \
+				{ \
+					name			"p"#itemNumber"_name" \
+					type			ITEM_TYPE_OWNERDRAW \
+					rect			((SIDEBET_WIDTH/2)+(PLAYER_BUTTON_WIDTH*(itemNumber-2))+(PLAYER_BUTTON_SPACING*(itemNumber-2))+(PLAYER_BUTTON_WIDTH/2)-28-(PLAYER_LIFE_WIDTH*(lifeNumber-1))) (PLAYER_BUTTON_ALIGN_HEIGHT+(PLAYER_BUTTON_HEIGHT/2)-(PLAYER_LIFE_SIZE/2)) PLAYER_LIFE_SIZE PLAYER_LIFE_SIZE \
+					forecolor		1 1 1 0 \
+					ownerdraw		CG_PLAYER_LIFE_COUNTER_ALIVE_GRAPHIC \
+					visible			when( dvarInt( "sidebet_p"#itemNumber"_lives" ) >= lifeNumber ); \
+					decoration \
+					\
+					state \
+					{ \
+						name		FadeIn \
+						forecolor	1 1 1 1 \
+						\
+						onEnter \
+						{ \
+							enterArgs \
+						} \
+					} \
+					\
+					state \
+					{ \
+						name		Delay \
+						\
+						onEnter \
+						{ \
+							changeState FadeIn PLAYER_NAME_FADE_TIME; \
+						} \
+					} \
+				}
+				
+		#define	PLAYER_BETPAD( itemNumber, leftArgs, rightArgs ) \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_betpad" \
+					type		ITEM_TYPE_BUTTON_NO_TEXT \
+					rect		((SIDEBET_WIDTH/2)+(BET_PAD_WIDTH*(itemNumber-2))+(BET_PAD_SPACING*(itemNumber-2))-1) (BET_PAD_ALIGN_HEIGHT+(BET_PAD_HEIGHT/2)) 0 0 \
+					style		WINDOW_STYLE_FILLED \
+					backcolor	BET_PAD_BG_COLOR \
+					bordercolor	BET_PAD_BORDER_COLOR \
+					border		1 \
+					bordersize	0 \
+					visible		1 \
+					\
+					onFocus { execNow ui_animate sidebet "p"#itemNumber"_betpad_highlight" highlight BET_FADEIN_TIME; } \
+					\
+					execKeyInt APAD_LEFT { leftArgs } \
+					execKeyInt DPAD_LEFT { leftArgs } \
+					execKeyInt APAD_RIGHT { rightArgs } \
+					execKeyInt DPAD_RIGHT { rightArgs } \
+					\
+					action \
+					{ \
+						if ( WAGER_CAN_BET && ( !WAGER_RESTRICTED || ( player( localname ) == dvarString( "sidebet_p"#itemNumber ) ) ) ) \
+						{ \
+							play CHOICE_ACTION_SOUND; \
+							setdvar sidebet_made itemNumber; \
+							scriptMenuResponse "sidebet_p"#itemNumber; \
+							execNow ui_animate sidebet "p1_details_bg" Default DETAILS_ROLLUP_TIME; \
+							setdvar "sidebet_p1_pulldown" 0; \
+							execNow ui_animate sidebet "p2_details_bg" Default DETAILS_ROLLUP_TIME; \
+							setdvar "sidebet_p2_pulldown" 0; \
+							execNow ui_animate sidebet "p3_details_bg" Default DETAILS_ROLLUP_TIME; \
+							setdvar "sidebet_p3_pulldown" 0; \
+							execNow ui_animate sidebet "p"#itemNumber"_betpad_highlight" bet_placed BET_PLACED_FADEIN_TIME; \
+						} \
+					} \
+					\
+					state \
+					{ \
+						name		expand \
+						bordersize	1 \
+						rect		((SIDEBET_WIDTH/2)+(BET_PAD_WIDTH*(itemNumber-2))+(BET_PAD_SPACING*(itemNumber-2))-(BET_PAD_WIDTH/2)-1) BET_PAD_ALIGN_HEIGHT BET_PAD_WIDTH BET_PAD_HEIGHT \
+					} \
+					\
+					state \
+					{ \
+						name		bet_placed \
+						bordersize	1 \
+						rect		((SIDEBET_WIDTH/2)+(BET_PAD_WIDTH*(itemNumber-2))+(BET_PAD_SPACING*(itemNumber-2))-(BET_PAD_WIDTH/2)-1) BET_PAD_ALIGN_HEIGHT BET_PAD_WIDTH BET_PAD_HEIGHT \
+						backcolor	BET_PLACED_COLOR \
+					} \
+				}
+				
+		#define PLAYER_BETPAD_HIGHLIGHT( itemNumber ) \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_betpad_highlight" \
+					rect		((SIDEBET_WIDTH/2)+(BET_PAD_WIDTH*(itemNumber-2))+(BET_PAD_SPACING*(itemNumber-2))-(BET_PAD_WIDTH/2)+5) (BET_PAD_ALIGN_HEIGHT+5) (BET_PAD_WIDTH-10) (BET_PAD_HEIGHT-10+2) \
+					style		WINDOW_STYLE_FILLED \
+					backcolor	1 1 0.3 0 \
+					visible		when( WAGER_HAS_BET || WAGER_SUFFICIENT_FUNDS && ( !WAGER_RESTRICTED || ( player( localname ) == dvarString( "sidebet_p"#itemNumber ) ) ) ) \
+					decoration \
+					\
+					state \
+					{ \
+						name		highlight \
+						backcolor	1 1 0.3 0.2 \
+						\
+						onEnter \
+						{ \
+							changeState highlight2 1000; \
+							execNow ui_animate sidebet "p"#itemNumber"_betpad_placebet" FadeIn 200; \
+							execNow ui_animate sidebet "p"#itemNumber"_betpad_button" FadeIn 200; \
+						} \
+					} \
+					\
+					state \
+					{ \
+						name		highlight2 \
+						backcolor	1 1 0.3 0.05 \
+						\
+						onEnter \
+						{ \
+							changeState highlight 1000; \
+						} \
+					} \
+					state \
+					{ \
+						name		bet_placed \
+						backcolor	0 0.5 0 0.3 \
+						\
+						onEnter \
+						{ \
+							changeState bet_placed2 1000; \
+						} \
+					} \
+					state \
+					{ \
+						name		bet_placed2 \
+						backcolor	0 0.5 0 0.1 \
+						\
+						onEnter \
+						{ \
+							changeState bet_placed 1000; \
+						} \
+					} \
+				} \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_betpad_highlight" \
+					rect		((SIDEBET_WIDTH/2)+(BET_PAD_WIDTH*(itemNumber-2))+(BET_PAD_SPACING*(itemNumber-2))-(BET_PAD_WIDTH/2)+5) (BET_PAD_ALIGN_HEIGHT+5) (BET_PAD_WIDTH-10) (BET_PAD_HEIGHT-10+2) \
+					style		WINDOW_STYLE_FILLED \
+					backcolor	1 0 0.3 0 \
+					visible		when( ( !WAGER_HAS_BET && !WAGER_SUFFICIENT_FUNDS ) || ( WAGER_RESTRICTED && ( player( localname ) != dvarString( "sidebet_p"#itemNumber ) ) ) ) \
+					decoration \
+					\
+					state \
+					{ \
+						name		highlight \
+						backcolor	1 0 0 0.2 \
+						\
+						onEnter \
+						{ \
+							changeState highlight2 1000; \
+							execNow ui_animate sidebet "p"#itemNumber"_betpad_placebet" FadeIn 200; \
+							execNow ui_animate sidebet "p"#itemNumber"_betpad_button" FadeIn 200; \
+						} \
+					} \
+					\
+					state \
+					{ \
+						name		highlight2 \
+						backcolor	1 0 0 0.05 \
+						\
+						onEnter \
+						{ \
+							changeState highlight 1000; \
+						} \
+					} \
+				}
+				
+		#define PLAYER_BETPAD_PLACEBET( itemNumber ) \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_betpad_placebet" \
+					type		ITEM_TYPE_TEXT \
+					rect		((SIDEBET_WIDTH/2)+(BET_PAD_WIDTH*(itemNumber-2))+(BET_PAD_SPACING*(itemNumber-2))-50) (BET_PAD_ALIGN_HEIGHT+(BET_PAD_HEIGHT/2)-50) 100 100 \
+					forecolor	1 1 1 0 \
+					exp			text( locString( "@MPUI_WAGER_BET" )+dvarInt( "scr_wagerSideBet" )+" "+locString( "@MPUI_CP_ABBREV" ) ) \
+					textfont	UI_FONT_NORMAL \
+					textscale	0.45 \
+					textstyle	CHOICE_TEXTSTYLE \
+					textalign	ITEM_ALIGN_MIDDLE_CENTER \
+					visible		when( WAGER_CAN_BET && ( !WAGER_RESTRICTED || ( player( localname ) == dvarString( "sidebet_p"#itemNumber ) ) ) ) \
+					decoration \
+					\
+					state \
+					{ \
+						name		FadeIn \
+						forecolor	1 1 1 1 \
+					} \
+				} \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_betpad_placebet" \
+					type		ITEM_TYPE_TEXT \
+					rect		((SIDEBET_WIDTH/2)+(BET_PAD_WIDTH*(itemNumber-2))+(BET_PAD_SPACING*(itemNumber-2))-50) (BET_PAD_ALIGN_HEIGHT+(BET_PAD_HEIGHT/2)-50) 100 100 \
+					forecolor	1 1 1 0 \
+					exp			text( locString( "@MPUI_WAGER_INSUFFICIENT_FUNDS" ) ) \
+					textfont	UI_FONT_NORMAL \
+					textscale	0.45 \
+					textstyle	CHOICE_TEXTSTYLE \
+					textalign	ITEM_ALIGN_MIDDLE_CENTER \
+					visible		when( !WAGER_HAS_BET && !WAGER_SUFFICIENT_FUNDS ) \
+					decoration \
+					\
+					state \
+					{ \
+						name		FadeIn \
+						forecolor	1 1 1 1 \
+					} \
+				} \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_betpad_placebet" \
+					type		ITEM_TYPE_TEXT \
+					rect		((SIDEBET_WIDTH/2)+(BET_PAD_WIDTH*(itemNumber-2))+(BET_PAD_SPACING*(itemNumber-2))-50) (BET_PAD_ALIGN_HEIGHT+(BET_PAD_HEIGHT/2)-50) 100 100 \
+					forecolor	1 1 1 0 \
+					exp			text( locString( "@MPUI_WAGER_BET_PLACED" ) ) \
+					textfont	UI_FONT_NORMAL \
+					textscale	0.45 \
+					textstyle	CHOICE_TEXTSTYLE \
+					textalign	ITEM_ALIGN_MIDDLE_CENTER \
+					visible		when( WAGER_HAS_BET ) \
+					decoration \
+					\
+					state \
+					{ \
+						name		FadeIn \
+						forecolor	1 1 1 1 \
+					} \
+				}
+				
+		#define	PLAYER_BETPAD_BUTTON( itemNumber ) \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_betpad_button" \
+					type		ITEM_TYPE_BUTTON \
+					rect		((SIDEBET_WIDTH/2)+(BET_PAD_WIDTH*(itemNumber-2))+(BET_PAD_SPACING*(itemNumber-2))-75) (BET_PAD_ALIGN_HEIGHT+(BET_PAD_HEIGHT/2)-50) 150 100 \
+					forecolor	1 1 1 0 \
+					exp			text( locString( "@XBOXLIVE_SELECTBUTTON" ) ) \
+					textfont	UI_FONT_NORMAL \
+					textscale	0.4 \
+					textstyle	CHOICE_TEXTSTYLE \
+					textalign	ITEM_ALIGN_MIDDLE_LEFT \
+					visible		when( WAGER_CAN_BET && ( !WAGER_RESTRICTED || ( player( localname ) == dvarString( "sidebet_p"#itemNumber ) ) ) ) \
+					state \
+					{ \
+						name		FadeIn \
+						forecolor	1 1 1 1 \
+					} \
+				}
+				
+		#define PLAYER_BETPAD_BETS( itemNumber ) \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_betpad_bets" \
+					type		ITEM_TYPE_TEXT \
+					rect		((SIDEBET_WIDTH/2)+(BET_PAD_WIDTH*(itemNumber-2))+(BET_PAD_SPACING*(itemNumber-2))-50) ((BET_PAD_ALIGN_HEIGHT+(PLAYER_BUTTON_ALIGN_HEIGHT+PLAYER_BUTTON_HEIGHT))/2+10) 100 100 \
+					forecolor	1 1 1 0 \
+					exp			text( dvarString( "sidebet_p"#itemNumber"_bets" )+" "+locString( "@MPUI_CP_ABBREV" ) ) \
+					textfont	UI_FONT_NORMAL \
+					textscale	0.40 \
+					textstyle	CHOICE_TEXTSTYLE \
+					textalign	ITEM_ALIGN_MIDDLE_CENTER \
+					visible		1 \
+					decoration \
+					\
+					state \
+					{ \
+						name		FadeIn \
+						forecolor	1 1 1 1 \
+					} \
+				} \
+				itemDef \
+				{ \
+					name		"p"#itemNumber"_betpad_bets" \
+					type		ITEM_TYPE_OWNERDRAW \
+					rect		((SIDEBET_WIDTH/2)+(BET_PAD_WIDTH*(itemNumber-2))+(BET_PAD_SPACING*(itemNumber-2))-(BET_PAD_WIDTH/2)) ((BET_PAD_ALIGN_HEIGHT+(PLAYER_BUTTON_ALIGN_HEIGHT+PLAYER_BUTTON_HEIGHT))/2-75) PLAYER_BUTTON_WIDTH 100 \
+					forecolor	1 1 1 0 \
+					ownerdraw	UI_WAGER_POKERCHIPS \
+					dvar		"sidebet_p"#itemNumber"_bets" \
+					visible		1 \
+					decoration \
+					\
+					state \
+					{ \
+						name		FadeIn \
+						forecolor	1 1 1 1 \
+					} \
+				}
+				
+		#define MOVE( from, to ) \
+				if ( !WAGER_HAS_BET ) \
+				{ \
+					setFocus "p"#to"_betpad"; \
+					execNow ui_animate sidebet "p"#from"_betpad_highlight" Default BET_FADEOUT_TIME; \
+					execNow ui_animate sidebet "p"#from"_betpad_placebet" Default BET_FADEOUT_TIME; \
+					execNow ui_animate sidebet "p"#from"_betpad_button" Default BET_FADEOUT_TIME; \
+					\
+					execNow ui_animate sidebet "p"#to"_betpad_highlight" highlight BET_FADEIN_TIME; \
+					execNow ui_animate sidebet "p"#to"_betpad_placebet" FadeIn BET_FADEIN_TIME; \
+					execNow ui_animate sidebet "p"#to"_betpad_button" FadeIn BET_FADEIN_TIME; \
+				}
+		
+		// player 1
+		PLAYER_NAME_BG( 1 )
+		// player 1 bets
+		PLAYER_BETPAD_BETS( 1 )
+		// player 1 details bg
+		PLAYER_DETAILS_BG( 1 )
+		// player 1 name
+		PLAYER_NAME( 1, execNow ui_animate sidebet p2_name FadeIn PLAYER_NAME_FADE_TIME; )
+		// player 1 lives
+		PLAYER_LIVES( 1, 1 )
+		PLAYER_LIVES( 1, 2 )
+		PLAYER_LIVES( 1, 3 )
+		// player 1 bet pad
+		PLAYER_BETPAD( 1, MOVE( 1, 3 ), MOVE( 1, 2 ) )
+		// player 1 bet pad highlight
+		PLAYER_BETPAD_HIGHLIGHT( 1 )
+		// player 1 place bet
+		PLAYER_BETPAD_PLACEBET( 1 )
+		// player 1 A button
+		PLAYER_BETPAD_BUTTON( 1 )
+		
+		// player 2 name background
+		PLAYER_NAME_BG( 2 )
+		// player 2 bets
+		PLAYER_BETPAD_BETS( 2 )
+		// player 2 details bg
+		PLAYER_DETAILS_BG( 2 )
+		// player 2 name
+		PLAYER_NAME( 2, execNow ui_animate sidebet p3_name FadeIn PLAYER_NAME_FADE_TIME; )
+		// player 2 lives
+		PLAYER_LIVES( 2, 1 )
+		PLAYER_LIVES( 2, 2 )
+		PLAYER_LIVES( 2, 3 )
+		// player 2 bet pad
+		PLAYER_BETPAD( 2, MOVE( 2, 1 ), MOVE( 2, 3 ) )
+		// player 2 bet pad highlight
+		PLAYER_BETPAD_HIGHLIGHT( 2 )
+		// player 2 place bet
+		PLAYER_BETPAD_PLACEBET( 2 )
+		// player 2 A button
+		PLAYER_BETPAD_BUTTON( 2 )
+		
+		// player 3 name background
+		PLAYER_NAME_BG( 3 )
+		// player 3 bets
+		PLAYER_BETPAD_BETS( 3 )
+		// player 3 details bg
+		PLAYER_DETAILS_BG( 3 )
+		// player 3 name
+		PLAYER_NAME( 3, SET_PROPER_INITIAL_FOCUS execNow ui_animate sidebet p1_betpad_bets FadeIn 100; execNow ui_animate sidebet p2_betpad_bets FadeIn 100; execNow ui_animate sidebet p3_betpad_bets FadeIn 100; execNow ui_animate sidebet localcp expand 250; execNow ui_animate sidebet timer expand 250; )
+		// player 3 lives
+		PLAYER_LIVES( 3, 1 )
+		PLAYER_LIVES( 3, 2 )
+		PLAYER_LIVES( 3, 3 )
+		// player 3 bet pad
+		PLAYER_BETPAD( 3, MOVE( 3, 2 ), MOVE( 3, 1 ) )
+		// player 3 bet pad highlight
+		PLAYER_BETPAD_HIGHLIGHT( 3 )
+		// player 3 place bet
+		PLAYER_BETPAD_PLACEBET( 3 )
+		// player 3 A button
+		PLAYER_BETPAD_BUTTON( 3 )
+
+		#define HUD_ALPHA 0.65
+		#define SUMMARY_START_Y -150
+		#define SUMMARY_START_X 180
+		#define SUMMARY_PLACE_PLAYER_SPACE 35
+		#define SUMMARY_DEAD_ICON_SPACE 20
+		#define SUMMARY_SPACING 16
+		#define SUMMARY_YOU_COLOR 1 1 0.3 HUD_ALPHA
+		#define SPEC_HUD_WIDTH 200
+
+		
+		// In the money summary	
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			60 -150 150 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont		UI_FONT_BOLD
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+			exp				text( locString( "@MP_WAGER_IN_THE_MONEY" ) );
+			visible			1
+			decoration
+		}
+
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			(SUMMARY_START_X + SUMMARY_DEAD_ICON_SPACE) -170 SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont		UI_FONT_BOLD
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+			exp				text( "Place" );
+			visible			1
+			decoration
+		}
+
+
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			SUMMARY_START_X -170 SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_RIGHT
+			textfont		UI_FONT_BOLD
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+			exp				text( "Score" );
+			visible			1
+			decoration
+		}
+
+		#define SUMMARY_ISDEAD( itemNumber ) \
+			itemDef\
+			{ \
+				style			WINDOW_STYLE_SHADER \
+				rect			SUMMARY_START_X (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-2)) 16 16 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				forecolor		1 1 1 1 \
+				background		"hud_death_suicide" \
+				visible			when( dvarInt( "sidebet_p"#itemNumber"_lives" ) < 1 ); \ 
+			}
+
+		SUMMARY_ISDEAD( 1 )
+		SUMMARY_ISDEAD( 2 )
+		SUMMARY_ISDEAD( 3 )
+
+		#define IS_TIED_FOR_PLACE( place ) \
+			( place > 1 && ( getScoreForClient( getClientInPlace( place ) ) == getScoreForClient( getClientInPlace( place - 1 ) ) ) )
+				
+		#define SUMMARY_PLACE( itemNumber ) \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			(SUMMARY_START_X + SUMMARY_DEAD_ICON_SPACE) (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-1)) SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				textstyle		ITEM_TEXTSTYLE_SHADOWED \
+				textalign		ITEM_ALIGN_LEFT \
+				textfont		UI_FONT_NORMAL \
+				textscale		0.3 \
+				forecolor		1 1 1 HUD_ALPHA \
+				exp				text( toOrdinal( itemNumber ) ); \
+				visible			when( !IS_TIED_FOR_PLACE( itemNumber ) ); \
+				decoration \
+			} \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			(SUMMARY_START_X + SUMMARY_DEAD_ICON_SPACE) (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-1)) SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				textstyle		ITEM_TEXTSTYLE_SHADOWED \
+				textalign		ITEM_ALIGN_LEFT \
+				textfont		UI_FONT_NORMAL \
+				textscale		0.3 \
+				forecolor		1 1 1 HUD_ALPHA \
+				text			"@MENU_TIED" \
+				visible			when( IS_TIED_FOR_PLACE( itemNumber ) ); \
+				decoration \
+			} 
+
+		#define SUMMARY_PLACE_NOTIE( itemNumber ) \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			(SUMMARY_START_X + SUMMARY_DEAD_ICON_SPACE) (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-1)) SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				textstyle		ITEM_TEXTSTYLE_SHADOWED \
+				textalign		ITEM_ALIGN_LEFT \
+				textfont		UI_FONT_NORMAL \
+				textscale		0.3 \
+				forecolor		1 1 1 HUD_ALPHA \
+				exp				text( toOrdinal( itemNumber ) ); \
+				visible			when( 1 ); \
+				decoration \
+			} 
+
+		SUMMARY_PLACE_NOTIE( 1 )
+		SUMMARY_PLACE( 2 )
+		SUMMARY_PLACE( 3 )
+		
+		#define SUMMARY_PLAYERNAME( itemNumber ) \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			(SUMMARY_START_X+(SUMMARY_PLACE_PLAYER_SPACE*2)) (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-1)) (SPEC_HUD_WIDTH-SUMMARY_PLACE_PLAYER_SPACE) 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				textstyle		ITEM_TEXTSTYLE_SHADOWED \
+				textalign		ITEM_ALIGN_LEFT \
+				textfont		UI_FONT_NORMAL \
+				textscale		0.3 \
+				forecolor		1 1 1 HUD_ALPHA \
+				exp				text( getClientName( getClientInPlace( itemNumber ) ) ); \
+				visible			when( 1 ); \
+				decoration \
+			} 
+			
+		SUMMARY_PLAYERNAME( 1 )
+		SUMMARY_PLAYERNAME( 2 )
+		SUMMARY_PLAYERNAME( 3 )
+		
+		#define SUMMARY_SCORE( itemNumber ) \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			SUMMARY_START_X (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-1)) SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				textstyle		ITEM_TEXTSTYLE_SHADOWED \
+				textalign		ITEM_ALIGN_RIGHT \
+				textfont		UI_FONT_NORMAL \
+				textscale		0.3 \
+				forecolor		1 1 1 HUD_ALPHA \
+				exp				text( getScoreForClient( getClientInPlace( itemNumber ) ) ); \
+				visible			when( 1 ); \
+				decoration \
+			} 
+			
+		SUMMARY_SCORE( 1 )
+		SUMMARY_SCORE( 2 )
+		SUMMARY_SCORE( 3 )
+	}
+}

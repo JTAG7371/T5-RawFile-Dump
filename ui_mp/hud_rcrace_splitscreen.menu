@@ -1,0 +1,269 @@
+// CONSOLE HUD - MP
+
+#define SPLITSCREEN_ENABLED	1
+
+#include "ui/menudef.h"
+#include "ui_mp/hud_gametypes.inc"
+#define SPEC_HUD_WIDTH 160
+
+{
+	// game messages
+	//menuDef
+	//{
+	//	name			"rcrace_gamemessages_ss"
+	//	rect			6 -120 10 10 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+	//	fullScreen		0
+	//	visible			1
+	//	visibilityBits	bits( !BIT_IN_KILLCAM !BIT_DEMO_ALL_GAME_HUD_HIDDEN )
+	//	
+	//	itemDef
+	//	{
+	//		rect				0 0 0 0
+	//		exp					rect Y( 0 - (ONLINEGAME * ONLINEGAME_OFFSET) );
+	//		type				ITEM_TYPE_GAME_MESSAGE_WINDOW
+	//		gamemsgwindowindex	0
+	//		gamemsgwindowmode	MODE_BOTTOMUP_ALIGN_BOTTOM
+	//		textfont			UI_FONT_DEFAULT
+	//		textstyle			ITEM_TEXTSTYLE_SHADOWED
+	//		textalign			ITEM_ALIGN_LEFT
+	//		textscale			TEXTSIZE_SMALL
+	//		visible				1
+	//		visibilityBits		bits( !BIT_UI_ACTIVE BIT_HUD_OBITUARIES )
+	//	}
+	//}
+
+	menuDef
+	{
+		name			"scorebars_rcrace_ss"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible 		1
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_UI_ACTIVE !BIT_SPECTATING_CLIENT )
+		
+		#define SUMMARY_START_Y -78
+		#define SUMMARY_PLACE_PLAYER_SPACE 25
+		#define SUMMARY_SPACING 15
+		#define SUMMARY_YOU_COLOR 1 1 0.3 HUD_ALPHA
+		
+		// In the money summary	
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 (SUMMARY_START_Y-SUMMARY_SPACING) SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont		UI_FONT_BOLD
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+			exp				text( locString( "@MP_WAGER_IN_THE_MONEY" ) );
+			visible			1
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 (SUMMARY_START_Y-SUMMARY_SPACING) SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_RIGHT
+			textfont		UI_FONT_BOLD
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+			exp				text( "Score" );
+			visible			1
+			decoration
+		}
+		
+		#define SUMMARY_PLACE( itemNumber ) \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			0 (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-1)) SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				textstyle		ITEM_TEXTSTYLE_SHADOWED \
+				textalign		ITEM_ALIGN_LEFT \
+				textfont		UI_FONT_NORMAL \
+				textscale		0.3 \
+				forecolor		1 1 1 HUD_ALPHA \
+				exp				text( toOrdinal( itemNumber ) ); \
+				visible			when( getClientName( getClientInPlace( itemNumber ) ) != player( localname ) ); \
+				decoration \
+			} \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			0 (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-1)) SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				textstyle		ITEM_TEXTSTYLE_SHADOWED \
+				textalign		ITEM_ALIGN_LEFT \
+				textfont		UI_FONT_BOLD \
+				textscale		0.3 \
+				forecolor		SUMMARY_YOU_COLOR \
+				exp				text( toOrdinal( itemNumber ) ); \
+				visible			when( getClientName( getClientInPlace( itemNumber ) ) == player( localname ) ); \
+				decoration \
+			}
+			
+		SUMMARY_PLACE( 1 )
+		SUMMARY_PLACE( 2 )
+		SUMMARY_PLACE( 3 )
+		
+		#define SUMMARY_PLAYERNAME( itemNumber ) \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			SUMMARY_PLACE_PLAYER_SPACE (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-1)) (SPEC_HUD_WIDTH-SUMMARY_PLACE_PLAYER_SPACE) 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				textstyle		ITEM_TEXTSTYLE_SHADOWED \
+				textalign		ITEM_ALIGN_LEFT \
+				textfont		UI_FONT_NORMAL \
+				textscale		0.3 \
+				forecolor		1 1 1 HUD_ALPHA \
+				exp				text( getClientName( getClientInPlace( itemNumber ) ) ); \
+				visible			when( getClientName( getClientInPlace( itemNumber ) ) != player( localname ) ); \
+				decoration \
+			} \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			SUMMARY_PLACE_PLAYER_SPACE (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-1)) (SPEC_HUD_WIDTH-SUMMARY_PLACE_PLAYER_SPACE) 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				textstyle		ITEM_TEXTSTYLE_SHADOWED \
+				textalign		ITEM_ALIGN_LEFT \
+				textfont		UI_FONT_BOLD \
+				textscale		0.3 \
+				forecolor		SUMMARY_YOU_COLOR \
+				exp				text( getClientName( getClientInPlace( itemNumber ) ) ); \
+				visible			when( getClientName( getClientInPlace( itemNumber ) ) == player( localname ) ); \
+				decoration \
+			}
+			
+		SUMMARY_PLAYERNAME( 1 )
+		SUMMARY_PLAYERNAME( 2 )
+		SUMMARY_PLAYERNAME( 3 )
+		
+		#define SUMMARY_SCORE( itemNumber ) \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			0 (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-1)) SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				textstyle		ITEM_TEXTSTYLE_SHADOWED \
+				textalign		ITEM_ALIGN_RIGHT \
+				textfont		UI_FONT_NORMAL \
+				textscale		0.3 \
+				forecolor		1 1 1 HUD_ALPHA \
+				exp				text( getScoreForClient( getClientInPlace( itemNumber ) ) ); \
+				visible			when( getClientName( getClientInPlace( itemNumber ) ) != player( localname ) ); \
+				decoration \
+			} \
+			itemDef \
+			{ \
+				type			ITEM_TYPE_TEXT \
+				rect			0 (SUMMARY_START_Y+SUMMARY_SPACING*(itemNumber-1)) SPEC_HUD_WIDTH 100 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+				textstyle		ITEM_TEXTSTYLE_SHADOWED \
+				textalign		ITEM_ALIGN_RIGHT \
+				textfont		UI_FONT_BOLD \
+				textscale		0.3 \
+				forecolor		SUMMARY_YOU_COLOR \
+				exp				text( getScoreForClient( getClientInPlace( itemNumber ) ) ); \
+				visible			when( getClientName( getClientInPlace( itemNumber ) ) == player( localname ) ); \
+				decoration \
+			}
+			
+		SUMMARY_SCORE( 1 )
+		SUMMARY_SCORE( 2 )
+		SUMMARY_SCORE( 3 )
+		
+		// Score background
+		itemDef
+		{
+			name			"ScoreBackground"
+			style			WINDOW_STYLE_SHADER
+			rect			0 -45 SPEC_HUD_WIDTH 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		0 0 0 0.3
+			background		"white"
+			visible			1
+			decoration
+		}
+		// Player icons
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			1 -45 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( dvarString( "g_TeamIcon_Allies" ) );
+			visible			1
+			forecolor		1 1 1 1
+			decoration
+		}
+		// Labels
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			35 -30 20 20 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont		UI_FONT_NORMAL
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+			exp 			text( locString( "@CGAME_SB_SCORE" ) )
+			visible			1
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			35 -15 20 20 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont		UI_FONT_NORMAL
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+			exp				text( locString( "@MP_PLACE" ) )
+			visible			1
+			decoration
+		}
+		// Number backgrounds
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			70 -43 55 13 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		0 0 0 0.3
+			background		"white"
+			visible			1
+			decoration
+		}
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			70 -28 55 13 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			forecolor		0 0 0 0.3
+			background		"white"
+			visible			1;
+			decoration
+		}
+		// Actual numbers
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			75 -30 20 20 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont		UI_FONT_NORMAL
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+			exp text		( player( score ) );
+			visible			1
+			decoration
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			rect			75 -15 20 20 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textfont		UI_FONT_NORMAL
+			textscale		0.3
+			forecolor		1 1 1 HUD_ALPHA
+			exp text		( player( place ) );
+			visible			1
+			decoration
+		}
+	}
+}

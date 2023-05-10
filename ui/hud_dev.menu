@@ -1,0 +1,42 @@
+// CONSOLE HUD - DEV
+
+#include "ui/menudef.h"
+
+{
+	assetGlobalDef
+	{
+		fadeClamp		1					// sets the fadeup alpha
+		fadeCycle		1					// how often fade happens in milliseconds
+		fadeAmount		0.1					// amount to adjust alpha per cycle
+	}
+
+	// Safe area
+	menuDef
+	{
+		name			"safearea"
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible			1
+
+		#include "ui/safearea.menu"
+	}
+
+	menuDef
+	{
+		name			"reference_art"
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible			1
+		
+		itemDef
+		{
+			name			"reference_art2"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			0 0 640 480
+			forecolor		1 1 1 1
+			ownerdraw		CG_DEBUG_REFERENCE_ART
+			visible			1
+			decoration
+		}
+	}
+}

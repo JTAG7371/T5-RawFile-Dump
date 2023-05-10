@@ -1,0 +1,436 @@
+// Assumes that "choices_setup_common" has already been included
+
+#ifdef PC
+#undef	CHOICE_Y_OFFSET
+#define CHOICE_Y_OFFSET						0
+#endif
+
+#ifndef CHOICE_POPUP_TITLE_HEIGHT
+#define CHOICE_POPUP_TITLE_HEIGHT			0
+#endif
+
+#ifndef CENTER_POPUP_ON_CLOSE
+#define CENTER_POPUP_ON_CLOSE 
+#endif
+
+#undef	CHOICE_FOCUS_SOUND
+#define CHOICE_FOCUS_SOUND					"uin_navigation_submenu_over"
+
+#ifndef	POPUP_SIDE_PAD
+#define POPUP_SIDE_PAD						15
+#endif
+
+#ifndef	POPUP_BUTTON_COUNT
+#define POPUP_BUTTON_COUNT					2
+#endif
+
+#ifndef	SYSTEM_POPUP_WIDTH
+	#ifdef SPLITSCREEN_ENABLED
+		#define SYSTEM_POPUP_WIDTH					(270*SPLITSCREEN_MULTIPLIER)
+	#else
+		#define SYSTEM_POPUP_WIDTH					270
+	#endif
+#endif
+
+#ifndef	SYSTEM_POPUP_HEIGHT
+	#ifdef SPLITSCREEN_ENABLED
+		#define SYSTEM_POPUP_HEIGHT					(160*SPLITSCREEN_MULTIPLIER)
+	#else
+		#define SYSTEM_POPUP_HEIGHT					160
+	#endif
+#endif
+
+
+		
+#define SMALL_CENTER_POPUP_WIDTH 400
+#define SMALL_CENTER_POPUP_HEIGHT 230
+
+#ifndef SMALL_CENTER_POPUP_BACKCOLOR
+#define SMALL_CENTER_POPUP_BACKCOLOR 0.2 0.2 0.2 0.7
+#endif //#ifndef SMALL_CENTER_POPUP_BACKCOLOR
+
+#define SMALL_CENTER_POPUP_SETUP( nameArg, itemCount, onOpenArg, onEscArg ) \
+		name			nameArg \
+		visible			1 \
+		fullscreen		0 \
+		rect			(-SMALL_CENTER_POPUP_WIDTH/2) (-SMALL_CENTER_POPUP_HEIGHT/2) SMALL_CENTER_POPUP_WIDTH SMALL_CENTER_POPUP_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		backcolor		SMALL_CENTER_POPUP_BACKCOLOR \
+		background		"menu_mp_lobby_frame_circle" \
+		focusColor		COLOR_FOCUSED \
+		style			WINDOW_STYLE_FRAMED \
+		frame           16 0.5 FRAME_SIDE_ALL \
+		priority		MENU_PRI_POPUP \
+		popup \
+		onOpen \
+		{ \
+			activateBlur; \
+			setLocalVarBool	ui_centerPopup 1; \
+			play uin_navigation_sys_open; \
+			onOpenArg; \
+		} \
+		onClose \
+		{ \
+			deactivateBlur; \
+			CENTER_POPUP_ON_CLOSE \
+			setLocalVarBool	ui_centerPopup 0; \
+		} \
+		onESC \
+		{ \
+			deactivateBlur; \
+			setLocalVarBool	ui_centerPopup 0; \
+			onEscArg; \
+			close self; \
+		}
+		
+#define	IN_MP_FRONTEND			( dvarBool( ui_multiplayer ) && !IsInGame() )
+#define POPUP_BACKCOLOR			0.2 0.2 0.2 0.6
+#define POPUP_INNER_COLOR		0 0 0 0.5
+
+#ifdef SPLITSCREEN_ENABLED
+#define SMALL_CENTER_POPUP_TITLE_HEIGHT (20*SPLITSCREEN_MULTIPLIER)
+#else
+#define SMALL_CENTER_POPUP_TITLE_HEIGHT	20
+#endif
+
+#define SMALL_CENTER_POPUP_TITLE_VIS( textArg, visArg ) \
+	POPUP_TITLE_VIS( CHOICE_X_START POPUP_SIDE_PAD (SMALL_CENTER_POPUP_WIDTH-30) SMALL_CENTER_POPUP_TITLE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, textArg, visArg )
+
+#define SMALL_CENTER_POPUP_SUBTITLE_VIS( textArg, visArg ) \
+	PREPROC_TEXT_DRAW_VIS_EX( CHOICE_X_START (POPUP_SIDE_PAD+SMALL_CENTER_POPUP_TITLE_HEIGHT) (SMALL_CENTER_POPUP_WIDTH-30) 100 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, textArg, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, COLOR_BODY_TEXT, visArg, autowrapped )
+
+#define SMALL_CENTER_POPUP_SETUP_INGAME( nameArg, itemCount, onOpenArg, onEscArg ) \
+		name			nameArg \
+		visible			1 \
+		fullscreen		0 \
+		rect			(-SMALL_CENTER_POPUP_WIDTH/2) (-SMALL_CENTER_POPUP_HEIGHT/2) SMALL_CENTER_POPUP_WIDTH SMALL_CENTER_POPUP_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+		focusColor		COLOR_FOCUSED \
+		priority		MENU_PRI_POPUP \
+		/* ingame / SP background overlay */																			\
+		itemDef																											\
+		{																												\
+			style			WINDOW_STYLE_FILLED																			\
+			rect			-2000 -2000 4000 4000																		\
+			/* overkill to make sure the whole screen is covered. doing it this way because	*/							\
+			/* this makes it simple to center the items and buttons when the base menu uses	*/							\
+			/* the center alignment values rather than full screen							*/							\
+			backcolor		POPUP_BG_OVERLAY_COLOR																		\
+			visible			when( !IN_MP_FRONTEND );																	\ 
+			decoration																									\
+		}																												\
+		itemDef	{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			0 0 SMALL_CENTER_POPUP_WIDTH SMALL_CENTER_POPUP_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			background		"menu_mp_popup_window_small" \
+			forecolor		POPUP_BACKCOLOR \
+			visible			1 \
+			decoration \
+		} \
+		popup \
+		onOpen \
+		{ \
+			activateBlur; \
+			setLocalVarBool	ui_centerPopup 1; \
+			play uin_navigation_sys_open; \
+			onOpenArg; \
+		} \
+		onClose \
+		{ \
+			deactivateBlur; \
+			CENTER_POPUP_ON_CLOSE \
+			setLocalVarBool	ui_centerPopup 0; \
+		} \
+		onESC \
+		{ \
+			deactivateBlur; \
+			setLocalVarBool	ui_centerPopup 0; \
+			onEscArg; \
+			close self; \
+		}
+
+#define POPUP_SETUP_VIS( xArg, yArg, wArg, hArg, nameArg, onOpenArg, onEscArg, overlayColor, blurDarkenAmount, visArg )	\
+		name			nameArg																							\
+		fullscreen		0																								\
+		rect			xArg yArg wArg hArg HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER								\
+		focusColor		COLOR_FOCUSED																					\
+		priority		MENU_PRI_POPUP																					\
+		visible			when( visArg );																					\
+		popup																											\
+		onOpen																											\
+		{																												\
+			if( IN_MP_FRONTEND )																						\
+			{																											\
+				activateBlur;																							\
+			}																											\
+			onOpenArg;																									\
+		}																												\
+		onFocus																											\
+		{																												\
+			setLocalVarString ui_choiceGroup nameArg;																	\
+		}																												\
+		onClose																											\
+		{																												\
+			if( IN_MP_FRONTEND )																						\
+			{																											\
+				deactivateBlur;																							\
+			}																											\
+			CENTER_POPUP_ON_CLOSE																						\
+		}																												\
+		onESC																											\
+		{																												\
+			if( IN_MP_FRONTEND )																						\
+			{																											\
+				deactivateBlur;																							\
+			}																											\
+			onEscArg;																									\
+			close self;																									\
+		}																												\
+		/* ingame / SP background overlay */																			\
+		itemDef																											\
+		{																												\
+			style			WINDOW_STYLE_FILLED																			\
+			rect			-2000 -2000 4000 4000																			\
+			/* overkill to make sure the whole screen is covered. doing it this way because	*/							\
+			/* this makes it simple to center the items and buttons when the base menu uses	*/							\
+			/* the center alignment values rather than full screen							*/							\
+			backcolor		overlayColor																				\
+			visible			when( visArg && !IN_MP_FRONTEND );															\ 
+			decoration																									\
+		}																												\
+		/* rounded corner background */																					\
+		itemDef																											\
+		{																												\
+			rect            0 0	wArg hArg																				\
+			style           WINDOW_STYLE_SHADER_FRAMED																	\
+			frame           16 0.5 FRAME_SIDE_ALL																		\
+			background      "menu_mp_lobby_frame_circle"																\
+			forecolor       POPUP_BACKCOLOR																				\
+			visible         when( visArg );																				\
+			decoration																									\
+		}																												
+
+#define INNER_BG_RECT( wArg, hArg )	\
+		POPUP_INNER_BG_PAD POPUP_HEADER_HEIGHT ( wArg - ( POPUP_INNER_BG_PAD * 2 ) ) ( hArg - POPUP_HEADER_HEIGHT - POPUP_INNER_BG_PAD )
+
+#define POPUP_INNER_BG( wArg, hArg, visArg )				\
+		itemDef												\
+		{													\
+			rect			INNER_BG_RECT( wArg, hArg ) 	\
+			style			WINDOW_STYLE_SHADER_FRAMED		\
+			frame           16 0.5 FRAME_OPEN_TOP			\
+			background      "menu_mp_lobby_frame_circle"	\
+			forecolor       POPUP_INNER_COLOR				\
+			visible         when( visArg );					\
+			decoration										\
+		}
+
+#define POPUP_GLOW( wArg, hArg, glowColor, visArg )							\
+		PREPROC_SHADER_DRAW_VIS_EX(	0 0	wArg ( hArg - POPUP_INNER_BG_PAD ),	\
+									"menu_mp_lobby_frame_fade", glowColor,	\
+									when( visArg );, ; )	
+
+#define POPUP_TITLE_VIS( rectArg, textArg, visArg )	\
+		PREPROC_TEXT_DRAW_VIS_EX( rectArg, 0 0, textArg, TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, visArg, autowrapped )
+
+#define POPUP_SPINNER( rectArg, visArg )		\
+		itemDef									\ 
+		{										\ 
+			style		WINDOW_STYLE_SPINNER	\ 
+			rect		rectArg					\ 
+			visible		when( visArg );			\ 
+			decoration							\ 
+		}	
+
+#ifdef CONSOLE
+#define POPUP_BACK_BUTTON_EX( yArg, actionArg )																						\
+		PREPROC_TEXT_DRAW( 0 yArg 0 0, 0 0, "@PLATFORM_BACK", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1 )
+#else // #ifdef CONSOLE
+#define POPUP_BACK_BUTTON_EX( yArg, actionArg )																						\
+		itemDef																											\
+		{																												\
+			type			ITEM_TYPE_BUTTON \
+			rect			15 ( yArg - 16 ) 50 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER  \
+			exp				rect W( getTextWidth(locString("@PLATFORM_BACK"),CHOICE_TEXTFONT,TEXTSIZE_DEFAULT)+8 ) \
+			text			"@PLATFORM_BACK" \
+			textfont		CHOICE_TEXTFONT  \
+			textscale		TEXTSIZE_DEFAULT \
+			textalign		ITEM_ALIGN_MIDDLE_CENTER  \
+			style			WINDOW_STYLE_FILLED \
+			forecolor		1 1 1 1 \
+			backcolor		1 1 1 0 \
+			visible			1  \
+			border				1								\
+			bordersize			1								\
+			bordercolor			CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA \
+			mouseEnter		{ play CHOICE_FOCUS_SOUND; setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA; } \
+			mouseexit		{ setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA; } \
+			action		{ play CHOICE_FOCUS_SOUND ; actionArg; } \
+		}
+#endif // #ifdef CONSOLE
+
+#define POPUP_BACK_BUTTON( yArg )	\
+		POPUP_BACK_BUTTON_EX( yArg, close self; );
+
+
+
+
+			
+#define SYSTEM_POPUP_X		(-SYSTEM_POPUP_WIDTH/2) 
+#define SYSTEM_POPUP_Y		(-SYSTEM_POPUP_HEIGHT/2)
+
+#define SYSTEM_POPUP_SETUP_VIS( nameArg, onOpenArg, onEscArg, visArg )																													\
+		POPUP_SETUP_VIS( SYSTEM_POPUP_X, SYSTEM_POPUP_Y, SYSTEM_POPUP_WIDTH, SYSTEM_POPUP_HEIGHT, nameArg, onOpenArg, onEscArg, POPUP_BG_OVERLAY_COLOR, BLUR_DARKEN_DEFAULT, visArg )	\
+		POPUP_GLOW( SYSTEM_POPUP_WIDTH, SYSTEM_POPUP_HEIGHT, POPUP_GLOW_WHITE, visArg )
+
+#ifdef SPLITSCREEN_ENABLED
+#define SYSTEM_POPUP_TITLE_HEIGHT	(20*SPLITSCREEN_MULTIPLIER)
+#else
+#define SYSTEM_POPUP_TITLE_HEIGHT	20
+#endif
+
+#define SYSTEM_POPUP_TITLE_VIS( textArg, visArg )	\
+		POPUP_TITLE_VIS( CHOICE_X_START POPUP_SIDE_PAD (SYSTEM_POPUP_WIDTH-30) SYSTEM_POPUP_TITLE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, textArg, visArg )
+
+#define SYSTEM_POPUP_SUBTITLE_VIS( textArg, visArg )	\
+		POPUP_TITLE_VIS( CHOICE_X_START (POPUP_SIDE_PAD+SYSTEM_POPUP_TITLE_HEIGHT) (SYSTEM_POPUP_WIDTH-30) 100 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, textArg, visArg)
+
+#define SYSTEM_POPUP_DOUBLE_LINE_TITLE_VIS( textArg1, textArg2, visArg )	\
+		POPUP_TITLE_VIS( CHOICE_X_START POPUP_SIDE_PAD (SYSTEM_POPUP_WIDTH-30) SYSTEM_POPUP_TITLE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, textArg1, visArg ) \
+		POPUP_TITLE_VIS( CHOICE_X_START (POPUP_SIDE_PAD+20) (SYSTEM_POPUP_WIDTH-30) SYSTEM_POPUP_TITLE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, textArg2, visArg )
+
+#define SYSTEM_POPUP_SUBTITLE2_VIS( textArg, visArg )	\
+		POPUP_TITLE_VIS( CHOICE_X_START (POPUP_SIDE_PAD+SYSTEM_POPUP_TITLE_HEIGHT+20) (SYSTEM_POPUP_WIDTH-30) 100 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, textArg, visArg)
+
+#define SYSTEM_POPUP_SPINNER_SIZE		( SYSTEM_POPUP_HEIGHT - ( POPUP_SIDE_PAD * 2 ) )
+#define SYSTEM_POPUP_SPINNER_X_START	( ( SYSTEM_POPUP_WIDTH / 2 ) - ( SYSTEM_POPUP_SPINNER_SIZE / 2 ) )
+#define SYSTEM_POPUP_SPINNER_Y_START	( ( SYSTEM_POPUP_HEIGHT / 2 ) - ( SYSTEM_POPUP_SPINNER_SIZE / 2 ) )
+
+#define SYSTEM_POPUP_SPINNER( visArg )																									\
+		POPUP_SPINNER( SYSTEM_POPUP_SPINNER_X_START SYSTEM_POPUP_SPINNER_Y_START SYSTEM_POPUP_SPINNER_SIZE SYSTEM_POPUP_SPINNER_SIZE, visArg )
+
+#define SYSTEM_POPUP_BACK_BUTTON	\
+		POPUP_BACK_BUTTON( ( SYSTEM_POPUP_HEIGHT + 20) )
+
+#define SYSTEM_POPUP_BACK_BUTTON_EX( actionArg )	\
+		POPUP_BACK_BUTTON_EX( ( SYSTEM_POPUP_HEIGHT + 20), actionArg )
+
+#ifdef CONSOLE
+	#define SYSTEM_POPUP_BUTTON_X( textArg, offsetArg, actionArg, visArg )
+		PREPROC_TEXT_DRAW( offsetArg (SYSTEM_POPUP_HEIGHT+16) 0 0, 0 0, textArg, TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1 )
+#else // #ifdef CONSOLE
+	#define GENERIC_POPUP_BUTTON_X( popup_width, popup_height, offsetArg, textArg, actionArg, visArg )							\
+		itemDef																													\
+		{																														\
+			type			ITEM_TYPE_BUTTON																					\
+			rect			15 (popup_height + 4) 10 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER							\
+			exp				rect W( getTextWidth( locString( textArg ), CHOICE_TEXTFONT,TEXTSIZE_DEFAULT ) + 8 )				\
+			exp				rect X( 15 + offsetArg )																			\
+			exp				text( textArg );																					\
+			textfont		CHOICE_TEXTFONT																						\
+			textscale		TEXTSIZE_DEFAULT																					\
+			textalign		ITEM_ALIGN_MIDDLE_CENTER																			\
+			style			WINDOW_STYLE_FILLED																					\
+			forecolor		1 1 1 1																								\
+			backcolor		1 1 1 0																								\
+			visible			visArg																								\
+			border			1																									\
+			bordersize		1																									\
+			bordercolor		CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA															\
+			mouseEnter		{ setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA; play CHOICE_FOCUS_SOUND; }			\
+			mouseexit		{ setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA; }								\
+			action			{ play CHOICE_FOCUS_SOUND ; actionArg }																\
+		}
+		
+	#define SYSTEM_POPUP_BUTTON_X( textArg, offsetArg, actionArg, visArg ) \
+		GENERIC_POPUP_BUTTON_X( SYSTEM_POPUP_WIDTH, SYSTEM_POPUP_HEIGHT, offsetArg, textArg, actionArg, visArg )
+#endif // #else // #ifdef CONSOLE
+
+#ifdef CONSOLE
+	#define SYSTEM_POPUP_BUTTON2( textArg, actionArg, visArg )
+		PREPROC_TEXT_DRAW( 65 (SYSTEM_POPUP_HEIGHT+16) 0 0, 0 0, textArg, TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1 )
+#else // #ifdef CONSOLE
+	#define SYSTEM_POPUP_BUTTON2( textArg, actionArg, visArg ) \
+		SYSTEM_POPUP_BUTTON_X( textArg, getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + 20, actionArg, visArg )
+#endif // #else // #ifdef CONSOLE
+
+
+#define MEDIUM_POPUP_X		(-MEDIUM_POPUP_WIDTH/2) 
+#define MEDIUM_POPUP_Y		(-MEDIUM_POPUP_HEIGHT/2)
+
+#define MEDIUM_POPUP_SETUP_VIS( nameArg, onOpenArg, onEscArg, glowColorArg, showInnerArg, visArg )																						\
+		POPUP_SETUP_VIS( MEDIUM_POPUP_X, MEDIUM_POPUP_Y, MEDIUM_POPUP_WIDTH, MEDIUM_POPUP_HEIGHT, nameArg, onOpenArg, onEscArg, POPUP_BG_OVERLAY_COLOR, BLUR_DARKEN_PURCHASE, visArg )	\
+		POPUP_INNER_BG( MEDIUM_POPUP_WIDTH, MEDIUM_POPUP_HEIGHT, ( showInnerArg && visArg) )																							\
+		POPUP_GLOW( MEDIUM_POPUP_WIDTH, MEDIUM_POPUP_HEIGHT, glowColorArg, visArg )
+
+#define MEDIUM_POPUP_TITLE_HEIGHT	20
+#define MEDIUM_POPUP_TITLE_X_START	5
+#define MEDIUM_POPUP_TITLE_Y_START	5
+
+#define MEDIUM_POPUP_TITLE_VIS( textArg, visArg )	\
+		POPUP_TITLE_VIS( MEDIUM_POPUP_TITLE_X_START MEDIUM_POPUP_TITLE_Y_START (MEDIUM_POPUP_WIDTH-30) MEDIUM_POPUP_TITLE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, textArg, visArg )
+
+#define MEDIUM_POPUP_SUBTITLE_VIS( textArg, visArg )	\
+		POPUP_TITLE_VIS( MEDIUM_POPUP_TITLE_X_START (MEDIUM_POPUP_TITLE_Y_START+MEDIUM_POPUP_TITLE_HEIGHT) (MEDIUM_POPUP_WIDTH-30) 100 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, textArg, visArg)
+
+#define MEDIUM_POPUP_SPINNER_SIZE		( MEDIUM_POPUP_HEIGHT - ( POPUP_SIDE_PAD * 2 ) )
+#define MEDIUM_POPUP_SPINNER_X_START	( ( MEDIUM_POPUP_WIDTH / 2 ) - ( MEDIUM_POPUP_SPINNER_SIZE / 2 ) )
+#define MEDIUM_POPUP_SPINNER_Y_START	( ( MEDIUM_POPUP_HEIGHT / 2 ) - ( MEDIUM_POPUP_SPINNER_SIZE / 2 ) )
+
+#define MEDIUM_POPUP_SPINNER( visArg )	\
+		POPUP_SPINNER( MEDIUM_POPUP_SPINNER_X_START MEDIUM_POPUP_SPINNER_Y_START MEDIUM_POPUP_SPINNER_SIZE MEDIUM_POPUP_SPINNER_SIZE, visArg )
+
+#define MEDIUM_POPUP_BACK_BUTTON	\
+		POPUP_BACK_BUTTON( ( MEDIUM_POPUP_HEIGHT + 20 ) )
+
+
+
+			
+#define LARGE_POPUP_X		(-LARGE_POPUP_WIDTH/2) 
+#define LARGE_POPUP_Y		(-LARGE_POPUP_HEIGHT/2)
+
+#define LARGE_POPUP_SETUP_VIS( nameArg, onOpenArg, onEscArg, glowColorArg, showInnerArg, visArg )																					\
+		POPUP_SETUP_VIS( LARGE_POPUP_X, LARGE_POPUP_Y, LARGE_POPUP_WIDTH, LARGE_POPUP_HEIGHT, nameArg, onOpenArg, onEscArg, POPUP_BG_OVERLAY_COLOR, BLUR_DARKEN_PURCHASE, visArg )	\
+		POPUP_INNER_BG( LARGE_POPUP_WIDTH, LARGE_POPUP_HEIGHT, ( showInnerArg && visArg) )																							\
+		POPUP_GLOW( LARGE_POPUP_WIDTH, LARGE_POPUP_HEIGHT, glowColorArg, visArg )
+
+#define LARGE_POPUP_TITLE_HEIGHT	25
+#define LARGE_POPUP_TITLE_X_START	8
+#define LARGE_POPUP_TITLE_Y_START	5
+
+#define LARGE_POPUP_TITLE_VIS( textArg, visArg )																																		\
+		PREPROC_TEXT_DRAW_ALL(	LARGE_POPUP_TITLE_X_START LARGE_POPUP_TITLE_Y_START (LARGE_POPUP_WIDTH-30) LARGE_POPUP_TITLE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,	\
+								textArg,																																				\
+								TEXTSIZE_SUBTITLE, 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,															\
+								visArg, autowrapped )
+	
+#define LARGE_POPUP_SUBTITLE_VIS( textArg, visArg )	\
+		POPUP_TITLE_VIS( (LARGE_POPUP_TITLE_X_START+1) (LARGE_POPUP_TITLE_Y_START+LARGE_POPUP_TITLE_HEIGHT) (LARGE_POPUP_WIDTH-30) 100 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, textArg, visArg)
+
+#ifdef CONSOLE
+	#define LARGE_POPUP_BACK_BUTTON	\
+		PREPROC_TEXT_DRAW( CHOICE_X_START LARGE_POPUP_HEIGHT 50 17, 0 0, "@PLATFORM_BACK", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1 )
+#else // #ifdef CONSOLE
+	#define LARGE_POPUP_BACK_BUTTON																						\
+		itemDef																											\
+		{																												\
+			type			ITEM_TYPE_BUTTON																			\
+			rect			CHOICE_X_START (LARGE_POPUP_HEIGHT + 4) 10 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER	\
+			exp				rect W( getTextWidth( locString( "@PLATFORM_BACK" ),CHOICE_TEXTFONT,TEXTSIZE_DEFAULT ) + 8 )\
+			text			"@PLATFORM_BACK"																			\
+			textfont		CHOICE_TEXTFONT																				\
+			textscale		TEXTSIZE_DEFAULT																			\
+			textalign		ITEM_ALIGN_MIDDLE_CENTER																	\
+			style			WINDOW_STYLE_FILLED																			\
+			forecolor		1 1 1 1																						\
+			backcolor		1 1 1 0																						\
+			visible			1																							\
+			border			1																							\
+			bordersize		1																							\
+			bordercolor		CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA													\
+			mouseEnter		{ setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA; play CHOICE_FOCUS_SOUND; }	\
+			mouseexit		{ setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA; }						\
+			action			{ play CHOICE_FOCUS_SOUND ; if( IN_MP_FRONTEND ) { deactivateBlur; } close self; }			\																					\
+		}
+#endif // #else // #ifdef CONSOLE
+
+
+

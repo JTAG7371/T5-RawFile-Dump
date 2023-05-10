@@ -1,0 +1,9 @@
+name, default, minimum, maximum
+scr_spawn_dom_owned_outer_flag_influencer_score,100,-500,500
+scr_spawn_dom_owned_outer_flag_influencer_radius,1050,200,5000
+scr_spawn_dom_owned_inner_flag_influencer_score,150,-500,500
+scr_spawn_dom_owned_inner_flag_influencer_radius,1050,200,5000
+scr_spawn_dom_enemy_flag_influencer_score,-150.0,-500,500
+scr_spawn_dom_enemy_flag_influencer_radius,1050,200,5000
+scr_spawn_dom_unowned_inner_flag_influencer_score,-150,-500,500
+scr_spawn_dom_unowned_inner_flag_influencer_radius,1050,200,5000

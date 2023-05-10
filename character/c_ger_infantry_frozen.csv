@@ -1,0 +1,5 @@
+rawfile,character/c_ger_infantry_frozen.gsc
+xmodel,c_ger_infantry_frozen_body
+xmodelalias,c_ger_infantry_frozen_head_alias
+xmodel,c_ger_infantry_frozen_helm
+xmodel,c_ger_infantry_frozen_gear

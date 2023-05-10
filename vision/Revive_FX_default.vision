@@ -1,0 +1,8 @@
+r_reviveFX_enable				"1"
+r_reviveFX_edgeColorTemp		"6500"
+r_reviveFX_edgeSaturation		"1"
+r_reviveFX_edgeScale				"1 1 1"
+r_reviveFX_edgeContrast			"1 1 1"
+r_reviveFX_edgeOffset				"0 0 0"
+r_reviveFX_edgeMaskAdjust		"0"
+r_reviveFX_edgeAmount				"0"

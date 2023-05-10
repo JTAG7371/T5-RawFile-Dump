@@ -1,0 +1,12 @@
+build,pack,parent
+codbo,snd,
+codbo_mp_beta,snd_beta,
+test,snd_test,codbo
+codbo_dlc1,snd_dlc1
+codbo_dlc2,snd_dlc2,codbo
+codbo_dlc3,snd_dlc3,codbo
+codbo_dlc4,snd_dlc4,codbo
+codbo_dlc5,snd_dlc5,codbo
+codbo_dlc6,snd_dlc6,codbo
+
+

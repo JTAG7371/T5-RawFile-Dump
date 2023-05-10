@@ -1,0 +1,457 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/custom_mode.inc"
+#include "ui/frame.inc"
+
+#define CHOICE_SEP_1 2
+#define CHOICE_SEP_2 4
+#define CHOICE_SEP_3 6
+
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/custom_mode_layout.inc"
+
+#define GAME_OPTIONS_MENU_NAME "custom_killstreaks"
+
+#undef	NEW_FRAME_BUTTON_NAME
+#define NEW_FRAME_BUTTON_NAME "custom_killstreaks_"
+
+#undef CHOICE_BUTTON_NAME
+#define CHOICE_BUTTON_NAME "custom_killstreaks_"
+
+#undef MENUDEF_NAME
+#define MENUDEF_NAME custom_killstreaks
+
+#define ITEM_IMAGE_HEIGHT	( FRAME_DEFAULT_HEIGHT - FRAME_HEADER_HEIGHT )
+#define ITEM_IMAGE_WIDTH	(327)
+
+#include "ui_mp/item_animate.inc"
+#include "ui_mp/item_listbox.inc"
+
+
+#define INITIALIZE_CUSTOM_KILLSTREAK_DVARS \
+	if( dvarInt( "custom_killstreak_1_kills" ) == 0 ) \
+	{	\
+		setdvar "custom_killstreak_1_kills" 3;	\
+		setdvar "custom_killstreak_2_kills" 5;	\
+		setdvar "custom_killstreak_3_kills" 7;	\
+		execnow set "custom_killstreak_1" ( GetItemIndex( "KILLSTREAK_RECON" ) ); \
+		execnow set "custom_killstreak_2" ( GetItemIndex( "KILLSTREAK_NAPALM" ) ); \
+		execnow set "custom_killstreak_3" ( GetItemIndex( "KILLSTREAK_HELICOPTER_COMLINK" ) ); \
+	}	\
+	if( !dvarInt(selected_killstreak_index) ) \
+	{ \
+		execnow set selected_killstreak_index (dvarInt("custom_killstreak_1" )); \
+	} 
+
+//***********************************************************************************
+// Custom Killstreak menu
+//***********************************************************************************
+menuDef {
+	name			GAME_OPTIONS_MENU_NAME
+	rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+	focuscolor		COLOR_FOCUSED
+	style			WINDOW_STYLE_FILLED
+	soundloop 		MENU_MUSIC
+	border			0
+	visible			when( MenuHasFocus() || dvarBool( ui_custom_save_to_file_share ) )
+	onOpen			{
+						execnow ui_animate GAME_OPTIONS_MENU_NAME * highlightOff 0;
+						activateBlur;
+						focusFirst; setLocalVarBool ui_inOverlay 1; setLocalVarBool ui_hideBack 1; 
+						execnow set ui_inside_popup killstreaks;
+						execnow set selected_group killstreak;
+						execnow buildItemListForGroupName (dvarString( selected_group ));
+						execnow set ui_slot_count 3;
+						play uin_navigation_menu_lg_open;
+						INITIALIZE_CUSTOM_KILLSTREAK_DVARS
+					}
+	onClose			{ deactivateBlur; setLocalVarBool ui_inOverlay 0; setLocalVarBool ui_hideBack 0; setLocalVarBool ui_choice_hideaccept 0; }
+	onEsc			{ close self; }
+	
+	// right side text and images
+	PREPROC_SHADER_DRAW_VIS_EX( (CUSTOM_MODE_FRAME_WIDTH/2-ITEM_IMAGE_WIDTH) (-CUSTOM_MODE_FRAME_HEIGHT/2+NEW_FRAME_HEADER_HEIGHT) ITEM_IMAGE_WIDTH ITEM_IMAGE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, GetItemRef( dvarInt(selected_killstreak_index) )+"_lobby", 1 1 1 0.9, when( dvarInt( selected_killstreak_index ) != 0 ), ; )
+
+	NEW_FRAME( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+	NEW_FRAME_TITLE( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT, "@CUSTOM_GAME_CREATE_CAPS", 1 )
+	NEW_FRAME_SUBTITLE( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT, CUSTOM_GAMETYPE_NAME + " / " + locString("@CUSTOM_KILLSTREAK_EDITOR"), 1 )
+
+	CUSTOM_MODE_BACKGROUND_WATERMARK_VIS( dvarInt( selected_killstreak_index ) == 0 )
+
+	#define KILLSTREAK_IS_DEFINED( num ) \
+			(dvarInt( "custom_killstreak_"num ) != 0)
+
+	#define KILLSTREAK_NUM_KILLS_MORE_THAN_ONE( num ) \
+			( KILLSTREAK_IS_DEFINED( num ) && dvarInt( "custom_killstreak_"num"_kills" ) > 1 )
+	#define KILLSTREAK_NUM_KILLS_ONE_KILL( num ) \
+			( KILLSTREAK_IS_DEFINED( num ) && dvarInt( "custom_killstreak_"num"_kills" ) == 1 )
+
+	#define SETUP_KILLSTREAK_EDIT( num ) \
+		setdvar custom_killstreak_edit_dvar "custom_killstreak_"num; \
+		setdvar custom_killstreak_edit_slot num; \
+		open custom_killstreak_popup;
+
+	#define SETUP_NUM_KILLS_EDIT( num ) \
+		setdvar custom_killstreak_num_kills_dvar "custom_killstreak_"num"_kills";\
+		setdvar custom_killstreak_edit_slot num; \
+		open custom_num_kills_popup;
+
+	#define CUSTOM_KILLSTREAK_NAME( num ) \
+		ToUpper( locString( "@"+GetItemName( dvarInt( ( "custom_killstreak_"num ) ) ) ) )
+	
+	#define CUSTOM_NUM_KILLS_DISPLAY( num ) \
+		dvarInt( "custom_killstreak_"num"_kills" ) + " " + locString( "@MPUI_KILLS_CAPS" )
+
+	#define SET_KILLSTREAK_IMAGE( num, tooltipString ) \
+		SET_CHOICE_DESC( "", tooltipString, "" ) \
+		execnow set selected_killstreak_index (dvarInt( "custom_killstreak_"num ) );
+
+	#define KILLSTREAK_EDIT_CHOICE( num, killstreakNum ) \
+		FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( num, "@CUSTOM_SELECT_KILLSTREAK",  SETUP_KILLSTREAK_EDIT( killstreakNum ), SET_KILLSTREAK_IMAGE( killstreakNum, "@CUSTOM_SELECT_KILLSTREAK_DESC" ), CLEAR_CHOICE_DESC, 1, ; ) \
+		CUSTOM_FRAME_CHOICE_VIS( num, CUSTOM_KILLSTREAK_NAME( killstreakNum ), KILLSTREAK_IS_DEFINED( killstreakNum ) ) \
+		CUSTOM_FRAME_CHOICE_VIS( num, "@CUSTOM_NO_KILLSTREAK", !KILLSTREAK_IS_DEFINED( killstreakNum ) ) 
+	#define KILLSTREAK_NUM_KILLS_CHOICE( num, killstreakNum ) \
+		FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( num, "@CUSTOM_NUM_KILLS",  SETUP_NUM_KILLS_EDIT( killstreakNum ), SET_KILLSTREAK_IMAGE( killstreakNum, "@CUSTOM_NUM_KILLS_DESC" ), CLEAR_CHOICE_DESC, KILLSTREAK_IS_DEFINED( killstreakNum ), ; ) \
+		FRAME_CHOICE_DBUTTON_FOCUS_VIS_EX( num, "@CUSTOM_NUM_KILLS", SET_CHOICE_DESC( "", "@CUSTOM_NUM_KILLS_DISABLED_DESC", "" ) setLocalVarBool ui_choice_hideaccept 1;, CLEAR_CHOICE_DESC setLocalVarBool ui_choice_hideaccept 0;, !KILLSTREAK_IS_DEFINED( killstreakNum ), ; ) \
+		CUSTOM_FRAME_CHOICE_VIS( num, "@CUSTOM_VALUE_KILLS_1", KILLSTREAK_NUM_KILLS_ONE_KILL( killstreakNum ) ) \
+		CUSTOM_FRAME_CHOICE_VIS( num, CUSTOM_NUM_KILLS_DISPLAY( killstreakNum ), KILLSTREAK_NUM_KILLS_MORE_THAN_ONE( killstreakNum ) ) 
+
+	KILLSTREAK_EDIT_CHOICE( 1, "1" )
+	KILLSTREAK_NUM_KILLS_CHOICE( 2, "1" )
+
+	KILLSTREAK_EDIT_CHOICE( 3, "2" )
+	KILLSTREAK_NUM_KILLS_CHOICE( 4, "2" )
+
+	KILLSTREAK_EDIT_CHOICE( 5, "3" )		
+	KILLSTREAK_NUM_KILLS_CHOICE( 6, "3" )
+
+	// killstreak tweakables
+	#define IS_KILLSTREAK_RCXD \
+		( dvarInt( "custom_killstreak_1" ) == GetItemIndex( "KILLSTREAK_RCBOMB" ) || dvarInt( "custom_killstreak_2" ) == GetItemIndex( "KILLSTREAK_RCBOMB" ) || dvarInt( "custom_killstreak_3" ) == GetItemIndex( "KILLSTREAK_RCBOMB" ) )
+
+	// killstreak modifiers subheader
+	PREPROC_TEXT_DRAW_VIS_EX(	CHOICE_RECT( 7 ), 0 0,	
+								"@CUSTOM_RCXD_OPTIONS",																										
+								TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_LEFT, 0.69 0.69 0.69 0.75,														
+								when( IS_KILLSTREAK_RCXD ),																													
+								name NEW_FRAME_BUTTON_NAME"killstreak_modifier"; NEW_FRAME_TRANSPARENT_STATE( 1 1 1 ) )														
+
+	FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS(	8, "@CUSTOM_RCXD_AUTO_DESTRUCT_TIMER", scr_rcbomb_notimeout, 
+											{ "@MENU_ENABLED_CAPS" 0 "@MENU_DISABLED_CAPS" 1 }, 
+											;,
+											SET_CHOICE_DESC( "", "@CUSTOM_RCXD_AUTO_DESTRUCT_TIMER_DESC", "" ) setLocalVarBool ui_choice_hideaccept 1; execnow set selected_killstreak_index (GetItemIndex( "KILLSTREAK_RCBOMB" )),
+											CLEAR_CHOICE_DESC setLocalVarBool ui_choice_hideaccept 0,
+											IS_KILLSTREAK_RCXD )
+
+	CUSTOM_FRAME_HINT( ui_choice_desc )
+
+#ifdef PC
+	NEW_FRAME_BACK_BUTTON_ACTION( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT, close self; )
+	SAVE_TO_FILESHARE_BUTTON_NEW_FRAME_ACTION( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+#else //#ifdef PC
+	NEW_FRAME_BACK_BUTTON( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+	SAVE_TO_FILESHARE_BUTTON_NEW_FRAME( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+#endif //#ifdef PC
+
+	#include "ui/safearea.menu"
+}
+
+//***********************************************************************************
+// Killstreak edit popup
+//***********************************************************************************
+#define CHOICE_TAB_TEXTSIZE				TEXTSIZE_DEFAULT
+#undef	HIGHLIGHT_COLOR
+#define HIGHLIGHT_COLOR					0.3 0.35 0.55 0.25
+
+#define LIST_X_START	 				(FRAME_CHOICE_X_START-3)
+#define LIST_Y_START	 				(FRAME_CHOICE_Y_START-4)
+#define LIST_HEIGHT						( COMMAND_SUPPORT_BOTTOM_Y - LIST_Y_START + 30 )
+#define LIST_WIDTH						245
+#define	LIST_ELEM_HEIGHT				17
+
+#define COMMAND_SUPPORT_BOTTOM_Y		( LIST_Y_START + FRAME_DEFAULT_HEIGHT - NEW_FRAME_BG_Y_OFFSET( FRAME_DEFAULT_HEIGHT ) - 88 + 35 )
+#define COMMAND_SUPPORT_DESC_X			( -5 )
+
+#undef  CHOICE_X_START
+#define CHOICE_X_START					FRAME_CHOICE_X_START
+#undef  CHOICE_Y_START
+#define CHOICE_Y_START					( LIST_Y_START )
+#undef	CHOICE_SIZE_Y
+#define CHOICE_SIZE_Y					LIST_ELEM_HEIGHT
+#undef	CHOICE_Y_COUNT
+#define CHOICE_Y_COUNT					12
+
+#define ITEM_TITLE_HEIGHT				30
+#define ITEM_TITLE_WIDTH				( (FRAME_DEFAULT_WIDTH/2) - FRAME_DEFAULT_TITLE_X_OFFSET )
+#define ITEM_INFO_TEXT_HEIGHT			15
+
+#define ITEM_INFO_Y_1					(LIST_Y_START-4)
+#define	ITEM_INFO_Y_2					(LIST_Y_START+ITEM_TITLE_HEIGHT-10)
+#define ITEM_INFO_Y_3					(LIST_Y_START + LIST_HEIGHT - (ITEM_INFO_TEXT_HEIGHT*5) )
+#define ITEM_INFO_Y_4					(ITEM_INFO_Y_3 + (ITEM_INFO_TEXT_HEIGHT*2))
+
+#define ITEM_INFO( itemArg )																																																		\
+		/* BG Image */																																																			\
+		PREPROC_SHADER_DRAW_VIS_EX( (FRAME_DEFAULT_WIDTH/2-ITEM_IMAGE_WIDTH) (  ( -FRAME_DEFAULT_HEIGHT / 2 ) + NEW_FRAME_HEADER_HEIGHT ) ITEM_IMAGE_WIDTH ITEM_IMAGE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,		\
+									GetItemRef( itemArg )+"_lobby", 1 1 1 0.9,																																	\
+									when( itemArg );,																																												\
+									; )																																															\
+		/* Name */																																																				\	
+		PREPROC_TEXT_DRAW_ALL(	(COMMAND_SUPPORT_DESC_X) ITEM_INFO_Y_1 ITEM_TITLE_WIDTH ITEM_TITLE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,																	\
+								toUpper( locString( "@" + GetItemName( itemArg ) ) ),																																				\
+								TEXTSIZE_TITLE, 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,																									\
+								when( itemArg );, ; )																																												\
+		/* Description Header */																																																\
+		PREPROC_TEXT_DRAW_VIS(	(COMMAND_SUPPORT_DESC_X) (ITEM_INFO_Y_4) ITEM_TITLE_WIDTH ITEM_INFO_TEXT_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,																\
+								"@MPUI_DESCRIPTION_CAPS",																																										\
+								TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, 0 0 0 0.8,																																			\
+								when( itemArg ); )																																													\
+		/* Description */																																																		\
+		PREPROC_TEXT_DRAW_VIS_EX(	(COMMAND_SUPPORT_DESC_X) (ITEM_INFO_Y_4+ITEM_INFO_TEXT_HEIGHT) ITEM_TITLE_WIDTH (ITEM_INFO_TEXT_HEIGHT*2) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,								\
+									"@" + GetItemDesc( itemArg ),																																					\
+									TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1,																																			\
+									when( itemArg );, autowrapped )
+																																																								
+
+#undef ON_ESC
+#define ON_ESC							\
+	deactivateBlur;						\
+	play uin_navigation_menu_lg_close;	\
+	close self;
+		
+menuDef
+{
+	name					custom_killstreak_popup
+	rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+	focuscolor				COLOR_FOCUSED
+	style					WINDOW_STYLE_FILLED
+	priority				MENU_PRI_ONTOP
+	soundloop 				MENU_MUSIC
+	onOpen	
+	{
+		activateBlur;
+		execnow set ui_show_preview 1;
+		setdvar ui_items_no_cost 1;
+		execnow focusitem killstreaks;
+	}
+	onFocus {  }
+	onClose	
+	{
+		deactivateBlur; 
+		execnow set ui_show_preview 0;
+		execnow set ui_primary_highlighted 0;
+		execnow set ui_attachment_highlighted 0;
+		setdvar ui_items_no_cost 0;
+	}
+	onESC	
+	{
+		ON_ESC
+	}
+	
+	NEW_FRAME( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+	NEW_FRAME_TITLE( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT, "@CUSTOM_GAME_CREATE_CAPS", 1 )
+	NEW_FRAME_SUBTITLE( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT, CUSTOM_GAMETYPE_NAME + " / " + locString("@CUSTOM_KILLSTREAK_EDITOR") + " / " + locString("@CUSTOM_SELECT_KILLSTREAK"), 1 )
+	
+	//PLAYER_INFO_VIS( COMMAND_SUPPORT_WIDTH, COMMAND_SUPPORT_HEIGHT, 1 )
+
+	ITEM_INFO( GetCurrentItemIndex() )
+	CUSTOM_MODE_BACKGROUND_WATERMARK_VIS( !GetCurrentItemIndex() )
+
+	
+	#define CUSTOM_KILLSTREAK_SELECTED \
+		execnow set (dvarString( custom_killstreak_edit_dvar )) (getCurrentItemIndex()); \
+		execnow set selected_killstreak_index (dvarInt( dvarString( custom_killstreak_edit_dvar ) ) );\
+		if( dvarInt( selected_killstreak_index ) == 0 ) { \
+			execnow set selected_killstreak_index (GetItemIndex( "KILLSTREAK_RCBOMB" )); } \
+		close self; 
+
+	itemDef
+	{
+		name						killstreaks
+		type						ITEM_TYPE_LISTBOX
+		feeder						FEEDER_CUSTOM_KILLSTREAKS
+		rect						LIST_X_START LIST_Y_START LIST_WIDTH LIST_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+		origin						0 0
+		elementwidth				30
+		elementheight				SORTED_ITEM_ELEM_HEIGHT
+		elementtype					LISTBOX_TEXT
+		textstyle					ITEM_TEXTSTYLE_NORMAL
+		textfont					UI_FONT_NORMAL
+		textscale					TEXTSIZE_DEFAULT
+		textalignx					12
+		forecolor					NEW_FRAME_COMMON_TEXT_COLOR
+		focusColor					CHOICE_TEXTCOLOR
+		disableColor				CHOICE_TEXTCOLOR
+		noscrollbars
+		selectIcon					SELECT_ICON
+		outlineColor				NEW_FRAME_COMMON_HIGHLIGHT_COLOR
+		elementBackgroundColor		NEW_FRAME_TRANSPARENCY
+		noBlinkingHighlight
+		modal
+		/*				x					y					w							h							len	horzAlign		vertAlign*/ 
+		userarea	5	10					0					LIST_WIDTH					(SORTED_ITEM_ELEM_HEIGHT-1)	32	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE 				/* Name */
+						20					1					(SORTED_ITEM_ELEM_HEIGHT-2)	(SORTED_ITEM_ELEM_HEIGHT-2)	16	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE 				/* Image */ 
+						(LIST_WIDTH-70)		0					50							(SORTED_ITEM_ELEM_HEIGHT-1)	24	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE 				/* Cost */
+						(LIST_WIDTH)		(17/2-LOCK_SIZE/2)	LOCK_SIZE					LOCK_SIZE					24	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE 				/* Lock */
+						(LIST_WIDTH-95)	0					50							(SORTED_ITEM_ELEM_HEIGHT-1)	24	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE					/* Count */
+		visible 1
+		onfocus
+		{
+			execNow refreshFeederSelection;
+			play CHOICE_FOCUS_SOUND;
+		}
+		onListboxSelectionChange
+		{
+			play CHOICE_FOCUS_SOUND;
+		}
+		doubleclick
+		{
+			CUSTOM_KILLSTREAK_SELECTED;
+		}
+	}
+
+#ifdef PC
+	NEW_FRAME_BACK_BUTTON_ACTION( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT, ON_ESC )
+	SAVE_TO_FILESHARE_BUTTON_NEW_FRAME_ACTION( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+#else // #ifdef PC
+	NEW_FRAME_BACK_BUTTON( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+	SAVE_TO_FILESHARE_BUTTON_NEW_FRAME( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+#endif // #else #ifdef PC
+	
+	#include "ui/safearea.menu"
+}
+
+//***********************************************************************************
+// Killstreak num kills popup
+//***********************************************************************************
+
+#define	LIST_ELEM_HGT				(CHOICE_SIZE_Y+2)
+#undef	LIST_HEIGHT
+#define LIST_HEIGHT						( COMMAND_SUPPORT_BOTTOM_Y - LIST_Y_START - ( LIST_ELEM_HGT ) )
+
+#define ON_NUM_KILLS_SELECTED_ARGS( selected, notselected ) \
+	if(		( dvarInt( custom_killstreak_numkills ) != dvarInt( "custom_killstreak_1_kills" ) || !dvarInt( "custom_killstreak_1" ) ) \
+		&&	( dvarInt( custom_killstreak_numkills ) != dvarInt( "custom_killstreak_2_kills" ) || !dvarInt( "custom_killstreak_2" ) ) \
+		&&	( dvarInt( custom_killstreak_numkills ) != dvarInt( "custom_killstreak_3_kills" ) || !dvarInt( "custom_killstreak_3" ) ) ) \
+	{																							\
+		notselected																				\
+	}																							\
+	else																						\
+	{																							\
+		selected																				\
+	}
+
+#define SHOW_NUM_KILLS_MESSAGE \
+	if( dvarInt( custom_killstreak_numkills ) == dvarInt( ( "custom_killstreak_" + dvarInt( custom_killstreak_edit_slot )+ "_kills" ) ) ) \
+	{ \
+		execnow set ui_choice_desc "@CUSTOM_NUM_KILLS_THIS_KILLSTREAK_DESC"; \
+	} \
+	else \
+	{ \
+		execnow set ui_choice_desc "@CUSTOM_NUM_KILLS_IN_USE_DESC"; \
+	}
+
+#undef ON_ESC
+#define ON_ESC							\
+	deactivateBlur;						\
+	play uin_navigation_menu_lg_close;	\
+	close self;
+	
+menuDef
+{
+	name					custom_num_kills_popup
+	rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+	focuscolor				COLOR_FOCUSED
+	style					WINDOW_STYLE_FILLED
+	priority				MENU_PRI_ONTOP
+	soundloop 				MENU_MUSIC
+	onOpen	
+	{
+		activateBlur;
+		execnow set ui_show_preview 1;
+		setdvar ui_items_no_cost 1;
+		execnow focusitem killcount;
+		ON_NUM_KILLS_SELECTED_ARGS( SHOW_NUM_KILLS_MESSAGE , execnow set ui_choice_desc ""; ) 
+		focusFirst;
+	}
+	onFocus {  }
+	onClose	
+	{
+		deactivateBlur; 
+		execnow set ui_show_preview 0;
+		execnow set ui_primary_highlighted 0;
+		execnow set ui_attachment_highlighted 0;
+		setdvar ui_items_no_cost 0;
+	}
+	onESC	
+	{
+		ON_ESC
+	}
+	
+	NEW_FRAME( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+	NEW_FRAME_TITLE( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT, "@CUSTOM_GAME_CREATE_CAPS", 1 )
+	NEW_FRAME_SUBTITLE( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT, CUSTOM_GAMETYPE_NAME + " / " + locString("@CUSTOM_KILLSTREAK_EDITOR") + " / " + locString("@CUSTOM_NUM_KILLS"), 1 )
+
+	ITEM_INFO( dvarInt( selected_killstreak_index ) )
+
+#ifdef PC
+	#define KILLCOUNT_LIST_MODAL modal
+#else // #ifdef PC
+	#define KILLCOUNT_LIST_MODAL
+#endif // #else #ifdef PC
+
+	itemDef
+	{
+		name					killcount
+		type					ITEM_TYPE_LISTBOX
+		feeder					FEEDER_KILLSTREAK_NUM_KILLS
+		rect					LIST_X_START LIST_Y_START LIST_WIDTH LIST_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+		elementwidth			30
+		elementheight			LIST_ELEM_HGT
+		noscrollbars
+		noBlinkingHighlight
+		KILLCOUNT_LIST_MODAL
+		textfont				CHOICE_TEXTFONT
+		textscale				CHOICE_TEXTSIZE
+		forecolor				CHOICE_TEXTCOLOR
+		textalignx				12
+		focusColor				COLOR_TITLE
+		disablecolor			0.3 0.3 0.3 1
+		textstyle				ITEM_TEXTSTYLE_NORMAL
+		visible					1
+		/*				x					y					w				h					len	horzAlign		vertAlign*/
+		userarea	7	-1					0					(LIST_WIDTH+1)	LIST_ELEM_HGT		32	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE	/* Background */
+						30					0					LIST_WIDTH		LIST_ELEM_HGT		32	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE	/* Name */
+						20					1					15				(LIST_ELEM_HGT-2)	16	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE	/* Image */ 
+						(LIST_WIDTH-60)		0					50				LIST_ELEM_HGT		24	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE	/* Cost */
+						(LIST_WIDTH)		(17/2-LOCK_SIZE/2)	LOCK_SIZE		LOCK_SIZE			24	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE	/* Lock */
+						(LIST_WIDTH-100)	0					50				LIST_ELEM_HGT		24	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE	/* Count */
+						1					0					16 				LIST_ELEM_HGT		16	ITEM_ALIGN_LEFT	ITEM_ALIGN_MIDDLE	/* Extra Image */
+
+		onfocus 				{ execNow refreshFeederSelection; setLocalVarInt ui_highlight -1; setdvar ui_choice_noaction 0; play CHOICE_FOCUS_SOUND; }
+		leaveFocus				{  }
+		onListboxSelectionChange
+		{
+			play CHOICE_FOCUS_SOUND;
+			ON_NUM_KILLS_SELECTED_ARGS( SHOW_NUM_KILLS_MESSAGE , execnow set ui_choice_desc ""; ) 
+		}
+		doubleclick
+		{
+			ON_NUM_KILLS_SELECTED_ARGS( ; , execnow set (dvarString( custom_killstreak_num_kills_dvar )) (dvarInt(custom_killstreak_numkills)); close self;  ) 
+		}
+	}
+
+	CUSTOM_FRAME_HINT( ui_choice_desc )
+	
+#ifdef PC
+	NEW_FRAME_BACK_BUTTON_ACTION( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT, ON_ESC )
+	SAVE_TO_FILESHARE_BUTTON_NEW_FRAME_ACTION( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+#else // #ifdef PC
+	NEW_FRAME_BACK_BUTTON( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+	SAVE_TO_FILESHARE_BUTTON_NEW_FRAME( CUSTOM_MODE_FRAME_WIDTH, CUSTOM_MODE_FRAME_HEIGHT )
+#endif // #else #ifdef PC
+	
+	#include "ui/safearea.menu"
+}

@@ -1,0 +1,84 @@
+#include "ui/menudef.h"
+
+#define CHOICE_SIZE_X		180
+#define CHOICE_ACTION_SOUND "uin_mouse_click_t"
+#include "ui_mp/common_macro.inc"
+#include "ui/choices_setup_common.menu"
+
+{
+	menuDef
+	{
+#ifdef OPTIONS_INGAME
+		name			ingameoptions
+		fullScreen		0
+		blurWorld		4.8
+#endif
+#ifdef OPTIONS_MAIN
+		name			options
+		fullScreen		1
+#endif
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		soundloop		""
+
+		onOpen
+		{
+			setitemcolor fadebox backcolor 0 0 0 1;
+			fadeout fadebox ;
+			setdvar ui_background "background_american_w";
+			setdvar ui_logo_show "1";
+			setdvar ui_version_show "1";
+			setdvar ui_separator_show "1";
+			setdvar ui_background_gradient_show "0";
+		}
+		onClose
+		{
+			close options_look;
+			close options_move;
+			close options_shoot;
+			close options_invehicle;
+			close options_misc;
+			close options_graphics;
+			close options_sound;
+			close options_game;
+			close options_view;
+			close options_defaults;
+			close options_driverinfo;
+			close options_credits;
+			close options_multi;
+			close options_graphics_defaults;
+			close options_graphics_texture;
+			close options_control_defaults;
+		}
+		onESC
+		{
+			close self;
+		}
+
+#ifdef OPTIONS_INGAME
+		#include "ui/background_ingame.menu"
+#endif
+
+#ifdef OPTIONS_MAIN
+		#include "ui/background_main_blurred.menu"
+#endif
+
+		CHOICE_MENU_TITLE( "@MENU_SETTINGS_CAPS" )
+		
+		CHOICE_SECTION_TITLE( 1, "@MENU_CONTROLS" )
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_LOOK",					open options_look,				1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 3, "@MENU_MOVE",					open options_move,				1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 4, "@MENU_SHOOT",					open options_shoot,				1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 5, "@MENU_INVEHICLE",				open options_invehicle,			1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 6, "@MENU_INTERACT",				open options_misc,				1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 7, "@MENU_SET_DEFAULT_CONTROLS",	open options_control_defaults,	1, ; )
+
+		CHOICE_SECTION_TITLE( 8, "@MENU_SYSTEM" )
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 9, "@MENU_GRAPHICS",				open options_graphics,			1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 10, "@MENU_SOUND",					open options_sound,				1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 11, "@MENU_GAME_OPTIONS",			open options_game,				1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 12, "@MENU_RESET_SYSTEM_DEFAULTS",	open options_graphics_defaults,	1, ; )
+	}
+}

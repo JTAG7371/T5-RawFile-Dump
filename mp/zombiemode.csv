@@ -1,0 +1,134 @@
+#Zombie Settings
+# NOTE: The first valid entry needs to contain the maximum number of columns that you plan to use in this file
+# The values after the NAME will reflect what difficulty mode you are in.
+# If it is a single value, then it is not currently being used in conjunction with difficulty.
+NAME,EASY,MEDIUM,HARD,VETERAN
+zombify_player,0,
+spectators_respawn,1,
+
+# Difficulty values
+zombie_health_start,80,150,150,150,
+zombie_health_increase,80,100,100,100,
+zombie_health_increase_multiplier,0.075,0.1,0.1,0.1,
+zombie_spawn_delay,2.0,2.0,2.0,2.0,
+zombie_new_runner_interval,60,10,10,10,
+zombie_move_speed_multiplier,6,8,8,8,
+zombie_max_spawned,6,6,6,6,
+zombie_max_ai,24,24,24,24,
+zombie_ai_per_player,6,6,6,6,
+
+penalty_no_revive,0.0,0.10,0.10,0.10,
+penalty_died,0.10,0.0,0.25,0.25,
+penalty_downed,0.01,0.05,0.05,0.05,
+starting_lives,1,0,0,10,
+
+zombie_score_start_1p,1000,500,14000,30000,
+zombie_score_start_2p,1000,500,6000,500,
+zombie_score_start_3p,1000,500,4000,500,
+zombie_score_start_4p,1000,500,3500,500,
+zombie_team_score_start_1p,0,0,0,0,
+zombie_team_score_start_2p,0,0,0,0,
+zombie_team_score_start_3p,0,0,0,0,
+zombie_team_score_start_4p,0,0,0,0,
+
+game_start_delay,0,0,30,30
+zombie_intermission_time,15,
+
+zombie_score_kill_4player,50
+zombie_score_kill_3player,50
+zombie_score_kill_2player,50
+zombie_score_kill_1player,50
+
+zombie_score_kill_4p_team,0
+zombie_score_kill_3p_team,0
+zombie_score_kill_2p_team,0
+zombie_score_kill_1p_team,0
+
+zombie_score_damage_normal,10
+zombie_score_damage_light,10
+
+ape_min_health_solo,3500,8000,10000,10000,
+ape_min_health_coop,3500,14000,14000,14000,
+ape_health_multiplier,6,7,7,7,
+
+zombie_score_bonus_melee,80,
+zombie_score_bonus_head,50,
+zombie_score_bonus_neck,20,
+zombie_score_bonus_torso,10,
+zombie_score_bonus_burn,10,
+zombie_perk_juggernaut_health,250,
+rebuild_barrier_cap_per_round,500,
+zombie_flame_dmg_point_delay,500,
+tesla_max_arcs,5,
+tesla_max_enemies_killed,10,
+tesla_radius_start,300,
+tesla_radius_decay,20,
+tesla_head_gib_chance,75,
+tesla_arc_travel_time,0.11,
+tesla_kills_for_powerup,10,
+Achievement_General_Contractor,200,
+Achievement_HighRoller,75000,
+Achievement_Survivor_1,15,
+Achievement_Insta_Melee_Kills,10,
+Achievement_Headshot_count,150,
+Achievement_Crypt_Keeper,200,
+Achievement_frequent_flier,8,
+Achievement_this_is_a_knife,40,
+Achievement_Perkholic_Anon,20,
+
+# Powerups
+zombie_powerup_point_doubler_time,30,
+zombie_powerup_insta_kill_time,30,
+zombie_powerup_drop_increment,2000,
+zombie_powerup_drop_max_per_round,4,
+
+# weapon name,cost,ammo cost
+#	special
+ray_gun_zm,10000,
+tesla_gun_zm,10000,
+thundergun_zm,10000,
+freezegun_zm,10000,
+sabertooth_zm,2500,
+#	pistol
+m1911_zm,50,
+python_zm,2200,
+#Combat Rifle
+g11_zm,900,
+m14_zm,500,
+m16_zm,1200,
+m16_gl_zm,1100,
+#	SMG
+ak74u_zm,1200,
+kiparisrh_zm,1750,
+mac11rh_zm,1750,
+mp5k_zm,1000,
+mp40_zm,1000,
+mpl_zm,1000,
+pm63_zm,1000,
+skorpion_zm,1200,
+uzi_zm,1300,
+#	Shotgun
+ithaca_zm,1500,
+spas_zm,2000,
+rottweil72_zm,500,
+#	Assault Rifle
+ak47_zm,1500,
+ak47_mk_zm,2200,
+aug_zm,1200,
+aug_acog_zm,1200,
+enfield_zm,1500,
+#	Sniper Rifle
+wa2000_zm,2000,
+dragunov_zm,2500,
+#	LMG
+m60_zm,4000,
+rpk_zm,4000,
+stoner63_zm,4000,
+minigun_zm,4000,
+#	Launchers
+m202_flash_zm,2500
+//new weapons
+ray_gun_upgraded,10000,
+tesla_gun_upgraded,10,
+#	Grenade
+frag_grenade_zm,250,250

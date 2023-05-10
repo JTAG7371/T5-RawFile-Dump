@@ -1,0 +1,259 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/frame.inc"
+
+#define CHOICE_GROUP				"intel"
+
+#include "ui/framestyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/overlaybg.inc"
+#include "ui_mp/newframe.inc"
+//#include "ui_mp/item_listbox.inc"
+
+#undef CHOICE_SIZE_X
+
+#ifdef PC
+	// choice size X needs reset on PC to have the COLLECTIBLESCOUNT_ORIGIN below align properly 
+	#define CHOICE_SIZE_X			275
+
+	// choice Y needs reset to 0 on PC so that the COLLECTIBLE_SELECTION below will align correctly	
+	#undef CHOICE_Y_OFFSET
+	#define CHOICE_Y_OFFSET 0
+#else
+	#define CHOICE_SIZE_X			200
+#endif
+
+#undef CHOICE_Y_START
+#define CHOICE_Y_START				-125
+
+#undef CHOICE_TEXT_OFFSET_X
+#define CHOICE_TEXT_OFFSET_X		18
+
+	#define SELECTION_ONFOCUS( materialname )					\
+			setDvar ui_intel_preview materialname
+
+#define COLLECTIBLESCOUNT_ORIGIN( itemIndex )	(CHOICE_X( itemIndex )+CHOICE_SIZE_X-20) CHOICE_Y( itemIndex )
+#define COLLECTIBLESCOUNT_RECT( itemIndex )	COLLECTIBLESCOUNT_ORIGIN( itemIndex ) CHOICE_SIZE_X CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+
+//#define KILLSTREAKS_LOCKED (1)
+	#define COLLECTIBLE_SELECTION( itemIndex, availAt,textArg, materialname, preview_materialname,redactStyle )			\
+			FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( itemIndex, "@"+textArg,					\
+							open fullscreen_collectibles;microfiche_select materialname;,	\
+							SELECTION_ONFOCUS( preview_materialname),														\
+							;,														\
+							dvarint(mis_01) >= availAt, ; ) \
+		itemDef	\
+			{																										\
+				name			materialname																		\
+				type			ITEM_TYPE_TEXT																		\
+				rect			COLLECTIBLESCOUNT_RECT(itemIndex)													\
+				textfont		CHOICE_TEXTFONT																		\
+				textscale		CHOICE_TEXTSIZE																		\
+				textalign		ITEM_ALIGN_BOTTOM_LEFT																\
+				forecolor		0 0 0 1																				\
+				exp				text( GetCollectiblesCount() );														\
+				autowrapped																							\
+			visible			when (localVarInt( ui_highlight ) == itemIndex)	\
+			decoration	\
+			}																										\
+		itemDef	\
+			{																										\
+				name			materialname																		\
+				type			ITEM_TYPE_TEXT																		\
+				rect			COLLECTIBLESCOUNT_RECT(itemIndex)													\
+				textfont		CHOICE_TEXTFONT																		\
+				textscale		CHOICE_TEXTSIZE																		\
+				textalign		ITEM_ALIGN_BOTTOM_LEFT																\
+				forecolor		1 1 1 1																				\
+				exp				text( GetCollectiblesCount() );														\
+				autowrapped																							\
+			visible			when (localVarInt( ui_highlight ) != itemIndex)	\
+			decoration	\
+			}																										\
+		itemDef	\
+			{																										\
+				style			WINDOW_STYLE_SHADER																	\
+				rect			CHOICE_X( itemIndex ) CHOICE_Y( itemIndex ) CHOICE_SIZE_X 20 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN	\
+				forecolor		0 0 0 1																				\
+				background		redactStyle																			\
+			visible			when (dvarint(mis_01) < availAt)	\
+			decoration	\
+		}
+
+
+	#define ITEM_IMAGE_X					-50
+	#define ITEM_IMAGE_Y					CHOICE_Y_START
+	#define ITEM_IMAGE_WIDTH				325
+	#define ITEM_IMAGE_HEIGHT				250
+	#define ITEM_IMAGE_SIZE					ITEM_IMAGE_WIDTH ITEM_IMAGE_HEIGHT
+
+	#define INTEL_PREVIEW(vis) \
+			PREPROC_SHADER_DRAW_VIS_EX( ITEM_IMAGE_X ITEM_IMAGE_Y ITEM_IMAGE_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, dvarString( ui_intel_preview ), 1 1 1 0.9, when( vis );, ; )
+
+	#undef ON_ESC
+	#define ON_ESC							\
+		play uin_navigation_menu_lg_close;	\
+		close blackout_3d_tv;				\
+		close self;
+
+	menuDef
+	{
+		blurWorld				4.8
+
+		name					menu_collectibles
+		rect					0 0 640 480
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+
+		onOpen	
+		{
+			play uin_navigation_menu_lg_open;
+			microfiche_start cuba_intel;
+		}
+		onFocus {}
+		onClose
+		{
+			microfiche_close;
+		}
+		onESC	
+		{
+			ON_ESC
+		}
+
+		FRAME_SP_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MENU_INTEL_CAPS", 1 )
+
+		INTEL_PREVIEW(1);
+
+		COLLECTIBLE_SELECTION( 1, 	0, 	"MENU_LEVEL_CUBA_CAPS",					"cuba_intel",			"intel_preview", redact1 )
+		COLLECTIBLE_SELECTION( 2, 	1, 	"MENU_LEVEL_VORKUTA_CAPS",				"vorkuta_intel",		"intel_preview", redact2 )
+		COLLECTIBLE_SELECTION( 3, 	4, 	"MENU_LEVEL_FLASHPOINT_CAPS",			"flashpoint_intel",		"intel_preview", redact3 )
+		COLLECTIBLE_SELECTION( 4, 	5, 	"MENU_LEVEL_KHE_SANH_CAPS",				"khe_sanh_intel",		"intel_preview", redact2 )
+		COLLECTIBLE_SELECTION( 5, 	7, 	"MENU_LEVEL_HUE_CITY_CAPS",				"hue_city_intel",		"intel_preview", redact3 )
+		COLLECTIBLE_SELECTION( 6, 	8, 	"MENU_LEVEL_KOWLOON_CAPS",				"kowloon_intel",		"intel_preview", redact1 )
+		COLLECTIBLE_SELECTION( 7, 	9, 	"MENU_LEVEL_FULLAHEAD_CAPS",			"fullahead_intel",		"intel_preview", redact3 )
+		COLLECTIBLE_SELECTION( 8, 	11,	"MENU_LEVEL_CREEK_1_CAPS",				"creek_1_intel",		"intel_preview", redact2 )
+		COLLECTIBLE_SELECTION( 9, 	12,	"MENU_LEVEL_RIVER_CAPS",				"river_intel",			"intel_preview", redact1 )
+		COLLECTIBLE_SELECTION( 10,	14,	"MENU_LEVEL_WMD_CAPS",					"wmd_intel",			"intel_preview", redact1 )
+		COLLECTIBLE_SELECTION( 11,	16,	"MENU_LEVEL_POW_CAPS",					"pow_intel",			"intel_preview", redact3 )
+		COLLECTIBLE_SELECTION( 12,	17,	"MENU_LEVEL_REBIRTH_CAPS",				"rebirth_intel",		"intel_preview", redact1 )
+		COLLECTIBLE_SELECTION( 13,	19,	"MENU_LEVEL_INTERROGATION_ESCAPE_CAPS",	"int_escape_intel",		"intel_preview", redact2 )
+		COLLECTIBLE_SELECTION( 14,	20,	"MENU_LEVEL_UNDERWATERBASE_CAPS",		"underwaterbase_intel",	"intel_preview", redact1 )
+
+
+#ifdef PC
+		NEW_FRAME_BACK_BUTTON_ACTION( FRAME_DEFAULT_WIDTH, FRAME_DEFAULT_HEIGHT, ON_ESC )
+#else //#ifdef PC		
+		FRAME_BACK_BUTTON_DEFAULT
+#endif //#ifdef PC
+	}
+
+#undef ON_ESC
+#define ON_ESC	\
+	close self;
+
+	menuDef
+	{
+		name					fullscreen_collectibles
+		fullScreen				1				
+		rect					0 0 640 480	HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN			// Size and position of the menu
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		soundloop 				MENU_MUSIC
+
+		onOpen					{ }
+		onFocus					{ }
+		onClose					{ }
+		onESC					{ close self; }
+		
+		execKeyInt K_MWHEELDOWN
+		{
+			execNow microFicheZoom 0.1;
+		}
+		
+		execKeyInt K_MWHEELUP
+		{
+			execNow microFicheZoom -0.1;
+		}
+
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_MICROFICHEREADER
+			rect			0 0 640 480
+			forecolor		1 1 1 1
+			visible			1
+			decoration
+		}
+		 
+		//controls
+#ifdef PC
+		NEW_FRAME_BACK_BUTTON_ACTION_PC( ON_ESC )
+		PREPROC_TEXT_DRAW( -200 -10 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM, 0 0, "@PLATFORM_INTEL_ZOOM", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, WHITE )
+		PREPROC_TEXT_DRAW( -200 -10 0 0 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM, 0 0, "@PLATFORM_INTEL_PAN", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, WHITE )
+#else //#ifdef PC		
+		#define CONTROLS_TEXT( rectArg, px, pw, textArg )		\
+				itemDef											\
+				{												\
+					type			ITEM_TYPE_TEXT				\
+					rect			rectArg						\
+					exp				rect X( px )				\
+					exp				rect W( pw )				\
+ 					text			textArg						\
+					textfont		CHOICE_TEXTFONT				\
+					textscale		TEXTSIZE_DEFAULT			\
+					textalign		ITEM_ALIGN_MIDDLE_CENTER	\
+					textstyle		ITEM_TEXTSTYLE_SHADOWED		\
+					visible			1							\
+					decoration									\
+		} 	
+
+		#define CONTROL_BG_PAD					10
+
+		#define BACK_WIDTH						( getTextWidth( locString( "@PLATFORM_BACK" ),		CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (CONTROL_BG_PAD*2) )
+		#define ZOOMOUT_WIDTH					( getTextWidth( locString( "@PLATFORM_ZOOMOUT" ),	CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (CONTROL_BG_PAD*2) )
+		#define ZOOMIN_WIDTH					( getTextWidth( locString( "@PLATFORM_ZOOMIN" ),	CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (CONTROL_BG_PAD*2) )
+		#define PAN_WIDTH						( getTextWidth( locString( "@PLATFORM_PAN" ),		CHOICE_TEXTFONT, TEXTSIZE_SMALL ) + (CONTROL_BG_PAD*2) )
+
+		#define CONTROLS_START_X				( -( BACK_WIDTH+ZOOMOUT_WIDTH+ZOOMIN_WIDTH+PAN_WIDTH ) / 2 )
+
+		//background for the buttons
+		#define BUTTON_CONTROLS_BG_WIDTH			400//300
+		#define BUTTON_CONTROLS_BG_HEIGHT			20
+
+		itemDef 
+		{ 
+			style			WINDOW_STYLE_SHADER_FRAMED
+			frame			5 0.5 FRAME_SIDE_ALL
+			rect			0 (-BUTTON_CONTROLS_BG_HEIGHT) 0 BUTTON_CONTROLS_BG_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			exp				rect X( CONTROLS_START_X )
+			exp				rect W( ( BACK_WIDTH+ZOOMOUT_WIDTH+ZOOMIN_WIDTH+PAN_WIDTH ) )
+			forecolor		0.1 0.1 0.1 0.6
+			background		"menu_mp_lobby_frame_circle"
+			visible			1  
+			decoration		
+		} 	
+
+
+		CONTROLS_TEXT( 0 (-BUTTON_CONTROLS_BG_HEIGHT) 0 BUTTON_CONTROLS_BG_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM,
+			CONTROLS_START_X, BACK_WIDTH, "@PLATFORM_BACK" )
+
+		CONTROLS_TEXT( 0 (-BUTTON_CONTROLS_BG_HEIGHT) 0 BUTTON_CONTROLS_BG_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM,
+			( CONTROLS_START_X+BACK_WIDTH ), ZOOMOUT_WIDTH, "@PLATFORM_ZOOMOUT" )
+
+		CONTROLS_TEXT( 0 (-BUTTON_CONTROLS_BG_HEIGHT) 0 BUTTON_CONTROLS_BG_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM,
+			( CONTROLS_START_X+BACK_WIDTH+ZOOMOUT_WIDTH ), ZOOMIN_WIDTH, "@PLATFORM_ZOOMIN" )
+
+		CONTROLS_TEXT( 0 (-BUTTON_CONTROLS_BG_HEIGHT) 0 BUTTON_CONTROLS_BG_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM,
+			( CONTROLS_START_X+BACK_WIDTH+ZOOMOUT_WIDTH+ZOOMIN_WIDTH ), PAN_WIDTH, "@PLATFORM_PAN" )
+
+		#include "ui/safearea.menu"
+#endif //#ifdef PC	
+	}

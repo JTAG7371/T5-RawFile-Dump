@@ -1,0 +1,85 @@
+#define SPLITSCREEN_ENABLED 1
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_SEP_1			3
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+{
+
+//splitscreen online quit options
+	menuDef
+	{
+		blurWorld		4.8
+		 
+		SYSTEM_POPUP_SETUP_VIS( popup_coop_host_quit_splitscreen, focusFirst;, close self; open "pausedmenu_splitscreen";, 1 )
+
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_QUIT_WARNING", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_HOST_QUIT_WARNING_DESC", 1 )
+		
+		#define ACTION_COOP_QUIT_RESUME_SS	\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";
+
+		#define ACTION_COOP_QUIT_SS			\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";			\
+				scriptMenuResponse "endround";
+
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RESUMEGAME_CAPS",	ACTION_COOP_QUIT_RESUME_SS,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@PLATFORM_QUIT_CAPS",	ACTION_COOP_QUIT_SS,		1, ; )
+	}
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegame_coop_splitscreen, setfocus popup_leavegame_coop_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LEAVE_GAME", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_DESC", 1 )
+		
+		#define LOCAL_ACCEPT_LEAVEGAME_COOP	\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";			\
+				exec "disconnect"
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES_CAPS",	LOCAL_ACCEPT_LEAVEGAME_COOP,	1, ;							)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO_CAPS",		close self,						1, name popup_leavegame_coop_2	)
+	}				
+
+	menuDef
+	{
+		blurWorld		4.8
+
+		SYSTEM_POPUP_SETUP_VIS( popup_coop_client_quit_splitscreen, focusFirst, close self; open "pausedmenu";, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_QUIT_WARNING", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_CLIENT_QUIT_WARNING_DESC", 1 )
+		
+		#define ACTION_COOP_CLIENT_RESUME	\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";
+
+		#define ACTION_COOP_CLIENT_QUIT		\
+				play CHOICE_FOCUS_SOUND;	\
+				close self;					\
+				close "pausedmenu";			\
+				exec "disconnect";			
+				
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_RESUMEGAME_CAPS",	ACTION_COOP_CLIENT_RESUME,	1, ; )
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@PLATFORM_QUIT_CAPS",	ACTION_COOP_CLIENT_QUIT,	1, ; )
+	}				
+

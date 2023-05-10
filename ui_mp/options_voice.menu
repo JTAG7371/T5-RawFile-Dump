@@ -1,0 +1,128 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#define OPTIONS_STYLE			1
+#define CHOICE_ACTION_SOUND		"uin_mouse_click_t"
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/framestyle.inc"
+#include "ui/frame.inc"
+
+#undef CHOICE_BUTTON_NAME
+#define CHOICE_BUTTON_NAME		"options_voice_"
+#undef MENUDEF_NAME
+#define MENUDEF_NAME			options_voice
+
+#undef	OPTIONS_VOICE_HEIGHT
+#undef	OPTIONS_VOICE_WIDTH
+#define OPTIONS_VOICE_HEIGHT		332
+#define OPTIONS_VOICE_WIDTH			OPTIONS_VOICE_HEIGHT * FRAME_ASPECT_RATIO
+
+{
+	menuDef
+	{
+		name options_voice
+		fullScreen 0
+		rect 0 0 640 480				// Size and position of the menu
+		focusColor COLOR_FOCUSED		// Menu focus color for text and items
+		soundloop ""
+
+		onOpen
+		{
+			LOCAL_CLOSE_ALL_BUT( options_voice )
+			
+			setLocalVarBool ui_hideBack 1;
+			
+			if (IsInGame())
+			{
+				showMenu "pausedbkgnd";
+			}			
+			else
+			{
+				activateBlur;
+			}
+		}
+		onClose
+		{
+			setLocalVarBool ui_hideBack 0;
+
+			if (IsInGame())
+			{
+				hideMenu "pausedbkgnd";
+			}			
+			else
+			{
+				deactivateBlur;
+			}
+		}
+		onESC
+		{
+			close self;
+			open options_new_pc;
+		}
+		PC_TAB_SWITCH_ACTIONS( options_new_pc, options_controls_new_pc, options_controls_new_pc )
+
+		#include "ui_mp/leftside_options.inc"
+		
+#undef	CHOICE_X_START
+#undef	CHOICE_Y_START
+#undef	CHOICE_HORIZONTAL_ALIGN
+#undef	CHOICE_VERTICAL_ALIGN
+#undef	CHOICE_DVAR_EXTRA_WIDTH
+#undef	CHOICE_TEXT_OFFSET_X
+
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_CENTER
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_CENTER
+#define CHOICE_X_START				((-OPTIONS_VOICE_WIDTH/2) - 75)
+#define CHOICE_Y_START				((-OPTIONS_VOICE_HEIGHT/2) + 32)
+#define	CHOICE_DVAR_EXTRA_WIDTH		120
+#define CHOICE_TEXT_OFFSET_X		-10
+
+#undef CHOICE_TEXTSTYLE
+#undef CHOICE_TEXTSIZE
+#define CHOICE_TEXTSTYLE		ITEM_TEXTSTYLE_NORMAL
+#define CHOICE_TEXTSIZE			TEXTSIZE_DEFAULT
+
+#undef	CHOICE_TEXT_COLOR_NO_HL
+#undef	CHOICE_TEXT_COLOR_HL
+#undef	CHOICE_CAPTION_TEXT_COLOR_NO_HL
+#undef	CHOICE_CAPTION_TEXT_COLOR_HL
+
+#define	CHOICE_TEXT_COLOR_NO_HL			CHOICE_TEXTCOLOR
+#define	CHOICE_TEXT_COLOR_HL			1 1 1 1
+#define	CHOICE_CAPTION_TEXT_COLOR_NO_HL	CHOICE_TEXTCOLOR
+#define	CHOICE_CAPTION_TEXT_COLOR_HL	0 0 0 1
+
+		FRAME_CHOICE_SECTION_TITLE( 21, "@MENU_VOICECHAT_CAPS" )
+	
+		FRAME_CHOICE_DVARFLOATLIST_VIS( 22, "@MENU_VOICECHAT_CAPS", cl_voice, { "@MENU_ON_CAPS" 1 "@MENU_OFF_CAPS" 0 }, ;, 1 )
+		
+		FRAME_CHOICE_CAPTION_VIS( 23, "@MENU_VOICECHAT_LEVEL_INDICATOR_CAPS", 1, ; )
+
+		itemDef
+		{
+			name			voicechat_level_indicator
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_RECORDLEVEL
+			rect			( CHOICE_X( 23 ) + CHOICE_DVAR_OFFSET_X - 17 ) ( CHOICE_Y( 23 ) + 2 ) ( CHOICE_DVAR_WIDTH_OFFSET - 15 ) ( CHOICE_SIZE_Y - 4 ) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+			forecolor		CHOICE_TEXTCOLOR
+			visible			1
+			decoration
+		}
+
+ 		itemDef 
+ 		{
+ 			name			graphic_warning
+ 			type			ITEM_TYPE_TEXT
+ 			text			"@PLATFORM_RECORD_LEVEL_INFO"
+ 			style			WINDOW_STYLE_FILLED
+ 			textstyle		ITEM_TEXTSTYLE_SHADOWED
+ 			rect			CHOICE_ORIGIN( 25 ) 240 60 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+ 			textfont		UI_FONT_NORMAL
+ 			textalign		ITEM_ALIGN_LEFT
+ 			textscale		TEXTSIZE_SMALL
+ 			visible			1
+ 			decoration
+ 			autowrapped
+ 		}
+	}
+}

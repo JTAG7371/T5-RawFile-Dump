@@ -1,0 +1,292 @@
+#include "ui/menudef.h"
+
+
+// Displays after level has loaded, and we're waiting for the player to click before starting the game.
+{
+	assetGlobalDef
+	{
+		fadeClamp 1.0				// sets the fadeup alpha
+		fadeCycle 1					// how often fade happens in milliseconds
+		fadeAmount 0.1				// amount to adjust alpha per cycle
+	}
+
+	menuDef
+	{
+		name				"pregame"
+  		rect				0 0 640 480
+		fullscreen			1
+		focusColor			COLOR_FOCUSED
+		backcolor			0 0 0 0
+		style				WINDOW_STYLE_FILLED
+		control				MENU_CONTROL_PREGAME
+		onEsc
+		{
+			uiScript playerstart
+		}
+
+		onOpen
+		{
+			setdvar ui_SaveLoadVisible "0";
+			setfocus press_to_skip;
+			execNow ui_animate pregame * fadewait 3000
+		}
+
+
+		itemDef 
+		{
+			style			WINDOW_STYLE_FILLED
+			rect			FULLSCREEN_WIDE
+			backcolor		0 0 0 1
+			visible			1
+			background		"white"
+			decoration
+		}
+		
+
+		itemDef 
+		{
+			style			WINDOW_STYLE_FILLED
+			type			ITEM_TYPE_OWNERDRAW
+			rect			FULLSCREEN_WIDE
+			backcolor		1 1 1 1
+			visible			1
+			background		cinematic
+			decoration
+		}
+		
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			#ifdef PC
+				rect			-250 388 500 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			#else
+				rect			-225 352 450 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			#endif
+			textcinematicsubtitle
+			textfont		UI_FONT_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textscale		0.38
+			textalign		ITEM_ALIGN_TOP_CENTER
+			visible			1
+			decoration
+			autowrapped
+		}		
+		
+		itemDef
+		{
+			name			"profile"
+			type			ITEM_TYPE_OWNERDRAW
+			visible			1
+			rect			40 40 560 400
+			ownerdraw		UI_LOADPROFILING
+			decoration
+		}
+
+		// the button
+		// Text message saying you should click to continue
+
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			style			WINDOW_STYLE_FILLED
+			textscale		TEXTSIZE_TITLE
+			border			0
+			bordercolor		1 1 1 1
+			rect			-128 445 896 45
+			textalign		ITEM_ALIGN_TOP_CENTER
+			textaligny		28
+			forecolor		1 1 1 1
+			backcolor		0 0 0 0
+			visible			1
+			decoration
+		}
+		
+#ifdef CONSOLE
+
+#define SKIPPING_TEXT_PAD		10
+
+#define TEXT_WIDTH			( getTextWidth( locString( "@PLATFORM_SKIP" ), UI_FONT_NORMAL, TEXTSIZE_SMALL ) + SKIPPING_TEXT_PAD )
+#define TEXT_X_START		(-TEXT_WIDTH)
+
+#ifdef PS3
+		itemDef
+		{
+			rect			0 -16 100 16 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			exp				rect X( TEXT_X_START - (SKIPPING_TEXT_PAD/2) )
+			exp				rect W( TEXT_WIDTH + SKIPPING_TEXT_PAD )
+			style			WINDOW_STYLE_SHADER_FRAMED
+			frame			5 0.5 FRAME_SIDE_ALL
+			forecolor		0.1 0.1 0.1 0.6
+			background		"menu_mp_lobby_frame_circle"
+			visible			when (dvarstring(#"mapname") != "frontend" && !dvarbool( ui_readingSaveDevice ) )
+			decoration
+
+			state
+			{
+				name		"fadewait"
+				onEnter
+				{
+							changeState fadeout 3000;							
+				}
+			}
+			state
+			{
+				name		"fadeout"
+				forecolor	0.2 0.2 0.2 0.0
+			}
+		}
+#endif //#ifdef PS3
+		itemDef
+		{
+			name			accept_button
+			type			ITEM_TYPE_TEXT
+			text			"@PLATFORM_SKIP"
+			rect			0 -16 100 16 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			exp				rect X( TEXT_X_START )
+			exp				rect W( TEXT_WIDTH )
+			textscale		TEXTSIZE_SMALL
+			textalign		ITEM_ALIGN_MIDDLE_RIGHT
+			visible			when (dvarstring(#"mapname") != "frontend" && !dvarbool( ui_readingSaveDevice ) )
+			decoration
+
+			state
+			{
+				name		"fadewait"
+				onEnter
+				{
+							changeState fadeout 3000;							
+				}
+			}
+			state
+			{
+				name		"fadeout"
+				forecolor	1 1 1 0
+			}
+		}
+#endif // #ifdef CONSOLE
+#ifdef PC
+/*
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			text			"@MENU_CLICK_TO_START_THE_MISSION"
+			style			WINDOW_STYLE_FILLED
+			textscale		TEXTSIZE_SMALL
+			border			0
+			bordercolor		1 1 1 1
+			rect			0 368 640 45
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_TOP_CENTER
+			textaligny		4
+			forecolor		1 1 1 0.5
+			backcolor		0 0 0 0
+			visible when ( !dvarbool( ui_isSaving ) );
+			decoration
+
+			state
+			{
+				name		"fadewait"
+				onEnter
+				{
+							changeState fadeout 3000;							
+				}
+			}
+			state
+			{
+				name		"fadeout"
+				forecolor	1 1 1 0
+			}
+		}
+*/
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			text			"@PLATFORM_SKIP"
+			style			WINDOW_STYLE_FILLED
+			textscale		TEXTSIZE_SMALL
+			border			0
+			bordercolor		1 1 1 1
+			rect			0 368 640 45
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_TOP_CENTER
+			textaligny		4
+			forecolor		1 1 1 0.5
+			backcolor		0 0 0 0
+			visible when ( !dvarbool( ui_isSaving ) );
+			decoration
+
+			state
+			{
+				name		"fadewait"
+				onEnter
+				{
+							changeState fadeout 3000;							
+				}
+			}
+			state
+			{
+				name		"fadeout"
+				forecolor	1 1 1 0
+			}
+		}
+#endif // #ifdef PC
+
+		itemDef
+		{
+			name			press_to_skip
+			type			ITEM_TYPE_BUTTON
+			rect			-130 -2 900 486
+			style			WINDOW_STYLE_EMPTY
+			visible			1
+			forecolor		0 0 0 0
+			backcolor		0 0 0 0
+			action
+			{
+#ifdef PS3
+				if (dvarbool (ps3_profileFinishedReading) && !dvarbool(ui_readingSaveDevice))
+				{
+					uiScript playerstart
+				}
+#else
+				uiScript playerstart
+#endif
+			}
+			execkeyint BUTTON_A
+			{
+#ifdef PS3
+				if (dvarbool (ps3_profileFinishedReading) && !dvarbool(ui_readingSaveDevice))
+				{
+				uiScript playerstart
+			}
+#else
+				uiScript playerstart
+#endif
+			}
+			execkeyint BUTTON_B
+			{
+#ifdef PS3
+				if (dvarbool (ps3_profileFinishedReading) && !dvarbool(ui_readingSaveDevice))
+				{
+				uiScript playerstart
+			}
+#else
+				uiScript playerstart
+#endif
+			}
+			execkeyint BUTTON_START
+			{
+#ifdef PS3
+				if (dvarbool (ps3_profileFinishedReading) && !dvarbool(ui_readingSaveDevice))
+		{
+					uiScript playerstart
+		}
+#else
+				uiScript playerstart
+#endif
+		}
+		}
+
+#include "ui/safearea.menu"
+	}
+}
+

@@ -1,0 +1,136 @@
+#include "ui/menudef.h"
+#include "ui_mp/hud_gametypes.inc"
+
+#define FLAG_ICON_X 115
+#define FLAG_ICON_Y 10
+#define FLAG_ICON_Y_SPACING 22
+#define FLAG_TEXT_X_OFFSET 27
+#define FLAG_TEXT_Y_OFFSET 19
+#define FLAG_TEXT_SCALE TEXTSIZE_SMALL
+#define SPIKE_CAM_X_OFFSET 51
+
+menuDef
+{
+	name			"hud_ctf_icons"
+	rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+	exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+	fullScreen		0
+	visible 		1
+	visibilityBits	bits( !BIT_IN_KILLCAM !BIT_UI_ACTIVE !BIT_DEMO_ALL_GAME_HUD_HIDDEN BIT_HUD_VISIBLE !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC )
+	
+	// Green flag
+	itemDef
+	{
+		style			WINDOW_STYLE_SHADER
+		rect			FLAG_ICON_X FLAG_ICON_Y 24 24 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		background		"hud_ctf_flag_info_green"
+		visible			1
+		forecolor		1 1 1 0.85
+		decoration
+		
+		state
+		{
+			name		"spike_cam_on"
+			rect		(FLAG_ICON_X+SPIKE_CAM_X_OFFSET) FLAG_ICON_Y 24 24 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		}
+	}
+	
+	// Red flag
+	itemDef
+	{
+		style			WINDOW_STYLE_SHADER
+		rect			FLAG_ICON_X (FLAG_ICON_Y+FLAG_ICON_Y_SPACING) 24 24 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		background		"hud_ctf_flag_info_red"
+		visible			1
+		forecolor		1 1 1 0.85
+		decoration
+		
+		state
+		{
+			name		"spike_cam_on"
+			rect		(FLAG_ICON_X+SPIKE_CAM_X_OFFSET) (FLAG_ICON_Y+FLAG_ICON_Y_SPACING) 24 24 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		}
+	}
+	
+	// Green flag text
+	itemDef 
+	{
+		type			ITEM_TYPE_TEXT
+		rect			(FLAG_ICON_X+FLAG_TEXT_X_OFFSET) (FLAG_ICON_Y+FLAG_TEXT_Y_OFFSET) 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		exp text		( GetFlagCarrierForTeam( player( otherteamname ) );
+		textfont		UI_FONT_SMALL
+		textscale		FLAG_TEXT_SCALE
+		textalign		ITEM_ALIGN_LEFT
+		textstyle		ITEM_TEXTSTYLE_SHADOWED
+		forecolor		1 1 1 1
+		outlinecolor	0.75 0.25 0.25 1
+		visible 		1
+		decoration
+		
+		state
+		{
+			name		"spike_cam_on"
+			rect		(FLAG_ICON_X+FLAG_TEXT_X_OFFSET+SPIKE_CAM_X_OFFSET) (FLAG_ICON_Y+FLAG_TEXT_Y_OFFSET) 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		}
+	}
+	itemDef 
+	{
+		type			ITEM_TYPE_TEXT
+		rect			(FLAG_ICON_X+FLAG_TEXT_X_OFFSET) (FLAG_ICON_Y+FLAG_TEXT_Y_OFFSET) 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		exp text		( GetFlagStatusForTeam( player( teamname ) );
+		textfont		UI_FONT_SMALL
+		textscale		FLAG_TEXT_SCALE
+		textalign		ITEM_ALIGN_LEFT
+		textstyle		ITEM_TEXTSTYLE_SHADOWED
+		forecolor		1 1 1 1
+		visible 		when( GetFlagCarrierForTeam( player( otherteamname ) ) == "" );
+		decoration
+		
+		state
+		{
+			name		"spike_cam_on"
+			rect		(FLAG_ICON_X+FLAG_TEXT_X_OFFSET+SPIKE_CAM_X_OFFSET) (FLAG_ICON_Y+FLAG_TEXT_Y_OFFSET) 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		}
+	}
+
+	// Red flag text
+	itemDef 
+	{
+		type			ITEM_TYPE_TEXT
+		rect			(FLAG_ICON_X+FLAG_TEXT_X_OFFSET) (FLAG_ICON_Y+FLAG_ICON_Y_SPACING+FLAG_TEXT_Y_OFFSET) 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		exp text		( GetFlagCarrierForTeam( player( teamname ) );
+		textfont		UI_FONT_SMALL
+		textscale		FLAG_TEXT_SCALE
+		textalign		ITEM_ALIGN_LEFT
+		textstyle		ITEM_TEXTSTYLE_SHADOWED
+		forecolor		1 1 1 1
+		outlinecolor	0.25 0.75 0.25 1
+		visible 		1
+		decoration
+		
+		state
+		{
+			name		"spike_cam_on"
+			rect		(FLAG_ICON_X+FLAG_TEXT_X_OFFSET+SPIKE_CAM_X_OFFSET) (FLAG_ICON_Y+FLAG_ICON_Y_SPACING+FLAG_TEXT_Y_OFFSET) 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		}
+	}
+	itemDef 
+	{
+		type			ITEM_TYPE_TEXT
+		rect			(FLAG_ICON_X+FLAG_TEXT_X_OFFSET) (FLAG_ICON_Y+FLAG_ICON_Y_SPACING+FLAG_TEXT_Y_OFFSET) 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		exp text		( GetFlagStatusForTeam( player( otherteamname ) );
+		textfont		UI_FONT_SMALL
+		textscale		FLAG_TEXT_SCALE
+		textalign		ITEM_ALIGN_LEFT
+		textstyle		ITEM_TEXTSTYLE_SHADOWED
+		forecolor		1 1 1 1
+		visible 		when( GetFlagCarrierForTeam( player( teamname ) ) == "" );
+		decoration
+		
+		state
+		{
+			name		"spike_cam_on"
+			rect		(FLAG_ICON_X+FLAG_TEXT_X_OFFSET+SPIKE_CAM_X_OFFSET) (FLAG_ICON_Y+FLAG_ICON_Y_SPACING+FLAG_TEXT_Y_OFFSET) 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		}
+	}
+}

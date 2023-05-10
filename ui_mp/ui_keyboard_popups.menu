@@ -1,0 +1,80 @@
+#ifdef PC
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_SEP_1			4
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+// Generic PopMenus for ui_keyboard
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		4
+
+#undef	CHOICE_BUTTON_NAME
+#define CHOICE_BUTTON_NAME		"popmenu_ui_keyboard_text_"
+#undef	MENUDEF_NAME
+#define MENUDEF_NAME			popmenu_ui_keyboard_text
+		menuDef
+		{
+			SYSTEM_POPUP_SETUP_VIS( popmenu_ui_keyboard_text, setdvar ui_keyboard_dvar_new dvarstring( ui_keyboard_dvar_edit ); setFocus nameEntry;, close self;, 1 )
+			SYSTEM_POPUP_TITLE_VIS( dvarString(ui_keyboardtitle), 1 )
+			SYSTEM_POPUP_SUBTITLE_VIS( dvarString(ui_keyboardsubtitle), 1 );
+			
+			#define LOCAL_ACTION_SAVE_TEXT \
+					setdvar ui_keyboard_dvar_new dvarstring( ui_keyboard_dvar_edit ) \
+					exec ui_keyboard_complete; \
+					close self
+
+			// Name Caption
+			itemDef
+			{
+				type			ITEM_TYPE_TEXT
+				rect			CHOICE_RECT( 1 )
+				text			"@MENU_NAME1"
+				textfont		CHOICE_TEXTFONT
+				textscale		CHOICE_TEXTSIZE
+				textstyle		CHOICE_TEXTSTYLE
+				textAlign		CHOICE_TEXTALIGN
+				textAlignX		CHOICE_TEXT_OFFSET_X
+				forecolor		CAPTION_TEXT_COLOR_NO_HL
+				visible			1
+				decoration
+			}
+
+			// Edit Field
+			itemDef 
+			{
+				name			nameEntry
+				TYPE			ITEM_TYPE_EDITFIELD
+				text			" "
+				dvar			"ui_keyboard_dvar_edit"
+				rect			CHOICE_RECT( 2 )
+				maxchars		21
+				maxpaintchars	21
+				textalign		ITEM_ALIGN_MIDDLE_LEFT
+				textalignx		6
+				textfont		UI_FONT_NORMAL
+				textscale		TEXTSIZE_DEFAULT
+				forecolor		.9 .9 .9 1
+				style			WINDOW_STYLE_FILLED
+				backcolor		0 0 0 .3
+				visible			1
+				mouseenter		{ play CHOICE_FOCUS_SOUND; }
+				mouseexit		{ ; }
+				accept			{ LOCAL_ACTION_SAVE_TEXT }
+			}
+			
+			onClose	{ exec ui_clear_keyboard_active; }
+
+			FRAME_CHOICE_BUTTON_VIS_EX( 3, "@MENU_OK", LOCAL_ACTION_SAVE_TEXT, 1, ; )
+			FRAME_CHOICE_BUTTON_VIS_EX( 4, "@MENU_CANCEL",	close self;, 1, ; )
+		}
+
+#endif // #ifdef PC

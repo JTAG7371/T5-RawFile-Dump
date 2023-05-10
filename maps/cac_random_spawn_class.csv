@@ -1,0 +1,76 @@
+a0,b1,c2,d3,e4,f5,g6,h7,i8,j9,k10,l11,m12,n13,o14
+# Custom Class Data,,,,,,,,,,,,,,
+# index,# stat num,# group,# name,# reference,# stat and reference numbers,#count,# image,# name,# description,#presell reference number,#collectors reference number,#both reference number,#presell reference,#collectors reference
+
+Primary Weapons,1,6,,,,,,,,,,,,
+1,3011,Primary Weapon,@WEAPON_MP5,mp5,11,,weapon_mp5,WEAPON_MP5,attachment_popup_SMG,,,,,PWDefault
+2,3022,Primary Weapon,@WEAPON_M16,m16,22,,weapon_m16,WEAPON_M16,attachment_popup_assault,,,,,
+3,2012,Primary Weapon,@WEAPON_UZI,uzi,12,,weapon_uzi,WEAPON_UZI,attachment_popup_SMG,,,,,
+4,3061,Primary Weapon,@WEAPON_DRAGUNOV,dragunov,61,,weapon_dragunov,WEAPON_DRAGUNOV,attachment_popup_rifle,,,,,
+5,3071,Primary Weapon,@WEAPON_M1014,tempshotgun,71,,weapon_m1014,WEAPON_M1014,attachment_popup_shotgun,,,,,
+6,3082,Primary Weapon,@WEAPON_RPD,templmg,82,,weapon_rpd,WEAPON_RPD,attachment_popup_LMG1,,,,,
+
+
+Side Arms,15,1,,,,,,,,,,,,
+15,3000,Secondary Weapon,@WEAPON_COLT45,colt45,0,,weapon_colt,WEAPON_COLT45,attachment_popup_pistol,,,,,SWDefault
+16,,,,,,,,,,,,,,
+17,,,,,,,,,,,,,,
+18,,,,,,,,,,,,,,
+19,,,,,,,,,,,,,,
+
+
+
+
+
+
+Primary Grenade,25,2,,,,,,,,,,,,
+25,3100,Grenade,@WEAPON_FRAGGRENADE,frag_grenade,100,,weapon_fraggrenade,WEAPON_FRAGGRENADE,,,,,,PGDefault
+26,3101,Grenade,@WEAPON_MOLOTOV,molotov,101,,weapon_molotov,WEAPON_MOLOTOV,,,,,,
+
+
+
+Secondary Grenade,30,1,,,,,,,,,,,,
+30,3102,Grenade,@WEAPON_M8_WHITE_SMOKE,smoke_grenade,102,,weapon_m8_white_smoke,WEAPON_M8_WHITE_SMOKE,,,,,,SGDefault
+31,3106,Grenade,@WEAPON_FLASHBANG,flash_grenade,106,,weapon_flashbang,WEAPON_FLASHBANG,,,,,,
+
+
+Perk Slot 1,40,4,,,,,,,,,,,,
+40,150,Perk,@PERKS_BOMB_SQUAD,specialty_detectexplosive,150,,specialty_detectexplosive,PERKS_ABILITY_TO_SEEK_OUT_ENEMY,,,,,,P1Default
+41,182,Perk,@PERKS_SPECIAL_GRENADES_X_3,specialty_specialgrenade,182,,specialty_specialgrenade,PERKS_3_SPECIAL_GRENADES_NO,,,,,,
+42,186,Perk,@PERKS_BAZOOKA_X_2,bazooka_mp,186,,specialty_weapon_bazooka,PERKS_ROCKET_LAUNCHER_WITH,,,,,,
+43,184,Perk,@PERKS_SATCHEL_CHARGE_X_2,satchel_charge_mp,184,,specialty_weapon_satchel_charge,PERKS_REMOTE_DETONATION_EXPLOSIVE,,,,,,
+44,,,,,,,,,,,,,,
+45,,,,,,,,,,,,,,
+46,,,,,,,,,,,,,,
+47,,,,,,,,,,,,,,
+48,,,,,,,,,,,,,,
+49,,,,,,,,,,,,,,
+50,,,,,,,,,,,,,,
+
+
+
+Perk Slot 2,60,3,,,,,,,,,,,,
+60,156,Perk,@PERKS_DOUBLE_TAP,specialty_rof,156,,specialty_rof,PERKS_INCREASED_RATE_OF_FIRE,,,,,,P2Default
+61,159,Perk,@PERKS_JUGGERNAUT,specialty_armorvest,159,,specialty_armorvest,PERKS_INCREASED_HEALTH,,,,,,
+62,155,Perk,@PERKS_STOPPING_POWER,specialty_bulletdamage,155,,specialty_bulletdamage,PERKS_INCREASED_BULLET_DAMAGE,,,,,,
+63,,,,,,,,,,,,,,
+64,,,,,,,,,,,,,,
+65,,,,,,,,,,,,,,
+66,,,,,,,,,,,,,,
+67,,,,,,,,,,,,,,
+68,,,,,,,,,,,,,,
+69,,,,,,,,,,,,,,
+70,,,,,,,,,,,,,,
+
+Perk Slot 3,80,3,,,,,,,,,,,,
+80,168,Perk,@PERKS_DEEP_IMPACT,specialty_bulletpenetration,168,,specialty_bulletpenetration,PERKS_DEEPER_BULLET_PENETRATION,,,,,,
+81,169,Perk,@PERKS_STEADY_AIM,specialty_bulletaccuracy,169,,specialty_bulletaccuracy,PERKS_INCREASED_HIPFIRE_ACCURACY,,,,,,P3Default
+82,167,Perk,@PERKS_MARTYRDOM,specialty_grenadepulldeath,167,,specialty_grenadepulldeath,PERKS_DROP_A_LIVE_GRENADE_WHEN,,,,,,
+83,,,,,,,,,,,,,,
+84,,,,,,,,,,,,,,
+85,,,,,,,,,,,,,,
+86,,,,,,,,,,,,,,
+87,,,,,,,,,,,,,,
+88,,,,,,,,,,,,,,
+89,,,,,,,,,,,,,,
+90,,,,,,,,,,,,,,

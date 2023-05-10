@@ -1,0 +1,219 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_SEP_1			3
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+{
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegame, setfocus popup_leavegame_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_GAME1", 1 )
+		
+		#define LOCAL_ACCEPT_LEAVEGAME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_leavegame;		\
+				exec "disconnect"
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_LEAVEGAME,	1, ;						)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,				1, name popup_leavegame_2	)
+	}				
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegameandparty, setfocus popup_leavegameandparty_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LEAVE_GAME_AND_PARTY", 1 )
+		
+		#define LOCAL_ACCEPT_LEAVEGAMEANDPARTY						\
+				play CHOICE_FOCUS_SOUND;							\
+				close popup_leavegameandparty;						\
+				exec "disconnect; xstopprivateparty; xstopparty";	\
+				exec "xblive_privatematch 0";						\
+				exec "xstartprivateparty";
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_LEAVEGAMEANDPARTY,	1, ;								)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,						1, name popup_leavegameandparty_2	)
+	}			
+	
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_endgame, setfocus popup_endgame_2, ;, ( dvarbool( onlineunrankedgameandhost ) == 1 || dvarbool( sv_running ) == 1 ) )
+		
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LEAVE_GAME_RANKED", when(!isIntermission() && dvarBool( "xblive_basictraining" )) )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_END_GAME2", when(isIntermission() || !dvarBool( "xblive_basictraining" )) )
+
+#ifdef CONSOLE		
+		#define LOCAL_ACCEPT_ENDGAME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_endgame;		\
+				scriptMenuResponse "endround";
+
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_ENDGAME,	1, ;)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,				1, name popup_endgame_2	)
+#else
+		#define LOCAL_ACCEPT_ENDGAME		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_endgame;		\
+				scriptMenuResponse "killserverpc"; 
+
+		#define LOCAL_ACCEPT_DISCONNECT		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_endgame;		\
+				exec "disconnect"; 
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_ENDGAME, (!isIntermission() && !dvarBool( "xblive_basictraining" )), ;)
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_DISCONNECT, (isIntermission() || dvarBool( "xblive_basictraining" )), ;)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,				1, name popup_endgame_2	)
+#endif
+	}	
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegame_ranked, setfocus popup_leavegame_ranked_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_GAME1", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_RANKED", when( dvarInt( xblive_wagermatch ) != 1 ); )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_WAGER", when( dvarInt( xblive_wagermatch ) == 1 ); )
+		
+		#define LOCAL_ACCEPT_LEAVEGAME_RANKED	\
+				play CHOICE_FOCUS_SOUND;		\
+				close popup_leavegame;			\
+				exec "disconnect"
+
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_LEAVEGAME_RANKED,	1, ;								)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,						1, name popup_leavegame_ranked_2	)
+	}		
+
+#ifdef CONSOLE
+#define VIS_POP ( dvarbool( onlineunrankedgameandhost ) == 1 )
+#else
+#define VIS_POP 1
+#endif
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_endgame_ranked, setfocus popup_endgame_ranked_2, ;, VIS_POP )
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_GAME1", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_RANKED", when( dvarInt( xblive_wagermatch ) != 1 ); );
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_WAGER", when( dvarInt( xblive_wagermatch ) == 1 ); )
+		
+#ifdef XENON
+		#define LOCAL_ACCEPT_ENDGAME_RANKED		\
+				play CHOICE_FOCUS_SOUND;		\
+				close popup_endgame;			\
+				exec "hostmigration_start";		\
+				exec "xpartydisbandafterround";
+#endif
+
+#ifdef PS3
+		#define LOCAL_ACCEPT_ENDGAME_RANKED		\
+				play CHOICE_FOCUS_SOUND;		\
+				close popup_endgame;			\
+				exec "xpartydisbandafterround"; \
+				scriptMenuResponse "endround"
+#endif
+
+#ifdef PC
+		#define LOCAL_ACCEPT_ENDGAME_RANKED		\
+				play CHOICE_FOCUS_SOUND;		\
+				close popup_endgame_ranked;		\
+				exec "disconnect";
+#endif
+
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_ENDGAME_RANKED,	1, ;							)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,						1, name popup_endgame_ranked_2	)
+	}	
+
+
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( popup_leavegameandparty_ranked, setfocus popup_leavegameandparty_ranked_2, ;, 1 )
+		SYSTEM_POPUP_TITLE_VIS( "@MENU_LEAVE_GAME_AND_PARTY", 1 )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_RANKED", when( dvarInt( xblive_wagermatch ) != 1 ); )
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_LEAVE_GAME_WAGER", when( dvarInt( xblive_wagermatch ) == 1 ); )
+		
+		#define LOCAL_ACCEPT_LEAVEGAMEANDPARTY_RANKED				\
+				play CHOICE_FOCUS_SOUND;							\
+				close popup_leavegameandparty;						\
+				exec "disconnect; xstopprivateparty; xstopparty";	\
+				exec "xblive_privatematch 0";						\
+				exec "xstartprivateparty";
+		
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_LEAVEGAMEANDPARTY_RANKED,	1, ;										)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,								1, name popup_leavegameandparty_ranked_2	)
+	}	
+
+#ifdef CONSOLE
+#define ISHOST gameHost()
+#else
+#define ISHOST 1
+#endif
+	// Demo Leave/End
+	menuDef
+	{						
+		SYSTEM_POPUP_SETUP_VIS( popup_leavedemo_clipnotmodified, setfocus popup_leavedemo_clipnotmodified_2;, ;, 1 )
+		
+		// Films
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_FILM",	when( !ISHOST && !isDemoClipPlaying() )	)
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_END_FILM",	when( ISHOST && !isDemoClipPlaying() )	)
+
+		// Clips
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_CLIP",	when( !ISHOST && isDemoClipPlaying() )	)
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_END_CLIP",	when( ISHOST && isDemoClipPlaying() )	)
+
+		#define LOCAL_ACCEPT_LEAVEDEMO		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_leavedemo;		\
+				exec "xblive_theater 0";	\
+				exec "disconnect";
+
+		#define LOCAL_ACCEPT_ENDDEMO		\
+				play CHOICE_FOCUS_SOUND;	\
+				close popup_leavedemo;		\
+				exec "demo_stop";			\
+				exec "disconnect";			\
+
+		// If no modified clip exist
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_LEAVEDEMO,	( !ISHOST && isClipModified() == 0 ),	;										)
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	LOCAL_ACCEPT_ENDDEMO,	( ISHOST && isClipModified() == 0 ),	;										)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,				( isClipModified() == 0 ),					name popup_leavedemo_clipnotmodified_2	)
+	}	
+	
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		3
+
+	// Demo Leave/End
+	menuDef
+	{					
+		SYSTEM_POPUP_SETUP_VIS( popup_leavedemo_clipmodified, setfocus popup_leavedemo_clipmodified3;, ;, 1 )
+		
+		// Films
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_FILM",	when( !ISHOST && !isDemoClipPlaying() )	)
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_END_FILM",	when( ISHOST && !isDemoClipPlaying() )	)
+
+		// Clips
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_LEAVE_CLIP",	when( !ISHOST && isDemoClipPlaying() )	)
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_END_CLIP",	when( ISHOST && isDemoClipPlaying() )	)
+
+		SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_DEMO_UNUPLOADED_CLIP", when( isClipModified() != 0 ) );
+
+
+		// If modified clip exist
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_SAVE_CLIP",				close self; open clip_save_screen;,	( ISHOST && isClipModified() != 0 ), ;										)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_END_FILM_WITHOUT_SAVING",	LOCAL_ACCEPT_ENDDEMO,				( ISHOST && isClipModified() != 0 ), ;										)
+		FRAME_CHOICE_BUTTON_VIS_EX( 3, "@MENU_CANCEL",					close self,							( ISHOST && isClipModified() != 0 ), name popup_leavedemo_clipmodified_2	)
+
+	}	
+}

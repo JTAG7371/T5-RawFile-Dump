@@ -1,0 +1,85 @@
+//SR71 Intro
+ch_wmd_b01_sr71_intro_cam01
+ch_wmd_b01_sr71_intro_cam01_loop
+ch_wmd_b01_sr71_intro_cam02
+ch_wmd_b01_sr71_trans_cam01
+ch_wmd_b01_sr71_trans_cam02
+ch_wmd_b01_sr71_trans_cam02_loop		
+
+// SR71 Intro v2.0
+ch_wmd_b01_sr71intro_player
+ch_wmd_b01_sr71pilot_idle_player
+ch_wmd_b01_sr71_copilotidle
+ch_wmd_b01_sr71_pilotidle
+ch_wmd_b01_sr71_pilotLook
+ch_wmd_b01_RSO_idle_player
+ch_wmd_b01_RSO_leadin_player
+ch_wmd_b01_RSO_twitch_player
+
+v_wmd_b01_sr71intro_sr71
+v_wmd_sr71_landing_gear_up
+v_wmd_b01_sr71intro_idleDials_sr71
+v_wmd_b01_sr71intro_thrustDials_sr71
+
+sr71_player_controls : additive
+{
+	sr71_pullback
+	{
+		ch_wmd_b01_sr71pilot_pullback_player
+		ch_wmd_b01_sr71pilot_neutral_player
+	}
+	ch_wmd_b01_sr71pilot_throttle_player
+	ch_wmd_b01_RSO_neutral_player
+	sr71_player_ud_controls
+	{
+		ch_wmd_b01_RSO_joystickDn_player
+		ch_wmd_b01_RSO_joystickUp_player
+	}
+	sr71_player_lr_controls
+	{
+		ch_wmd_b01_RSO_joystickLe_player
+		ch_wmd_b01_RSO_joystickRi_player
+	}
+	sr71_player_zoom_controls
+	{
+		ch_wmd_b01_RSO_zoomIn_player
+		ch_wmd_b01_RSO_zoomOut_player
+	}
+}
+
+sr71_plane_controls : additive
+{
+	ch_wmd_b01_sr71pilot_throttle_sr71
+	ch_wmd_b01_RSO_neutral_sr71
+	sr71_dials
+	{
+		v_wmd_b01_sr71intro_neutralDials_sr71
+		v_wmd_b01_sr71intro_liftoffDials_sr71
+	}
+	sr71_ud_controls
+	{
+		ch_wmd_b01_RSO_joystickDn_sr71
+		ch_wmd_b01_RSO_joystickUp_sr71
+	}
+	sr71_lr_controls
+	{
+		ch_wmd_b01_RSO_joystickLe_sr71
+		ch_wmd_b01_RSO_joystickRi_sr71
+	}
+	sr71_zoom_controls
+	{
+		ch_wmd_b01_RSO_zoomIn_sr71
+		ch_wmd_b01_RSO_zoomOut_sr71
+	}
+}
+
+
+// SR-71
+p_wmd_b01_sr71_cameraShake_01
+ch_wmd_b01_RSO_idle_sr71
+ch_wmd_b01_RSO_leadin_sr71
+ch_wmd_b01_RSO_twitch_sr71
+
+// RSO Props
+
+o_wmd_b01_weaversignalkill_door

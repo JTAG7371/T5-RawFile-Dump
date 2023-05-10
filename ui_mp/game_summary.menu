@@ -1,0 +1,848 @@
+//======================================
+//    End of Game Summary & Unlocks
+//				   EOG
+//======================================
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+{
+	// ANIMATION SPEEDS
+	#define POPUP_MOVE_SPEED		400 	//milliseconds
+	#define PROGRESS_BAR_SPEED		1000	//milliseconds
+	#define ANIMATE_DISTANCE		400		//units
+	
+	// top bar position/size
+	#define WIDTH_TOPBAR			540
+	#define HEIGHT_TOPBAR			34
+	#define ORIGIN_TOPBAR_X			0 //(-(WIDTH_TOPBAR/2))
+	#define ORIGIN_TOPBAR_Y			0 //80
+	#define ORIGIN_TOPBAR			ORIGIN_TOPBAR_X ORIGIN_TOPBAR_Y
+	#define RECT_TOPBAR				ORIGIN_TOPBAR WIDTH_TOPBAR HEIGHT_TOPBAR
+	#define RECT_TOPBAR_ALIGNED 	RECT_TOPBAR HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+	
+	// main frame position/size
+	#define WIDTH_MAINFRAME			WIDTH_TOPBAR
+	#define HEIGHT_MAINFRAME		300
+	#define ORIGIN_MAINFRAME_X		ORIGIN_TOPBAR_X
+	#define ORIGIN_MAINFRAME_Y		(ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR+6)
+	#define ORIGIN_MAINFRAME		ORIGIN_MAINFRAME_X ORIGIN_MAINFRAME_Y
+	#define RECT_MAINFRAME			ORIGIN_MAINFRAME WIDTH_MAINFRAME HEIGHT_MAINFRAME
+	#define RECT_MAINFRAME_ALIGNED( widthArg )	ORIGIN_MAINFRAME (widthArg) 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+
+	// Rank frame position/size
+	#define ORIGIN_RANK_FRAME_X		256
+	#define ORIGIN_RANK_FRAME_Y		(ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR+6)
+	#define ORIGIN_RANK_FRAME		ORIGIN_RANK_FRAME_X ORIGIN_RANK_FRAME_Y
+	#define WIDTH_RANK_FRAME		WIDTH_TOPBAR - ORIGIN_RANK_FRAME_X
+	#define HEIGHT_RANK_FRAME		300
+	#define RECT_RANK_FRAME			ORIGIN_RANK_FRAME WIDTH_RANK_FRAME HEIGHT_RANK_FRAME
+	#define RECT_RANK_FRAME_ALIGNED( widthArg )	ORIGIN_RANK_FRAME (widthArg) HEIGHT_RANK_FRAME HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+
+	//Next Rank position/size
+	#define WIDTH_NEXT_RANK_FRAME			(WIDTH_RANK_FRAME-148)
+	#define HEIGHT_NEXT_RANK_FRAME			(HEIGHT_RANK_FRAME-179)
+	#define ORIGIN_NEXT_RANK_FRAME_X		(ORIGIN_RANK_FRAME_X+WIDTH_NEXT_RANK_FRAME)
+	#define ORIGIN_NEXT_RANK_FRAME_Y		ORIGIN_RANK_FRAME_Y
+	#define ORIGIN_NEXT_RANK_FRAME			ORIGIN_NEXT_RANK_FRAME_X ORIGIN_RANK_FRAME_Y
+	
+	
+	// summary content positioning
+	#define ORIGIN_XP_SLOT1				14 162
+	#define ORIGIN_XP_SLOT2				14 178//186
+	#define ORIGIN_XP_SLOT3				14 194//210
+	#define ORIGIN_XP_SLOT4				14 (210+5)//238
+	#define ORIGIN_CP_SLOT				14 (210+5+22)
+	#define ORIGIN_TOTAL_CP_SLOT		14 280
+	
+	// Wager stuff
+	#define WAGER_HAS_SIDE_BET ( dvarString( sidebet_made ) != "" )
+	#define WAGER_NET_EARNINGS_NO_SB ( dvarInt( "scr_wager_winnings" ) - dvarInt( "scr_wagerBet" ) )
+	#define WAGER_NET_EARNINGS ( WAGER_NET_EARNINGS_NO_SB + dvarInt( "scr_wager_sideBetWinnings" ) - dvarInt( "scr_wager_sideBetLosses" ) )
+
+	// Nemesis content positioning
+	#define ORIGIN_NEMISIS_SLOT1		14 256//9  238
+	#define ORIGIN_NEMISIS_SLOT2		14 281
+	#define ORIGIN_NEMISIS_SLOT3		14 297
+	//#define ORIGIN_NEMISIS_SLOT4		14 238
+
+	// player content positioning
+	#define ORIGIN_PLAYER_SLOT1		14 (34+10)
+	#define ORIGIN_PLAYER_SLOT2		14 (48+10)
+	#define ORIGIN_PLAYER_SLOT3		14 (64+10)
+	#define ORIGIN_PLAYER_SLOT4		14 (80+10)
+	#define ORIGIN_PLAYER_SLOT5		14 (98+10)
+	#define ORIGIN_PLAYER_SLOT6		14 (116+10)
+	#define ORIGIN_PLAYER_SLOT7		14 (145+10)
+	#define ORIGIN_PLAYER_SLOT8		14 (175+10)
+	#define ORIGIN_PLAYER_SLOT9		14 (205+10)
+	
+	// colors/border
+	#define EOG_BASE_COLOR			0.25 0.25 0.27 1
+	#define EOG_BG_COLOR			0.1 0.1 0.12 0.85
+	#define EOG_SHINE_COLOR			0.9 0.9 0.9 0.45
+	#define EOG_BORDER_SIZE			1
+	#define EOG_BORDER_COLOR		0.35 0.35 0.37 1
+	#define EOG_BORDER				WINDOW_BORDER_RAISED
+	#define EOG_TEXT_COLOR			0.7 0.7 0.72 1
+	#define EOG_TEXT_COLOR_LOSE		1.0 0.0 0.0 1
+	#define EOG_TEXT_COLOR_WIN		0.0 1.0 0.0 1
+	#define EOG_TITLE_COLOR			COLOR_TITLE
+	#define EOG_INNER_COLOR			0 0 0 0.3
+	
+	#define TITLE_BG_COLOR_OFF		1 1 1 0.075
+	#define TITLE_BG_COLOR_ON		1 0.8 0.4 0.6 //0.95 0.80 0.3 0.6
+	
+	#define ZERO_TO_ONE				milliseconds()-dvarInt(ui_time_marker)
+	#define UNIT_GROWTH				sin( sin( min( ZERO_TO_ONE, POPUP_MOVE_SPEED )*(1.5707/POPUP_MOVE_SPEED) )*1.5707 )
+	
+	#define FRAME_ANIMATE( offset ) \
+		offset-offset*UNIT_GROWTH
+	
+	#define PC_NEXT_BUTTON( prect1, prect2, visArg )\
+		FRAMING_VIS( prect1, visArg )\
+		FRAMING_VIS( prect2, !(visArg) )\
+		PREPROC_TEXT_DRAW_ALL( prect1 0 0, 0 0,  "@MENU_GOTO_NEXT", TEXTSIZE_DEFAULT, 0, 1, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 0.15,  UI_FONT_NORMAL, ITEM_TEXTSTYLE_SHADOWED, when( visArg ),	  ; )\
+		PREPROC_TEXT_DRAW_ALL( prect2 0 0, 0 -2, "@MENU_GOTO_NEXT", TEXTSIZE_DEFAULT, 0, 1, ITEM_ALIGN_MIDDLE_CENTER, 1 1 1 0.15,  UI_FONT_NORMAL, ITEM_TEXTSTYLE_SHADOWED, when( !(visArg) ), ; )\
+		PREPROC_TEXT_DRAW_ALL( prect1 0 0, 0 0,  "@MENU_GOTO_NEXT", TEXTSIZE_DEFAULT, 0, 1, ITEM_ALIGN_MIDDLE_CENTER, COLOR_TITLE, UI_FONT_NORMAL, ITEM_TEXTSTYLE_SHADOWED, when( visArg ),	  name highlighted_next )\			
+		PREPROC_TEXT_DRAW_ALL( prect2 0 0, 0 -2, "@MENU_GOTO_NEXT", TEXTSIZE_DEFAULT, 0, 1, ITEM_ALIGN_MIDDLE_CENTER, COLOR_TITLE, UI_FONT_NORMAL, ITEM_TEXTSTYLE_SHADOWED, when( !(visArg) ), name highlighted_next )\
+		itemDef { \
+			type			ITEM_TYPE_BUTTON \
+			rect			prect1 0 0\
+			text			""\
+			textfont		UI_FONT_NORMAL \
+			textAlign		ITEM_ALIGN_MIDDLE_CENTER \
+			visible			when( visArg );\
+			onfocus			{ show highlighted_next; }\
+			leavefocus		{ hide highlighted_next; }\
+			mouseEnter 		{ play CHOICE_FOCUS_SOUND; }\
+			action 			{ play CHOICE_FOCUS_SOUND; close self; }	}\
+		itemDef { \
+			type			ITEM_TYPE_BUTTON \
+			rect			prect2 0 0\
+			text			""\
+			textfont		UI_FONT_NORMAL \
+			textAlign		ITEM_ALIGN_MIDDLE_CENTER \
+			visible			when( !(visArg) );\
+			onfocus			{ show highlighted_next; }\
+			leavefocus		{ hide highlighted_next; }\
+			mouseEnter 		{ play CHOICE_FOCUS_SOUND; }\
+			action 			{ play CHOICE_FOCUS_SOUND; close self; }\
+		}
+	
+	menuDef
+	{
+		name 			"popup_summary"
+		rect			(-(WIDTH_TOPBAR/2)) HEIGHT_TOPBAR WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		onOpen			
+		{ 
+			open "popup_summary_body"; 					// open child popup page
+			//play "uin_lobby_summary"; 
+			exec "setdvartotime ui_time_marker"; 	// animation start marker
+#ifdef XENON
+			setdvar invite_visible "0";
+#endif//#ifdef XENON
+		}
+		onESC 			
+		{ 
+			close self; 
+		}
+		onClose	
+		{ 	;	}	
+			
+		// Fullscreen darkened backdrop
+		PREPROC_SHADER_DRAW( -800 -800 2000 2000, "white", 0 0 0 0.6 )
+
+		// ==================== TOP BAR ===================
+		// Top bar frame
+		#define FRAMING( prect ) \
+			FRAMING_VIS( prect, 1 )
+
+		#define FRAMING_VIS( prect, visArg )																	\
+				PREPROC_SHADER_DRAW_VIS_EX( prect, "white",				EOG_BASE_COLOR,		when(visArg), ; )	\
+				PREPROC_SHADER_DRAW_VIS_EX( prect, "white",				EOG_BG_COLOR,		when(visArg), ; )	\
+				PREPROC_SHADER_DRAW_VIS_EX( prect, "line_horizontal",	EOG_SHINE_COLOR,	when(visArg), ; )
+
+		FRAMING( RECT_TOPBAR )
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X ORIGIN_TOPBAR_Y WIDTH_TOPBAR HEIGHT_TOPBAR, "menu_white_line_faded", 0.1 0.1 0.1 0.9 )
+		
+		// Top bar title
+		PREPROC_TEXT_DRAW_VIS( RECT_TOPBAR, 0 0, "@MPUI_GAME_SUMMARY_CAPS",	TEXTSIZE_DEFAULT, 0, 1, ITEM_ALIGN_MIDDLE_CENTER, EOG_TITLE_COLOR, when( dvarString(ui_lobbypopup_text) != "promotion" ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_TOPBAR, 0 0, "@RANK_PROMOTED",		TEXTSIZE_DEFAULT, 0, 1, ITEM_ALIGN_MIDDLE_CENTER, EOG_TITLE_COLOR, when( dvarString(ui_lobbypopup_text) == "promotion" ); ) 
+	}
+		
+	menuDef	
+	{
+		name 			"popup_summary_body"
+		exp				rect X (-(WIDTH_TOPBAR/2)) 
+		#ifdef PC
+			exp				rect Y (HEIGHT_TOPBAR+FRAME_ANIMATE(ANIMATE_DISTANCE))
+		#else
+			exp				rect Y (HEIGHT_TOPBAR)
+		#endif
+		rect			0 0 WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME+HEIGHT_TOPBAR) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		onOpen			{ ; }
+		execkeyint BUTTON_A { close self; }
+		execkeyint BUTTON_RSHLDR { close self; open popup_summary_bests; }
+
+#ifdef XENON
+		execkeyint BUTTON_Y { showGamerCard nemesis; }
+#endif//#ifdef XENON
+		onESC 			
+		{ 
+			close self; 
+		}
+		onClose			
+		{ 
+			close "popup_summary";
+#ifdef XENON
+			setdvar invite_visible "1";
+#endif//#ifdef XENON
+		}
+
+		// ==================== SUMMARY FRAME ====================
+
+		// Summary frame
+		FRAMING( RECT_MAINFRAME )
+		
+		FRAMING( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6 )
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6, "menu_white_line_faded",	0.1 0.1 0.1 0.9 )
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6, "white",					1 1 1 0.15 )
+		
+		#define ALIGNED_IN_X					(ORIGIN_RANK_FRAME_X+WIDTH_NEXT_RANK_FRAME-78)
+		#define ALIGNED_IN_Y					8
+		#define ALIGNED_IN_X_NEXT				(ORIGIN_RANK_FRAME_X+WIDTH_NEXT_RANK_FRAME+78)
+		#define ALIGNED_IN_X_XP					12
+		#define ALIGNED_IN_Y_XP					180
+		#define ALIGNED_IN_X_KILLSTREAK			14
+		#define ALIGNED_IN_Y_KILLSTREAK			(108+10)
+
+		#define BAR_FIXED						253*((getDStat( "PlayerStatsList", "RANKXP" )-int(tablelookup( "mp/ranktable.csv", 0, string(getDStat( "PlayerStatsList", "RANK" )), 2)))/int(tablelookup("mp/ranktable.csv",0,getDStat( "PlayerStatsList", "RANK" ),3)))
+		#define ANIMATE_BAR						min( BAR_FIXED, BAR_FIXED*((milliseconds()-dvarInt(ui_time_marker))/PROGRESS_BAR_SPEED) )
+		
+		#define REQUIRED_XP						int(getDStat( "PlayerStatsList", "RANKXP" )-int(tablelookup( "mp/ranktable.csv", 0, string(getDStat( "PlayerStatsList", "RANK" )), 2)))
+		#define ANIMATE_NUM						int(min( REQUIRED_XP, REQUIRED_XP*((milliseconds()-dvarInt(ui_time_marker))/PROGRESS_BAR_SPEED) ))
+		#define REQUIRED_XP_STRING				string(int(tablelookup( "mp/ranktable.csv", 0, string(getDStat( "PlayerStatsList", "RANK" )), 3 ))-ANIMATE_NUM)
+		
+
+		PREPROC_SHADER_DRAW( (ORIGIN_RANK_FRAME_X+6) (ORIGIN_RANK_FRAME_Y+7) WIDTH_NEXT_RANK_FRAME HEIGHT_NEXT_RANK_FRAME,		"white", EOG_INNER_COLOR )
+		PREPROC_SHADER_DRAW( (ORIGIN_NEXT_RANK_FRAME_X+6) (ORIGIN_RANK_FRAME_Y+7) WIDTH_NEXT_RANK_FRAME HEIGHT_NEXT_RANK_FRAME,	"white", EOG_INNER_COLOR )
+
+		#define MAINFRAME_WIDTH		230
+		// rank
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(120), (ALIGNED_IN_X-45) (ALIGNED_IN_Y+20),	"@MPUI_RANK_PRE_CAPS",																							TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_SHADER_DRAW( (ORIGIN_MAINFRAME_X+(ALIGNED_IN_X-10)) (ORIGIN_MAINFRAME_Y+(ALIGNED_IN_Y+23)) 56 56, tablelookup( "mp/rankIconTable.csv", 0, getDStat( "PlayerStatsList", "RANK" ), getDStat( "PlayerStatsList", "PLEVEL" )+1 ), 1 1 1 1 )
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(120), (ALIGNED_IN_X-45) (ALIGNED_IN_Y+100),	"@"+tablelookup( "mp/ranktable.csv", 0, getDStat( "PlayerStatsList", "RANK" ), 5 ),								TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(120), (ALIGNED_IN_X-45) (ALIGNED_IN_Y+115),	locString( "@MPUI_LEVEL_N", int(tablelookup("mp/ranktable.csv",0,getDStat( "PlayerStatsList", "RANK" ),14))),	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		
+		// next rank
+		/* rank icon */
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+(ALIGNED_IN_X_NEXT-30)) (ORIGIN_MAINFRAME_Y+(ALIGNED_IN_Y+23)) 56 56, tablelookup( "mp/rankIconTable.csv", 0, getDStat( "PlayerStatsList", "RANK" )+1, getDStat( "PlayerStatsList", "PLEVEL" )+1 ),	1 1 1 1, when( CAN_RANK_UP && PRESTIGE_NEXT==0 );,	; ) 
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+(ALIGNED_IN_X_NEXT-30)) (ORIGIN_MAINFRAME_Y+(ALIGNED_IN_Y+23)) 56 56, tablelookup( "mp/rankIconTable.csv", 0, 0, getDStat( "PlayerStatsList", "PLEVEL" )+2 ),										1 1 1 1, when( CAN_RANK_UP && PRESTIGE_NEXT );,		; ) 
+		/* rank label */
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(120), (ALIGNED_IN_X_NEXT-60) (ALIGNED_IN_Y+20),	"@MPUI_NEXT_RANK_PRE_CAPS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR ) 
+		/* rank level */
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(120), (ALIGNED_IN_X_NEXT-60) (ALIGNED_IN_Y+115),	locString( "@MPUI_LEVEL_N", int(tablelookup("mp/ranktable.csv",0,getDStat( "PlayerStatsList", "RANK" )+1,14))), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( getDStat( "PlayerStatsList", "RANK" ) < MAX_RANK ) )
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(120), (ALIGNED_IN_X_NEXT-60) (ALIGNED_IN_Y+115),	locString( "@MPUI_LEVEL_N", 1 ),																				TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( CAN_RANK_UP && PRESTIGE_NEXT ) )
+		/* rank name */
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(120), (ALIGNED_IN_X_NEXT-60) (ALIGNED_IN_Y+100),	"@"+tablelookup( "mp/ranktable.csv", 0, string(getDStat( "PlayerStatsList", "RANK" )+1), 5 ),	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( CAN_RANK_UP && PRESTIGE_NEXT==0 ); )
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(120), (ALIGNED_IN_X_NEXT-60) (ALIGNED_IN_Y+100),	"@MPUI_PRESTIGE",																				TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( CAN_RANK_UP && PRESTIGE_NEXT ); )
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(120), (ALIGNED_IN_X_NEXT-60) (ALIGNED_IN_Y+100),	"@MPUI_NONE",																					TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( CAN_RANK_UP==0 ); )
+
+		#define RANK_FRAME_WIDTH		230
+		
+		// xp gained
+		PREPROC_SHADER_DRAW( (ORIGIN_RANK_FRAME_X+6) (ORIGIN_RANK_FRAME_Y+130) (WIDTH_RANK_FRAME-12) (HEIGHT_RANK_FRAME-136), "white", EOG_INNER_COLOR ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT1,	"@MPUI_SCORE_PER_CAPS",										TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR,		when( !dvarBool( xblive_privatematch ) ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT2,	"@MPUI_CHALLENGES_PRE",									TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR,		when( !dvarBool( xblive_privatematch ) ); )	
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT3,	"@MPUI_MATCHBONUS_PRE",									TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR,		when( !dvarBool( xblive_privatematch ) ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT4,	"@MPUI_TOTALXP_PRE",									TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  COLOR_INFO_YELLOW,	when( !dvarBool( xblive_privatematch ) ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_CP_SLOT,	"@MPUI_CODPOINTS",										TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR,		when( !dvarBool( xblive_privatematch ) ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT1,	dvarString( ps_s ) + " " + locString( "@MPUI_XP_PRE" ),	TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR,		when( ( dvarString( ps_s ) != "" ) && ( !dvarBool( xblive_privatematch ) ) ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT2,	dvarString( ps_c ) + " " + locString( "@MPUI_XP_PRE" ),	TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR,		when( ( dvarString( ps_c ) != "" ) && ( !dvarBool( xblive_privatematch ) ) ); )
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT3,	dvarString( ps_m ) + " " + locString( "@MPUI_XP_PRE" ),	TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR,		when( ( dvarString( ps_m ) != "" ) && ( !dvarBool( xblive_privatematch ) ) ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT4,	dvarString( ps_x ),										TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, COLOR_INFO_YELLOW,	when( !dvarBool( xblive_privatematch ) ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_CP_SLOT,	dvarString( ps_cp ),									TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR,		when( !dvarBool( xblive_privatematch ) ); ) 
+
+		//Player stats
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT1,	dvarString( "ps_n" ),				TEXTSIZE_SMALL, 0,	-15, ITEM_ALIGN_LEFT,  COLOR_INFO_YELLOW ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT2,	"@MPUI_KILLS_CAPS",					TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT2,	dvarString( ps_k ),					TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT3,	"@MPUI_DEATHS_CAPS",				TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT3,	dvarString( ps_d ),					TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT4,	"@MPUI_SPREAD_PRE",					TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT4,	"+" + dvarString( ps_kds ),			TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR, when( dvarInt( ps_kds ) > 0 ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT4,	dvarString( ps_kds ),				TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR, when( dvarInt( ps_kds ) <= 0 ); ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT5,	"@MPUI_HEADSHOTS_CAPS",				TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT5,	dvarString( ps_h ),					TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT6,	"@MPUI_LONGEST_KILLSTREAK_CAPS",	TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT6,	dvarString( ps_st ),				TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR ) 
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+ALIGNED_IN_X_KILLSTREAK) (ORIGIN_MAINFRAME_Y+ALIGNED_IN_Y_KILLSTREAK) 24 24,		"hud_icon_u2_spyplane", 1 1 1 1,	when( dvarInt( ps_r ) > 0 );,	; ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT7,	"@MPUI_KILLSTREAK_RECON",			TEXTSIZE_SMALL, 26, -21, ITEM_ALIGN_LEFT,	EOG_TEXT_COLOR, when( dvarInt( ps_r ) > 0 ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT7,	locString( "@MPUI_KILLSTREAK_CALLED", dvarInt( ps_r ) ),	TEXTSIZE_SMALL, 26, -10, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( ps_r ) > 0 ); ) 
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+ALIGNED_IN_X_KILLSTREAK) (ORIGIN_MAINFRAME_Y+(ALIGNED_IN_Y_KILLSTREAK+30)) 24 24,	"hud_icon_artillery", 1 1 1 1,		when( dvarInt( ps_ac ) > 0 );,	; ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT8,	"@MPUI_KILLSTREAK_ARTILLERY",		TEXTSIZE_SMALL, 26, -21, ITEM_ALIGN_LEFT,	EOG_TEXT_COLOR, when( dvarInt( ps_ac ) > 0 ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT8,	locString( "@MPUI_KILLSTREAK_CALLED_AND_KILLS", dvarInt( ps_ac ), dvarInt( ps_ak ) ),	TEXTSIZE_SMALL, 26, -10, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( ps_ac ) > 0 ); ) 
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+ALIGNED_IN_X_KILLSTREAK) (ORIGIN_MAINFRAME_Y+(ALIGNED_IN_Y_KILLSTREAK+60)) 24 24,	"compass_objpoint_dogs", 1 1 1 1,	when( dvarInt( ps_dc ) > 0 );,	; ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT9,	"@MPUI_KILLSTREAK_DOGS",			TEXTSIZE_SMALL, 26, -21, ITEM_ALIGN_LEFT,	EOG_TEXT_COLOR, when( dvarInt( ps_dc ) > 0 ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT9,	locString( "@MPUI_KILLSTREAK_CALLED_AND_KILLS", dvarInt( ps_dc ), dvarInt( ps_dk ) ),	TEXTSIZE_SMALL, 26, -10, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( ps_dc ) > 0 ); ) 
+
+
+		//Nemesis
+		PREPROC_SHADER_DRAW( (ORIGIN_MAINFRAME_X+8) (ORIGIN_MAINFRAME_Y+(206+20)) (WIDTH_MAINFRAME-WIDTH_RANK_FRAME+8) 28,					"white", 1 1 1 0.075 ) 
+		PREPROC_SHADER_DRAW( (ORIGIN_MAINFRAME_X+6) (ORIGIN_MAINFRAME_Y+6) (WIDTH_MAINFRAME-WIDTH_RANK_FRAME+6) (HEIGHT_RANK_FRAME-12),		"white", EOG_INNER_COLOR )
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+(ALIGNED_IN_X_KILLSTREAK-5)) (ORIGIN_MAINFRAME_Y+(ALIGNED_IN_Y_KILLSTREAK+101+10)) 20 20, tablelookup( "mp/rankIconTable.csv", 0, dvarInt( ns_r ), dvarInt( ns_ri ) + 1 ), 1 1 1 1, when( dvarInt( ns_r ) > 0 ), ; )
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(120), ORIGIN_NEMISIS_SLOT1,	"@MPUI_NEMESIS_TITLE_CAPS", TEXTSIZE_SMALL, 0, -30,  ITEM_ALIGN_LEFT, COLOR_INFO_YELLOW  ) 
+#ifdef XENON
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT1,	"@XBOXLIVE_GAMERCARD", TEXTSIZE_SMALL, 70, -30, ITEM_ALIGN_LEFT, COLOR_INFO_YELLOW, when( dvarString( ns_id ) != "" );  ) 
+#endif//#ifdef XENON		
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT1, dvarString( ns_n ),			TEXTSIZE_SMALL, 20,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT2, "@MPUI_KILLS_CAPS",			TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR )	
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT2, dvarString( ns_k ),			TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )	
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT3, "@MPUI_KILLED_BY_PRE_CAPS",	TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT3, dvarString( ns_d ),			TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR ) 
+		
+		/* xp required*/
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), (ALIGNED_IN_X_XP+258) (ALIGNED_IN_Y_XP+78),	REQUIRED_XP_STRING,	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT,	EOG_TEXT_COLOR, when( ( CAN_RANK_UP ) && ( !dvarBool( xblive_privatematch ) ) ); )
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ALIGNED_IN_X_XP (ALIGNED_IN_Y_XP+78),			"@MPUI_XP_NEEDED_CAPS",	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT,	EOG_TEXT_COLOR, when( ( CAN_RANK_UP ) && ( !dvarBool( xblive_privatematch ) ) ); )
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_RANK_FRAME_X+(ALIGNED_IN_X_XP)) (ORIGIN_RANK_FRAME_Y+(ALIGNED_IN_Y_XP+82)) 255 14, "menu_mp_bar_shadow",  0.2 0.2 0.2 0.8, when( ( CAN_RANK_UP ) && ( !dvarBool( xblive_privatematch ) ) );, ; )
+		/* xp filling bar*/
+		PREPROC_SHADER_DRAW_ADV_VIS_EX( (ORIGIN_RANK_FRAME_X+ALIGNED_IN_X_XP+2), (ORIGIN_RANK_FRAME_Y+ALIGNED_IN_Y_XP+84), ANIMATE_BAR, 12, 0 0, "menu_mp_combatrecord_bar", 1 0.9 0.5 0.6, when( ( CAN_RANK_UP ) && ( !dvarBool( xblive_privatematch ) ) );, ; )
+		
+		#ifdef PC
+			// @param: prect1, prect2, visArg :: visArg->prect1||prect2
+			PC_NEXT_BUTTON( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR+6+HEIGHT_MAINFRAME) WIDTH_TOPBAR HEIGHT_TOPBAR, 0 0 0 0, 1 )
+		#endif
+	}
+	
+	menuDef	
+	{
+		name 			"popup_summary_bests"
+		exp				rect X (-(WIDTH_TOPBAR/2)) 
+		#ifdef PC
+			exp				rect Y (HEIGHT_TOPBAR+FRAME_ANIMATE(ANIMATE_DISTANCE))
+		#else
+			exp				rect Y (HEIGHT_TOPBAR)
+		#endif
+		rect			0 0 WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME+HEIGHT_TOPBAR) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		onOpen			{ ; }
+		execkeyint BUTTON_LSHLDR { close self; open popup_summary_body; }
+		execkeyint BUTTON_RSHLDR { close self; open popup_summary_heatmap; }
+
+		onESC 			
+		{ 
+			close self; 
+		}
+		onClose			
+		{ 
+			close "popup_summary";
+#ifdef XENON
+			setdvar invite_visible "1";
+#endif//#ifdef XENON
+		}
+		
+		#define LIST_X_START				ORIGIN_TOPBAR_X
+		#define LIST_Y_START				ORIGIN_MAINFRAME_Y
+		#define LIST_HEIGHT					HEIGHT_MAINFRAME
+		#define LIST_WIDTH					WIDTH_MAINFRAME
+		#define	LIST_ELEM_HEIGHT			18
+		#include "ui_mp/item_listbox.inc"
+
+		// ==================== SUMMARY FRAME ====================
+		// Summary frame
+		FRAMING( RECT_MAINFRAME )
+		
+		FRAMING( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6 )
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6, "menu_white_line_faded",	0.1 0.1 0.1 0.9 )
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6, "white",					1 1 1 0.15 )
+		
+		PERSONAL_BEST_LISTBOX( personalbests, FEEDER_PERSONALBESTS )
+
+		#ifdef PC
+			// @param: prect1, prect2, visArg :: visArg->prect1||prect2
+			PC_NEXT_BUTTON( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR+6+HEIGHT_MAINFRAME) WIDTH_TOPBAR HEIGHT_TOPBAR, 0 0 0 0, 1 )
+		#endif
+	}
+
+	menuDef	
+	{
+		name 			"popup_summary_heatmap"
+		exp				rect X (-(WIDTH_TOPBAR/2)) 
+		#ifdef PC
+			exp				rect Y (HEIGHT_TOPBAR+FRAME_ANIMATE(ANIMATE_DISTANCE))
+		#else
+			exp				rect Y (HEIGHT_TOPBAR)
+		#endif
+		rect			0 0 WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME+HEIGHT_TOPBAR) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+
+		itemDef 
+		{ 
+			type			ITEM_TYPE_OWNERDRAW 
+			rect			0 0 WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME+HEIGHT_TOPBAR) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			ownerdraw		UI_DRAWHEATMAP  
+			visible 	1
+			decoration  
+		}  
+		
+		onOpen			{ ; }
+		execkeyint BUTTON_LSHLDR { close self; open popup_summary_bests; }
+		execkeyint BUTTON_RSHLDR { close self; open popup_summary_body; }
+
+		onESC 			
+		{ 
+			close self; 
+		}
+		onClose			
+		{ 
+			close "popup_summary";
+#ifdef XENON
+			setdvar invite_visible "1";
+#endif//#ifdef XENON
+		}
+
+		#ifdef PC
+			// @param: prect1, prect2, visArg :: visArg->prect1||prect2
+			PC_NEXT_BUTTON( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR+6+HEIGHT_MAINFRAME) WIDTH_TOPBAR HEIGHT_TOPBAR, 0 0 0 0, 1 )
+		#endif
+	}
+
+	#define VIS_WEAPON		dvarInt(player_unlockweapons)!=0
+	#define VIS_PERKS		dvarInt(player_unlockperks)!=0
+	
+	menuDef
+	{
+		name 			"popup_unlock"
+		rect			(-(WIDTH_TOPBAR/2)) 68 WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		onOpen			
+		{ 
+			//play "uin_lobby_summary"; 
+			exec "setdvartotime ui_time_marker";		// animation start marker
+#ifdef CONSOLE
+			execnow "set ui_keep_unlock_open 0";
+#else // #ifdef CONSOLE
+			setdvar ui_keep_unlock_open "0";
+#endif // #else // #ifdef CONSOLE
+			uiScript openMenuOnDvar player_unlock_page "1" popup_unlock_page1;	// unlock page 1 only
+			uiScript openMenuOnDvar player_unlock_page "2" popup_unlock_page2;	// unlock page 2 only
+			uiScript openMenuOnDvar player_unlock_page "3" popup_unlock_page1;	// both pages visible
+			
+			#ifdef PC
+				hide highlighted_next;
+			#endif
+
+			uiScript closeMenuOnDvar ui_keep_unlock_open "0" popup_unlock;
+		}
+		onESC 			{ close self; }
+		execkeyint BUTTON_A { close self; }
+		onClose			
+		{ 
+			open popup_summary; 	// when last child page closes this parent topbar, we continue to game summary menu
+		}	
+			
+		// Fullscreen darkened backdrop
+		PREPROC_SHADER_DRAW( -800 -800 2000 2000, "white", 0 0 0 0.6 )
+
+		// ==================== TOP BAR ===================
+			
+		FRAMING( RECT_TOPBAR )
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X ORIGIN_TOPBAR_Y WIDTH_TOPBAR HEIGHT_TOPBAR, "menu_white_line_faded", 0.1 0.1 0.1 0.9 )
+	
+		// Top bar title
+		PREPROC_TEXT_DRAW( RECT_TOPBAR, 0 0, "@MPUI_UNLOCKED", TEXTSIZE_DEFAULT, 0, 1, ITEM_ALIGN_MIDDLE_CENTER, EOG_TITLE_COLOR ) 
+	}
+	
+	menuDef	
+	{
+		name 			"popup_unlock_page1"
+		exp				rect X (-(WIDTH_TOPBAR/2)) 
+		#ifdef PC
+			exp				rect Y (68+FRAME_ANIMATE(ANIMATE_DISTANCE))
+		#else
+			exp				rect Y (68)
+		#endif
+		rect			0 0 WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME+HEIGHT_TOPBAR) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+#ifdef CONSOLE
+		onOpen			{ execnow "set ui_keep_unlock_open 1"; }
+#else // #ifdef CONSOLE
+		onOpen			{ setdvar ui_keep_unlock_open "1"; }
+#endif // #else // #ifdef CONSOLE
+		onClose			{ uiScript openMenuOnDvar player_unlock_page "3" popup_unlock_page2; uiScript closeMenuOnDvar player_unlock_page "1" popup_unlock;}
+		execkeyint BUTTON_A { close self; }
+		onESC 			{ close self; }
+		
+		FRAMING( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6 )
+		
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6, "white", 1 0 0 0.1 )
+		
+		// inner frames
+		PREPROC_SHADER_DRAW( (ORIGIN_MAINFRAME_X+6) (ORIGIN_MAINFRAME_Y+6) (WIDTH_MAINFRAME-12) 81,		"white", EOG_INNER_COLOR ) 
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+6) (ORIGIN_MAINFRAME_Y+93) (WIDTH_MAINFRAME-12) 140,	"white", EOG_INNER_COLOR, when(VIS_WEAPON);, ; ) 
+		
+		
+		// attachment title shade
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+10) (ORIGIN_MAINFRAME_Y+8) 87 38,	"white", TITLE_BG_COLOR_ON, when( dvarString(player_unlockattachment0a) != "" );,			; )  
+
+		// weapon title shade
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+10) (ORIGIN_MAINFRAME_Y+95) 87 28,	"white", TITLE_BG_COLOR_ON, when( dvarString(player_unlockweapon0) != "" &&VIS_WEAPON );,	; ) 
+						
+		// weapon & camo & attachment title text
+		PREPROC_TEXT_DRAW_VIS( (ORIGIN_MAINFRAME_X+10) (ORIGIN_MAINFRAME_Y+116) 80 20 0 0, 10 116,	"@MPUI_WEAPON_PRE",		TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, 1 1 0.8 0.9, when(VIS_WEAPON); )
+		
+		PREPROC_TEXT_DRAW_VIS( (ORIGIN_MAINFRAME_X+10) (ORIGIN_MAINFRAME_Y+34) 80 20 0 0, 10 34,	"@MPUI_ATTACHMENT_PRE",	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, 1 1 0.8 0.9, when( dvarString(player_unlockattachment0a) != "" ); )
+
+		// weapon display ( max 2 slots unlocked at once )
+		#define WEAPON_SLOT_WIDTH	250//236//216
+		#define WEAPON_SLOT_HEIGHT	100
+		
+		#define WEAPON_SLOT1_X		20//25//50//90//50//12
+		#define WEAPON_SLOT2_X		(WEAPON_SLOT_WIDTH+(6)+WEAPON_SLOT1_X)
+		#define WEAPON_SLOT_Y		(HEIGHT_TOPBAR+134)
+
+		#define WEAPON_NAME( pref ) \
+			"@"+tablelookup("mp/statstable.csv",4,pref,3)
+		
+		#define WEAPON_IMAGE( pref ) \
+			tablelookup("mp/statstable.csv",4,pref,6)
+		
+		#define WEAPON_GROUP( pref ) \
+			tablelookup("mp/statstable.csv",4,pref,2)
+		
+		#define WEAPON_DESC( pref ) \
+			"@"+tablelookup("mp/statstable.csv",4,pref,7)
+		
+		// individual unlocked weapon
+		#define WEAPON_SLOT_SET( px, py, pw, ph, pref, visArg )																																													\
+				PREPROC_SHADER_DRAW_VIS_EX( px py pw ph,				"white",			EOG_BASE_COLOR,	visArg, ; )																															\
+				PREPROC_SHADER_DRAW_VIS_EX( px py pw (ph/2),			"gradient_bottom",	1 1 1 0.5,		visArg, ; )																															\
+				PREPROC_SHADER_DRAW_VIS_EX( px (py+(ph/2)) pw (ph/2),	"gradient_top",		1 1 1 0.5,		visArg, ; )																															\
+				PREPROC_TEXT_DRAW_VIS( px py (pw-4) 20 0 0,			 0 0, WEAPON_NAME(pref), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, COLOR_INFO_YELLOW,	visArg )																				\
+				PREPROC_TEXT_DRAW_VIS( (px+4) (py+20) (pw-6) 20 0 0, 0 0, WEAPON_DESC(pref), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT,  1 1 1 0.6,			visArg )																				\
+				PREPROC_SHADER_DRAW_VIS_EX( (px+110) (py+42) 120 60,		WEAPON_IMAGE( pref ), 1 1 1 1,	when( pref != "" && WEAPON_GROUP( pref ) != "weapon_pistol" && WEAPON_GROUP( pref ) != "weapon_grenade" && VIS_WEAPON );,		; )	\
+				PREPROC_SHADER_DRAW_VIS_EX( (px+170) (py+42) 60 60,			WEAPON_IMAGE( pref ), 1 1 1 1,	when( pref != "" && ( WEAPON_GROUP( pref ) == "weapon_pistol" || WEAPON_GROUP( pref ) == "weapon_grenade" ) && VIS_WEAPON );,	; )	\
+				PREPROC_SHADER_DRAW_VIS_EX( (px+2) (py+98) (-(pw-6)) 18,	"gradient_fadein", 0 0 0 0.45,	visArg,	; )																															\
+				PREPROC_TEXT_DRAW_VIS( (px+4) (py+98) (pw-6) 20 0 0, 0 -1, "@"+tablelookup("mp/attributesTable.csv",0,WEAPON_GROUP(pref),1), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, visArg )
+			
+		WEAPON_SLOT_SET( WEAPON_SLOT1_X, WEAPON_SLOT_Y, WEAPON_SLOT_WIDTH, WEAPON_SLOT_HEIGHT, dvarString(player_unlockweapon0), when(dvarString(player_unlockweapon0)!="" && VIS_WEAPON ); )
+		WEAPON_SLOT_SET( WEAPON_SLOT2_X, WEAPON_SLOT_Y, WEAPON_SLOT_WIDTH, WEAPON_SLOT_HEIGHT, dvarString(player_unlockweapon1), when(dvarString(player_unlockweapon1)!="" && VIS_WEAPON ); )
+		
+		// individual unlocked camo/attachment item block
+		#define BLOCK_WIDTH		180//108 //114
+		
+		// attachment unlocks ===========================================================		
+		#define ATTACHMENT_SET( px, py, pref_a, pref_b )																																																												\
+				PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+px) (ORIGIN_MAINFRAME_Y+py) BLOCK_WIDTH 36,	"white",			0.37 0.37 0.4 1,	when( pref_a != "" );, ; )																															\
+				PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+px) (ORIGIN_MAINFRAME_Y+py) BLOCK_WIDTH 36,	"gradient_bottom",	1 1 1 0.625,		when( pref_a != "" );, ; )																															\
+				PREPROC_TEXT_DRAW_VIS( ORIGIN_MAINFRAME (BLOCK_WIDTH-6) 80 20 0,	(px+4) (py-1),	"@"+tablelookup("mp/statstable.csv",4,pref_a,3),														TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_RIGHT, COLOR_INFO_YELLOW,	when( pref_a != "" ); )	\
+				PREPROC_TEXT_DRAW_VIS( ORIGIN_MAINFRAME BLOCK_WIDTH 80 20 0,		(px+4) (py+16),	"@"+tablelookup("mp/statstable.csv",4,pref_a,3)+"_"+tablelookup("mp/attachmentTable.csv",4,pref_b,7),	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT,  EOG_TEXT_COLOR,		when( pref_a != "" ); )
+			
+		ATTACHMENT_SET( 110, 10, dvarString(player_unlockattachment0a), dvarString(player_unlockattachment0b) )
+		ATTACHMENT_SET( 310, 10, dvarString(player_unlockattachment1a), dvarString(player_unlockattachment1b) )
+		ATTACHMENT_SET( 110, 48, dvarString(player_unlockattachment2a), dvarString(player_unlockattachment2b) )		
+		ATTACHMENT_SET( 310, 48, dvarString(player_unlockattachment3a), dvarString(player_unlockattachment3b) )		
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), 500 29, "...", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, COLOR_TITLE, when(dvarInt(player_unlockattachments)>4); )
+
+	
+		#ifdef PC
+			// @param: prect1, prect2, visArg :: visArg->prect1||prect2
+			PC_NEXT_BUTTON( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR+6+HEIGHT_MAINFRAME) WIDTH_TOPBAR HEIGHT_TOPBAR, ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR+99) WIDTH_TOPBAR HEIGHT_TOPBAR, VIS_WEAPON )
+		#endif
+	}
+	
+	menuDef	
+	{
+		name 			"popup_unlock_page2"
+		exp				rect X (-(WIDTH_TOPBAR/2)) 
+		#ifdef PC
+			exp				rect Y (68+FRAME_ANIMATE(ANIMATE_DISTANCE))
+		#else
+			exp				rect Y (68)
+		#endif
+		rect			0 0 WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME+HEIGHT_TOPBAR) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+#ifdef CONSOLE
+		onOpen			{ execnow "set ui_keep_unlock_open 1"; }
+#else // #ifdef CONSOLE
+		onOpen			{ setdvar ui_keep_unlock_open "1"; }
+#endif // #else // #ifdef CONSOLE		
+		execkeyint BUTTON_A {  close self; }
+		onESC 			{ close self; }
+		onClose			
+		{ 
+			close "popup_unlock"; 					// last popup page in this set, closing parent topbar
+		}
+		
+		// Unlock frame
+		/*with perks*/		FRAMING_VIS( ORIGIN_MAINFRAME WIDTH_MAINFRAME 200, VIS_PERKS )
+	
+		// color strip
+		FRAMING( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6 )
+		
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6, "white", 0 0 1 0.1 )
+		
+		// inner frames
+		PREPROC_SHADER_DRAW( (ORIGIN_MAINFRAME_X+6) (ORIGIN_MAINFRAME_Y+6) (WIDTH_MAINFRAME-12) 61,				"white", EOG_INNER_COLOR ) 
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+30) (ORIGIN_MAINFRAME_Y+73) (WIDTH_MAINFRAME-12-24) 88,	"white", EOG_INNER_COLOR, when( VIS_PERKS );, ; ) 
+		
+		#define LOCAL_FEATURES			dvarString(player_unlockfeatures) != 0 || dvarString(player_unlockchallenges) != 0
+		#define LOCAL_FEATURES_NOT		dvarString(player_unlockfeatures) == 0 && dvarString(player_unlockchallenges) == 0
+
+		// feature title shade
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+10) (ORIGIN_MAINFRAME_Y+9) 87 28,	"white", TITLE_BG_COLOR_ON, when( LOCAL_FEATURES );, ; ) 
+		
+		// perk title shade
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+34) (ORIGIN_MAINFRAME_Y+75) 63 33,	"white", TITLE_BG_COLOR_ON, when( dvarString(player_unlockperk0) != "" && VIS_PERKS );, ; ) 
+											
+		// feature & perk title text
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), 10 30, "@MPUI_FEATURE_PRE",	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, 1 1 0.8 0.9, when( LOCAL_FEATURES ); )
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), 10 96, "@MPUI_PERK_PRE",	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, 1 1 0.8 0.9, when( VIS_PERKS ); )
+		
+		// ================================== feature display =============================
+		
+		#define LOCAL_FEATURE( ptext, visArg ) \
+				PREPROC_TEXT_DRAW_VIS( ORIGIN_MAINFRAME 348 38 0 0, 104 30, ptext, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, COLOR_TITLE, when( visArg ); )
+		
+		// challenges merged with features unlock
+		#define LOCAL_LOCSTRING0_CH locString("@MPUI_NEW_CHALLENGES") //#define LOCAL_LOCSTRING0_CH dvarInt(player_unlockchallenges) + " New Challenge(s)"
+		#define LOCAL_LOCSTRING1_CH LOCAL_LOCSTRING0_CH + ", " + locString("@"+dvarString(player_unlockfeature0))
+		#define LOCAL_LOCSTRING2_CH LOCAL_LOCSTRING1_CH + ", " + locString("@"+dvarString(player_unlockfeature1))
+		#define LOCAL_LOCSTRING3_CH LOCAL_LOCSTRING2_CH + ", " + locString("@"+dvarString(player_unlockfeature2))
+		#define LOCAL_LOCSTRING4_CH LOCAL_LOCSTRING3_CH + ", " + locString("@"+dvarString(player_unlockfeature3))
+		
+		// features unlock, no challenges
+		#define LOCAL_LOCSTRING1 locString("@"+dvarString(player_unlockfeature0))
+		#define LOCAL_LOCSTRING2 LOCAL_LOCSTRING1 + ", " + locString("@"+dvarString(player_unlockfeature1))
+		#define LOCAL_LOCSTRING3 LOCAL_LOCSTRING2 + ", " + locString("@"+dvarString(player_unlockfeature2))
+		#define LOCAL_LOCSTRING4 LOCAL_LOCSTRING3 + ", " + locString("@"+dvarString(player_unlockfeature3))
+		
+		// unlock string display conditions
+		#define VIS_CH_FEATURE(features) dvarInt(player_unlockchallenges)!=0 && dvarInt(player_unlockfeatures)==features
+		#define VIS_FEATURE(features) dvarInt(player_unlockchallenges)==0 && dvarInt(player_unlockfeatures)==features
+		
+		// with challenges
+		LOCAL_FEATURE( LOCAL_LOCSTRING0_CH, VIS_CH_FEATURE(0) )
+		LOCAL_FEATURE( LOCAL_LOCSTRING1_CH, VIS_CH_FEATURE(1) )
+		LOCAL_FEATURE( LOCAL_LOCSTRING2_CH, VIS_CH_FEATURE(2) )
+		LOCAL_FEATURE( LOCAL_LOCSTRING3_CH, VIS_CH_FEATURE(3) )
+		LOCAL_FEATURE( LOCAL_LOCSTRING4_CH, VIS_CH_FEATURE(4) )
+		// without challenges
+		LOCAL_FEATURE( LOCAL_LOCSTRING1, VIS_FEATURE(1) )
+		LOCAL_FEATURE( LOCAL_LOCSTRING2, VIS_FEATURE(2) )
+		LOCAL_FEATURE( LOCAL_LOCSTRING3, VIS_FEATURE(3) )
+		LOCAL_FEATURE( LOCAL_LOCSTRING4, VIS_FEATURE(4) )
+		
+
+		// ==================== perk map layout ( all perk display elements will hide when no perks unlocked: VIS_PERKS ) ==========================		
+		#define PERK_SIZE		32 32
+		#define PERK_SIZE2		40 40
+		
+		#define MAP_START_X		52//24//60//106 //72
+		#define MAP_START_Y		144//78//38
+		#define MAP_ORIGIN		MAP_START_X MAP_START_Y
+		
+		#define MAP_V_SPACING	28
+		#define MAP_H_SPACING	50//46
+		#define PERK_NAME( pref_dvar ) \
+			"@"+tablelookup("mp/statsTable.csv",4,dvarString(pref_dvar),3)
+		
+		#define PERK_DESC( pref_dvar ) \
+			"@"+tablelookup("mp/statsTable.csv",4,dvarString(pref_dvar),7)
+		
+		#define PERK_MAP_ITEM_FIXED( px, py, pref ) \
+				PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+px) (ORIGIN_MAINFRAME_Y+py) PERK_SIZE, tablelookup("mp/statsTable.csv",4,pref,6), 1 1 1 0.6, when( pref != "" && VIS_PERKS );, ; ) 
+			
+		// unlocked perk item 1
+		PERK_MAP_ITEM_FIXED( 102, 75, dvarString(player_unlockperk0) )
+		PREPROC_TEXT_DRAW_VIS( ORIGIN_MAINFRAME 140 20 0 0,					 140 91,	PERK_NAME(player_unlockperk0), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, COLOR_INFO_YELLOW, when( VIS_PERKS ); ) 
+		PREPROC_TEXT_DRAW_VIS( ORIGIN_MAINFRAME (WIDTH_MAINFRAME-98) 20 0 0, 140 106,	PERK_DESC(player_unlockperk0), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR,	 when( VIS_PERKS ); )  
+
+		// unlocked perk item 2
+		PERK_MAP_ITEM_FIXED( 102, 115, dvarString(player_unlockperk1) )
+		PREPROC_TEXT_DRAW_VIS( ORIGIN_MAINFRAME 140 20 0 0,					 140 124, PERK_NAME(player_unlockperk1), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, COLOR_INFO_YELLOW,	when( VIS_PERKS ); )  
+		PREPROC_TEXT_DRAW_VIS( ORIGIN_MAINFRAME (WIDTH_MAINFRAME-98) 20 0 0, 140 138, PERK_DESC(player_unlockperk1), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR,		when( VIS_PERKS ); )  
+
+		#ifdef PC
+			// @param: prect1, prect2, visArg :: visArg->prect1||prect2
+			PC_NEXT_BUTTON( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR+6+HEIGHT_MAINFRAME) WIDTH_TOPBAR HEIGHT_TOPBAR, ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR+79) WIDTH_TOPBAR HEIGHT_TOPBAR, VIS_PERKS )
+		#endif
+
+	}
+	
+	menuDef
+	{
+		name 			"wager_summary"
+		rect			(-(WIDTH_TOPBAR/2)) HEIGHT_TOPBAR WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		onOpen			
+		{ 
+			open "wager_summary_body"; 					// open child popup page
+			play "uin_lobby_summary"; 
+			exec "setdvartotime ui_time_marker"; 	// animation start marker
+#ifdef XENON
+			setdvar invite_visible "0";
+#endif//#ifdef XENON
+		}
+		onESC 			
+		{ 
+			close self; 
+		}
+		onClose	
+		{ 	;	}	
+			
+		// Fullscreen darkened backdrop
+		PREPROC_SHADER_DRAW( -800 -800 2000 2000, "white", 0 0 0 0.6 )
+
+		// ==================== TOP BAR ===================
+		// Top bar frame
+		
+		FRAMING( RECT_TOPBAR )
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X ORIGIN_TOPBAR_Y WIDTH_TOPBAR HEIGHT_TOPBAR, "menu_white_line_faded", 0.1 0.1 0.1 0.9 )
+		
+		// Top bar title
+		PREPROC_TEXT_DRAW_VIS( RECT_TOPBAR, 0 0, "@MPUI_EARNINGS_STATEMENT", TEXTSIZE_DEFAULT, 0, 1, ITEM_ALIGN_MIDDLE_CENTER, EOG_TITLE_COLOR, when( dvarString(ui_lobbypopup_text) != "promotion" ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_TOPBAR, 0 0, "@RANK_PROMOTED",			 TEXTSIZE_DEFAULT, 0, 1, ITEM_ALIGN_MIDDLE_CENTER, EOG_TITLE_COLOR, when( dvarString(ui_lobbypopup_text) == "promotion" ); ) 
+	}
+		
+	menuDef	
+	{
+		name 			"wager_summary_body"
+		exp				rect X (-(WIDTH_TOPBAR/2)) 
+		#ifdef PC
+			exp				rect Y (HEIGHT_TOPBAR+FRAME_ANIMATE(ANIMATE_DISTANCE))
+		#else
+			exp				rect Y (HEIGHT_TOPBAR)
+		#endif
+		rect			0 0 WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME+HEIGHT_TOPBAR) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		onOpen			{ ; }
+		execkeyint BUTTON_A { close self; }
+
+#ifdef XENON
+		execkeyint BUTTON_Y { showGamerCard nemesis; }
+#endif//#ifdef XENON
+		onESC 			
+		{ 
+			close self; 
+		}
+		onClose			
+		{ 
+			close "wager_summary";
+#ifdef XENON
+			setdvar invite_visible "1";
+#endif//#ifdef XENON
+		}
+
+		// ==================== SUMMARY FRAME ====================
+
+		// Summary frame
+		FRAMING( RECT_MAINFRAME )
+		
+		FRAMING( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6 )
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6, "menu_white_line_faded",	0.1 0.1 0.1 0.9 )
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_X+HEIGHT_TOPBAR) WIDTH_TOPBAR 6, "white",					1 1 1 0.15 )
+		
+		// Total Prize Pool
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), (ALIGNED_IN_X-45) (ALIGNED_IN_Y+20), locString( "@MPUI_TOTAL_PRIZE_POOL", dvarint( "scr_wagerPool" ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		
+		// Placements
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(30), (ALIGNED_IN_X-20) (ALIGNED_IN_Y+40), locString( "@MP_1ST" )+": ", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(30), (ALIGNED_IN_X-20) (ALIGNED_IN_Y+55), locString( "@MP_2ND" )+": ", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(30), (ALIGNED_IN_X-20) (ALIGNED_IN_Y+70), locString( "@MP_3RD" )+": ", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		
+		// Payouts
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(30), (ALIGNED_IN_X+30) (ALIGNED_IN_Y+40), dvarint( "scr_wager_firstPayout" )+" "+locString( "@MPUI_CP_ABBREV" ),  TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( "scr_wager_firstPayout" ) != 0 ) )
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(30), (ALIGNED_IN_X+30) (ALIGNED_IN_Y+55), dvarint( "scr_wager_secondPayout" )+" "+locString( "@MPUI_CP_ABBREV" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( "scr_wager_secondPayout" ) != 0 ) )
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(30), (ALIGNED_IN_X+30) (ALIGNED_IN_Y+70), dvarint( "scr_wager_thirdPayout" )+" "+locString( "@MPUI_CP_ABBREV" ),  TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( "scr_wager_thirdPayout" ) != 0 ) )
+		
+		// Winners
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(150), (ALIGNED_IN_X+40) (ALIGNED_IN_Y+40), dvarString( "scr_wager_firstPlayer" ),  TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(150), (ALIGNED_IN_X+40) (ALIGNED_IN_Y+55), dvarString( "scr_wager_secondPlayer" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(150), (ALIGNED_IN_X+40) (ALIGNED_IN_Y+70), dvarString( "scr_wager_thirdPlayer" ),  TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+
+		// Your wager
+		PREPROC_TEXT_DRAW( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH),	  ORIGIN_XP_SLOT1,	"@MPUI_YOUR_WAGER",																						TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR );
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT1,	dvarInt( "scr_wagerBet" )+" "+locString( "@MPUI_CP_ABBREV" ),											TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR, when( !WAGER_HAS_SIDE_BET ) );
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT1,	( dvarInt( "scr_wagerBet" )+dvarInt( "scr_wager_sideBetLosses" ) )+" "+locString( "@MPUI_CP_ABBREV" ),	TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR, when( WAGER_HAS_SIDE_BET ) );
+		
+		// Winnings
+		PREPROC_TEXT_DRAW( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT2, "@MPUI_WINNINGS_CAPS",														TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR );
+		PREPROC_TEXT_DRAW( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT2, dvarString( "scr_wager_winnings" )+" "+locString( "@MPUI_CP_ABBREV" ),	TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR );
+		
+		// Side Bet Winnings
+		PREPROC_TEXT_DRAW( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT3, "Side Bet Winnings",																TEXTSIZE_SMALL, 0, -10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR );
+		PREPROC_TEXT_DRAW( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT3, dvarString( "scr_wager_sideBetWinnings" )+" "+locString( "@MPUI_CP_ABBREV" ),	TEXTSIZE_SMALL, 0, -10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR );
+		
+		// Net Earnings
+		PREPROC_TEXT_DRAW( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT4, "@MPUI_NET_EARNINGS", TEXTSIZE_SMALL, 0, -10, ITEM_ALIGN_LEFT, COLOR_INFO_YELLOW );
+		// Made side bet
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT4, WAGER_NET_EARNINGS+" "+locString( "@MPUI_CP_ABBREV" ), TEXTSIZE_SMALL, 0, -10, ITEM_ALIGN_RIGHT, 0.6 0 0 1, when( WAGER_HAS_SIDE_BET && ( WAGER_NET_EARNINGS < 0 ) ); )
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT4, WAGER_NET_EARNINGS+" "+locString( "@MPUI_CP_ABBREV" ), TEXTSIZE_SMALL, 0, -10, ITEM_ALIGN_RIGHT, 0 0.6 0 1, when( WAGER_HAS_SIDE_BET && ( WAGER_NET_EARNINGS >= 0 ) ); )
+		// No side bet
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT4, WAGER_NET_EARNINGS_NO_SB+" "+locString( "@MPUI_CP_ABBREV" ), TEXTSIZE_SMALL, 0, -10, ITEM_ALIGN_RIGHT, 0.6 0 0 1, when( !WAGER_HAS_SIDE_BET && ( WAGER_NET_EARNINGS_NO_SB < 0 ) ); )
+		PREPROC_TEXT_DRAW_VIS( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_XP_SLOT4, WAGER_NET_EARNINGS_NO_SB+" "+locString( "@MPUI_CP_ABBREV" ), TEXTSIZE_SMALL, 0, -10, ITEM_ALIGN_RIGHT, 0 0.6 0 1, when( !WAGER_HAS_SIDE_BET && ( WAGER_NET_EARNINGS_NO_SB >= 0 ) ); )
+		
+		// Total CP
+		PREPROC_TEXT_DRAW( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_TOTAL_CP_SLOT, "@MPUI_TOTAL_CODPOINTS",										TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR );
+		PREPROC_TEXT_DRAW( RECT_RANK_FRAME_ALIGNED(RANK_FRAME_WIDTH), ORIGIN_TOTAL_CP_SLOT, GetStatByName( "CODPOINTS" )+" "+locString("@MPUI_CP_ABBREV"),	TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR );
+
+		//Player stats
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT1,	dvarString( "ps_n" ),		TEXTSIZE_SMALL, 0,	-15, ITEM_ALIGN_LEFT,  COLOR_INFO_YELLOW ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT2,	"@MPUI_KILLS_CAPS",				TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT2,	dvarString( ps_k ),			TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT3,	"@MPUI_DEATHS_CAPS",				TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT3,	dvarString( ps_d ),			TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT4,	"@MPUI_SPREAD_PRE",			TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT4,	"+" + dvarString( ps_kds ),	TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR, when( dvarInt( ps_kds ) > 0 ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_PLAYER_SLOT4,	dvarString( ps_kds ),		TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR, when( dvarInt( ps_kds ) <= 0 ); ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT5,	"@MPUI_HEADSHOTS_CAPS",			TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT5,	dvarString( ps_h ),			TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT6,	"@MPUI_LONGEST_KILLSTREAK_CAPS",		TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),		ORIGIN_PLAYER_SLOT6,	dvarString( ps_st ),		TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR ) 
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+ALIGNED_IN_X_KILLSTREAK) (ORIGIN_MAINFRAME_Y+ALIGNED_IN_Y_KILLSTREAK) 24 24,		"hud_icon_u2_spyplane",		1 1 1 1, when( dvarInt( ps_r ) > 0 );, ; ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT7,	"@MPUI_KILLSTREAK_RECON",									TEXTSIZE_SMALL, 26, -21, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( ps_r ) > 0 ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT7,	locString( "@MPUI_KILLSTREAK_CALLED", dvarInt( ps_r ) ),	TEXTSIZE_SMALL, 26, -10, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( ps_r ) > 0 ); ) 
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+ALIGNED_IN_X_KILLSTREAK) (ORIGIN_MAINFRAME_Y+(ALIGNED_IN_Y_KILLSTREAK+30)) 24 24,	"hud_icon_artillery",		1 1 1 1, when( dvarInt( ps_ac ) > 0 );, ; ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT8,	"@MPUI_KILLSTREAK_ARTILLERY",															TEXTSIZE_SMALL, 26, -21, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( ps_ac ) > 0 ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT8,	locString( "@MPUI_KILLSTREAK_CALLED_AND_KILLS", dvarInt( ps_ac ), dvarInt( ps_ak ) ),	TEXTSIZE_SMALL, 26, -10, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( ps_ac ) > 0 ); ) 
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+ALIGNED_IN_X_KILLSTREAK) (ORIGIN_MAINFRAME_Y+(ALIGNED_IN_Y_KILLSTREAK+60)) 24 24,	"compass_objpoint_dogs",	1 1 1 1, when( dvarInt( ps_dc ) > 0 );, ; ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT9,	"@MPUI_KILLSTREAK_DOGS",																TEXTSIZE_SMALL, 26, -21, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( ps_dc ) > 0 ); ) 
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH),	ORIGIN_PLAYER_SLOT9,	locString( "@MPUI_KILLSTREAK_CALLED_AND_KILLS", dvarInt( ps_dc ), dvarInt( ps_dk ) ),	TEXTSIZE_SMALL, 26, -10, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR, when( dvarInt( ps_dc ) > 0 ); ) 
+
+
+		//Nemesis
+		PREPROC_SHADER_DRAW( (ORIGIN_MAINFRAME_X+8) (ORIGIN_MAINFRAME_Y+(206+20)) (WIDTH_MAINFRAME-WIDTH_RANK_FRAME+8) 28,							"white", 1 1 1 0.075 ) 
+		PREPROC_SHADER_DRAW( (ORIGIN_MAINFRAME_X+6) (ORIGIN_MAINFRAME_Y+6) (WIDTH_MAINFRAME-WIDTH_RANK_FRAME+6) (HEIGHT_RANK_FRAME-12),				"white", EOG_INNER_COLOR )
+		PREPROC_SHADER_DRAW_VIS_EX( (ORIGIN_MAINFRAME_X+(ALIGNED_IN_X_KILLSTREAK-5)) (ORIGIN_MAINFRAME_Y+(ALIGNED_IN_Y_KILLSTREAK+101+10)) 20 20,	tablelookup( "mp/rankIconTable.csv", 0, dvarInt( ns_r ), dvarInt( ns_ri ) + 1 ), 1 1 1 1, when( dvarInt( ns_r ) > 0 );, ; )
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT1,		"@MPUI_NEMESIS_TITLE_CAPS", TEXTSIZE_SMALL, 0, -30,  ITEM_ALIGN_LEFT, COLOR_INFO_YELLOW  ) 
+#ifdef XENON
+		PREPROC_TEXT_DRAW_VIS( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT1,	"@XBOXLIVE_GAMERCARD", TEXTSIZE_SMALL, 70, -30, ITEM_ALIGN_LEFT, COLOR_INFO_YELLOW, when( dvarString( ns_id ) != "" ); ) 
+#endif//#ifdef XENON		
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT1,	dvarString( ns_n ),		TEXTSIZE_SMALL, 20,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR  ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT2,	"@MPUI_KILLS_CAPS",		TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR )	
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT2,	dvarString( ns_k ),		TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )	
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT3,	"@MPUI_KILLED_BY_PRE_CAPS",	TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_LEFT,  EOG_TEXT_COLOR ) 
+		PREPROC_TEXT_DRAW( RECT_MAINFRAME_ALIGNED(MAINFRAME_WIDTH), ORIGIN_NEMISIS_SLOT3,	dvarString( ns_d ),		TEXTSIZE_SMALL, 0,	-10, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR ) 
+		
+		#ifdef PC
+			// @param: prect1, prect2, visArg :: visArg->prect1||prect2
+			PC_NEXT_BUTTON( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR+6+HEIGHT_MAINFRAME) WIDTH_TOPBAR HEIGHT_TOPBAR, 0 0 0 0, 1 )
+		#endif
+	}
+}
+		

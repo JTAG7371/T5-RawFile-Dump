@@ -1,0 +1,413 @@
+#include "ui/menudef.h"
+
+#ifdef PC
+	#define 	SCOREBAR_OFFSET 0 4
+#else
+	#define 	SCOREBAR_OFFSET 0 0
+#endif
+	
+#define SCORE_BAR() \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			0 3 640 18 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP \
+			origin			SCOREBAR_OFFSET\
+			background		"line_horizontal_scorebar" \
+			forecolor		0 0 0 1 \
+			visible			when( team( name ) == "TEAM_ALLIES" && dvarString( "scr_allies" ) == "sas" && !dvarInt( "splitscreen" ) ) \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			0 3 640 18 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP \
+			origin			SCOREBAR_OFFSET\
+			background		"line_horizontal_scorebar" \
+			forecolor		0.6 0.64 0.69 1 \
+			visible			when( team( name ) == "TEAM_ALLIES" && dvarString( "scr_allies" ) == "usmc" && !dvarInt( "splitscreen" ) ) \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			0 3 640 18 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP \
+			origin			SCOREBAR_OFFSET\
+			background		"line_horizontal_scorebar" \
+			forecolor		0.52 0.28 0.28 1 \
+			visible			when( team( name ) == "TEAM_AXIS" && dvarString( "scr_axis" ) == "ussr" && !dvarInt( "splitscreen" ) ) \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			0 3 640 18 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP \
+			origin			SCOREBAR_OFFSET\
+			background		"line_horizontal_scorebar" \
+			forecolor		0.65 0.57 0.41 1 \
+			visible			when( team( name ) == "TEAM_AXIS" && dvarString( "scr_axis" ) == "arab" && !dvarInt( "splitscreen" ) ) \
+			decoration \
+		} \
+
+#define SCOREBAR_LEFT_OFFSET -200
+#define SCOREBAR_WIDTH 1000 
+
+{	
+	menuDef  // Stub: the scoreboard is controlled by code
+	{
+		name			"scoreboard"
+		rect			0 0 640 480
+		visible			when(dvarBool( missionsuccessbar ) == 1);
+		onEsc 
+		{
+			close scoreboard;
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 0 640 2 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		1 1 1 1
+			visible			when( !dvarInt( "splitscreen" ) );
+			decoration
+		}
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 2 640 1 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		0 0 0 0.5
+			visible			when( !dvarInt( "splitscreen" ) );
+			decoration
+		}	
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 3 640 18 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"menu_white_line_faded"
+			forecolor		0 0 0 0.5
+			visible			when( !dvarInt( "splitscreen" ) );
+			decoration
+		}	
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 21 640 1 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		0 0 0 0.5
+			visible			when( !dvarInt( "splitscreen" ) );
+			decoration
+		}	
+		
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 22 640 2 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		1 1 1 1
+			visible			when( !dvarInt( "splitscreen" ) );
+			decoration
+		}
+		
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 20 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			exp text		( locString( "@MENU_MISSION_SUCCESS" ) );
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_CENTER
+			forecolor		0.95 0.72 0.21 1.0
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			visible 		when( !dvarInt( "splitscreen" ) )
+			decoration 
+		}
+		
+		//SPLITSCREEN	
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			SCOREBAR_LEFT_OFFSET 0 SCOREBAR_WIDTH 2 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		1 1 1 1
+			visible			when( dvarInt( "splitscreen" ) );
+			decoration
+		}
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			SCOREBAR_LEFT_OFFSET 2 SCOREBAR_WIDTH 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		0 0 0 0.5
+			visible			when( dvarInt( "splitscreen" ) );
+			decoration
+		}	
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			SCOREBAR_LEFT_OFFSET 3 SCOREBAR_WIDTH 18 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"menu_white_line_faded"
+			forecolor		0 0 0 0.5
+			visible			when( dvarInt( "splitscreen" ) );
+			decoration
+		}	
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			SCOREBAR_LEFT_OFFSET 21 SCOREBAR_WIDTH 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		0 0 0 0.5
+			visible			when( dvarInt( "splitscreen" ) );
+			decoration
+		}	
+		
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			SCOREBAR_LEFT_OFFSET 22 SCOREBAR_WIDTH 2 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		1 1 1 1
+			visible			when( dvarInt( "splitscreen" ) );
+			decoration
+		}
+		
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 20 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			exp text		( locString( "@MENU_MISSION_SUCCESS" ) );
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_CENTER
+			forecolor		0.95 0.72 0.21 1.0
+			textstyle		ITEM_TEXTSTYLE_NORMAL
+			visible			when( dvarInt( "splitscreen" ) );
+			decoration 
+		}
+	}
+}
+
+
+/*	
+{	
+	menuDef  // Stub: the scoreboard is controlled by code
+	{
+		name			"scoreboard"
+		rect			0 0 640 480
+		onEsc 
+		{
+			close scoreboard;
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 0 640 2 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		1 1 1 1
+			visible			when( !dvarInt( "splitscreen" ) );
+			decoration
+		}
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 2 640 1 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		0 0 0 0.5
+			visible			when( !dvarInt( "splitscreen" ) );
+			decoration
+		}	
+//		SCORE_BAR
+		
+		itemDef	
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 21 640 1 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		0 0 0 0.5
+			visible			when( !dvarInt( "splitscreen" ) );
+			decoration
+		}	
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 22 640 2 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			origin			SCOREBAR_OFFSET
+			background		"line_horizontal_scorebar"
+			forecolor		1 1 1 1
+			visible			when( !dvarInt( "splitscreen" ) );
+			decoration
+		}
+
+		itemDef 
+		{
+			type		ITEM_TYPE_TEXT
+			rect		36 22 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin		SCOREBAR_OFFSET
+			exp text	( team( score ) );
+			textfont	UI_FONT_NORMAL
+			textscale	0.4
+			textalign	ITEM_ALIGN_LEFT
+			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
+			visible 	when ( (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_AXIS") && !dvarInt( "splitscreen" ) )
+			decoration 
+		}
+
+		itemDef 
+		{
+			type		ITEM_TYPE_TEXT
+			rect		36 22 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin		SCOREBAR_OFFSET
+			exp text	( player( score ) );
+			textfont	UI_FONT_NORMAL
+			textscale	0.4
+			textalign	ITEM_ALIGN_LEFT
+			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
+			visible 	when ( team( name ) == "TEAM_FREE" && !dvarInt( "splitscreen" ) )
+			decoration 
+		}
+
+		itemDef 
+		{
+			type		ITEM_TYPE_TEXT
+			rect		134 22 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin		SCOREBAR_OFFSET
+			exp text	( otherteam( score ) );
+			textfont	UI_FONT_NORMAL
+			textscale	0.4
+			textalign	ITEM_ALIGN_LEFT
+			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
+			visible 	when ( (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_AXIS") && !dvarInt( "splitscreen" ) )
+			decoration 
+		}
+
+		itemDef 
+		{
+			type		ITEM_TYPE_TEXT
+			rect		0 22 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+			origin		SCOREBAR_OFFSET
+			exp text	( gameTypeName() );
+			textfont	UI_FONT_NORMAL
+			textscale	TEXTSIZE_SMALL
+			textalign	ITEM_ALIGN_CENTER
+			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
+			visible 	when( (timeLeft() % 8 < 4 || timeLeft() < 0) && !dvarInt( "splitscreen" ) )
+			decoration 
+		}
+
+		itemDef 
+		{
+			type		ITEM_TYPE_TEXT
+			rect		0 0 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin		2 32
+			exp text	( gameTypeName() );
+			textfont	UI_FONT_NORMAL
+			textscale	TEXTSIZE_SMALL_SS
+			textalign	ITEM_ALIGN_LEFT
+			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
+			visible 	when( (timeLeft() % 8 < 4 || timeLeft() < 0) && dvarInt( "splitscreen" ) )
+			decoration 
+		}
+
+
+		itemDef 
+		{
+			type		ITEM_TYPE_TEXT
+			rect		36 22 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin		SCOREBAR_OFFSET
+			exp text	( marinesfield( score ) );
+			textfont	UI_FONT_NORMAL
+			textscale	0.4
+			textalign	ITEM_ALIGN_LEFT
+			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
+			visible 	when ( team( name ) == "TEAM_SEPCTATOR" && !dvarInt( "splitscreen" ) )
+			decoration 
+		}
+
+		itemDef 
+		{
+			type		ITEM_TYPE_TEXT
+			rect		134 22 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin		SCOREBAR_OFFSET
+			exp text	( opforfield( score ) );
+			textfont	UI_FONT_NORMAL
+			textscale	0.4
+			textalign	ITEM_ALIGN_LEFT
+			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
+			visible 	when ( team( name ) == "TEAM_SEPCTATOR" && !dvarInt( "splitscreen" ) )
+			decoration 
+		}
+
+		#ifdef PUBLIC_BETA
+			#define TIMEOFFSET 18
+		#else
+			#define TIMEOFFSET 0
+		#endif
+
+		itemDef 
+		{
+			type		ITEM_TYPE_TEXT
+			rect		SCOREBAR_OFFSET 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
+			origin		0 (22+TIMEOFFSET)
+			exp text	( secondsAsCountdown( timeLeft() ) );
+			textfont	UI_FONT_NORMAL
+			textscale	0.4
+			textalign	ITEM_ALIGN_RIGHT
+			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
+			visible 	when ( timeLeft() >= 30 && !dvarInt( "splitscreen" ) );
+			decoration 
+		}
+
+		itemDef 
+		{
+			type		ITEM_TYPE_TEXT
+			rect		SCOREBAR_OFFSET 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
+			origin		0 (22+TIMEOFFSET)
+			exp text	( secondsAsCountdown( timeLeft() ) );
+			textfont	UI_FONT_NORMAL
+			textscale	0.4
+			textalign	ITEM_ALIGN_RIGHT
+			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor	1 0.75 0 1
+			visible 	when ( timeLeft() >= 10 && timeLeft() < 30 && !dvarInt( "splitscreen" ) );
+			decoration 
+		}
+
+		itemDef 
+		{
+			type		ITEM_TYPE_TEXT
+			rect		SCOREBAR_OFFSET 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
+			origin		0 (22+TIMEOFFSET)
+			exp text	( secondsAsCountdown( timeLeft() ) );
+			textfont	UI_FONT_NORMAL
+			textscale	0.4
+			textalign	ITEM_ALIGN_RIGHT
+			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
+			forecolor	1 0.5 0 1
+			visible 	when ( timeLeft() >= 0 && timeLeft() < 10 && !dvarInt( "splitscreen" ) );
+			decoration 
+		}
+	}
+}
+*/

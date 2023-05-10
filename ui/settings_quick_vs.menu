@@ -1,0 +1,126 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define MENU_TITLE_TEXT "VERSUS OPTIONS"
+#define GAME_OPTIONS_MENU_NAME "settings_quick_vs"
+#include "ui/common_game_options.inc"
+
+#define TEAMBASED 1
+#define NUMLIVES_DVAR		"scr_vs_numlives"
+#define PLAYERRESPAWN_DVAR 	"scr_vs_playerrespawndelay"
+#define WAVERESPAWN_DVAR	"scr_vs_waverespawndelay"
+#define GAMETYPE_OPTIONS	"@UI_VERSUS"
+
+// --- gameplay options
+#define CHOICE1_TEXT		"Attacker starting health"
+#define CHOICE1_DVAR		scr_vs_attackerHealth
+#define CHOICE1_DVARTEXT	CHOICE1_DVAR"_text"
+#define CHOICE1_SHOW		1
+#define CHOICE1_STR1		"100" 
+#define CHOICE1_STR2		"150" 
+#define CHOICE1_STR3		"200"
+#define CHOICE1_STR4		"250"
+#define CHOICE1_STR5		"300"
+#define CHOICE1_STR6		""
+#define CHOICE1_VAL1		100
+#define CHOICE1_VAL2		150
+#define CHOICE1_VAL3		200
+#define CHOICE1_VAL4		250
+#define CHOICE1_VAL5		300
+#define CHOICE1_VAL6		0
+#define CHOICE1_EXEC		;
+#define CHOICE1_STRLIST		{ CHOICE1_STR1 CHOICE1_VAL1 CHOICE1_STR2 CHOICE1_VAL2 CHOICE1_STR3 CHOICE1_VAL3 CHOICE1_STR4 CHOICE1_VAL4 CHOICE1_STR5 CHOICE1_VAL5 CHOICE1_STR6 CHOICE1_VAL6 }
+#define CHOICE1_NUMVALS		5
+#define CHOICE1_POPUP		1
+
+#define CHOICE2_TEXT		"Attacker Revive Time"
+#define CHOICE2_DVAR		"scr_vs_reviveTime"
+#define CHOICE2_DVARTEXT	CHOICE2_DVAR"_text"
+#define CHOICE2_SHOW		1
+#define CHOICE2_STR1		"1 sec"
+#define CHOICE2_STR2		"1.5 sec"
+#define CHOICE2_STR3		"2 sec"
+#define CHOICE2_STR4		"2.5 sec"
+#define CHOICE2_STR5		"3 sec"
+#define CHOICE2_STR6		"4 sec"
+#define CHOICE2_VAL1		1
+#define CHOICE2_VAL2		1.5
+#define CHOICE2_VAL3		2
+#define CHOICE2_VAL4		2.5
+#define CHOICE2_VAL5		3
+#define CHOICE2_VAL6		4
+#define CHOICE2_EXEC		;
+#define CHOICE2_STRLIST		{ CHOICE2_STR1 CHOICE2_VAL1 CHOICE2_STR2 CHOICE2_VAL2 CHOICE2_STR3 CHOICE2_VAL3 CHOICE2_STR4 CHOICE2_VAL4 CHOICE2_STR5 CHOICE2_VAL5 CHOICE2_STR6 CHOICE2_VAL6 }
+#define CHOICE2_NUMVALS		6
+#define CHOICE2_POPUP		1
+
+#define CHOICE3_TEXT		"Defender Respawn Wave Delay"
+#define CHOICE3_DVAR		"scr_vs_waverespawndelay"
+#define CHOICE3_DVARTEXT	CHOICE3_DVAR"_text"
+#define CHOICE3_SHOW		1
+#define CHOICE3_STR1		"5 sec"
+#define CHOICE3_STR2		"10 sec"
+#define CHOICE3_STR3		"15 sec"
+#define CHOICE3_STR4		"20 sec"
+#define CHOICE3_STR5		"25 sec"
+#define CHOICE3_STR6		"30 sec"
+#define CHOICE3_VAL1		5
+#define CHOICE3_VAL2		10
+#define CHOICE3_VAL3		15
+#define CHOICE3_VAL4		20
+#define CHOICE3_VAL5		25
+#define CHOICE3_VAL6		30
+#define CHOICE3_EXEC		;
+#define CHOICE3_STRLIST		{ CHOICE3_STR1 CHOICE3_VAL1 CHOICE3_STR2 CHOICE3_VAL2 CHOICE3_STR3 CHOICE3_VAL3 CHOICE3_STR4 CHOICE3_VAL4 CHOICE3_STR5 CHOICE3_VAL5 CHOICE3_STR6 CHOICE3_VAL6 }
+#define CHOICE3_NUMVALS		6
+#define CHOICE3_POPUP		1
+
+#define CHOICE4_TEXT		"Defender Wave Respawn Allowed"
+#define CHOICE4_DVAR		"scr_vs_usedefenderwaverespawn"
+#define CHOICE4_DVARTEXT	CHOICE4_DVAR"_text"
+#define CHOICE4_SHOW		1
+#define CHOICE4_STR1		"@MENU_NO"
+#define CHOICE4_STR2		"@MENU_YES"
+#define CHOICE4_STR3		""
+#define CHOICE4_STR4		""
+#define CHOICE4_STR5		""
+#define CHOICE4_STR6		""
+#define CHOICE4_VAL1		0
+#define CHOICE4_VAL2		1
+#define CHOICE4_VAL3		0
+#define CHOICE4_VAL4		0
+#define CHOICE4_VAL5		0
+#define CHOICE4_VAL6		0
+#define CHOICE4_EXEC		;
+#define CHOICE4_STRLIST		{ CHOICE4_STR1 CHOICE4_VAL1 CHOICE4_STR2 CHOICE4_VAL2 CHOICE4_STR3 CHOICE4_VAL3 CHOICE4_STR4 CHOICE4_VAL4 CHOICE4_STR5 CHOICE4_VAL5 CHOICE4_STR6 CHOICE4_VAL6 }
+#define CHOICE4_NUMVALS		2
+#define CHOICE4_POPUP		1
+
+#define CHOICE5_TEXT		"Defender Bleedout"
+#define CHOICE5_DVAR		"scr_vs_usedefenderbleedout"
+#define CHOICE5_DVARTEXT	CHOICE5_DVAR"_text"
+#define CHOICE5_SHOW		1
+#define CHOICE5_STR1		"@MENU_NO"
+#define CHOICE5_STR2		"@MENU_YES"
+#define CHOICE5_STR3		""
+#define CHOICE5_STR4		""
+#define CHOICE5_STR5		""
+#define CHOICE5_STR6		""
+#define CHOICE5_VAL1		0
+#define CHOICE5_VAL2		1
+#define CHOICE5_VAL3		0
+#define CHOICE5_VAL4		0
+#define CHOICE5_VAL5		0
+#define CHOICE5_VAL6		0
+#define CHOICE5_EXEC		;
+#define CHOICE5_STRLIST		{ CHOICE5_STR1 CHOICE5_VAL1 CHOICE5_STR2 CHOICE5_VAL2 CHOICE5_STR3 CHOICE5_VAL3 CHOICE5_STR4 CHOICE5_VAL4 CHOICE5_STR5 CHOICE5_VAL5 CHOICE5_STR6 CHOICE5_VAL6 }
+#define CHOICE5_NUMVALS		2
+#define CHOICE5_POPUP		1
+
+#undef CAMPAIGN_MODE 
+#undef SO_MODE
+#undef ZOMBIE_MODE 
+#define VS_MODE
+{
+	#include "ui/game_options.inc"
+}

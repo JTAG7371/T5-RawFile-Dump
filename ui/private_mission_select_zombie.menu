@@ -1,0 +1,337 @@
+#include "ui/menustyle_zombie.inc"
+
+#undef CHOICE_DVAR_OFFSET_X
+#define CHOICE_DVAR_OFFSET_X	100//(CHOICE_SIZE_X+20)
+#include "ui_mp/stats_info.inc"
+#include "ui/overlaybg.inc"
+
+#define ORIGIN_DESCRIPTION		-190 0
+#define COLOR_DESC_TEXT			COLOR_BODY_TEXT
+
+#define ORIGIN_BUTTON_BACK		52 438
+#define ORIGIN_BUTTON_INVITE	390 86
+#define ORIGIN_BUTTON_KICK		529 98
+
+#define MENU_FONT_SIZE			TEXTSIZE_DEFAULT
+#define HIGHLIGHT_SIZE			142 22
+#define MENU_FONT_COLOR			1 1 1 0.5
+#define MENU_LOCKED_COLOR		0.25 0.25 0.25 1
+
+#define LISTBOX_WIDTH			204
+#define COLOR_DISABLE			0.3 0.3 0.3 1
+
+#define GAMEINFO_ORIENTATION		1
+#define GAMEINFO_ORIGIN_X			-160
+#define GAMEINFO_ORIGIN_Y			65
+#define GAMEINFO_ORIGIN				GAMEINFO_ORIGIN_X GAMEINFO_ORIGIN_Y//-200 65 //-200 100//100 100//(CHOICE_X_START+CHOICE_SIZE_X-GAMEINFO_WIDTH) 226 //(CHOICE_X_START + 32) 226
+
+#define GAMEINFO_WIDTH				160 //100 100 256 192
+#define GAMEINFO_HEIGHT				100//120//192//150
+
+#define GAMEINFO_RECT				GAMEINFO_ORIGIN GAMEINFO_WIDTH GAMEINFO_HEIGHT
+
+#undef	CHOICE_SIZE_X
+#define CHOICE_SIZE_X			(LISTBOX_WIDTH-15)
+{
+	menuDef
+	{
+		name			private_mission_select
+		fullscreen		0
+#ifdef INGAME_MENUS		
+		ui3dWindowId	0
+		forecolor		1 1 1 1
+		backcolor		0 0 0 1
+		style			WINDOW_STYLE_FILLED
+#endif
+		rect			0 0 640 480
+		onOpen
+		{
+			open private_mission_select_2d;
+		}
+
+		onESC	{ close self; }
+		onClose
+		{
+			close private_mission_select_2d;
+			if( dvarString( "menu_parent_name" ) == "ss_lobby_zom" )
+			{
+				open menu_splitscreen_lobby_zombie;
+			}
+			elseif( dvarString( "menu_parent_name" ) == "sl_lobby_zom" )
+			{
+				open menu_systemlink_lobby_zombie;
+			}
+			elseif( dvarString( "menu_parent_name" ) == "xbl_plobby_zom" )
+			{
+				open menu_xboxlive_privatelobby_zombie;
+			}
+		}
+	}
+
+	menuDef
+	{
+		name			private_mission_select_2d
+#ifdef INGAME_MENUS		
+		fullscreen		0
+#else
+		fullscreen		1
+		soundloop 		MENU_MUSIC
+#endif
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+
+		onOpen			
+		{ 
+			setdvar ui_gametype "zom";
+			setdvar arcademode "0";
+			setdvar ui_hostOptionsEnabled "0";
+			setdvar ui_mapname FIRST_PLAYABLE_ZOMBIE_LEVEL;
+			setdvar invite_visible "0"; 
+			setdvar ui_preview_map dvarString( ui_mapname );
+			setdvar ui_preview_gt dvarString( ui_gametype ); 
+			exec "selectStringTableEntryInDvar maps/didyouknow_coop.csv 0 didyouknow"; 
+			setfocus map_selection; 
+		}
+		
+		onEsc			{ }
+		onClose			{ setdvar invite_visible "1"; }
+
+#ifdef INGAME_MENUS
+		itemDef 
+		{ 
+			style	WINDOW_STYLE_SHADER 
+			rect	-4 40 648 400 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN 
+			forecolor		0 0 0 0.55
+			background		"white"  
+			visible			1
+			decoration  
+		}
+#else
+		MAIN_BG_ZOMBIE
+#endif // #ifdef INGAME_MENUS
+
+		#include "ui/navcontrols.inc"
+		#include "ui/safearea.menu"
+
+		CHOICE_MENU_TITLE( "@MENU_SETTINGS_CAPS" )
+
+		// ----------------------------map images------------------------------------
+		#include "ui_mp/game_info.inc"
+		#define MAP_IMAGE		tableLookup( "maps/mapsTable.csv",		0, dvarString( ui_mapname )	, 4 )
+		#define GAMETYPE_IMAGE	tableLookup( "maps/gametypesTable.csv",	0, dvarString( ui_gametype ), 5 )
+		#define GAMEMODE_WITH_ARCADEMODE		tableLookup( "maps/gametypesTable.csv",	0, dvarString( ui_gametype ), 1 )
+		#define GAMEMODE_WITHOUT_ARCADEMODE		tableLookup( "maps/gametypesTable.csv",	0, dvarString( ui_gametype ), 3 )
+		#define GAMEMODE		tableLookup( "maps/gametypesTable.csv",	0, dvarString( ui_gametype ), 7 )
+		#define MAP_NAME		tableLookup( "maps/mapsTable.csv",		0, dvarString( ui_mapname )	, 3 )
+		#define GAMEMODE_DESC_WITH_ARCADEMODE	tableLookup( "maps/gametypesTable.csv",	0, dvarString( ui_gametype ), 2 )
+		#define GAMEMODE_DESC_WITHOUT_ARCADEMODE	tableLookup( "maps/gametypesTable.csv",	0, dvarString( ui_gametype ), 4 )
+		
+		GAME_INFO3_COOP( MAP_IMAGE, GAMETYPE_IMAGE, "@" + GAMEMODE_WITH_ARCADEMODE, "@" + MAP_NAME, "@" + GAMEMODE_DESC_WITH_ARCADEMODE, ( dvarbool( arcademode ) || dvarbool( zombiemode ) ) && dvarString( ui_gametype ) != "locked" )
+		GAME_INFO3_COOP( MAP_IMAGE, GAMETYPE_IMAGE, "@" + GAMEMODE_WITHOUT_ARCADEMODE, "@" + MAP_NAME, "@" + GAMEMODE_DESC_WITHOUT_ARCADEMODE, ( !dvarbool( arcademode ) && !dvarbool( zombiemode ) ) && dvarString( ui_gametype ) != "locked" )
+		GAME_INFO3_COOP_LOCKED( MAP_IMAGE, GAMETYPE_IMAGE, "@" + GAMEMODE_WITH_ARCADEMODE, "@" + MAP_NAME, "@" + GAMEMODE_DESC_WITH_ARCADEMODE, dvarString( ui_gametype ) == "locked" )
+		// ----------------------------map images------------------------------------
+
+		// map selection ===========================================
+		itemDef 
+		{
+			name						map_selection
+			type						ITEM_TYPE_LISTBOX
+			feeder						FEEDER_MAPS
+			rect						0 70 190/*197*/ 308 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+			origin						0 0
+			elementwidth				20//25
+			elementheight				23//18//23//25//18
+			noscrollbars
+			textfont					CHOICE_TEXTFONT
+			textscale					CHOICE_TEXTSIZE
+			textalignx					-5
+			forecolor					CHOICE_TEXTCOLOR
+			focusColor					COLOR_TITLE
+			selectBorder				0.8 0.95 1 0	
+			outlinecolor				HIGHLIGHT_COLOR 
+			highlightTexture			"menu_button_backing_highlight" 
+			#ifdef XENON
+				selectIcon				"ui_button_xenon_3d_a_32x32"
+			#endif
+			#ifdef PS3
+				selectIcon				"ui_button_ps3_x_32x32"
+			#endif
+			//backcolor					.1 .1 .1 .5
+			//backgroundItemListbox		"menu_white_line_faded"
+			disablecolor				COLOR_DISABLED
+			textstyle					ITEM_TEXTSTYLE_SHADOWED
+			visible						1
+			columns						1 25 190 64//22 190 64
+			onfocus 					{ play CHOICE_FOCUS_SOUND; }
+			onListboxSelectionChange	{ play CHOICE_FOCUS_SOUND; }
+			doubleclick					
+			{ 
+				play CHOICE_FOCUS_SOUND; 
+				execNow "xupdatepartystate"; 
+				setdvar ui_preview_map dvarString( ui_mapname );
+				close private_mission_select;
+				//open popmenu_difficulty_zombie; 
+			}
+			execKeyInt BUTTON_B			
+			{ 
+				setdvar ui_mapname dvarString ( ui_preview_map ); 
+				close private_mission_select; 
+			}
+		}
+	
+	}
+
+	#define FOCUS_CHECK( pnum ) \
+		dvartest "party_privacyStatus" focusdvar { pnum }
+	
+	#undef GAMEINFO_ORIGIN_X
+	#define GAMEINFO_ORIGIN_X			-200
+	#undef GAMEINFO_WIDTH
+	#define GAMEINFO_WIDTH				200
+	menuDef
+	{
+		name			popup_party_privacy_zombie
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		fullscreen		1
+		soundloop 		MENU_MUSIC
+
+		onOpen			{ 
+							setfocusbydvar "party_privacyStatus";
+							setdvar invite_visible "0"; 
+#if COOP_EPD							
+							exec "selectStringTableEntryInDvar maps/didyouknow_epd.csv 0 didyouknow";
+#else
+							exec "selectStringTableEntryInDvar maps/didyouknow_coop.csv 0 didyouknow";
+#endif
+						}
+		onEsc			{ close self; }
+		onClose			{ setdvar invite_visible "1"; exec "updategamerprofile"; }
+
+		// background from overlaybg.inc
+#ifdef INGAME_MENUS
+		itemDef
+		{
+			style			WINDOW_STYLE_FILLED
+			rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+			backcolor		0 0 0 1
+			visible			1
+			decoration
+		}
+#endif // #ifdef INGAME_MENUS
+
+		MAIN_BG_ZOMBIE
+		
+		#include "ui/navcontrols.inc"
+
+		CHOICE_MENU_TITLE( "@MPUI_LOBBY_PRIVACY_CAPS" )
+				
+		#define PARTY_PRIVACY_OPEN \
+			execNow "party_privacyStatus 0"; \
+			exec "xsessionupdateprivacy";
+			
+		#define PARTY_PRIVACY_OPEN2FRIENDS \
+			execNow "party_privacyStatus 1"; \
+			exec "xsessionupdateprivacy";
+			
+		#define PARTY_PRIVACY_INVITEONLY \
+			execNow "party_privacyStatus 2"; \
+			exec "xsessionupdateprivacy";
+			
+		#define PARTY_PRIVACY_CLOSE \
+			execNow "party_privacyStatus 3"; \
+			exec "xsessionupdateprivacy";	
+		// onfocus
+		#define PRIVACY_OPEN_FOCUS \
+				exec "set ui_privacy_pref @MPUI_OPEN_CAPS";  \
+				exec "set ui_privacy_pref_desc @MENU_OPEN_DESC"; \
+				exec "set ui_privacy_pref_icon menu_party_privacy_open"	
+
+		#define PRIVACY_FRIENDS_FOCUS \
+				exec "set ui_privacy_pref @MPUI_OPEN_FRIENDS_CAPS"; \
+				exec "set ui_privacy_pref_desc @MENU_OPEN_FRIENDS_DESC"; \
+				exec "set ui_privacy_pref_icon menu_party_privacy_friends"
+
+		#define PRIVACY_INVITE_FOCUS \
+				exec "set ui_privacy_pref @MPUI_INVITE_ONLY_CAPS"; \
+				exec "set ui_privacy_pref_desc @MENU_INVITE_ONLY_DESC"; \
+				exec "set ui_privacy_pref_icon menu_party_privacy_invite";
+
+		#define PRIVACY_CLOSE_FOCUS \
+				exec "set ui_privacy_pref @MPUI_CLOSE_CAPS"; \
+				exec "set ui_privacy_pref_desc @MENU_CLOSE_DESC"; \
+				exec "set ui_privacy_pref_icon menu_party_privacy_close";
+
+#ifdef PS3
+		CHOICE_BUTTON_FOCUS_VIS_EX( 1, "@MPUI_INVITE_ONLY_CAPS", close self; PARTY_PRIVACY_INVITEONLY, PRIVACY_INVITE_FOCUS;, ;, 1, FOCUS_CHECK( 2 ) )
+		CHOICE_BUTTON_FOCUS_VIS_EX( 2, "@MPUI_CLOSE_CAPS", close self; PARTY_PRIVACY_CLOSE, PRIVACY_CLOSE_FOCUS;, ;, 1, FOCUS_CHECK( 3 ) )		
+#else
+		CHOICE_BUTTON_FOCUS_VIS_EX( 1, "@MPUI_OPEN_CAPS", close self; PARTY_PRIVACY_OPEN, PRIVACY_OPEN_FOCUS;, ;, 1, FOCUS_CHECK( 0 ) )
+		CHOICE_BUTTON_FOCUS_VIS_EX( 2, "@MPUI_OPEN_FRIENDS_CAPS", close self; PARTY_PRIVACY_OPEN2FRIENDS, PRIVACY_FRIENDS_FOCUS;, ;, 1, FOCUS_CHECK( 1 )  )
+		CHOICE_BUTTON_FOCUS_VIS_EX( 3, "@MPUI_INVITE_ONLY_CAPS", close self; PARTY_PRIVACY_INVITEONLY, PRIVACY_INVITE_FOCUS;, ;, 1, FOCUS_CHECK( 2 )  )
+		CHOICE_BUTTON_FOCUS_VIS_EX( 4, "@MPUI_CLOSE_CAPS", close self; PARTY_PRIVACY_CLOSE, PRIVACY_CLOSE_FOCUS;, ;, 1, FOCUS_CHECK( 3 )  )
+#endif	
+
+		//icon
+		PREPROC_SHADER_DRAW( -170 45 128 128 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP, dvarString( ui_privacy_pref_icon ), 1 1 1 1 )
+		//name
+		PREPROC_TEXT_DRAW( 3 -7 200 14 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_CENTER,			ORIGIN_DESCRIPTION, dvarString( ui_privacy_pref ),		TEXTSIZE_DEFAULT,	0, 0, ITEM_ALIGN_LEFT, COLOR_FOCUSED )
+		//description
+		PREPROC_TEXT_DRAW_VIS_EX( 3 10 185 100 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_CENTER,	ORIGIN_DESCRIPTION, dvarString( ui_privacy_pref_desc ),	TEXTSIZE_SMALL,		0, 0, ITEM_ALIGN_LEFT, COLOR_DESC_TEXT, 1, autowrapped )
+	}
+
+#ifdef XENON
+
+	#define FOCUS_CHECK_SEARCH_PREF( pnum ) \
+		dvartest "geographicalMatchmaking" focusdvar { pnum }
+
+	menuDef
+	{
+		name			popup_geographicalMatchmaking_zombie
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		soundloop 		MENU_MUSIC
+#if COOP_EPD		
+		onOpen			{ setfocusbydvar "geographicalMatchmaking"; setdvar invite_visible "0"; exec "selectStringTableEntryInDvar maps/didyouknow_epd.csv 0 didyouknow"; }
+#else	
+		onOpen			{ setfocusbydvar "geographicalMatchmaking"; setdvar invite_visible "0"; exec "selectStringTableEntryInDvar maps/didyouknow_coop.csv 0 didyouknow"; }
+#endif		
+		onEsc			{ close self; }
+		onClose			{ exec "updategamerprofile"; setdvar invite_visible "1"; }
+
+		// background from overlaybg.inc
+		MAIN_BG_ZOMBIE
+		#include "ui/navcontrols.inc"
+
+		#define ANY_LOCALE_FOCUS											\
+				exec "set ui_search_pref @MPUI_ANY_LOCALE_CAPS";			\
+				exec "set ui_search_pref_desc @MPUI_ANY_LOCALE_DESC";		\
+				exec "set ui_search_pref_icon menu_matchmaking_locale_any"	
+
+		#define LOCALE_PREFERRED_FOCUS											\
+				exec "set ui_search_pref @MPUI_LOCALE_PREFERRED_CAPS";			\
+				exec "set ui_search_pref_desc @MPUI_LOCALE_PREFERRED_DESC";		\
+				exec "set ui_search_pref_icon menu_matchmaking_locale_preferred"
+
+		#define LOCALE_ONLY_FOCUS										\
+				exec "set ui_search_pref @MPUI_LOCALE_ONLY_CAPS";		\
+				exec "set ui_search_pref_desc @MPUI_LOCALE_ONLY_DESC";	\
+				exec "set ui_search_pref_icon menu_matchmaking_locale";
+
+		CHOICE_MENU_TITLE( "@MPUI_MATCHMAKING_OPTIONS" )
+
+		CHOICE_BUTTON_FOCUS_VIS_EX( 1, "@MPUI_ANY_LOCALE_CAPS", close self; execNow "geographicalMatchmaking 0";, ANY_LOCALE_FOCUS, ;, 1, FOCUS_CHECK_SEARCH_PREF( 0 ) )
+		CHOICE_BUTTON_FOCUS_VIS_EX( 2, "@MPUI_LOCALE_PREFERRED_CAPS", close self; execNow "geographicalMatchmaking 1";, LOCALE_PREFERRED_FOCUS, ;, 1, FOCUS_CHECK_SEARCH_PREF( 1 ) )
+		CHOICE_BUTTON_FOCUS_VIS_EX( 3, "@MPUI_LOCALE_ONLY_CAPS", close self; execNow "geographicalMatchmaking 2";, LOCALE_ONLY_FOCUS, ;, 1, FOCUS_CHECK_SEARCH_PREF( 2 ) )
+
+		PREPROC_SHADER_DRAW( -190 -5 185 (115+45) HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_CENTER, "menu_button_backing", 0 0 0 0.5 )
+
+		//icon
+		PREPROC_SHADER_DRAW( -170 45 128 128 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP, dvarString( ui_search_pref_icon ), 1 1 1 1 )
+		//name
+		PREPROC_TEXT_DRAW( 3 -7 200 14 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_CENTER,	ORIGIN_DESCRIPTION, dvarString( ui_search_pref ),		TEXTSIZE_DEFAULT,	0, 0, ITEM_ALIGN_LEFT, COLOR_FOCUSED )
+		//description
+		PREPROC_TEXT_DRAW( 3 10 185 100 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_CENTER,	ORIGIN_DESCRIPTION, dvarString( ui_search_pref_desc ),	TEXTSIZE_SMALL,		0, 0, ITEM_ALIGN_LEFT, COLOR_DESC_TEXT )
+	}
+#endif // #ifdef XENON
+}

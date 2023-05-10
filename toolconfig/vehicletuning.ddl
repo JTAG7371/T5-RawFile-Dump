@@ -1,0 +1,17 @@
+name,default,minimum,maximum
+vehicle_damage_zone_front,1,0,10
+vehicle_damage_zone_rear,2,0,10
+vehicle_damage_zone_side,1,0,10
+vehicle_damage_zone_under,2.533,0,10
+vehicle_destructible_damage_bouncing_betty,1,0,10
+vehicle_destructible_damage_grenade,0.397,0,10
+vehicle_destructible_damage_radius,91.7,0,1000
+vehicle_destructible_damage_satchel_charge,1.223,0,10
+vehicle_destructible_damage_sticky_grenade,1.527,0,10
+vehicle_perk_boost_duration_seconds,1.5,0,10
+vehicle_perk_boost_speed_increase,1.5,0,10
+vehicle_perk_leadfoot_speed_increase,1.5,0,10
+vehicle_switch_seat_delay,0.4998,0,3
+vehicle_useRadius,256,0,1000
+vehicle_damage_max_shielding,.25,0,1
+g_destructibleDraw,1,0,1

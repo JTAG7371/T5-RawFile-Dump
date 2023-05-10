@@ -1,0 +1,178 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/menustyle.inc"
+
+
+#define KEYBOARD_TEXTSIZE	(TEXTSIZE_SMALL*0.95)
+
+#define KEYBOARD_KEYWIDTH	20
+#define KEYBOARD_KEYHEIGHT	20
+
+#undef HIGHLIGHT_COLOR
+#define HIGHLIGHT_COLOR			0.9 0.3 0 0.8
+
+#define KEYBOARD_HIGHLIGHT(button_name,bg_image,location) \
+	itemDef\
+	{\
+		style	WINDOW_STYLE_SHADER\
+		type	ITEM_TYPE_HIGHLIGHT\
+		rect	location\
+		background		bg_image \
+		visible	when (dvarString(#"ui_keyboard_focus")==button_name)\
+		forecolor HIGHLIGHT_COLOR\
+		decoration\
+	}
+
+
+#define KEYBOARD_KEY(button_name,row,row_offset,column,letter,left,right,up,down) \
+	itemDef\
+	{\
+		name	button_name\
+		rect	(((column*KEYBOARD_KEYWIDTH)*-1)+row_offset) (row*KEYBOARD_KEYHEIGHT) KEYBOARD_KEYWIDTH KEYBOARD_KEYHEIGHT HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP \
+		style	WINDOW_STYLE_SHADER\
+		type	ITEM_TYPE_BUTTON\
+		background		"keyboard_key"\
+		visible			1\
+		backcolor		0 0 0 1\
+		text			letter\
+		textfont		UI_FONT_BOLD \
+		textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE\
+		textscale		KEYBOARD_TEXTSIZE \
+		textalign		(ITEM_ALIGN_CENTER | ITEM_ALIGN_MIDDLE)  \
+		execkeyint DPAD_LEFT { setfocus left } \
+		execkeyint APAD_LEFT { setfocus left } \
+		execkeyint DPAD_RIGHT { setfocus right } \
+		execkeyint APAD_RIGHT { setfocus right } \
+		execkeyint DPAD_UP { setfocus up } \
+		execkeyint APAD_UP { setfocus up } \
+		execkeyint DPAD_DOWN { setfocus down } \
+		execkeyint APAD_DOWN { setfocus down } \
+		onFocus { setDvar ui_keyboard_focus button_name;setDvar ui_keyboard_focus_key letter}\
+	}\
+	KEYBOARD_HIGHLIGHT(button_name,"keyboard_key",(((column*KEYBOARD_KEYWIDTH)*-1)+row_offset) (row*KEYBOARD_KEYHEIGHT) KEYBOARD_KEYWIDTH KEYBOARD_KEYHEIGHT HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP )
+
+#define KEYBOARD_KEY_SPACE(width,button_name,row,row_offset,column,letter,left,right,up,down) \
+	itemDef\
+	{\
+		name	button_name\
+		rect	(((column*KEYBOARD_KEYWIDTH)*-1)+row_offset) (row*KEYBOARD_KEYHEIGHT) (width) KEYBOARD_KEYHEIGHT HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP \
+		style	WINDOW_STYLE_SHADER\
+		type	ITEM_TYPE_BUTTON\
+		background		"keyboard_space"\
+		visible			1\
+		backcolor		0 0 0 1\
+		text			letter\
+		textfont		UI_FONT_BOLD \
+		textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE\
+		textscale		KEYBOARD_TEXTSIZE \
+		textalign		(ITEM_ALIGN_CENTER | ITEM_ALIGN_MIDDLE) \
+		execkeyint DPAD_LEFT { setfocus left } \
+		execkeyint APAD_LEFT { setfocus left } \
+		execkeyint DPAD_RIGHT { setfocus right } \
+		execkeyint APAD_RIGHT { setfocus right } \
+		execkeyint DPAD_UP { setfocus up } \
+		execkeyint APAD_UP { setfocus up } \
+		execkeyint DPAD_DOWN { setfocus down } \
+		execkeyint APAD_DOWN { setfocus down } \
+		onFocus { setDvar ui_keyboard_focus button_name;setDvar ui_keyboard_focus_key letter }\
+	}\
+	KEYBOARD_HIGHLIGHT(button_name,"keyboard_space",(((column*KEYBOARD_KEYWIDTH)*-1)+row_offset) (row*KEYBOARD_KEYHEIGHT) (width) KEYBOARD_KEYHEIGHT HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP)
+
+#define KEYBOARD_KEY_WIDTH(width,button_name,row,row_offset,column,letter,left,right,up,down) \
+	itemDef\
+	{\
+		name	button_name\
+		rect	(((column*KEYBOARD_KEYWIDTH)*-1)+row_offset) (row*KEYBOARD_KEYHEIGHT) (width) KEYBOARD_KEYHEIGHT HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP \
+		style	WINDOW_STYLE_SHADER\
+		type	ITEM_TYPE_BUTTON\
+		background		"keyboard_key"\
+		visible			1\
+		backcolor		0 0 0 1\
+		text			letter\
+		textfont		UI_FONT_BOLD \
+		textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE\
+		textscale		KEYBOARD_TEXTSIZE \
+		textalign		(ITEM_ALIGN_CENTER | ITEM_ALIGN_MIDDLE) \
+		execkeyint DPAD_LEFT { setfocus left } \
+		execkeyint APAD_LEFT { setfocus left } \
+		execkeyint DPAD_RIGHT { setfocus right } \
+		execkeyint APAD_RIGHT { setfocus right } \
+		execkeyint DPAD_UP { setfocus up } \
+		execkeyint APAD_UP { setfocus up } \
+		execkeyint DPAD_DOWN { setfocus down } \
+		execkeyint APAD_DOWN { setfocus down } \
+		onFocus { setDvar ui_keyboard_focus button_name;setDvar ui_keyboard_focus_key letter }\
+	}\
+	KEYBOARD_HIGHLIGHT(button_name,"keyboard_key",(((column*KEYBOARD_KEYWIDTH)*-1)+row_offset) (row*KEYBOARD_KEYHEIGHT) (width) KEYBOARD_KEYHEIGHT HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP)
+
+
+
+{
+	menuDef
+	{
+		name		keyboard
+		fullscreen	0
+		rect		-40 0 630 480 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_TOP
+#ifdef PC
+		visible		when( dvarbool(gpad_enabled) )
+#else
+		visible		when( dvarbool(gpad_enabled) )
+#endif
+		
+		onFocus
+		{
+			setfocus SPACE
+		}
+		onEsc
+		{
+		}
+
+		KEYBOARD_KEY(ONE  ,0,0,10,"1",DELETE,TWO,SPACE,Q);
+		KEYBOARD_KEY(TWO  ,0,0,9,"2",ONE,THREE,SPACE,W);
+		KEYBOARD_KEY(THREE,0,0,8,"3",TWO,FOUR,SPACE,E);
+		KEYBOARD_KEY(FOUR ,0,0,7,"4",THREE,FIVE,SPACE,R);
+		KEYBOARD_KEY(FIVE ,0,0,6,"5",FOUR,SIX,SPACE,T);
+		KEYBOARD_KEY(SIX  ,0,0,5,"6",FIVE,SEVEN,SPACE,Y);
+		KEYBOARD_KEY(SEVEN,0,0,4,"7",SIX,EIGHT,SPACE,U);
+		KEYBOARD_KEY(EIGHT,0,0,3,"8",SEVEN,NINE,SPACE,I);
+		KEYBOARD_KEY(NINE ,0,0,2,"9",EIGHT,ZERO,SPACE,O);
+		KEYBOARD_KEY(ZERO ,0,0,1,"0",NINE,DELETE,SPACE,P);
+		KEYBOARD_KEY_WIDTH((KEYBOARD_KEYWIDTH*2),DELETE,0,0,0,"DEL",ZERO,ONE,SPACE,MINUS);
+
+		KEYBOARD_KEY(Q,1,4,10,"Q",MINUS,W,ONE,A);
+		KEYBOARD_KEY(W,1,4,9,"W",Q,E,TWO,S);
+		KEYBOARD_KEY(E,1,4,8,"E",W,R,THREE,D);
+		KEYBOARD_KEY(R,1,4,7,"R",E,T,FOUR,F);
+		KEYBOARD_KEY(T,1,4,6,"T",R,Y,FIVE,G);
+		KEYBOARD_KEY(Y,1,4,5,"Y",T,U,SIX,H);
+		KEYBOARD_KEY(U,1,4,4,"U",Y,I,SEVEN,J);
+		KEYBOARD_KEY(I,1,4,3,"I",U,O,EIGHT,K);
+		KEYBOARD_KEY(O,1,4,2,"O",I,P,NINE,L);
+		KEYBOARD_KEY(P,1,4,1,"P",O,MINUS,ZERO,ENTER);
+		KEYBOARD_KEY(MINUS,1,4,0,"-",P,Q,DELETE,ENTER);
+		
+		KEYBOARD_KEY(A,2,8,10,"A",ENTER,S,Q,Z);
+		KEYBOARD_KEY(S,2,8,9,"S",A,D,W,X);
+		KEYBOARD_KEY(D,2,8,8,"D",S,F,E,C);
+		KEYBOARD_KEY(F,2,8,7,"F",D,G,R,V);
+		KEYBOARD_KEY(G,2,8,6,"G",F,H,T,B);
+		KEYBOARD_KEY(H,2,8,5,"H",G,J,Y,N);
+		KEYBOARD_KEY(J,2,8,4,"J",H,K,U,M);
+		KEYBOARD_KEY(K,2,8,3,"K",J,L,I,DOT);
+		KEYBOARD_KEY(L,2,8,2,"L",K,ENTER,O,SLASH);
+		KEYBOARD_KEY_WIDTH((KEYBOARD_KEYWIDTH*2),ENTER,2,8,1,"ENTER",L,A,MINUS,QUESTION);
+
+		KEYBOARD_KEY(Z,3,12,10,"Z",QUESTION,X,A,SPACE);
+		KEYBOARD_KEY(X,3,12,9,"X",Z,C,S,SPACE);
+		KEYBOARD_KEY(C,3,12,8,"C",X,V,D,SPACE);
+		KEYBOARD_KEY(V,3,12,7,"V",C,B,F,SPACE);
+		KEYBOARD_KEY(B,3,12,6,"B",V,N,G,SPACE);
+		KEYBOARD_KEY(N,3,12,5,"N",B,M,H,SPACE);
+		KEYBOARD_KEY(M,3,12,4,"M",N,DOT,J,SPACE);
+		KEYBOARD_KEY(DOT,3,12,3,".",M,SLASH,K,SPACE);
+		KEYBOARD_KEY(SLASH,3,12,2,"/",DOT,QUESTION,L,SPACE);
+		KEYBOARD_KEY(QUESTION,3,12,1,"?",SLASH,Z,ENTER,SPACE);
+
+		KEYBOARD_KEY_SPACE((KEYBOARD_KEYWIDTH*5),SPACE,4,16,9,"SPACE",SPACE,SPACE,Z,ONE);
+	}
+}

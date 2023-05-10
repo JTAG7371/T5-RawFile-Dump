@@ -1,0 +1,81 @@
+name,file,template,loadspec,secondary,group,vol_min,vol_max,team_vol_mod,dist_min,dist_max,dist_reverb_max,volume_falloff_curve,reverb_falloff_curve,volume_min_falloff_curve,reverb_min_falloff_curve,limit_count,limit_type,entity_limit_count,entity_limit_type,pitch_min,pitch_max,team_pitch_mod,min_priority,max_priority,min_priority_threshold,max_priority_threshold,spatialized,type,loop,randomize_type,probability,start_delay,reverb_send,duck,pan,center_send,envelop_min,envelop_max,envelop_percentage,occlusion_level,occlusion_wet_dry,is_big,distance_lpf,move_type,move_time,real_delay,subtitle,mature,doppler,futz,context_type,context_value,compression,timescale,music,fade_in,fade_out,pc_format,pause,stop_on_death,bus,snapshot
+# #music,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#mus_defeat,stream\music\mp\mp_defeat.wav,,,,music,92,92,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+##mus_spawn_japanese,stream\music\mp\mp_spawn.wav,,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+##mus_spawn_german,stream\music\mp\mp_spawn.wav,,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+##mus_spawn_soviet,stream\music\mp\mp_spawn.wav,,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+##mus_spawn_usa,stream\music\mp\mp_spawn.wav,,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_suspense_01,stream\music\mp\mp_suspense_00.wav,,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_suspense_02,stream\music\mp\mp_suspense_01.wav,,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_suspense_03,stream\music\mp\mp_suspense_02.wav,,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_suspense_04,stream\music\mp\mp_suspense_00.wav,,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_suspense_05,stream\music\mp\mp_suspense_01.wav,,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_suspense_06,stream\music\mp\mp_suspense_02.wav,,,,music,89,89,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_time_running_out_losing,stream\music\mp\mp_time_lose.wav,,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+#mus_time_running_out_winning,stream\music\mp\mp_time_lose.wav,,,,music,93,93,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+##mus_victory_japanese,stream\music\mp\mp_victory.wav,,,,music,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,music
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# SFX,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Suitcase Bomb,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_sd_exp_suitcase_bomb_main,mpl\sab\explosion\sab_explosion.wav,,,mpl_sab_explode,event,99,100,,3000,20000,45000,,,,,1,reject,,,0,0,,100,100,0.25,1,2d,streamed,,,,,,,,,,,,0.1,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Suitcase Bomb Sabotage,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_sab_exp_suitcase_bomb_main,mpl\sab\explosion\sab_explosion.wav,,,mpl_sab_explode,event,99,100,,3000,20000,45000,,,,,1,reject,,,0,0,,100,100,0.25,1,2d,streamed,,,,,100,,,,1500,10000,100,0.1,,,,,,,,,,,,,,,,,,,,,,event
+mpl_sab_explode,wpn\grenade\explosion\explode,WPN_GRENADE_EXP,wpn_grenade,mpl_sab_explode_sub,,,,,,,,,,,,,,,,,,,,,,,2d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_sab_explode_sub,wpn\rocket\rpg\explode\sub,WPN_GRENADE_EXP,wpn_grenade,mpl_sab_explode_dist,,,,,,,,,,,,,,,,,,,,,,,2d,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_sab_explode_dist,exp\distant\generic,WPN_GRENADE_DIST,wpn_grenade,mpl_sab_explode_trail_l,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_sab_explode_trail_l,wpn\grenade\explosion\flux_l,WPN_GRENADE_FLUX_L,wpn_grenade,mpl_sab_explode_trail_r,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_sab_explode_trail_r,wpn\grenade\explosion\flux_r,WPN_GRENADE_FLUX_R,wpn_grenade,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_sab_ui_suitcasebomb_timer,uin\timer,,,,ui,100,100,,,,,,,,,,,,,,,,50,80,0.15,0.75,2d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ui
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# S&D Bomb,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_sd_bomb_insert,mpl\bomb_plant\insert\insert_00.wav,,,,event,100,100,,200,500,500,,,,,,,,,0,0,,100,100,0.25,1,2d,,,,,,93,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_sd_bomb_twist,mpl\bomb_plant\turn\turn_00.wav,,,,event,100,100,,200,500,500,,,,,,,,,0,0,,100,100,0.25,1,2d,,,,,,93,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_sd_bomb_pull,mpl\bomb_plant\pin\pin_00.wav,,,,event,100,100,,200,500,500,,,,,,,,,0,0,,100,100,0.25,1,2d,,,,,,93,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_sd_bomb_throw,mpl\bomb_plant\throw\throw.wav,,,,event,100,100,,200,500,500,,,,,,,,,0,0,,100,100,0.25,1,2d,,,,,,93,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_generic_debris_dirt_l,wpn\grenade\explosion\debris\dirt,WPN_GRENADE_MATERIAL,wpn_grenade surf_dirt,mpl_generic_explode,,,,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_generic_debris_dirt_r,wpn\grenade\explosion\debris\dirt,WPN_GRENADE_MATERIAL,wpn_grenade surf_dirt,mpl_generic_explode,,,,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_generic_explode,wpn\grenade\explosion\explode,WPN_GRENADE_EXP,wpn_grenade,mpl_generic_explode_sub,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_generic_explode_sub,wpn\rocket\rpg\explode\sub,WPN_GRENADE_EXP,wpn_grenade,mpl_generic_explode_dist,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,lfe,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_generic_explode_dist,exp\distant\generic,WPN_GRENADE_DIST,wpn_grenade,mpl_generic_explode_trail_l,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_generic_explode_trail_l,wpn\grenade\explosion\flux_l,WPN_GRENADE_FLUX_L,wpn_grenade,mpl_generic_explode_trail_r,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_generic_explode_trail_r,wpn\grenade\explosion\flux_r,WPN_GRENADE_FLUX_R,wpn_grenade,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Flag,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_flag_pickup_plr,mpl\flag\pickup.wav,,,,event,99,99,,,,,,,,,,,,,,,,50,70,0.15,0.85,2d,,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_flag_drop_plr,mpl\flag\drop.wav,,,,event,99,99,,,,,,,,,,,,,,,,50,70,0.15,0.85,2d,,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_flagdrop_sting_enemy,mpl\ctf\friendly_drop_flag.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_flagdrop_sting_friend,mpl\ctf\friendly_drop_flag.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_flagget_sting_enemy,mpl\ctf\friendly_got_flag.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_flagget_sting_friend,mpl\ctf\friendly_got_flag.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_flagreturn_sting,mpl\ctf\return_flag.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_flagcapture_sting_friend,mpl\ctf\friendly_capture_flag.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_flagcapture_sting_enemy,mpl\ctf\friendly_capture_flag.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Headquarters,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_hq_cap_us,mpl\hq\mpl_hq_cap_us.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Wager Match (Sharpshooter),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_ss_moveup_sting,,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_ss_movedown_sting,,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_ss_firstplace_sting,mpl\wager\sharp_shooter\first.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_ss_lastplace_sting,mpl\wager\sharp_shooter\last.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_ss_second,mpl\wager\sharp_shooter\second.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_ss_third,mpl\wager\sharp_shooter\third.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_ss_fourth,mpl\wager\sharp_shooter\fourth.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+mpl_ss_fifth,mpl\wager\sharp_shooter\fifth.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+mpl_oic_bullet_pickup,mpl\wager\one_in_chamber\evt_oic_bullet_pickup.wav,evt_2d,,,event,99,99,,,,,,,,,,,,,,,,,,,,,streamed,,,,,,,front_mostly,,,,,,,,,,,,,,,,,,,,,,,,,,,event

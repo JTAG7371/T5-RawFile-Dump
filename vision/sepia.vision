@@ -1,0 +1,26 @@
+
+
+r_filmEnable                  "1"
+r_filmMidStart                "0.5"
+r_filmMidEnd                  "0.5"
+r_filmDarkFeather             "1"
+r_filmLightFeather            "1"
+r_filmColorTemp               "6500 6500 6500"
+r_filmHue                     "0 0 0"
+r_filmSaturation              "0.0475 0.0475 0.0475"
+r_filmDarkTint                "1.0707 1.0679 0.9181"
+r_filmMidTint                 "1.039 0.6901 0.6"
+r_filmLightTint               "1.0074 0.69 0.3281"
+r_filmContrast                "1.1 1.1 1.1"
+
+ 
+r_sCurveEnable                "1" 
+r_sCurveShoulderStrength      "0.068"  
+r_sCurveLinearStrength        "0.413"  
+r_sCurveLinearAngle           "0.093"  
+r_sCurveToeStrength           "0.117"  
+r_sCurveToeNumerator          "0.000"  
+r_sCurveToeDenominator        "0.228"  
+
+
+r_reviveFX_Enable		"0"

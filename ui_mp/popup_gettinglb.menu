@@ -1,0 +1,71 @@
+#include "ui/menudef.h"
+
+{	
+	menuDef
+	{
+		name			popup_gettinglb
+    	visible			0
+   		fullscreen		0
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+   		style			WINDOW_STYLE_FILLED
+		priority		MENU_PRI_POPUP
+		popup
+		onESC 
+		{ 
+			close popup_gettinglb;
+			close menu_leaderboard_wins;
+			close menu_leaderboard_kills;
+			close menu_leaderboard_experience;
+			close menu_leaderboard_service_report;
+		}
+
+#ifndef MIN_DELAY_FOR_LB_READ
+#define MIN_DELAY_FOR_LB_READ 300
+#endif
+
+#ifdef CONSOLE
+		execKeyInt BUTTON_Y
+		{
+			if( ( milliseconds() - dvarInt( leaderBoardLastFetchTime ) ) > MIN_DELAY_FOR_LB_READ )
+			{
+				execNow set leaderBoardLastFetchTime ( milliseconds() ); 
+				play CHOICE_FOCUS_SOUND;
+				execNow "toggle lb_filter 0 1 2";
+			}
+		}
+		execKeyInt BUTTON_LSHLDR
+		{ 
+			if( ( milliseconds() - dvarInt( leaderBoardLastFetchTime ) ) > MIN_DELAY_FOR_LB_READ )
+			{
+				execNow set leaderBoardLastFetchTime ( milliseconds() ); 
+				execnow "downloadingleaderboard"; 
+				execNow "toggle lb_typeByResetPeriod 2 1 0";
+				uiScript RefreshLeaderboards;
+			}
+		}
+		execKeyInt BUTTON_RSHLDR
+		{
+			if( ( milliseconds() - dvarInt( leaderBoardLastFetchTime ) ) > MIN_DELAY_FOR_LB_READ )
+			{
+				execNow set leaderBoardLastFetchTime ( milliseconds() );
+				execnow "downloadingleaderboard"; 
+				execNow "toggle lb_typeByResetPeriod 0 1 2";
+				uiScript RefreshLeaderboards;
+			}
+		}
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			origin			320 254
+			forecolor		COLOR_UNFOCUSED
+			text			"@MENU_DOWNLOADING"
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_CENTER
+			visible			1
+			decoration
+		}
+#endif // #ifdef CONSOLE
+	}
+}

@@ -1,0 +1,205 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define CHOICE_X_START					-258
+#define CHOICE_Y_START					35
+#define BUTTON_BG_WIDTH					180
+
+#define CHOICE_SEP_OFFSET_X				20
+#define CHOICE_SEP_OFFSET_Y				-2
+#define CHOICE_SEP_1					1
+#define CHOICE_SEP_2					3
+
+#define CHOICE_GROUP					"splitscreen"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/stats_info.inc"
+#include "ui_mp/friendslist.inc"
+
+#define MENU_FONT_SIZE					TEXTSIZE_DEFAULT
+#define HIGHLIGHT_SIZE					142 22
+#define MENU_FONT_COLOR					1 1 1 0.5
+#define MENU_LOCKED_COLOR				0.25 0.25 0.25 1
+
+#undef  CHOICE_SIZE_X
+#define CHOICE_SIZE_X					BUTTON_BG_WIDTH
+#undef	CHOICE_TEXTSTYLE
+#define	CHOICE_TEXTSTYLE				ITEM_TEXTSTYLE_NORMAL
+
+#undef CHOICE_HORIZONTAL_ALIGN
+#define CHOICE_HORIZONTAL_ALIGN			HORIZONTAL_ALIGN_CENTER
+
+// ------------------ preprocessing function definitions ------------------
+#define PAD_LEFT						\
+		execKeyInt DPAD_LEFT			\
+		{								\
+			/*setdvar ui_selectlobby "0"*/	\
+			/*focusFirst;	*/				\
+			/*show selection_left;*/		\
+			/*hide selection_right;*/		\
+		}								\
+		execKeyInt APAD_LEFT			\
+		{								\
+			/*setdvar ui_selectlobby "0"*/	\
+			/*focusFirst;*/					\
+			/*show selection_left;*/		\
+			/*hide selection_right;*/		\
+		}
+
+#define PAD_RIGHT						\
+		execKeyInt DPAD_RIGHT			\
+		{								\
+			/*setdvar ui_selectlobby "1"*/	\
+			/*setFocus partyList;*/			\
+		}								\
+		execKeyInt APAD_RIGHT			\
+		{								\
+			/*setdvar ui_selectlobby "1"*/	\
+			/*setFocus partyList;	*/		\
+		}
+
+#define SELECTION_IMAGE_BIG( materialArg )	( "menu_" + materialArg + "_map_select_big" )
+
+{
+	menuDef
+	{
+		name			menu_gamesetup_splitscreen
+		fullscreen		1
+		rect			0 0 640 480 
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		border			0
+		soundloop 		MENU_MUSIC
+		control			MENU_CONTROL_USED
+		allowSignIn
+
+		onOpen
+		{
+			focusFirst;
+			execnow "validatePrivateMatchGametype";
+			exec "exec dvar_defaults.cfg";
+			
+			// If ui_mapname is set to an map unavailable in splitscreen from a custom match, reset it.
+			setDvarStringUsingTable( ui_is_splitscreen_map, tableLookup( "mp/mapsTable.csv", 0, dvarString( ui_mapname ), 10 ) );
+			execNowOnDvarStringValue ui_is_splitscreen_map NO "set ui_mapname mp_nuked"
+			setDvarStringUsingTable( ui_is_splitscreen_gametype, tableLookup( "mp/gametypesTable.csv", 0, dvarString( ui_gametype ), 5 ) );
+			execNowOnDvarStringValue ui_is_splitscreen_gametype NO "set ui_gametype tdm"
+		}
+		onEsc
+		{
+			close self;
+		}
+
+		// ------------------ statics ------------------------
+		#include "ui_mp/blurredbg.inc"
+
+		// Scroller background only
+		#include "ui/scroller_bg.inc"
+
+		// ----------------- title --------------------------	
+		CHOICE_MENU_TITLE_CENTER_ALIGN_VIS( "@MENU_SPLIT_SCREEN_SETUP_CAPS", ITEM_ALIGN_TOP_RIGHT, 1 )
+		
+		// ---------------------------- map ------------------------------------
+		#define GAMEINFO_ORIENTATION	1
+		#define GAMEINFO_X				CHOICE_X_START
+		#define GAMEINFO_Y				235
+		#define GAMEINFO_ORIGIN			GAMEINFO_X GAMEINFO_Y
+		#define GAMEINFO_WIDTH			BUTTON_BG_WIDTH
+		#define GAMEINFO_WIDTH2			GAMEINFO_WIDTH
+		#define GAMEINFO_HEIGHT			80
+		
+		#include "ui_mp/game_info.inc"
+		#define MAPIMAGE				SELECTION_IMAGE_FINAL( dvarString( ui_mapname ) )
+		#define MAPNAME					locString( tableLookup( "mp/mapstable.csv", 0, dvarString( ui_mapname ), 3 ) )
+		#define GAMETYPENAME			locString( tableLookup( "mp/gametypesTable.csv", 0, dvarString( ui_gametype ), 1 ) )
+
+		#define VOTE_BG_SIZE			20
+
+		#define SELECTION_IMAGE_FINAL( materialArg )	\
+				( "menu_" + materialArg + "_map_select_final" )
+
+		#define MAP_SELECTION_INFO( xPos, yPos, widthArg, heightArg, mapName, gametypeName, visArg )															\
+				PREPROC_TEXT_DRAW_ALL(	(xPos+widthArg-96-8) (yPos+heightArg-VOTE_BG_SIZE+1-18) 96 24 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM,			\
+										0 0, toUpper( mapName ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_TOP_RIGHT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,	\
+										visArg, ; )																												\
+				PREPROC_TEXT_DRAW_VIS_EX(	(xPos-8) (yPos+heightArg-VOTE_BG_SIZE+1) widthArg 20 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM,					\
+										0 0, gametypeName, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_RIGHT, 1 1 1 1,													\
+										visArg, autowrapped )
+
+		#define MAP_X_START				(CHOICE_X_START+CHOICE_SIZE_X-MAP_WIDTH-10)
+		#define MAP_Y_START				(-MAP_HEIGHT-25)
+		#define MAP_WIDTH				183
+		#define MAP_ASPECT_RATIO		(203/275)
+		#define MAP_HEIGHT				(MAP_WIDTH*MAP_ASPECT_RATIO)
+					
+		PREPROC_SHADER_DRAW_VIS_EX(	MAP_X_START MAP_Y_START MAP_WIDTH MAP_HEIGHT CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM, 
+									MAPIMAGE, 1 1 1 1, 
+									1, ; )
+	
+		MAP_SELECTION_INFO( MAP_X_START, MAP_Y_START, MAP_WIDTH, MAP_HEIGHT, MAPNAME, GAMETYPENAME, 1 )
+		
+		// ---------------------- locked hint -------------------------
+		#define	HINT_X_START			( CHOICE_X_START - 13 )
+		HINT_TEXT_ALL( 9, HINT_X_START, 1, CHOICE_SIZE_X, dvarString( ui_hint_text ), 1 1 1 1, dvarBool( ui_show_arrow ), ; )
+		
+
+		// --------------------- lobby players count -----------------------
+		PREPROC_TEXT_DRAW_VIS(	-100 -63 100 15 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM, 0 0,
+								dvarString( "splitscreen_lobbyPlayerCount" ),
+								TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_RIGHT, 1 1 1 1, 
+								1 )
+
+		//=========================================================
+		//===================== MENU SELECTION ====================
+		//=========================================================
+		#define SETUP_ACTION_STARTMATCH												\
+				exec "selectStringTableEntryInDvar mp/didyouknow.csv 0 didyouknow";	\
+				uiScript StartServer;				
+
+		TEMP_CHOICE_BUTTON_FOCUS_VIS(	1, "@MPUI_START_MATCH_CAPS", 
+										SETUP_ACTION_STARTMATCH, 
+										exec set ui_hint_text "@MPUI_START_MATCH_DESC"; exec set ui_show_arrow 1;,
+										CLEARUIHINT,
+										1 )
+					
+		TEMP_CHOICE_BUTTON_FOCUS_VIS(	2, "@MPUI_CHANGE_MAP_CAPS", 
+										open select_map, 
+										exec set ui_hint_text "@MPUI_CHANGE_MAP_DESC"; exec set ui_show_arrow 1;,
+										CLEARUIHINT,
+										1 )
+
+		TEMP_CHOICE_BUTTON_FOCUS_VIS(	3, "@MPUI_CHANGE_GAME_MODE_CAPS", 
+										open select_game_mode, 
+										exec set ui_hint_text "@MPUI_CHANGE_GAME_MODE_DESC"; exec set ui_show_arrow 1;,
+										CLEARUIHINT,
+										1 )
+		
+		TEMP_CHOICE_BUTTON_FOCUS_VIS(	4, "@MPUI_CREATE_A_CLASS_CAPS", 
+										open cac_main;, 
+										exec set ui_hint_text "@MPUI_CAC_DESC"; exec set ui_show_arrow 1;,
+										CLEARUIHINT,
+										1 )
+
+		TEMP_CHOICE_BUTTON_FOCUS_VIS(	5, "@MENU_KILLSTREAKS_CAPS", 
+										open menu_xboxlive_killstreaks;, 
+										exec set ui_hint_text "@MPUI_KILLSTREAKS_DESC"; exec set ui_show_arrow 1;,
+										CLEARUIHINT,
+										1 )
+
+		// --------- buttons ----------
+		// OPEN FRIENDS LIST
+#ifdef PS3
+		FRIENDS_BUTTON_VIS( canShowContentFromUser( 0 ) )
+#else // #ifdef PS3
+		FRIENDS_BUTTON
+#endif // #else // #ifdef PS3
+	
+		// Back button
+		PREPROC_TEXT_DRAW_VIS( MAP_X_START 0 0 0 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM, 0 0, "@PLATFORM_BACK", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1, 1 )
+		
+		#define SPLITSCREEN_PLAYERLIST	1
+		#include "ui_mp/playerlist.inc"
+		#include "ui/safearea.menu"
+	}
+}

@@ -1,0 +1,13 @@
+rawfile,character/c_zom_quad.gsc
+xmodel,c_zom_quad_body
+xmodel,c_zom_quad_head
+xmodel,c_zom_quad_g_upclean
+xmodel,c_zom_quad_g_larmoff
+xmodel,c_zom_quad_g_behead
+xmodel,c_zom_quad_g_lowclean
+xmodel,c_zom_quad_g_rlegoff
+xmodel,c_zom_quad_g_llegoff
+xmodel,c_zom_quad_g_legsoff
+xmodel,c_zom_quad_g_rlegspawn
+xmodel,c_zom_quad_g_llegspawn
+rawfile,character/clientscripts/c_zom_quad.csc

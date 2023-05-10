@@ -1,0 +1,1197 @@
+// CONSOLE HUD - MP
+
+#include "ui/menudef.h"
+#include "ui_mp/hud_gametypes.inc"
+
+#define TICKER_WIDTH( segID )		(segID*54) 1 64 6 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+#define TICKER_WIDTH_WS( segID )		(segID*72) 1 128 6 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+
+#define HUD_TICKER( segID ) \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			TICKER_WIDTH( segID ) \
+			origin			0 0 \
+			background		"hud_xpticker480" \
+			forecolor		1 1 1 HUD_FOREGROUND_ALPHA \
+			visible			when( !dvarInt( "wideScreen" ) ); \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER \
+			rect			TICKER_WIDTH_WS( segID ) \
+			origin			0 0 \
+			background		"hud_xpticker480ws" \
+			forecolor		1 1 1 HUD_FOREGROUND_ALPHA \
+			visible			when( dvarInt( "wideScreen" ) ); \
+			decoration \
+		}
+
+#define FSM_VISIBILITY ( isVisibilityBitSet( BIT_SELECTING_LOCATION ) && !isVisibilityBitSet( BIT_SPECTATING_CLIENT ) && !isVisibilityBitSet( BIT_SCOREBOARD_OPEN ) )
+
+{
+	assetGlobalDef
+	{
+		fadeClamp		1					// sets the fadeup alpha
+		fadeCycle		1					// how often fade happens in milliseconds
+		fadeAmount		0.1					// amount to adjust alpha per cycle
+	}
+
+	// Mantle hint
+	menuDef
+	{
+    	name			"MantleHint"
+    	rect			0 120 40 40 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_CENTER
+		fullScreen		0
+		visible			1
+		visibilityBits  bits( !BIT_UI_ACTIVE !BIT_SELECTING_LOCATIONAL_KILLSTREAK !BIT_IS_DEMO_PLAYING !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC )
+
+		itemDef
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 40 40
+			exp				rect Y( 0 - (ONLINEGAME * ONLINEGAME_OFFSET) );
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_MANTLE_HINT
+			visible			1
+			visibilityBits  bits( !BIT_SPECTATING_CLIENT )
+			forecolor		1 1 1 HUD_ALPHA
+			decoration
+		}
+	}
+
+	// Place Turret hint
+	menuDef
+	{
+    	name			"PlaceTurretHint"
+    	rect			0 100 40 40 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_CENTER
+		fullScreen		0
+		visible			1
+		visibilityBits  bits( !BIT_UI_ACTIVE !BIT_SELECTING_LOCATIONAL_KILLSTREAK !BIT_IS_DEMO_PLAYING !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC )
+
+		itemDef
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 40 40
+			textscale		TEXTSIZE_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_PLAYER_PLACE_TURRET_HINT
+			visible			when( NOT_SPECTATING  )
+			forecolor		1 1 1 HUD_ALPHA
+			decoration
+		}
+	}
+
+#define	STUCK_SIZE	64
+	// Stuck hint
+	menuDef
+	{
+		name			"stuck"
+		rect			( -STUCK_SIZE / 2 ) -100 STUCK_SIZE STUCK_SIZE HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_CENTER
+		fullScreen		0
+		visible			1
+		visibilityBits  bits( !BIT_UI_ACTIVE !BIT_IS_FLASH_BANGED !BIT_SELECTING_LOCATIONAL_KILLSTREAK !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC !BIT_IN_VEHICLE !BIT_DEMO_CAMERA_MODE_MOVIECAM !BIT_DEMO_ALL_GAME_HUD_HIDDEN )
+		
+		itemDef 
+		{
+			name			"sticky_grenade"
+			style			WINDOW_STYLE_SHADER
+			rect			0 0 STUCK_SIZE STUCK_SIZE
+			background		"hud_icon_stuck_semtex"
+			forecolor		1 1 1 0
+			visible			1
+			decoration
+
+			state
+			{
+				name		"pulse"
+				forecolor	1 1 1 1
+				onEnter { changeState on 100; }
+			}
+			state
+			{
+				name		"on"
+				forecolor	1 1 1 1
+				onEnter	{ changeState Default 400; }
+			}
+		}
+
+		itemDef 
+		{
+			name			"explosive_bolt"
+			style			WINDOW_STYLE_SHADER
+			rect			0 0 STUCK_SIZE STUCK_SIZE
+			background		"hud_icon_stuck_arrow"
+			forecolor		1 1 1 0
+			visible			1
+			decoration
+
+			state
+			{
+				name		"pulse"
+				forecolor	1 1 1 1
+				onEnter { changeState on 100; }
+			}
+			state
+			{
+				name		"on"
+				forecolor	1 1 1 1
+				onEnter	{ changeState Default 400; }
+			}
+		}
+	}
+	
+	// Stance indicator
+	menuDef
+	{
+    	name			"stance"
+		rect			145 -81 48 48 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+    	fullScreen		0
+		visible			1
+		visibilityBits	bits(  !BIT_IS_FLASH_BANGED !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC !BIT_UI_ACTIVE !BIT_SPECTATING_CLIENT )
+		itemDef
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 80 80 // 64x64
+			ownerdraw		CG_PLAYER_STANCE
+			textfont		UI_FONT_NORMAL
+			visible			when( dvarint( ui_hud_showstanceicon ) != 0 );
+			visibilityBits  bits( HUD_VISIBILITY !BIT_IN_KILLCAM !BIT_SELECTING_LOCATION  )
+			forecolor		1 1 1 HUD_ALPHA
+			decoration
+		}
+	}
+	
+
+	// XP bar
+	menuDef
+	{
+		name			"xpbar"
+		rect			BOTTOM_RECT_X -8 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		// temporarily disabling xpbar from public matches
+		visible 		0 //when( !dvarInt( "xblive_privatematch" ) && !dvarInt( "xblive_wagermatch" ) && dvarInt( "onlinegame" ) && !inkillcam() && !ui_active() && NOT_SPECTATING && !isDemoPlaying() );
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 0 540 8 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			origin			0 0
+			background		"white"
+			forecolor		0 0 0 0.25
+			visible			when( !dvarInt( "wideScreen" ) );
+			decoration
+		}
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 2 540 4 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect W( 540 * ((getDStat( "PlayerStatsList", "RANKXP" )-getDStat( "PlayerStatsList", "MINXP" ))/(getDStat( "PlayerStatsList", "MAXXP" )-getDStat( "PlayerStatsList", "MINXP" ))) );
+			origin			0 0
+			background		"scorebar_fadein"
+			forecolor		1 0.8 0.4 HUD_ALPHA
+			visible			when( !dvarInt( "wideScreen" ) );
+			decoration
+		}
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 0 720 8 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			origin			0 0
+			background		"white"
+			forecolor		0 0 0 0.25
+			visible			when( dvarInt( "wideScreen" ) );
+			decoration
+		}
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 2 720 4 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				rect W( 720 * ((getDStat( "PlayerStatsList", "RANKXP" )-getDStat( "PlayerStatsList", "MINXP" ))/(getDStat( "PlayerStatsList", "MAXXP" )-getDStat( "PlayerStatsList", "MINXP" ))) );
+			origin			0 0
+			background		"scorebar_fadein"
+			forecolor		1 0.8 0.4 HUD_FOREGROUND_ALPHA
+			visible			when( dvarInt( "wideScreen" ) );
+			decoration
+		}
+
+		HUD_TICKER( 0 )
+		HUD_TICKER( 1 )
+		HUD_TICKER( 2 )
+		HUD_TICKER( 3 )
+		HUD_TICKER( 4 )
+		HUD_TICKER( 5 )
+		HUD_TICKER( 6 )
+		HUD_TICKER( 7 )
+		HUD_TICKER( 8 )
+		HUD_TICKER( 9 )
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 0 36 36 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+			origin			RANK_ORIGIN
+			background		"rank_icon_bg"
+			forecolor		0 0 0 HUD_ALPHA
+			visible			0
+			decoration
+		}
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			2 2 24 24 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+			origin			RANK_ORIGIN
+			background		"rank_prvt"
+			forecolor		1 1 1 HUD_ALPHA
+			visible			0
+			decoration
+		}
+
+	}
+	
+#define SCOREBAR_TIMER_X	10
+#define SCOREBAR_TIMER_Y	-90
+#define TIME_COLOR			0.74 0.84 0.86
+	
+	menuDef
+	{
+		name			"scorebar_timer"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible 		when( !FSM_VISIBILITY )
+		visibilityBits	bits( !BIT_BOMB_TIMER !BIT_BOMB_TIMER_A !BIT_BOMB_TIMER_B BIT_HUD_VISIBLE HUD_VISIBILITY !BIT_IN_KILLCAM !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC !BIT_UI_ACTIVE !BIT_DEMO_CAMERA_MODE_MOVIECAM !BIT_DEMO_ALL_GAME_HUD_HIDDEN )
+
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			SCOREBAR_TIMER_X SCOREBAR_TIMER_Y 64 20 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp text		( secondsAsCountdown( timeLeft() ) );
+			textfont		UI_FONT_EXTRABIG
+			textscale		TEXTSIZE_LARGE
+			textalign		ITEM_ALIGN_MIDDLE_CENTER
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible 		when ( (timeLeft() / 1000) >= 60 );
+			forecolor		TIME_COLOR 1
+			decoration 
+		}
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			SCOREBAR_TIMER_X SCOREBAR_TIMER_Y 64 20 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp text		( secondsAsCountdown( timeLeft() ) );
+			textfont		UI_FONT_EXTRABIG
+			textscale		TEXTSIZE_LARGE
+			textalign		ITEM_ALIGN_MIDDLE_CENTER
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			forecolor		1 0.75 0 1
+			visible 		when ( (timeLeft() / 1000) >= 30 && (timeLeft() / 1000) < 60 );
+			decoration 
+		}
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			SCOREBAR_TIMER_X SCOREBAR_TIMER_Y 64 20 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp text		( secondsAsCountdown( timeLeft(), 1 ) );
+			textfont		UI_FONT_EXTRABIG
+			textscale		TEXTSIZE_LARGE
+			textalign		ITEM_ALIGN_MIDDLE_CENTER
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			forecolor		1 0.5 0 1
+			visible 		when ( (timeLeft() / 1000) >= 0 && (timeLeft() / 1000) < 30 );
+			decoration 
+		}
+	}
+
+#define WEAPINFO_X		-93
+#define WEAPINFO_Y		-62
+#define AMMO_COLOR		1 1 1
+	
+	menuDef
+	{
+		name			"weaponinfo"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 0 0 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_BOTTOM
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible			when( !FSM_VISIBILITY )
+		visibilityBits  bits( !BIT_DEMO_CAMERA_MODE_MOVIECAM !BIT_DEMO_ALL_GAME_HUD_HIDDEN BIT_HUD_VISIBLE HUD_VISIBILITY !BIT_IN_KILLCAM !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC !BIT_AMMO_COUNTER_HIDE !BIT_IS_FLASH_BANGED !BIT_UI_ACTIVE !BIT_SPECTATING_CLIENT )
+
+		#define BG_X_START		(WEAPINFO_X-99)
+		#define BG_Y_START		(WEAPINFO_Y+20)
+
+		// background		
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(BG_X_START+11) (BG_Y_START-14) 128 62
+			exp				material( "hud_dpad_lines_fade" );
+			forecolor		1 1 1 0.4
+			visible 		1
+			decoration
+		}
+		
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(BG_X_START+9) (BG_Y_START-14) 134 64
+			exp				material( "hud_dpad_lines" );
+			forecolor		1 1 1 0.6
+			visible 		1
+			decoration
+		}
+		
+		#define WEAPON_AMMO_X ( WEAPINFO_X - 55 - dvarInt( ui_ammo_stock_width ) )
+
+		// Weapon Ammo
+		itemDef
+		{
+			name			"clip"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 (WEAPINFO_Y + 45) 60 40
+			exp				rect X( WEAPON_AMMO_X )
+			textscale		0.55
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_EXTRABIG
+			textalign		ITEM_ALIGN_RIGHT
+			forecolor		AMMO_COLOR 1
+			ownerdraw		CG_PLAYER_WEAPON_AMMO_CLIP
+			visible			1
+			visibilityBits	bits( !BIT_IS_FUEL_WEAPON )
+			decoration
+		}
+
+		#define DIVIDER_LINE_X_START		( (WEAPON_AMMO_X + 60) - dvarInt( ui_right_ammo_width ) - 3 )
+		// Dual Wield Divider Line
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			0 (WEAPINFO_Y + 23) 1 18
+			exp				rect X( DIVIDER_LINE_X_START )
+			exp				material("white")
+			forecolor		AMMO_COLOR 0.2
+			visible			when( isdualwield() ) 
+			decoration
+		}
+
+
+		itemDef
+		{
+			name			"clipLeft"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 (WEAPINFO_Y + 45) 20 20
+			exp				rect X( DIVIDER_LINE_X_START - dvarInt( ui_right_ammo_width ) - 3 )
+			textscale		0.55
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_EXTRABIG
+			textalign		ITEM_ALIGN_RIGHT
+			forecolor		AMMO_COLOR 1
+			ownerdraw		CG_PLAYER_WEAPON_AMMO_CLIP_DUAL_WIELD
+			visible			when( isdualwield() )
+			decoration
+		}
+
+		itemDef
+		{
+			name			"ammoStock"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 (WEAPINFO_Y + 43) 10 10
+			exp				rect X( WEAPON_AMMO_X + 63 )
+			textscale		TEXTSIZE_LARGE
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_EXTRABIG
+			forecolor		AMMO_COLOR 1
+			ownerdraw		CG_PLAYER_WEAPON_AMMO_STOCK
+			visible			1
+			decoration
+		}
+
+		#define	GRENADE_X_START		(WEAPINFO_X-9)
+		// Grenades
+		itemDef
+		{
+			name			"offhandFragIcon"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			GRENADE_X_START (WEAPINFO_Y+43) 18 18
+			forecolor		1 1 1 1
+			ownerdraw		CG_OFFHAND_WEAPON_ICON_FRAG
+			background		"hud_us_grenade" // default texture
+			visible			1
+			decoration
+		}
+
+		itemDef
+		{
+			name			"offhandSmokeIcon"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(GRENADE_X_START-25) (WEAPINFO_Y+43) 18 18
+			forecolor		1 1 1 1
+			ownerdraw		CG_OFFHAND_WEAPON_ICON_SMOKEFLASH
+			background		"hud_us_smokegrenade" // default texture
+			visible			1
+			decoration
+		}
+
+		// Weapon Name
+		itemDef
+		{
+			name			"weapname"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			(WEAPINFO_X+35) (WEAPINFO_Y+20) 1 1
+			textalign		ITEM_ALIGN_RIGHT
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
+			textscale		TEXTSIZE_DEFAULT
+			textfont		UI_FONT_EXTRABIG
+			forecolor		1 1 1 1
+			ownerdraw		CG_PLAYER_WEAPON_NAME
+			visible 		1
+			decoration
+		}
+
+		itemDef
+		{
+			name			"lowammowarning"	
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			-50 -8 100 100 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_CENTER
+			textfont		UI_FONT_DEFAULT
+			textscale		TEXTSIZE_SMALL
+			textalign		(ITEM_ALIGN_CENTER | ITEM_ALIGN_MIDDLE)
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			forecolor		1 1 1 HUD_ALPHA
+			//background	"white"
+			ownerdraw		CG_PLAYER_WEAPON_LOW_AMMO_WARNING
+			visible			1
+			visibilityBits  bits( !BIT_IS_DEMO_PLAYING )
+			decoration
+		}
+	}
+
+	menuDef
+	{
+		name			"heatinfo"
+		rect			0 0 0 0 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_BOTTOM
+		fullScreen		0
+		visible			when( (dvarString("g_gametype") != "vdm") && (dvarString("g_gametype") != "vtdm") );
+		visibilityBits  bits( BIT_HUD_VISIBLE HUD_VISIBILITY !BIT_IN_KILLCAM !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC !BIT_AMMO_COUNTER_HIDE !BIT_IS_FUEL_WEAPON !BIT_IS_FLASH_BANGED !BIT_UI_ACTIVE !BIT_SPECTATING_CLIENT   )
+		
+		itemDef
+		{
+			name			"heaticon"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(WEAPINFO_X+18) (WEAPINFO_Y-17) 80 40
+			forecolor		1 1 1 1
+			ownerdraw		CG_PLAYER_HEAT_VALUE
+			visible			1
+			decoration
+		}
+	}
+
+
+	menuDef
+	{
+		name			"fueltankinfo"
+		rect			0 0 0 0 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_BOTTOM
+		fullScreen		0
+		visible			1
+		visibilityBits  bits( !BIT_DEMO_CAMERA_MODE_MOVIECAM !BIT_DEMO_ALL_GAME_HUD_HIDDEN BIT_HUD_VISIBLE HUD_VISIBILITY !BIT_IN_KILLCAM !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC !BIT_AMMO_COUNTER_HIDE !BIT_IS_FLASH_BANGED !BIT_UI_ACTIVE BIT_IS_FUEL_WEAPON !BIT_SPECTATING_CLIENT )
+		
+		itemDef
+		{
+			name			"heaticon"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			(WEAPINFO_X+8) (WEAPINFO_Y+38) 80 40
+			forecolor		1 1 1 1
+			ownerdraw		CG_PLAYER_FUEL_AMMO_VALUE
+			visible			1
+			decoration
+		}
+		itemDef
+		{
+			name			"fuelpercentage"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			(WEAPINFO_X - 49) (WEAPINFO_Y + 47) 1 1
+			textscale		0.55
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textfont		UI_FONT_EXTRABIG
+			forecolor		AMMO_COLOR 1
+			textalign		ITEM_ALIGN_RIGHT
+			ownerdraw		CG_PLAYER_FUEL_PERCENTAGE
+			visible			1
+			decoration
+		}
+	}
+
+	#define	DPAD_BASE_SIZE		32
+	#define	DPAD_BASE_SIZE_HALF	16
+	#define DPAD_ICON_Y			-1//3
+	#define DPAD_LABEL_Y		40//44
+	#define DPAD_ICON_SPACING	60
+
+	#define DPAD_BG_X_START		(WEAPINFO_X+5)
+	#define DPAD_BG_Y_START		(WEAPINFO_Y+5)
+
+	#define DPAD_BG_WIDTH		92
+	#define DPAD_BG_HEIGHT		92
+
+
+	menuDef
+	{
+		name			"DPad"
+ 	   	rect			BOTTOM_RECT_X (BOTTOM_RECT_Y-32) 25 25 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_BOTTOM
+		exp				rect Y( (BOTTOM_RECT_Y-32) - (ONLINEGAME * ONLINEGAME_OFFSET) );
+ 	   	fullScreen		0
+		visible			when( !FSM_VISIBILITY && (dvarString( createfx ) != "on") && dvarint( actionslotshide ) == 0 );
+		visibilityBits  bits( BIT_HUD_VISIBLE HUD_VISIBILITY !BIT_DEMO_CAMERA_MODE_MOVIECAM !BIT_DEMO_ALL_GAME_HUD_HIDDEN !BIT_IN_KILLCAM !BIT_IS_FLASH_BANGED !BIT_UI_ACTIVE !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC !BIT_SPECTATING_CLIENT )
+
+		// DPAD HIGHTLIGHTS
+		itemDef
+        {
+			style			WINDOW_STYLE_SHADER			
+			background		"hud_dpad_outer_frame_highlight_up"
+            rect			(DPAD_BG_X_START-4) (DPAD_BG_Y_START-24) 96 96
+            forecolor		1 1 1 0
+			visible			1
+			decoration
+			
+			state
+			{
+				name		"spike_cam_on"
+				forecolor	0 1 0 1
+				onEnter
+				{
+					changeState	spike_cam_on_2 500;
+				}
+			}
+			state
+			{
+				name		"spike_cam_on_2"
+				forecolor	0 1 0 0.3
+				onEnter
+				{
+					changeState	spike_cam_on 500;
+				}
+			}
+        }
+	
+		// DPAD BACKGROUND
+		itemDef
+        {
+			style			WINDOW_STYLE_SHADER			
+			background		"hud_faction_back_light"
+            rect			DPAD_BG_X_START DPAD_BG_Y_START DPAD_BG_WIDTH DPAD_BG_HEIGHT
+            forecolor		1 1 1 0.2
+			visible			1
+			decoration
+        }
+
+		itemDef
+        {
+			style			WINDOW_STYLE_SHADER			
+			background		"hud_dpad_outer_frame"
+            rect			DPAD_BG_X_START DPAD_BG_Y_START DPAD_BG_WIDTH DPAD_BG_HEIGHT
+            forecolor		1 1 1 0.3
+			visible			1
+			decoration
+        }
+		
+		itemDef
+        {
+			style			WINDOW_STYLE_SHADER			
+			background		"hud_dpad_outer_frame_rim"
+            rect			DPAD_BG_X_START DPAD_BG_Y_START DPAD_BG_WIDTH DPAD_BG_HEIGHT
+            forecolor		1 1 1 0.2
+			visible			1
+			decoration
+        }
+
+
+		// DPAD ITEM ICONS
+		itemDef // Up
+        {
+			name			"slot1"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			(DPAD_BG_X_START+(DPAD_BG_WIDTH/2)-(DPAD_BASE_SIZE/2)) (DPAD_BG_Y_START+5) DPAD_BASE_SIZE DPAD_BASE_SIZE
+			ownerdraw		CG_PLAYER_ACTIONSLOT_1		
+			forecolor		1 1 1 1
+			visible			1
+			decoration
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textscale		0.24
+			textfont		UI_FONT_NORMAL
+        }
+		
+		itemDef // Left
+        {
+            name			"slot3"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+            rect			(DPAD_BG_X_START+5) (DPAD_BG_Y_START+(DPAD_BG_HEIGHT/2)-(DPAD_BASE_SIZE/2)) DPAD_BASE_SIZE DPAD_BASE_SIZE
+			ownerdraw		CG_PLAYER_ACTIONSLOT_3
+			forecolor		1 1 1 1
+			visible			1
+			decoration
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textscale		0.24
+			textfont		UI_FONT_NORMAL
+        }
+
+		itemDef // Right
+        {
+            name			"slot4"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+            rect			(DPAD_BG_X_START+DPAD_BG_WIDTH-DPAD_BASE_SIZE-5) (DPAD_BG_Y_START+(DPAD_BG_HEIGHT/2)-(DPAD_BASE_SIZE/2)) DPAD_BASE_SIZE DPAD_BASE_SIZE 
+			ownerdraw		CG_PLAYER_ACTIONSLOT_4
+			forecolor		1 1 1 1
+			visible			1
+			decoration
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textalign		ITEM_ALIGN_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_NORMAL
+        }
+
+#ifdef CONSOLE		
+#define DPAD_ENABLED 1
+#else
+#define DPAD_ENABLED dvarbool( gpad_enabled ) == 1
+#endif
+		// DPAD FOREGROUND
+		itemDef
+        {
+			style			WINDOW_STYLE_SHADER			
+#ifdef PS3
+			background		"hud_dpad_ps3"
+#else
+			background		"hud_dpad_xenon"
+#endif
+            rect			(DPAD_BG_X_START+23) (DPAD_BG_Y_START+23) 45 45
+            forecolor		1 1 1 1
+			visible			when( DPAD_ENABLED )
+			decoration
+        }
+		
+		itemDef
+        {
+			style			WINDOW_STYLE_SHADER			
+			background		"hud_dpad_overlay_x"
+            rect			DPAD_BG_X_START DPAD_BG_Y_START DPAD_BG_WIDTH DPAD_BG_HEIGHT
+            forecolor		1 1 1 0.3
+			visible			when( DPAD_ENABLED )
+			decoration
+        }
+
+		itemDef
+        {
+			style			WINDOW_STYLE_SHADER			
+			background		"hud_dpad_overlay_circle"
+            rect			DPAD_BG_X_START DPAD_BG_Y_START DPAD_BG_WIDTH DPAD_BG_HEIGHT
+            forecolor		1 1 1 0.3
+			visible			when( DPAD_ENABLED )
+			decoration
+        }
+
+		// Arrows
+		itemDef
+		{
+			rect			(DPAD_BG_X_START+33) (DPAD_BG_Y_START+20) 25 (-25)  
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		CG_PLAYER_ACTIONSLOT_ARROW_1
+			rect			(DPAD_BG_X_START+33) (DPAD_BG_Y_START+45) 25 (-25)  
+			background		"hud_frame_arrow"
+			forecolor		1 1 1 0.3
+			visible 		when( DPAD_ENABLED )
+			decoration
+		}
+		itemDef
+		{
+			rect			(DPAD_BG_X_START+33) (DPAD_BG_Y_START+20) 25 (-25)  
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			ownerdraw		CG_PLAYER_ACTIONSLOT_BIND_1
+			exp text		( "[" + KeyBinding( "+actionslot 1" ) + "]" );
+			textfont		UI_FONT_NORMAL
+			textscale		0.25
+			textalign		ITEM_ALIGN_TOP_CENTER
+			textaligny		9
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			forecolor		1 1 1 0.3
+			visible 		when( !DPAD_ENABLED )
+			decoration
+		}		
+		itemDef
+		{
+			rect			(DPAD_BG_X_START+20) (DPAD_BG_Y_START+33) (-26) 26  
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		CG_PLAYER_ACTIONSLOT_ARROW_3
+			rect			(DPAD_BG_X_START+45) (DPAD_BG_Y_START+33) (-26) 26  
+			background		"hud_frame_arrow_right"
+			forecolor		1 1 1 0.3
+			visible 		when( DPAD_ENABLED )
+			decoration
+		}
+		itemDef
+		{
+			rect			(DPAD_BG_X_START+20) (DPAD_BG_Y_START+33) (-26) 26  
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			ownerdraw		CG_PLAYER_ACTIONSLOT_BIND_3
+			exp text		( "[" + KeyBinding( "+actionslot 3" ) + "]" );
+			textfont		UI_FONT_NORMAL
+			textscale		0.25
+			textalign		ITEM_ALIGN_BOTTOM_LEFT
+			textaligny		-5
+			textalignx		10
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			forecolor		1 1 1 0.3
+			visible 		when( !DPAD_ENABLED )
+			decoration
+		}
+		itemDef
+		{
+			rect			(DPAD_BG_X_START+46) (DPAD_BG_Y_START+33) 26 26  
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		CG_PLAYER_ACTIONSLOT_ARROW_4
+			rect			(DPAD_BG_X_START+46) (DPAD_BG_Y_START+33) 26 26  
+			background		"hud_frame_arrow_right"
+			forecolor		1 1 1 0.3
+			visible 		when( DPAD_ENABLED )
+			decoration
+		}
+		itemDef
+		{
+			rect			(DPAD_BG_X_START+46) (DPAD_BG_Y_START+33) 26 26  
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			ownerdraw		CG_PLAYER_ACTIONSLOT_BIND_4
+			exp text		( "[" + KeyBinding( "+actionslot 4" ) + "]" );
+			textfont		UI_FONT_NORMAL
+			textscale		0.25
+			textalign		ITEM_ALIGN_BOTTOM_RIGHT
+			textaligny		-5
+			textalignx		-10
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			forecolor		1 1 1 0.3
+			visible 		when( !DPAD_ENABLED )
+			decoration
+		}
+    }
+	
+	menuDef
+	{
+		name			"compassRound"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 0 0 HORIZONTAL_ALIGN_USER_RIGHT VERTICAL_ALIGN_USER_BOTTOM
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible			when( !FSM_VISIBILITY )
+		visibilityBits  bits( BIT_HUD_VISIBLE HUD_VISIBILITY !BIT_DEMO_CAMERA_MODE_MOVIECAM !BIT_DEMO_ALL_GAME_HUD_HIDDEN !BIT_IN_KILLCAM !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC !BIT_AMMO_COUNTER_HIDE !BIT_IS_FLASH_BANGED !BIT_UI_ACTIVE !BIT_SPECTATING_CLIENT )
+
+		itemDef
+        {
+            name			"tickerRound"
+			type			ITEM_TYPE_OWNERDRAW
+            rect			(DPAD_BG_X_START-6) (DPAD_BG_Y_START-38) 104 104
+            forecolor		1 1 1 1
+            background		"hud_border_dpad_compass"
+            ownerdraw		CG_PLAYER_COMPASS_ROUND
+			visible			1
+			decoration
+        }
+	}
+
+	//	Local Talking Status
+	menuDef
+	{
+    	name			"amitalking"
+		rect			116 22 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+    	fullScreen		0
+    	visible			1
+		visibilityBits  bits( BIT_HUD_VISIBLE !BIT_UI_ACTIVE  )
+
+		itemDef
+		{
+			name			"talkingRect"
+			type			ITEM_TYPE_OWNERDRAW
+			rect			0 0 26 26
+			forecolor		1 1 1 1
+			ownerdraw		UI_AMITALKING
+			visible			1
+			decoration
+		}
+	}
+
+	#define CAM_TALKER_Y 40
+	// Remote Talking Status
+	menuDef
+	{
+    	name			"talkers"
+		rect			0 120 24 24 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+    	fullScreen		0
+    	visible			1
+		visibilityBits  bits( BIT_HUD_VISIBLE !BIT_UI_ACTIVE  )
+
+		itemDef
+		{
+			name			"talker1Rect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 24 24
+			forecolor		1 1 1 1
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_TALKER1
+			visible			1
+			decoration
+			
+			state
+			{
+				name		"spike_cam_on"
+				rect		0 (CAM_TALKER_Y+0) 24 24
+			}
+		}
+
+		itemDef
+		{
+			name			"talker2Rect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 24 24 24
+			forecolor		1 1 1 1
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_TALKER2
+			visible			1
+			decoration
+			
+			state
+			{
+				name		"spike_cam_on"
+				rect		0 (CAM_TALKER_Y+24) 24 24
+			}
+		}
+
+		itemDef
+		{
+			name			"talker3Rect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 48 24 24
+			forecolor		1 1 1 1
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_TALKER3
+			visible			1
+			decoration
+			
+			state
+			{
+				name		"spike_cam_on"
+				rect		0 (CAM_TALKER_Y+48) 24 24
+			}
+		}
+
+		itemDef
+		{
+			name			"talker4Rect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 72 24 24
+			forecolor		1 1 1 1
+			textscale		TEXTSIZE_SMALL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_TALKER4
+			visible			1
+			decoration
+			
+			state
+			{
+				name		"spike_cam_on"
+				rect		0 (CAM_TALKER_Y+72) 24 24
+			}
+		}
+	}
+	
+	// Generic message status bar
+	menuDef
+	{
+		name			"generic_status_bar"
+		rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen		0
+		visible 		when ( isVisibilityBitSet( BIT_TEAM_ALLIES ) || isVisibilityBitSet( BIT_TEAM_AXIS ) && dvarInt( "ui_generic_status_bar" ) && dvarString( "war_sb" ) == "" && !dvarInt( "ui_score_bar" ) );
+		visibilityBits  bits( !BIT_IN_KILLCAM !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC !BIT_SPECTATING_CLIENT !BIT_SCOREBOARD_OPEN )
+		
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			(-BARWIDTH/2) 3 BARWIDTH 18 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP
+			background		"line_horizontal"
+			forecolor		0 0 0 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			type			ITEM_TYPE_TEXT
+			rect			0 0 1 1 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP
+			origin			0 20
+			exp				text( locString( dvarString( "generic_status_bar_message" ) ) );
+			textfont		UI_FONT_NORMAL
+			textscale		0.35
+			textalign		ITEM_ALIGN_CENTER
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			forecolor		1 1 1 1
+			visible 		when( dvarString( "generic_status_bar_message" ) != "" )
+			decoration 
+		}
+	}
+	
+	// game messages
+	menuDef
+	{
+		name			"subtitles"
+		rect			200 400 10 10 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_TOP
+		fullScreen		0
+		visible			1
+		visibilityBits  bits( !BIT_IN_KILLCAM !BIT_IN_GUIDED_MISSILE !BIT_IN_GUIDED_MISSILE_STATIC )
+		
+		itemDef
+		{
+			origin				0 0
+			type				ITEM_TYPE_GAME_MESSAGE_WINDOW
+			gamemsgwindowindex	2
+			gamemsgwindowmode	MODE_BOTTOMUP_ALIGN_BOTTOM
+			textfont			UI_FONT_DEFAULT
+			textstyle			ITEM_TEXTSTYLE_SHADOWED
+			textalign			ITEM_ALIGN_LEFT
+			textscale			TEXTSIZE_SMALL
+			visible				1
+			visibilityBits		bits( !BIT_UI_ACTIVE BIT_HUD_OBITUARIES )
+		}
+	}
+	
+	// Hold breath zoom hint
+	menuDef 
+	{
+		name			"HoldBreathZoomHint"
+		rect			0 100 0 0 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP
+		fullScreen		0
+		visible			when ( dvarBool(cg_drawHoldBreathHint)==1 );
+		visibilityBits  bits( !BIT_IN_KILLCAM !BIT_SPECTATING_CLIENT !BIT_IS_DEMO_PLAYING !BIT_ADS_JAVELIN )
+
+		itemDef 
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 0 0
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_HOLD_BREATH_ZOOM_HINT
+			visible			1
+			decoration
+		}
+	}
+
+	// Hold breath hint
+	menuDef 
+	{
+		name			"HoldBreathHint"
+		rect			0 80 0 0 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_TOP
+		fullScreen		0
+		visible			when ( dvarBool(cg_drawHoldBreathHint)==1 );
+		visibilityBits  bits( !BIT_IN_KILLCAM !BIT_SPECTATING_CLIENT !BIT_IS_DEMO_PLAYING !BIT_ADS_JAVELIN )
+
+		itemDef 
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 0 0
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_HOLD_BREATH_HINT
+			visible			1
+			decoration
+		}
+	}
+
+	// RC Bomb hints
+	menuDef 
+	{
+		name			"RCBombHints"
+		rect			5 -60 0 0 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+		fullScreen		0
+		visible when ( !adsjavelin() && !inkillcam() && NOT_SPECTATING && !isDemoPlaying() && !isInGuidedMissile() );
+
+		//RC Bomb boost hint
+		itemDef 
+		{
+			name			"RCBombBoostHint"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 0 0
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_RCBOMB_BOOST_HINT
+			visible			1
+			decoration
+		}
+		//RC Bomb Detonate hint
+		itemDef 
+		{
+			name			"RCBombDetonateHint"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 20 0 0
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_RCBOMB_DETONATE_HINT
+			visible			1
+			decoration
+		}
+		//RC Bomb Handbrake hint
+		itemDef 
+		{
+			name			"RCBombHandbrakeHint"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 40 0 0
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_RCBOMB_HANDBRAKE_HINT
+			visible			1
+			decoration
+		}
+		//RC Bomb Steering hint
+//		itemDef 
+//		{
+//			name			"RCBombSteeringHint"
+//			type			ITEM_TYPE_OWNERDRAW_TEXT
+//			rect			0 60 0 0
+//			textfont		UI_FONT_NORMAL
+//			textscale		TEXTSIZE_DEFAULT
+//			textalign		ITEM_ALIGN_LEFT
+//			textstyle		ITEM_TEXTSTYLE_SHADOWED
+//			ownerdraw		CG_RCBOMB_STEERING_HINT
+//			visible			1
+//			decoration
+//		}
+//		//RC Bomb Accelerate hint
+//		itemDef 
+//		{
+//			name			"RCBombAccelerateHint"
+//			type			ITEM_TYPE_OWNERDRAW_TEXT
+//			rect			0 80 0 0
+//			textfont		UI_FONT_NORMAL
+//			textscale		TEXTSIZE_DEFAULT
+//			textalign		ITEM_ALIGN_LEFT
+//			textstyle		ITEM_TEXTSTYLE_SHADOWED
+//			ownerdraw		CG_RCBOMB_ACCELERATION_HINT
+//			visible			1
+//			decoration
+//		}
+	}
+
+	// Guided Missile Boost hint
+	menuDef 
+	{
+		name			"GuidedMissileBoostHint"
+		rect			30 -40 0 0 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+		fullScreen		0
+		visibilityBits  bits( !BIT_IN_GUIDED_MISSILE_STATIC  )
+		visible when ( !adsjavelin() && !inkillcam() && NOT_SPECTATING && !isDemoPlaying() && isInGuidedMissile() );
+
+		itemDef 
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 0 0
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_GUIDED_MISSILE_BOOST_HINT
+			visible			1
+			decoration
+		}
+	}
+
+	// Guided Missile Detonate hint
+	menuDef 
+	{
+		name			"GuidedMissileDetonateHint"
+		rect			30 -20 0 0 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+		fullScreen		0
+		visibilityBits  bits( !BIT_IN_GUIDED_MISSILE_STATIC )
+		visible when ( !adsjavelin() && !inkillcam() && NOT_SPECTATING && !isDemoPlaying() && isInGuidedMissile() );
+
+		itemDef 
+		{
+			name			"chRect"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 0 0 0
+			textfont		UI_FONT_NORMAL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_GUIDED_MISSILE_DETONATE_HINT
+			visible			1
+			decoration
+		}
+	}
+
+	// Guided missile info
+	menuDef 
+	{
+		name			"GuidedMissileInfo"
+		rect			0 0 0 0 HORIZONTAL_ALIGN_USER_CENTER VERTICAL_ALIGN_USER_CENTER
+		fullScreen		0
+		visibilityBits  bits( !BIT_IN_GUIDED_MISSILE_STATIC )
+		visible when ( !adsjavelin() && !inkillcam() && NOT_SPECTATING && !isDemoPlaying() && isInGuidedMissile() );
+
+		itemDef 
+		{
+			name			"GuidedMissileViewPosInfo"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 -180 0 0
+			textfont		UI_FONT_SMALL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_CENTER
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_GUIDED_MISSILE_VIEW_POS
+			visible			1
+			decoration
+		}
+		itemDef 
+		{
+			name			"GuidedMissileDistToTargetInfo"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			-185 8 0 0
+			textfont		UI_FONT_SMALL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_RIGHT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_GUIDED_MISSILE_DIST_TO_TARG
+			visible			1
+			decoration
+		}
+		itemDef 
+		{
+			name			"GuidedMissileDistFrowOwnerInfo"
+			type			ITEM_TYPE_OWNERDRAW_TEXT
+			rect			0 195 0 0
+			textfont		UI_FONT_SMALL
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_CENTER
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			ownerdraw		CG_GUIDED_MISSILE_DIST_FROM_OWNER
+			visible			1
+			decoration
+		}
+	}
+	
+}

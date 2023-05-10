@@ -1,0 +1,18 @@
+{
+	loadMenu { "ui_mp/scriptmenus/ingame_options.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_look_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_move_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_shoot_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_misc_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_graphics_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_game_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_sound_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_coop_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_control_defaults_ingame.menu" }
+//	loadMenu { "ui_mp/scriptmenus/options_controller_defaults_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_gamepad_pc_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_graphics_defaults_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_voice_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/options_multi_ingame.menu" }
+	loadMenu { "ui_mp/scriptmenus/controls_multi_ingame.menu" }
+}

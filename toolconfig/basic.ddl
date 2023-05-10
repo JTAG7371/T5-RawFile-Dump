@@ -1,0 +1,10 @@
+name,type,default,minimum,maximum
+timescale,INVALID,1,-2,2
+player_sprintUnlimited,INVALID,0,0,1
+player_sprintCameraBob,INVALID,0.5,0,1
+xenon_betaexpired,INVALID,0,0,1
+snd_skip_muted_sounds,INVALID,1,0,1
+cg_thirdPersonFocusDist,INVALID,512,0,1024
+cg_tracerScrewRadius,INVALID,0.5,0,3.402823E+38
+ai_coverScore_priority,FLOAT,8,0,3.402823E+38
+snd_global_pitch,FLOAT,1.0,0,2.0

@@ -1,0 +1,6 @@
+// hud menu defs
+// 
+{
+	loadMenu { "ui/hud_splitscreen.menu" }
+	loadMenu { "ui/hud_spectator_splitscreen_zombie.menu" }
+}

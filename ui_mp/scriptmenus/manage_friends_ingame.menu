@@ -1,0 +1,2 @@
+#define PC_INGAME
+#include				"ui_mp/manage_friends.menu"

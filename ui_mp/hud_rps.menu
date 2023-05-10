@@ -1,0 +1,287 @@
+// CONSOLE HUD - MP
+
+#include "ui/menudef.h"
+#include "ui_mp/hud_gametypes.inc"
+
+#define BAR_START_X		93
+#define BAR_WIDTH		76
+#define BAR_HEIGHT		8
+
+#define BAR_PERCENT_TEAM		(team( score ) / dvarInt( "ui_scorelimit" ) )
+#define BAR_PRECENT_OTHERTEAM	(otherteam( score ) / dvarInt( "ui_scorelimit" ) )
+
+{
+	menuDef
+	{
+		name			"scorebars_rps_background"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		fullScreen		0
+		visible 		1
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_UI_ACTIVE !BIT_SPECTATING_CLIENT SHOULD_DISPLAY_SCOREBAR )
+
+		// FACTION ICONS
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			0 -50 56 56 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			origin			5 -5
+			exp				material( dvarString( "g_TeamIcon_Allies" ) );
+			visible			0 //when( team( name ) == "TEAM_ALLIES" ); 
+			forecolor		1 1 1 1
+			decoration
+		}
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			0 -50 56 56 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			origin			5 -5
+			exp				material( dvarString( "g_TeamIcon_Axis" ) );
+			visible			0 //when( team( name ) == "TEAM_AXIS" );
+			forecolor		1 1 1 1
+			decoration
+		}
+
+		// quarter circle line
+		itemDef
+        {
+			style			WINDOW_STYLE_SHADER			
+			rect			(BAR_START_X-63) -59 -38 38 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			background		"hud_border_dpad_circle"
+            forecolor		1 1 1 0.5
+			visible			0 //1
+			decoration
+        }
+
+		// white line separator for the scores
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			(BAR_START_X-36) -34 -220 20 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			background		"hud_border_dpad_line"
+			forecolor		1 1 1 0.5
+			visible			1
+			decoration
+		}
+	}
+
+#define CLASS_ICON_START_X 320
+#define CLASS_ICON_ROW_1_Y -56
+#define CLASS_ICON_ROW_2_Y -22
+
+#define FRIENDLY_TEAM_COLOR 0.7 1.0 0.7 1.0
+#define ENEMY_TEAM_COLOR 1.0 0.7 0.7 1.0
+
+	//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
+	menuDef
+	{
+		name			"classicons_allies"
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) );
+		exp				rect X( BOTTOM_RECT_X - ( NOT_SPECTATING * 220 ) );  
+		fullScreen		0
+		visible 		1
+		visibilityBits	bits( !BIT_IN_KILLCAM !BIT_UI_ACTIVE SHOULD_DISPLAY_SCOREBAR )
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			CLASS_ICON_START_X CLASS_ICON_ROW_1_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "killiconmelee" );
+			forecolor		FRIENDLY_TEAM_COLOR
+			visible 		1
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			CLASS_ICON_START_X CLASS_ICON_ROW_1_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "thumbsdown" );
+			forecolor		1 1 1 1
+			visible 		when( ( team(name) == "TEAM_ALLIES" && !dvarbool( "allies_knife_isalive" ) ) || ( team(name) == "TEAM_AXIS" && !dvarbool( "axis_knife_isalive" ) ) )
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(CLASS_ICON_START_X+35) CLASS_ICON_ROW_1_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "hud_icon_spas12" );
+			forecolor		FRIENDLY_TEAM_COLOR
+			visible 		1
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(CLASS_ICON_START_X+35) CLASS_ICON_ROW_1_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "thumbsdown" );
+			forecolor		1 1 1 1
+			visible 		when( ( team(name) == "TEAM_ALLIES" && !dvarbool( "allies_shotgun_isalive" ) ) || ( team(name) == "TEAM_AXIS" && !dvarbool( "axis_shotgun_isalive" ) ) )
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(CLASS_ICON_START_X+70) CLASS_ICON_ROW_1_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "hud_icon_rpg" );
+			forecolor		FRIENDLY_TEAM_COLOR
+			visible 		1
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(CLASS_ICON_START_X+70) CLASS_ICON_ROW_1_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "thumbsdown" );
+			forecolor		1 1 1 1
+			visible 		when( ( team(name) == "TEAM_ALLIES" && !dvarbool( "allies_rocket_isalive" ) ) || ( team(name) == "TEAM_AXIS" && !dvarbool( "axis_rocket_isalive" ) ) )
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			CLASS_ICON_START_X CLASS_ICON_ROW_2_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "killiconmelee" );
+			forecolor		ENEMY_TEAM_COLOR
+			visible 		1
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			CLASS_ICON_START_X CLASS_ICON_ROW_2_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "thumbsdown" );
+			forecolor		1 1 1 1 
+			visible 		when( ( team(name) == "TEAM_ALLIES" && !dvarbool( "axis_knife_isalive" ) ) || ( team(name) == "TEAM_AXIS" && !dvarbool( "allies_knife_isalive" ) ) )
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(CLASS_ICON_START_X+35) CLASS_ICON_ROW_2_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "hud_icon_spas12" );
+			forecolor		ENEMY_TEAM_COLOR
+			visible 		1
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(CLASS_ICON_START_X+35) CLASS_ICON_ROW_2_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "thumbsdown" );
+			forecolor		1 1 1 1
+			visible 		when( ( team(name) == "TEAM_ALLIES" && !dvarbool( "axis_shotgun_isalive" ) ) || ( team(name) == "TEAM_AXIS" && !dvarbool( "allies_shotgun_isalive" ) ) )
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(CLASS_ICON_START_X+70) CLASS_ICON_ROW_2_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "hud_icon_rpg" );
+			forecolor		ENEMY_TEAM_COLOR
+			visible 		1
+			decoration
+		}
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			type			ITEM_TYPE_IMAGE
+			rect			(CLASS_ICON_START_X+70) CLASS_ICON_ROW_2_Y 32 32 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM
+			exp				material( "thumbsdown" );
+			forecolor		1 1 1 1
+			visible 		when( ( team(name) == "TEAM_ALLIES" && !dvarbool( "axis_rocket_isalive" ) ) || ( team(name) == "TEAM_AXIS" && !dvarbool( "allies_rocket_isalive" ) ) )
+			decoration
+		}
+	}
+
+#define RPS_CLASS_INFO( classId, className, classGun, classArmor, classHelmet ) \
+	menuDef \
+	{ \
+		name			"rps_class_info_"className \
+		rect			BOTTOM_RECT_X BOTTOM_RECT_Y 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN \
+		exp				rect Y( BOTTOM_RECT_Y - (ONLINEGAME * ONLINEGAME_OFFSET) ); \
+		fullScreen		0 \
+		visible 		when( dvarString( "ui_rps_class" ) == classId ) \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			450 -240 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+			text			className \
+			textfont		UI_FONT_NORMAL \
+			textscale		0.5 \
+			textalign		ITEM_ALIGN_LEFT \
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE \
+			forecolor		1 1 1 1 \
+			visible 		1 \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			450 -210 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+			text			classGun \
+			textfont		UI_FONT_NORMAL \
+			textscale		0.5 \
+			textalign		ITEM_ALIGN_LEFT \
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE \
+			forecolor		1 1 1 1 \
+			visible 		1 \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			450 -180 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+			text			classArmor \
+			textfont		UI_FONT_NORMAL \
+			textscale		0.5 \
+			textalign		ITEM_ALIGN_LEFT \
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE \
+			forecolor		1 1 1 1 \
+			visible 		1 \
+			decoration \
+		} \
+		itemDef \
+		{ \
+			type			ITEM_TYPE_TEXT \
+			rect			450 -150 1 1 HORIZONTAL_ALIGN_USER_LEFT VERTICAL_ALIGN_USER_BOTTOM \
+			text			classHelmet \
+			textfont		UI_FONT_NORMAL \
+			textscale		0.5 \
+			textalign		ITEM_ALIGN_LEFT \
+			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE \
+			forecolor		1 1 1 1 \
+			visible 		1 \
+			decoration \
+		} \
+	}
+
+	RPS_CLASS_INFO( "knife", "@MP_RPS_KNIFE_CLASS", "@MP_RPS_KNIFE_GUN", "@MP_RPS_KNIFE_ARMOR", "@MP_RPS_KNIFE_HEAD" )
+	RPS_CLASS_INFO( "shotgun", "@MP_RPS_SHOTGUN_CLASS", "@MP_RPS_SHOTGUN_GUN", "@MP_RPS_SHOTGUN_ARMOR", "@MP_RPS_SHOTGUN_HEAD" )
+	RPS_CLASS_INFO( "rocket", "@MP_RPS_ROCKET_CLASS", "@MP_RPS_ROCKET_GUN", "@MP_RPS_ROCKET_ARMOR", "@MP_RPS_ROCKET_HEAD" )
+}

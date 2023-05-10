@@ -1,0 +1,225 @@
+#include "ui/menudef.h"
+
+#define CHOICE_X_START			0
+#define CHOICE_Y_START			45
+#define CLANMANAGEMENT_BACKGROUND_WIDTH 320
+#define CLANMANAGEMENT_BACKGROUND_X_START 0
+#define CLANMANAGEMENT_BACKGROUND_Y_START 40
+#define CLANMANAGEMENT_BACKGROUND_HEIGHT 350
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_TOP
+#define CHOICE_SEP_OFFSET_Y		-2
+
+#define CHOICE_GROUP			"xboxlive_clanmanagement"
+#define STATUS_START_X                    -200
+#define STATUS_START_Y				180
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/friendslist.inc"
+
+#undef	CHOICE_HORIZONTAL_ALIGN 
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_LEFT
+
+
+#undef	CHOICE_X_START
+#define CHOICE_X_START				0
+#undef	CHOICE_Y_START
+#define CHOICE_Y_START				( CLANMANAGEMENT_BACKGROUND_Y_START + 10 )
+
+
+#define CLAN_MANAGEMENT_LAYOUT \
+		/* grey background */ \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER  \
+              rect              CLANMANAGEMENT_BACKGROUND_X_START CLANMANAGEMENT_BACKGROUND_Y_START ( 2*CLANMANAGEMENT_BACKGROUND_WIDTH + 80 ) CLANMANAGEMENT_BACKGROUND_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN  \
+			forecolor		.15 .15 .15 1  \
+			background		"white"  \
+			visible			1  \
+			decoration  \
+		}   \
+		/* black background */ \
+		itemDef \
+		{ \
+			style			WINDOW_STYLE_SHADER  \
+              rect              ( STATUS_START_X ) ( CLANMANAGEMENT_BACKGROUND_Y_START + 20 ) ( CLANMANAGEMENT_BACKGROUND_WIDTH - 140 ) ( CLANMANAGEMENT_BACKGROUND_HEIGHT - 280 ) HORIZONTAL_ALIGN_RIGHT CHOICE_VERTICAL_ALIGN  \
+			forecolor		0 0 0 1  \
+			background		"white"  \
+			visible			1  \
+			decoration  \
+		}	\
+		/* Clan Emblem */ \
+		itemDef  \
+		{  \
+			style           WINDOW_STYLE_SHADER \
+			type            ITEM_TYPE_IMAGE \
+            rect              ( STATUS_START_X ) ( CLANMANAGEMENT_BACKGROUND_Y_START + 20 ) ( CLANMANAGEMENT_BACKGROUND_WIDTH - 250 ) ( CLANMANAGEMENT_BACKGROUND_HEIGHT - 280 ) HORIZONTAL_ALIGN_RIGHT CHOICE_VERTICAL_ALIGN  \
+			exp             material( getcomposite( emblem_clan_local ) ) \
+			visible			1  \
+			decoration  \
+		}  
+
+{
+
+#ifdef XENON
+	#define SETUP_ACTION_VIEWCLANCARD \		
+		play CHOICE_ACTION_SOUND; \		
+		open menu_clancard;
+#endif		
+
+#undef	IF_OWNER
+#define IF_OWNER	\
+	if( isclanowner( getxuid() ) == 1  )
+
+#undef	IF_OWNER_OR_ADMIN
+#define IF_OWNER_OR_ADMIN	\
+	if( ( isclanowner( getxuid() ) == 1  ) || (getclanrank( getxuid() ) == "Admin" ) )
+
+#undef	IF_MEMBER_OR_ADMIN
+#define	IF_MEMBER_OR_ADMIN	\
+	if( (getclanrank( getxuid() ) == "Member" ) || (getclanrank( getxuid() ) == "Admin" ) )
+
+
+	menuDef
+	{
+		name			menu_xboxlive_clanmanagement
+		fullscreen		1
+		rect			0 0 640 480
+		focuscolor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		border			0
+		soundloop 		MENU_MUSIC
+		
+	
+		CLAN_MANAGEMENT_LAYOUT
+
+		CHOICE_MENU_TITLE( "@MPUI_CLAN_MANAGEMENT" )
+
+		itemDef
+        {       
+            DYNAMIC_MENU_COMMON_FIELDS
+			#ifdef XENON
+				selectIcon "ui_button_xenon_3d_a_32x32"
+			#endif
+			#ifdef PS3
+				selectIcon "ui_button_ps3_x_32x32"
+			#endif
+            rect CHOICE_X_START CHOICE_Y_START 190 400 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+
+			menuItemsDef
+			{
+				maxRows 6
+	
+				menuColDef
+				{	 // Menu Item
+					 type MENU_ITEM_TYPE_LOC_TEXT
+					 rect 0 0 190 26 ITEM_ALIGN_LEFT ITEM_ALIGN_TOP
+					 maxChars 50
+				}
+				menuColDef
+				{	// Title Description 
+					type MENU_ITEM_TYPE_LOC_TEXT_HIDDEN
+					maxChars 150
+				}
+				menuColDef
+				{	// Permission
+					type MENU_ITEM_TYPE_LOC_TEXT_HIDDEN
+					maxChars 150
+				}
+				menuColDef
+				{	// Title
+					type MENU_ITEM_TYPE_LOC_TEXT_HIDDEN
+					maxChars 32
+				}
+				menuColDef
+				{	// User Defined Text (MOTD / Desc / Name)
+					type MENU_ITEM_TYPE_TEXT_HIDDEN
+					maxChars 256
+				}
+			}  
+
+			onEvent EditEmblem	{	execnow "openmenu emblem_edit";			}
+			onEvent Membership	{											}
+			onEvent Advertise	{											}
+			onEvent SetClanName {	execnow "clanDescriptionKeyboard";		}
+			onEvent SetClanDesc {	execnow "clanLongDescriptionKeyboard";	}
+			onEvent SetClanMOTD {	execnow "clanSetMOTD";					}
+			onEvent QuitClan	{	open leaveclanwarning;					
+									exec "set clanleave 1";					}
+			onEvent	DisbandClan	{	open leaveclanwarning;					
+									exec "set clanleave 0";					}
+			onEvent Clear		{	execNow clearFeeder;					}
+			onEvent Populate
+			{
+				//													Column 1					Column 2							Column 3							Column 4						Column 5
+				execNow IF_OWNER			addToFeeder EditEmblem	MPUI_EDIT_CLAN_EMBLEM		MPUI_CLAN_EMBLEMEDITOR_INFO_PANE	MPUI_PERMISSION_EMBLEM_EDITOR		MPUI_TITLE_EMBLEM_EDITOR		"";
+				execNow IF_OWNER			addToFeeder SetClanName	MPUI_SET_CLAN_NAME			MPUI_CLAN_NAME_INFO_PANE			MPUI_PERMISSION_CLAN_NAME			MPUI_TITLE_CLAN_NAME			( getclanshortdescription( dvarString(clancard_clanid) ) );
+				execNow IF_OWNER			addToFeeder	SetClanDesc	MPUI_SET_CLAN_DESCRIPTION	MPUI_SET_DESCRIPTION_INFO_PANE		MPUI_PERMISSION_CLAN_DESCRIPTION	MPUI_TITLE_CLAN_DESCRIPTION		( getclanlongdescription( dvarString(clancard_clanid) ) );
+				execNow IF_OWNER			addToFeeder SetClanMOTD	MPUI_SET_CLAN_MOTD			MPUI_CLAN_MOTD_INFO_PANE			MPUI_PERMISSION_CLAN_MOTD			MPUI_TITLE_MOTD					( getclanmotd() );
+				execNow IF_MEMBER_OR_ADMIN	addToFeeder QuitClan	MPUI_QUIT_FROM_CLAN			MPUI_QUIT_CLAN_INFO_PANE			MPUI_PERMISSION_LEAVE_CLAN			MPUI_TITLE_QUIT_CLAN			"";
+				execNow IF_OWNER			addToFeeder DisbandClan	MPUI_DISBAND_CLAN			MPUI_DISBAND_CLAN_INFO_PANE			MPUI_PERMISSION_DISBAND_CLAN		MPUI_TITLE_DISBAND_CLAN			"";
+			}
+			onfocus                     {	play CHOICE_FOCUS_SOUND;	}
+			onListboxSelectionChange    {	play CHOICE_FOCUS_SOUND;	}
+            doubleclick                 {	play CHOICE_FOCUS_SOUND;
+											execNow raiseFeederEvent;	}                                           
+		}
+
+		onOpen
+		{
+			execNow raiseFeederEvent Clear;
+			setdvar invite_visible "1";
+			execNow raiseFeederEvent Populate;
+		}
+
+		onClose	
+		{ 
+			execNow raiseFeederEvent Clear;
+		}
+		onESC 
+		{ 
+			close menu_xboxlive_clanmanagement; 
+		}
+		
+		// Feeder data subscribers
+		PREPROC_TEXT_DRAW( (STATUS_START_X) (STATUS_START_Y - 20 )	190 20 HORIZONTAL_ALIGN_RIGHT  VERTICAL_ALIGN_TOP, 0 0, ( getFeederData("dynamic_menu_feeder", "4") ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, COLOR_BODY_TEXT )
+		PREPROC_TEXT_DRAW( (STATUS_START_X) (STATUS_START_Y)		190 36 HORIZONTAL_ALIGN_RIGHT  VERTICAL_ALIGN_TOP, 0 0, ( getFeederData("dynamic_menu_feeder", "2") ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, COLOR_BODY_TEXT )
+		PREPROC_TEXT_DRAW( (STATUS_START_X) (STATUS_START_Y + 70 )	190 36 HORIZONTAL_ALIGN_RIGHT  VERTICAL_ALIGN_TOP, 0 0, ( getFeederData("dynamic_menu_feeder", "3") ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, COLOR_BODY_TEXT )
+		PREPROC_TEXT_DRAW( (STATUS_START_X) (STATUS_START_Y + 110 ) 190 36 HORIZONTAL_ALIGN_RIGHT  VERTICAL_ALIGN_TOP, 0 0, ( getFeederData("dynamic_menu_feeder", "5") ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, 0.15 0.61 0.0 1.0 )
+		
+		//In-game Friend list.
+		FRIENDS_BUTTON
+		
+		// OPEN Clan Card
+		GAMEPAD_BUTTON( 40 -4 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM, "@PLATFORM_VIEW_CLANCARD", BUTTON_X { SETUP_ACTION_VIEWCLANCARD; }, when ( dvarbool( invite_visible ) ) )
+
+		#include "ui/safearea.menu"
+	}
+}  
+
+	#include "ui_mp/popupstyle.inc"
+	#include "ui/choices_setup_popmenu.menu"
+
+    // -------------------- first disband/leave clan warning --------------------
+	menuDef
+	{
+		SYSTEM_POPUP_SETUP_VIS( leaveclanwarning, setfocus leaveclanwarning_2, ;, 1 )
+		
+		#define SETUP_LEAVE_CLAN							\
+				exec "clanLeave";							\
+				exec "onlinegame 0";						\
+				exec "xstopprivateparty";					\
+				exec "xstopparty";							\
+				close leaveclanwarning;						\
+				close menu_xboxlive_clanmanagement;			\
+				close menu_xboxlive_clanheadquarterslobby;	\
+				close menu_xboxlive;
+
+
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_CONFIRM_DISBAND_CLAN",	when( !dvarBool(clanleave) )	)
+		SYSTEM_POPUP_TITLE_VIS( "@MPUI_CONFIRM_LEAVE_CLAN",		when( dvarBool(clanleave) )		)
+	
+		FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MPUI_YES",	SETUP_LEAVE_CLAN,	1, ;						)
+		FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MPUI_NO",	close self,			1, name leaveclanwarning_2	)	
+	}	

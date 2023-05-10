@@ -1,0 +1,15 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define MENU_TITLE_TEXT "COOPERATIVE CAMPAIGN OPTIONS"
+#define GAME_OPTIONS_MENU_NAME "settings_quick_cmp"
+#include "ui/common_game_options.inc"
+#define GAMETYPE_OPTIONS	"@MENU_COOP_CAMPAIGN"
+
+#define CAMPAIGN_MODE 
+#undef SO_MODE
+#undef ZOMBIE_MODE
+#undef VS_MODE
+{
+	#include "ui/game_options.inc"
+}

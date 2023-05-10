@@ -1,0 +1,5 @@
+rawfile,character/c_rus_engineer1_grey_gas.gsc
+xmodel,c_rus_engineer1_body_grey
+xmodelalias,c_rus_engineer_head_gas_alias
+xmodel,c_rus_engineer_helmet
+xmodelalias,c_rus_engineer_headgear_alias

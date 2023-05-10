@@ -1,0 +1,9 @@
+name,file,template,loadspec,secondary,group,vol_min,vol_max,team_vol_mod,dist_min,dist_max,dist_reverb_max,volume_falloff_curve,reverb_falloff_curve,volume_min_falloff_curve,reverb_min_falloff_curve,limit_count,limit_type,entity_limit_count,entity_limit_type,pitch_min,pitch_max,team_pitch_mod,min_priority,max_priority,min_priority_threshold,max_priority_threshold,spatialized,type,loop,randomize_type,probability,start_delay,reverb_send,duck,pan,center_send,envelop_min,envelop_max,envelop_percentage,occlusion_level,occlusion_wet_dry,is_big,distance_lpf,move_type,move_time,real_delay,subtitle,mature,doppler,futz,context_type,context_value,compression
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# WIND,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+bgt_outdoor_wind,Stream\backgrounds\wind\ext_wind\city_wind.wav,,,,ambience,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,looping,,,,0,,wpn_all,,,,,,,,,,,,,,,,,,
+bgt_indoor_wind,sfx\level\flashpoint\hangar_int.wav,,,,ambience,100,100,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,looping,,,,0,,wpn_all,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_squad_tower_exp_flux_l,sfx\Destruction\exp\wood\exp_wood_l.wav,WPN_GRENADE_FLUX_L,,evt_squad_tower_exp_flux_r,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_squad_tower_exp_flux_r,sfx\Destruction\exp\wood\exp_wood_r.wav,WPN_GRENADE_FLUX_R,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

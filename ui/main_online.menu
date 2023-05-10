@@ -1,0 +1,445 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/menustyle.inc"
+
+
+#ifdef CONSOLE
+	#define LOGO_START_X			-300
+	#define LOGO_START_Y			-125
+#endif
+
+#ifdef PC
+	#define LOGO_START_X			-300
+	#define LOGO_START_Y			-160
+#endif
+
+#ifdef PC
+	#undef	CHOICE_X_START
+	#define CHOICE_X_START			30
+	#undef	CHOICE_Y_START
+	#define CHOICE_Y_START			50
+#endif
+
+#define CHOICE_GROUP				"main"
+
+#define ARCADE_DESC_ORIGIN	CHOICE_SIZE_X CHOICE_Y(5)
+
+#define BUTTON_Y_START	-40
+
+#define MAIN_BUTTON_RECT( xOffset ) \
+		0 (BUTTON_Y_START+(xOffset*BUTTON_HEIGHT)) 640 BUTTON_HEIGHT HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+
+#define BUTTON_NAME					"online_button"
+
+#undef	CHOICE_TEXTALIGN
+#define CHOICE_TEXTALIGN			ITEM_ALIGN_MIDDLE_CENTER
+#undef	CHOICE_TEXT_OFFSET_X
+#define	CHOICE_TEXT_OFFSET_X		0
+#undef  CHOICE_TEXTSIZE
+#define CHOICE_TEXTSIZE				1.75
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X				100
+#undef CHOICE_SIZE_Y
+#define CHOICE_SIZE_Y				85
+
+#include "ui/choices_setup_common.menu"
+#include "ui/blurredbg.inc"
+{
+
+	#define SET_DEFAULT_MAP_AND_MODE \
+		exec "set ui_gametype zom; set ui_mapname "FIRST_PLAYABLE_ZOMBIE_LEVEL
+
+	#define LOCAL_NETWORK_RESET \
+		exec "set onlinegame 0; set systemlink 0";
+
+	#define SET_ARCADE_MODE											\
+		exec "set arcademode 1";									\
+		execOnDvarStringValue "ui_gametype" zom "set arcademode 0";	\
+		execOnDvarStringValue "ui_gametype" vs "set arcademode 0";	\
+		execOnDvarStringValue "ui_gametype" SO "set arcademode 0";
+
+
+#ifdef XENON
+	#define SIGN_IN_CMD			execNow "xsigninlivenoguests";
+#endif //#ifdef XENON
+#ifdef PS3
+	#define SIGN_IN_CMD			execNow "xsigninlive";
+#endif //#ifdef PS3
+#ifdef PC
+	#define SIGN_IN_CMD			execNow "xsigninlive";
+#endif
+
+
+	#define SETUP_ACTION_PUBLIC_GAME		\
+			exec "xblive_privatematch 0";	\
+			open menu_xboxlive;
+
+
+	#define SETUP_ACTION_SUMMARY_RESET												\
+			uiScript closeMenuOnDvar "ui_lobbypopup" summary "popup_summary_body";	\
+			setdvar ui_lobbypopup "";
+
+#ifdef PC
+	#define SETUP_ACTION_XBOXLIVE							\
+			if( !dvarBool( ui_ethernetLinkActive ) )		\
+			{												\
+				open error_netconnect_popmenu;				\
+			}												\
+			else											\
+			{												\
+				execNow "xblive_privatematch 0";			\
+				execNow "xblive_rankedmatch 0";				\
+				execNow "disableallbutprimaryclients";		\
+				execNow "systemlink 0";						\
+				execNow "onlinegame 1";						\
+				execNow "party_timerVisible 0";				\
+				SIGN_IN_CMD									\
+				exec "party_maxlocalplayers 2";				\
+				execNow "party_maxplayers 4";				\
+				execNow "xstartprivateparty";				\
+				COMMON_COOP_ACTION( "menu_xboxlive" );		\
+				open blackout_3d_tv;						\
+				SETUP_ACTION_SUMMARY_RESET;					\
+				SET_DEFAULT_MAP_AND_MODE;					\
+			}
+#else //#ifdef PC
+	#define SETUP_ACTION_XBOXLIVE							\
+			if( !dvarBool( ui_ethernetLinkActive ) )		\
+			{												\
+				open error_netconnect_popmenu;				\
+			}												\
+			else											\
+			{												\
+				execNow "xblive_privatematch 0";			\
+				execNow "xblive_rankedmatch 0";				\
+				execNow "disableallbutprimaryclients";		\
+				execNow "systemlink 0";						\
+				execNow "splitscreen 0";					\
+				execNow "onlinegame 1";						\
+				execNow "party_timerVisible 0";				\
+				SIGN_IN_CMD									\
+				exec "party_maxlocalplayers 2";				\
+				execNow "party_maxplayers 4";				\
+				execNow "xstartprivateparty";				\
+				COMMON_COOP_ACTION( "menu_xboxlive" );		\
+				open blackout_3d_tv;						\
+				SETUP_ACTION_SUMMARY_RESET;					\
+				SET_DEFAULT_MAP_AND_MODE;					\
+			}
+#endif //#ifdef PC
+
+#define SETUP_ACTION_SYSTEMLINK								\
+		if( ( IsSignedInToLive() == 0 ) && !dvarBool( systemlink_warning_shown ) && dvarBool( ui_ethernetLinkActive ) )	\
+		{													\
+			open systemlink_warning_coop;					\
+		}													\
+		elseif( !dvarBool( ui_ethernetLinkActive ) )		\
+		{													\
+			open error_netconnect_popmenu;					\
+		}													\
+		else												\
+		{													\
+			execNow "setclientbeingusedandprimary";			\
+			exec "xsignin";									\
+			exec "systemlink 1";							\
+			exec "splitscreen 0";							\
+			exec "party_maxlocalplayers 2";					\
+			exec "xblive_rankedmatch 0";					\
+			execNow "xblive_privatematch 0";				\
+			exec "onlinegame 0";							\
+			setDvar menu_parent_3d_tv_name "main_online";	\
+			SET_DEFAULT_MAP_AND_MODE;						\
+			open systemlink_flyout;							\
+		}
+
+#define SETUP_ACTION_SPLITSCREEN							\
+		execNow "disableallbutprimaryclients";				\
+		execNow "setclientbeingusedandprimary";				\
+		exec "splitscreen 1";								\
+		exec "systemlink 0";								\
+		exec "party_maxlocalplayers 2";						\
+		exec "onlinegame 0";								\
+		execNow "xblive_privatematch 0";					\
+		exec "xblive_rankedmatch 0";						\
+		COMMON_COOP_ACTION( "menu_gamesetup_splitscreen" )	\
+		SET_DEFAULT_MAP_AND_MODE;							\
+		open blackout_3d_tv;								\
+
+
+#define COOP_SIGNIN										\
+		if( IsSignedInToLive() ==  0 )					\
+		{												\
+			SIGN_IN_CMD									\
+			open error_netconnect_popmenu;				\
+		}												\
+		elseif( isDemonwareFetchingDone() == 1 ) 		\
+		{												\
+			SETUP_ACTION_XBOXLIVE						\ 
+		} 												\
+		else											\
+		{												\
+			open popup_connectingtodwhandler;			\
+		}
+	
+#define SETUP_SIGNIN												\
+		if( IsGuest() ==  1 )										\
+		{															\
+			open error_guest_popmenu;								\
+		}															\
+		elseif( IsSignedInToLive() ==  0 )							\
+		{															\
+			SIGN_IN_CMD												\
+		}															\
+		elseif( isContentRatingAllowed() == 0 )						\
+		{															\
+			setdvar com_errorTitle "@MENU_NOTICE_CAPS";				\
+			setdvar com_errorMessage "@XBOXLIVE_MPNOTALLOWED";		\
+			open error_popmenu;										\
+		}															\
+		elseif( isDemonwareFetchingDone() == 1 ) 					\
+		{															\
+			SETUP_ACTION_XBOXLIVE									\
+		} 															\
+		else														\
+		{															\
+			open popup_connectingtodwhandler;						\
+		}
+
+	menuDef
+	{
+		name			main_online
+		background		"menu_background_press_start_sm"
+
+		fullscreen		0
+		ui3dWindowId	0
+		forecolor		1 1 1 1
+		backColor		1 1 1 1
+		style			WINDOW_STYLE_FILLED
+		rect			0 0 640 480
+		control			MENU_CONTROL_USED
+
+		onOpen
+		{
+#ifdef PS3
+			execnow set systemlink_warning_shown 1;
+#endif // #ifdef PS3
+#ifdef CONSOLE
+			setdvar ui_version_show "0";
+			//showhidenewgameresume;
+			focusfirst;
+#else //#ifdef CONSOLE
+			setdvar dw_active 1
+#endif //#ifdef CONSOLE
+			uiScript openmenuondvar ui_sp_unlock 1 "popmenu_sp_unlock";
+			//execNowOnDvarIntValue zombiemode 1 "closeMenu main_online;";
+			setdvar zombiemode 1;
+			setdvar ui_zombiemode 1;
+			setdvar zombiefive_norandomchar 0;
+			
+#ifdef PC
+			setFocus BUTTON_NAME"1";
+#endif // #ifdef PC
+		}
+		onFocus
+		{
+#ifdef PC
+			setdvar onlinegame "1"
+#endif //#ifdef PC
+		}
+		
+		onEsc
+		{
+			exec "xstopprivateparty";
+			exec "xstopparty";
+			exec "set splitscreen 0";
+			exec "set arcademode 0";
+			LOCAL_NETWORK_RESET
+			setdvar spmode 0;
+			close self;
+			open main_text;
+		}
+
+		#undef  BUTTON_HEIGHT
+		#define BUTTON_HEIGHT		95
+
+#define COMMON_COOP_ACTION( menuName )					\
+		execnow "set next_menu_name "menuName;			\
+		setDvar menu_parent_3d_tv_name "main_online"
+
+#define ZOMBIE_LEVEL_SELECT_ACTION						\
+		setDvar menu_parent_3d_tv_name "main_online";	\
+		setdvar next_menu_name "levels_zombie";			\
+		LOCAL_NETWORK_RESET;							\
+		open blackout_3d_tv;
+
+
+#define LOC_SMALL_TV_TEXTFONT			UI_FONT_BIG
+#define LOC_SMALL_TV_TEXTSCALE			1.5
+#define IS_LOC_SMALL_TV_FONT			( dvarint( loc_language ) == 11 || dvarint( loc_language ) == 8 || dvarint( loc_language ) == 9) //japanese & russian
+
+#ifdef CONSOLE
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 1, MAIN_BUTTON_RECT( 1 ), 1 1 1 0.24, 1 )  
+		CHOICE_BUTTON_TV_VIS_EX(	1, MAIN_BUTTON_RECT( 1 ), BUTTON_NAME,
+									"@PLATFORM_XBOX_LIVE_CAPS", CHOICE_TEXTCOLOR,
+									SETUP_SIGNIN, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	1, MAIN_BUTTON_RECT( 1 ), BUTTON_NAME,
+									"@PLATFORM_XBOX_LIVE_CAPS", CHOICE_TEXTCOLOR,
+									SETUP_SIGNIN, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 2, MAIN_BUTTON_RECT( 2 ), 1 1 1 0.24, 1 )  
+		CHOICE_BUTTON_TV_VIS_EX(	2, MAIN_BUTTON_RECT( 2 ), BUTTON_NAME,
+									"@MENU_SPLIT_SCREEN_CAPS", CHOICE_TEXTCOLOR,
+									SETUP_ACTION_SPLITSCREEN, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	2, MAIN_BUTTON_RECT( 2 ), BUTTON_NAME,
+									"@MENU_SPLIT_SCREEN_CAPS", CHOICE_TEXTCOLOR,
+									SETUP_ACTION_SPLITSCREEN, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 3, MAIN_BUTTON_RECT( 3 ), 1 1 1 0.24, 1 )  
+		CHOICE_BUTTON_TV_VIS_EX(	3, MAIN_BUTTON_RECT( 3 ), BUTTON_NAME,
+									"@PLATFORM_SYSTEM_LINK_CAPS", CHOICE_TEXTCOLOR,
+									SETUP_ACTION_SYSTEMLINK, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	3, MAIN_BUTTON_RECT( 3 ), BUTTON_NAME,
+									"@PLATFORM_SYSTEM_LINK_CAPS", CHOICE_TEXTCOLOR,
+									SETUP_ACTION_SYSTEMLINK, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 4, MAIN_BUTTON_RECT( 4 ), 1 1 1 0.24, 1 )  
+		CHOICE_BUTTON_TV_VIS_EX(	4, MAIN_BUTTON_RECT( 4 ), BUTTON_NAME,
+									"@MENU_SOLO_CAPS", CHOICE_TEXTCOLOR,
+									ZOMBIE_LEVEL_SELECT_ACTION, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	4, MAIN_BUTTON_RECT( 4 ), BUTTON_NAME,
+									"@MENU_SOLO_CAPS", CHOICE_TEXTCOLOR,
+									ZOMBIE_LEVEL_SELECT_ACTION, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+#else //#ifdef CONSOLE
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 1, MAIN_BUTTON_RECT( 1 ), 1 1 1 0.24, 1 )  
+		CHOICE_BUTTON_TV_VIS_EX(	1, MAIN_BUTTON_RECT( 1 ), BUTTON_NAME,
+									"@PLATFORM_XBOX_LIVE_CAPS", CHOICE_TEXTCOLOR,
+									COOP_SIGNIN, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	1, MAIN_BUTTON_RECT( 1 ), BUTTON_NAME,
+									"@PLATFORM_XBOX_LIVE_CAPS", CHOICE_TEXTCOLOR,
+									COOP_SIGNIN, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 2, MAIN_BUTTON_RECT( 2 ), 1 1 1 0.24, 1 )  
+		CHOICE_BUTTON_TV_VIS_EX(	2, MAIN_BUTTON_RECT( 2 ), BUTTON_NAME,
+									"@MENU_SOLO_CAPS", CHOICE_TEXTCOLOR,
+									ZOMBIE_LEVEL_SELECT_ACTION, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	2, MAIN_BUTTON_RECT( 2 ), BUTTON_NAME,
+									"@MENU_SOLO_CAPS", CHOICE_TEXTCOLOR,
+									ZOMBIE_LEVEL_SELECT_ACTION, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+#endif //#ifdef CONSOLE
+
+		#include "ui/safearea.menu"
+	}
+
+
+
+	menuDef
+	{
+		name			systemlink_flyout
+		background		"menu_background_press_start_sm"
+
+		fullscreen		0
+		ui3dWindowId	0
+		forecolor		1 1 1 1
+		backColor		1 1 1 1
+		style			WINDOW_STYLE_FILLED
+		rect			0 0 640 480
+		control			MENU_CONTROL_USED
+
+		onOpen			{}
+		onFocus			{}
+		onEsc			{ close self; }
+
+		#undef  BUTTON_Y_START
+		#define BUTTON_Y_START		55
+
+		#define SETUP_ACTION_FINDGAME								\
+				setDvar next_menu_name "menu_systemlink";			\
+				setDvar menu_parent_3d_tv_name "systemlink_flyout";	\
+				open blackout_3d_tv;
+
+		#define SETUP_ACTION_CREATEGAME								\
+				exec "exec "SYSTEMLINK_MP_CFG;						\
+				exec "xblive_rankedmatch 0";						\
+				exec "ui_enumeratesaved";							\
+				exec "party_timerVisible 0";						\
+				exec "xstartpartyhost";								\
+				exec "party_maxlocalplayers 2";						\
+				setDvar next_menu_name "menu_systemlink_lobby";		\
+				setDvar menu_parent_3d_tv_name "systemlink_flyout";	\
+				open blackout_3d_tv;
+
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 1, MAIN_BUTTON_RECT( 1 ), 1 1 1 0.24, 1 )  
+		CHOICE_BUTTON_RECT_NOHI_EX( 1, MAIN_BUTTON_RECT( 1 ), BUTTON_NAME, "@MENU_JOIN_GAME_CAPS", CHOICE_TEXTCOLOR, SETUP_ACTION_FINDGAME, 1, ; )
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 2, MAIN_BUTTON_RECT( 2 ), 1 1 1 0.24, 1 )  
+		CHOICE_BUTTON_RECT_NOHI_EX( 2, MAIN_BUTTON_RECT( 2 ), BUTTON_NAME, "@MENU_CREATE_GAME_CAPS", CHOICE_TEXTCOLOR, SETUP_ACTION_CREATEGAME, 1, ; )
+
+		#include "ui/safearea.menu"
+	}
+
+#include "ui_mp/menustyle.inc"
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( systemlink_warning_popup_coop, ;, close self; , 1 )
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_NOTICE", 1 )
+	SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_SYSTEMLINK_WARNING", 1 );
+	
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self;, 1, ; )
+}
+
+menuDef
+{
+	name			systemlink_warning_coop
+	onOpen
+	{
+		if( !dvarBool( systemlink_warning_shown ) ) 
+		{
+			open systemlink_warning_popup_coop;			
+		}
+		else
+		{
+			execnow "setclientbeingused"; 
+			open local_flyout;		
+		}
+		setdvar systemlink_warning_shown "1";	
+		close self;
+	}
+}

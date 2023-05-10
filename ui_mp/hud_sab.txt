@@ -1,0 +1,6 @@
+// hud menu defs
+// 
+{
+	loadMenu { "ui_mp/hud_team.menu" }
+	loadMenu { "ui_mp/hud_bomb.menu" }
+}

@@ -1,0 +1,329 @@
+name,file,template,loadspec,secondary,group,vol_min,vol_max,team_vol_mod,dist_min,dist_max,dist_reverb_max,volume_falloff_curve,reverb_falloff_curve,volume_min_falloff_curve,reverb_min_falloff_curve,limit_count,limit_type,entity_limit_count,entity_limit_type,pitch_min,pitch_max,team_pitch_mod,min_priority,max_priority,min_priority_threshold,max_priority_threshold,spatialized,type,loop,randomize_type,probability,start_delay,reverb_send,duck,pan,center_send,envelop_min,envelop_max,envelop_percentage,occlusion_level,occlusion_wet_dry,is_big,distance_lpf,move_type,move_time,real_delay,subtitle,mature,doppler,futz,context_type,context_value,compression,timescale,music,fade_in,fade_out,pc_format,pause,stop_on_death,bus,snapshot
+# Zombie Vocals,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Universal,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_elec_vocals,vox\zmb\standard\elec,zmb_zombie_amb,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Standard Zombies,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_vocals_zombie_ambience,vox\zmb\standard\amb,zmb_zombie_amb,,,voice,90,93,,100,4500,5000,log1,log0,,,6,priority,1,reject,-300,300,,30,60,0.25,1,3d,,,,,,98,,,,,,,0.75,,,yes,,,,,,,,,,,,,,,,,yes,,voice
+zmb_vocals_zombie_teardown,vox\zmb\standard\attack,zmb_zombie_amb,,,voice,94,98,,50,2000,2150,log1,log0,,,5,priority,1,reject,-300,300,,70,90,0.25,1,3d,,,,,,98,,,,,,,0.75,,,no,,,,,,,,,,,,,,,,,yes,,voice
+zmb_vocals_zombie_attack,vox\zmb\standard\attack,zmb_zombie_close,,,voice,94,97,,150,1000,1500,log1,log0,,,5,priority,1,reject,-300,300,,70,90,0.25,1,3d,,,,,,98,,,,50,150,94,0.75,,,no,,,,,,,,,,,,,,,,,yes,,voice
+zmb_vocals_zombie_sprint,vox\zmb\standard\sprint,zmb_zombie_amb,,,voice,92,94,,50,3000,3500,log2,log0,,,3,priority,1,reject,-300,300,,30,60,0.25,1,3d,,,,,,98,,,,,,,0.5,,,no,,,,,,,,,,,,,,,,,yes,,voice
+zmb_vocals_zombie_taunt,vox\zmb\standard\taunt,zmb_zombie_amb,,,voice,91,93,,50,1000,1200,log1,log0,,,3,priority,1,reject,-300,300,,30,60,0.25,1,3d,,,,,,98,,,,,,,0.75,,,no,,,,,,,,,,,,,,,,,yes,,voice
+zmb_vocals_zombie_death,vox\zmb\standard\death,zmb_zombie_close,,,voice,94,97,,150,1000,1500,log2,log0,,,6,priority,1,reject,-300,300,,30,60,0.25,1,3d,,,,,,98,,,,,,,0.75,,,no,,,,,,,,,,,,,,,,,,,voice
+zmb_vocals_zombie_behind,vox\zmb\standard\behind,zmb_zombie_close,,,voice,94,97,,100,500,550,log2,log0,,,2,priority,1,reject,-300,300,,70,90,0.25,1,3d,,,,,,98,,,,,,,0,,,no,,,,,,,,,,,,,,,,,yes,,
+zmb_vocals_zombie_crawler,vox\zmb\standard\crawl,zmb_zombie_amb,,,voice,90,93,,100,4500,5000,log2,log1,,,6,priority,1,reject,-300,300,,30,60,0.25,1,3d,,,,,,98,,,,,,,0.75,,,no,,,,,,,,,,,,,,,,,yes,,voice
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Quad Zombies,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_vocals_quad_ambience,vox\zmb\quads\ambient,zmb_zombie_amb,,,,97,98,,100,2000,2500,log1,log0,,,5,priority,1,reject,0,165,,30,60,0.25,1,3d,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_vocals_quad_sprint,vox\zmb\quads\ambient,zmb_zombie_amb,,,,97,98,,100,2000,2500,log2,log0,,,3,priority,1,reject,0,165,,30,60,0.25,1,3d,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_vocals_quad_attack,vox\zmb\quads\attack,zmb_zombie_close,,,,100,100,,100,4500,5000,log2,log0,,,3,priority,1,reject,0,165,,30,60,0.25,1,3d,,,,,,98,,,,75,250,94,,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_vocals_quad_death,vox\zmb\quads\death,zmb_zombie_close,,,,97,100,,100,4500,5000,log2,log0,,,6,priority,1,reject,0,165,,70,90,0.25,1,3d,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_vocals_quad_behind,vox\zmb\standard\behind,zmb_zombie_close,,,,,,,,,,,,,,4,priority,1,reject,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_vocals_quad_spawn,vox\zmb\quads\spawn,zmb_zombie_amb,,,,98,98,,2000,6000,8000,curve4,curve3,,,3,priority,1,reject,0,165,,30,60,0.25,1,3d,,,,,,98,,,,,,,0,,,no,,,,,,,,,,,,,,,,,yes,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Thief Zombies,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_vocals_thief_ambience,vox\zmb\thief\ambient,zmb_zombie_amb,,,,99,99,,250,4500,5000,log2,log1,,,5,priority,1,reject,0,165,,30,60,0.25,1,3d,,,,,,98,,,,,,,0.35,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_vocals_thief_sprint,vox\zmb\thief\sprint,zmb_zombie_amb,,,,99,99,,250,2000,3000,log2,log1,,,3,priority,1,reject,0,165,,30,60,0.25,1,3d,,,,,,98,,,,,,,0.35,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_vocals_thief_steal,vox\zmb\thief\steal,zmb_zombie_close,,,,100,100,,250,2000,3000,log2,log1,,,3,priority,1,reject,0,165,,30,60,0.25,1,3d,,,,,,98,,,,75,250,94,0.35,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_vocals_thief_death,vox\zmb\thief\death,zmb_zombie_close,,,,99,100,,250,2000,3000,log2,log1,,,6,priority,1,reject,0,165,,70,90,0.25,1,3d,,,,,,98,,,,,,,0.35,,,,,,,,,,,,,,,,,,,,,,
+zmb_vocals_thief_anger,vox\zmb\thief\anger,zmb_zombie_close,,,,100,100,,250,4500,5000,log2,log1,,,5,priority,1,reject,0,165,,70,90,0.25,1,3d,,,,,,98,,,,50,150,94,0.35,,,no,,,,,,,,,,,,,,,,,yes,,voice
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Engineer Zombies,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_engineer_vocals_amb,vox\zmb\engineer\amb,zmb_zombie_amb,,,,,,,,,,,,,,,,1,reject,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_engineer_vocals_hit,vox\zmb\engineer\roar,zmb_zombie_close,,,event,97,97,,1000,2000,2500,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,event
+zmb_engineer_vocals_attack,vox\zmb\engineer\attack,zmb_zombie_close,,,event,97,97,,300,1500,1750,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,event
+zmb_engineer_vocals_death,vox\zmb\engineer\death,zmb_zombie_close,,,,95,95,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_boss_vocals_behind,vox\zmb\standard\behind,zmb_zombie_close,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"# Hellhounds (Some aliases must use old calls for dogs, since it's using the same animations)",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+aml_dog_attack_jump,evt\zombie_tron\hellhounds\vox\attack,evt_3d,,zmb_hellhound_vocals_bite,,97,97,,,,,log2,log1,,,,,1,oldest,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_hellhound_vocals_bite,evt\zombie_tron\hellhounds\vox\bite,evt_3d,,,,98,98,,,,,log2,log0,,,,,1,oldest,,,,,,,,,,,,,450,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_hellhound_vocals_amb,evt\zombie_tron\hellhounds\vox\move,evt_3d,,,,97,97,,,,,,,,,,,1,oldest,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_hellhound_vocals_close,evt\zombie_tron\hellhounds\vox\close,evt_3d,,,,94,94,,,,,,,,,,,1,oldest,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+zmb_hellhound_vocals_death,evt\zombie_tron\hellhounds\vox\death,evt_3d,,,,100,100,,,,,,,,,,,1,oldest,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+aml_dog_bark,,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+aml_dog_run_start,,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+aml_dog_growl,,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+aml_dog_idle_look,,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,yes,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Zombie Foley/SFX,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Universal,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_zombie_head_gib,fly\gibs\zombie\head,,,,event,97,100,,500,2500,3000,log2,log0,,,8,priority,,,-281,315,,10,15,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_death_gibs,fly\gibs,,,,event,97,100,,500,2500,3000,log2,log0,,,8,priority,,,-281,315,,10,15,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,event
+fly_step_zombie_default,FLY\footsteps\walk\dirt,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_bark,FLY\footsteps\walk\wood,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_brick,FLY\footsteps\walk\concrete,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_carpet,FLY\footsteps\run\carpet,FLY_STEP_RUN_NPC,,fly_gear_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_cloth,FLY\footsteps\run\carpet,FLY_STEP_RUN_NPC,,fly_gear_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_concrete,FLY\footsteps\walk\concrete,FLY_STEP_RUN_NPC,,fly_gear_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_dirt,FLY\footsteps\walk\dirt,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_flesh,,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_foliage,FLY\footsteps\run\grass,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_glass,FLY\footsteps\run\grass,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_grass,FLY\footsteps\run\grass,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_gravel,FLY\footsteps\walk\dirt,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_ice,FLY\footsteps\run\sand,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_metal,FLY\footsteps\walk\metal,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_mud,FLY\footsteps\walk\mud,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_paper,FLY\footsteps\walk\concrete,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_plaster,FLY\footsteps\walk\concrete,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_rock,FLY\footsteps\walk\concrete,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_sand,FLY\footsteps\run\sand,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_snow,FLY\footsteps\run\sand,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_water,FLY\footsteps\walk\water,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_wood,FLY\footsteps\walk\wood,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_asphalt,FLY\footsteps\walk\concrete,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_ceramic,FLY\footsteps\walk\concrete,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_plastic,FLY\footsteps\run\carpet,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_rubber,FLY\footsteps\run\carpet,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_cushion,FLY\footsteps\run\carpet,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_fruit,FLY\footsteps\walk\dirt,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_paintedmetal,FLY\footsteps\walk\metal,FLY_STEP_RUN_NPC,,fly_cloth_zombie,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_cloth_zombie,FLY\gear\cloth,FLY_GEAR_FRONT_NPC,,,,83,86,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_gear_zombie,FLY\gear\rattle,FLY_GEAR_REAR_NPC,,,,,,,100,1000,1250,log2,log0,,,4,priority,,,,,,,,,,,,,,,10,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Standard Zombies,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_zombie_spawn,evt\zombie_global\spawn\dirt,,,,event,93,93,,250,2000,2250,curve4,curve2,,,3,priority,,,0,0,,40,60,0.25,1,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+fly_fall_zombie,fly\bodyfall\zmb,fly_cm_npc,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie,,fly_cm_npc,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_zombie_sweetner,,fly_cm_npc,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_attack_whoosh,fly\melee\zmb\swing,fly_cm_npc,,,,97,100,,150,550,650,log2,log0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Quad Zombies,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_quad_spawn,evt\zombie_global\spawn\quad,,,,event,97,97,,300,2000,2250,curve4,curve2,,,3,priority,,,0,0,,40,60,0.25,1,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+fly_step_crawler,fly\footsteps\prone\zmb\crawl,fly_cm_npc,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_quad_l,fly\footsteps\prone\zmb\crawl,fly_cm_npc,,,,100,100,,50,1200,1500,log2,log0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_step_quad_r,fly\footsteps\prone\zmb\crawl,fly_cm_npc,,,,100,100,,50,1200,1500,log2,log0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_quad_explo,evt\zombie_global\quad\explo,evt_3d,,,event,98,98,,400,2000,2250,curve4,curve2,,,3,priority,,,0,0,,40,60,0.25,1,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_quad_roof_hit,evt\zombie_global\quad\spawn\hit,evt_3d,,zmb_quad_roof_break,,96,96,,1500,2500,4500,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_quad_roof_break,exp\wood,evt_3d,,,,93,93,,1000,1500,2500,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_quad_roof_break_land,exp\debris\wood\debris_flux_l.wav,evt_3d,,,,94,94,,1000,1500,2500,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_quad_roof_break_land,exp\debris\wood\debris_flux_r.wav,evt_3d,,,,94,94,,1000,1500,2500,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Engineer Zombies,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_engineer_spawn,evt\zombie_global\spawn\engineer,,,,event,97,97,,,,,,,,,,,,,,,,100,100,0.25,1,2d,streamed,,,,,0,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,event
+zmb_engineer_death_bells,evt\zombie_global\spawn\engineer\bells,,,zmb_engineer_vocals_death,event,97,97,,,,,,,,,,,,,,,,100,100,0.25,1,2d,streamed,,,,,0,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,event
+fly_step_engineer,fly\footsteps\zmb\engineer\sweetener,fly_cm_npc,,,event,97,97,,300,2000,4000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_engineer_headbutt,fly\footsteps\prone\zmb\crawl,fly_cm_npc,,,,97,97,,300,2000,4000,,,,,,,,,-300,300,,,,,,,,,pitch,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_engineer_headbang,fly\zmb\engineer\headbang,fly_cm_npc,,,event,97,97,,300,2000,4000,,,,,,,,,-300,300,,,,,,,,,pitch,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_engineer_pipebang,fly\zmb\engineer\headbang,fly_cm_npc,,,,97,97,,300,2000,4000,,,,,,,,,-300,300,,,,,,,,,pitch,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_engineer_handbang,fly\zmb\engineer\headbang,fly_cm_npc,,,,97,97,,300,2000,4000,,,,,,,,,-300,300,,,,,,,,,pitch,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_engineer_groundbang,fly\zmb\engineer\hammer\hit,,,zmb_engineer_groundbang_sweet,event,97,97,,1000,4000,4000,,curve2,,,1,reject,,,,,,100,100,0.25,1,3d,,,,,,,,,,,,,,,yes,,,,,,,,,,,,,,,,,,,,event
+zmb_engineer_groundbang_sweet,fly\zmb\engineer\hammer\sweet,,,zmb_engineer_groundbang_l,event,97,97,,1000,4000,4000,,curve2,,,1,reject,,,,,,100,100,0.25,1,3d,,,,,,,,,,,,,,,yes,,,,,,,,,,,,,,,,,,,,event
+zmb_engineer_groundbang_l,fly\zmb\engineer\hammer\flux\flux_l.wav,,,zmb_engineer_groundbang_r,event,97,97,,100,4000,6000,curve3,curve2,,,1,reject,,,,,,100,100,0.25,1,3d,,,,,200,,,,,,,,,,,,left_player,3000,,,,,,,,,,,,,,,,,event
+zmb_engineer_groundbang_r,fly\zmb\engineer\hammer\flux\flux_r.wav,,,,event,97,97,,100,4000,6000,curve3,curve2,,,1,reject,,,,,,100,100,0.25,1,3d,,,,,275,,,,,,,,,,,,right_player,4000,,,,,,,,,,,,,,,,,event
+zmb_engineer_whoosh,fly\melee\melee_swing,fly_cm_npc,,,event,97,97,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Hellhounds,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_hellhound_bolt,evt\zombie_global\hellhounds\spawn\strikes_00.wav,evt_3d,,,event,100.00,100,,2500,8000,10000,curve4,,,,2,priority,,,-386,454,,80,80,0.25,1,3d,,,,,,,,,,,,,0,,,no,,,,,,,,,,,,,,,,,,,event
+zmb_hellhound_spawn,evt\zombie_global\hellhounds\spawn\spawn_01.wav,evt_3d,,zmb_hellhound_spawn_flux_l,event,100.00,100,,1000,8000,10000,curve4,,,,2,priority,,,-182,165,,80,80,0.25,1,3d,,,,,,,,,,,,,0,,,no,,,,,,,,,,,,,,,,,,,event
+zmb_hellhound_prespawn,evt\zombie_global\hellhounds\spawn\pre_spawn.wav,evt_3d,,,event,100.00,100,,1000,8000,10000,curve4,,,,2,priority,,,-182,165,,80,80,0.25,1,3d,,,,,,,,,,,,,0,,,no,,,,,,,,,,,,,,,,,,,event
+zmb_hellhound_spawn_flux_l,evt\zombie_global\hellhounds\spawn\spn_flux_l.wav,evt_3d,,zmb_hellhound_spawn_flux_r,event,93.00,93,,50,2000,,curve2,,,,,,,,-182,0,,80,80,0.25,1,3d,,,,,500,,,,,,,,0,,,no,left_player,4000,,,,,,,,,,,,,,,,,event
+zmb_hellhound_spawn_flux_r,evt\zombie_global\hellhounds\spawn\spn_flux_r.wav,evt_3d,,,event,93.00,93,,50,2000,,curve2,,,,,,,,0,165,,80,80,0.25,1,3d,,,,,500,,,,,,,,0,,,no,right_player,4000,,,,,,,,,,,,,,,,,event
+zmb_hellhound_explode,evt\zombie_tron\hellhounds\explode,evt_3d,,zmb_hellhound_vocals_death,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_hellhound_loop_fire,evt\zombie_global\hellhounds\loop_00.wav,evt_3d,,zmb_hellhound_loop_breath,,90,90,,,,,,,,,,,,,,,,,,,,,,looping,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_hellhound_loop_breath,evt\zombie_global\hellhounds\loop_01.wav,evt_3d,,,,90,90,,,,,,,,,,,,,,,,,,,,,,looping,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fly_dog_step_run_default,evt\zombie_global\hellhounds\step,evt_3d,,,,96,96,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_dog_round_start,evt\zombie_global\hellhounds\dog_round_start.wav,evt_2d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Player Swiped,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_player_swiped,PRJ\bullet\impacts\plr_flesh_lg,evt_3d,,,event,100,100,,50,250,500,log1,log0,,,,,,,,,,,,,,,,,,,,,,quad,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Windows,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Boards,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_break_glass_barrier,evt\zombie_global\windows,fly_cm_npc,,,,100,100,,400,5000,5500,log2,log1,,,4,priority,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Boards,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_boards_float,evt\zombie_global\boards\float,evt_3d,,,,100,100,,500,2500,3500,log3,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_board_slam,evt\zombie_global\boards\slam,evt_3d,,,,100,100,,450,2000,3000,log2,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_break_boards,evt\zombie_global\boards\snap,evt_3d,,,,100,100,,400,25000,30000,log3,log1,,,4,priority,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_repair_boards,evt\zombie_global\boards\repair,evt_3d,,,,100,100,,400,25000,30000,log3,log1,,,4,priority,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Metal Bars,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_bar_pull,evt\zombie_global\bars\pull,evt_3d,,,,94,97,,400,25000,30000,log2,log1,,,,,,,-170,120,,,,,,,,,,,,98,,,,,,,0.1,,,,,,,,,,,,,,,,,,,,,,
+zmb_bar_break,evt\zombie_global\bars\break,evt_3d,,,,94,97,,400,25000,30000,log2,log1,,,,,,,-170,120,,,,,,,,,,,,98,,,,,,,0.1,,,,,,,,,,,,,,,,,,,,,,
+zmb_bar_drop,evt\zombie_global\bars\drop,evt_3d,,,,94,97,,150,1500,2500,log2,log1,,,,,,,-170,120,,,,,,,,,,,,98,,,,,,,0.1,,,,,,,,,,,,,,,,,,,,,,
+zmb_bar_bend,evt\zombie_global\bars\bend,evt_3d,,,,94,97,,50,1000,1350,log2,log1,,,,,,,-170,120,,,,,,,,,,,800,98,,,,,,,0.1,,,,,,,,,,,,,,,,,,,,,,
+zmb_bar_repair,evt\zombie_global\bars\repair,evt_3d,,,,94,97,,150,1500,2500,log2,log1,,,,,,,-170,120,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_metal_repair,evt\zombie_global\bars\metal\repair,evt_3d,,,,,,,150,1500,2500,log2,log1,,,,,,,,,,,,,,,,,,,,98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Doors (Or Equivalents),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_couch_slam,evt\zombie_global\couch\slam,,,,event,97,97,,1000,4000,4000,,curve2,,,1,reject,,,,,,40,60,0.25,1,3d,,,,,,,,,,,,,,,yes,,,,,,,,,,,,,,,,,,,,event
+zmb_lightning_l,evt\zombie_global\lightning\flux\flux_l.wav,,,zmb_lightning_r,event,97,97,,300,1850,2250,,curve2,,,1,reject,1,reject,-182,165,,40,60,0.25,1,3d,,,,,,,,,,250,500,98,,,yes,,left_player,6000,,,,,,,,,,,,,,,,,event
+zmb_lightning_r,evt\zombie_global\lightning\flux\flux_r.wav,,,,event,97,97,,300,1850,2250,,curve2,,,1,reject,1,reject,-182,165,,40,60,0.25,1,3d,,,,,,,,,,250,500,98,,,yes,,right_player,6000,,,,,,,,,,,,,,,,,event
+zmb_door_slide_open,evt\zombie_global\doors\slide\open,,,,ambience,94,94,,250,3500,4000,,curve2,,,3,priority,,,-182,241,,70,80,0.25,1,3d,,,pitch,,200,,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_heavy_door_open,evt\zombie_global\doors\heavy\slide\open,,,,ambience,94,94,,250,3500,4000,,curve2,,,3,priority,,,-182,241,,70,80,0.25,1,3d,,,pitch,,200,,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_gate_slide_open,fly\bump\fence\chainlink,,,,ambience,94,94,,250,3500,4000,,curve2,,,3,priority,,,-182,241,,70,80,0.25,1,3d,,,pitch,,200,,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_rckt_door_slide_open,evt\zombie_cosmodrome\rocket_door\open,,,,ambience,94,94,,250,3500,4000,,curve2,,,3,priority,,,-182,241,,70,80,0.25,1,3d,,,pitch,,200,,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_door_wood_open,evt\zombie_global\doors\wood,,,,ambience,94,94,,250,3500,4000,,curve2,,,3,priority,,,-182,241,,70,80,0.25,1,3d,,,pitch,,200,,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_door_fence_open,evt\zombie_global\doors\fence,,,,ambience,94,94,,250,3500,4000,,curve2,,,3,priority,,,-182,241,,70,80,0.25,1,3d,,,pitch,,200,,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_wooden_door_fall,evt\zombie_global\blockers\door\wood_fall.wav,,,,ambience,94,94,,100,1500,2500,log2,log1,,,3,priority,,,-182,241,,70,80,0.25,1,3d,,,pitch,,,,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_lab_door_slide,evt\zombie_global\blockers\door\lab_door.wav,,,,ambience,94,94,,100,1500,2500,log2,log1,,,3,priority,,,-182,241,,70,80,0.25,1,3d,,,pitch,,,,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_window_grate_slide,evt\zombie_global\blockers\window\window_slide.wav,,,,ambience,95,95,,100,1500,2500,log2,log1,,,3,priority,,,-182,241,,70,80,0.25,1,3d,,,pitch,,,,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Perk Machines,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_electrical_surge,evt\zombie_global\switch\surge,,,,event,97,97,,50,350,450,curve2,curve2,,,4,priority,,,-400,200,,5,10,0.1,1,3d,,,pitch,,,,,,,50,150,92,0.5,,,,,,no,,,,,,,,,,,,,,,,event
+evt_perk_deny,evt\zombie_global\perksacola\bottle\deny_00.wav,,,,ambience,100,100,,100,450,700,curve3,curve2,,,,,,,-100,100,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_bottle_dispense,evt\zombie_global\perksacola\bottle\dispensemn_00.wav,,,,ambience,100,100,,100,450,700,curve3,curve2,,,,,,,-100,100,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_perk_bottle_open,evt\zombie_global\perksacola\bottle\open\openmn_00.wav,,,,ambience,100,100,,100,450,700,curve3,curve2,,,,,,,-100,100,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_perk_swallow,evt\zombie_global\perksacola\bottle\swallow\swallowmn_00.wav,,,,ambience,100,100,,100,450,700,curve3,curve2,,,,,,,-100,100,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_belch,evt\zombie_global\perksacola\bottle\belch\belchmn_00.wav,,,,ambience,100,100,,100,450,700,curve3,curve2,,,,,,,-100,100,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+evt_bottle_break,evt\zombie_global\perksacola\bottle\break\breakmn_00.wav,,,,ambience,100,100,,100,450,700,curve3,curve2,,,,,,,-100,100,,25,50,0.25,1,3d,,,,,500,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_perks_packa_upgrade,evt\zombie_global\pap\upgrade.wav,,,,ambience,93,93,,50,350,600,curve3,curve2,,,,,,,0,0,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_perks_packa_ready,evt\zombie_global\pap\ready.wav,,,,ambience,93,93,,50,350,600,curve3,curve2,,,,,,,0,0,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_perks_packa_ticktock,evt\zombie_global\pap\loop.wav,,,,ambience,90,90,,50,350,600,curve3,curve2,,,,,,,0,0,,25,50,0.25,1,3d,,looping,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_perks_packa_deny,evt\zombie_global\pap\deny.wav,,,,ambience,93,93,,50,350,600,curve3,curve2,,,,,,,0,0,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_perks_machine_loop,evt\zombie_global\perksacola\hum\hum_loop.wav,,,,ambience,93,93,,50,350,600,curve3,curve2,,,,,,,0,0,,25,50,0.25,1,3d,,looping,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_perks_broken_jingle,evt\zombie_global\perksacola\random,,,,ambience,93,93,,50,350,600,curve3,curve2,,,,,,,0,0,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_perks_power_on,evt\zombie_global\perksacola\power_on\power_on.wav,,,,ambience,93,93,,50,350,600,curve3,curve2,,,,,,,0,0,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_perks_packa_loop,evt\zombie_global\perksacola\hum\packa_loop.wav,,,,ambience,88,88,,50,350,600,curve3,curve2,,,,,,,0,0,,25,50,0.25,1,3d,,looping,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_perks_packa_knuckle_0,evt\zombie_global\perksacola\packa\knuckle_00.wav,evt_2d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_perks_packa_knuckle_1,evt\zombie_global\perksacola\packa\knuckle_01.wav,evt_2d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Magic Box,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_music_box,evt\zombie_global\box\music_box,,,,event,97,97,,500,2500,4000,,curve2,,,1,oldest,,,0,0,,40,60,0.25,1,3d,,,,,,,,,,50,250,97,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_box_move,evt\zombie_global\box\disappear,,,,event,93,93,,500,2500,4000,,curve2,,,1,oldest,,,,,,40,60,0.25,1,3d,,,,,,,,all,,50,250,97,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_box_poof,evt\zombie_global\box\poof,,,,event,93,93,,500,4000,4000,,curve2,,,1,oldest,,,,,,40,60,0.25,1,3d,,,,,,,,all,,50,250,97,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_whoosh,evt\zombie_global\box\whoosh,,,,event,93,93,,500,2500,4000,,curve2,,,1,oldest,,,,,,40,60,0.25,1,3d,,,,,2450,,,,,50,250,97,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_laugh_child,vox\zmb\box\laugh\child,,,,event,93,93,,500,2500,4000,,curve2,,,1,oldest,,,,,,40,60,0.25,1,3d,,,,,,,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_lid_open,evt\zombie_global\box\open,,,,event,93,93,,250,2500,4000,,curve2,,,1,oldest,,,,,,20,30,0.25,1,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_lid_close,evt\zombie_global\box\close,,,,event,93,93,,250,2500,4000,,curve2,,,1,oldest,,,,,,20,30,0.25,1,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_box_poof_land,evt\zombie_global\box\land,,,zmb_box_poof_land_flux_l,event,93,93,,500,10000,12000,curve4,curve2,,,1,reject,,,,,,100,100,0.25,1,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_box_poof_land_flux_l,evt\zombie_global\box\land\flux\flux_l.wav,,,zmb_box_poof_land_flux_r,event,93,93,,100,4000,6000,curve3,curve2,,,1,reject,,,,,,100,100,0.25,1,3d,,,,,200,,,,,,,,,,,,left_player,3000,,,,,,,,,,,,,,,,,event
+zmb_box_poof_land_flux_r,evt\zombie_global\box\land\flux\flux_r.wav,,,,event,93,93,,100,4000,6000,curve3,curve2,,,1,reject,,,,,,100,100,0.25,1,3d,,,,,275,,,,,,,,,,,,right_player,4000,,,,,,,,,,,,,,,,,event
+zmb_ann_vox_laugh_l,vox\zmb\annc\laugh\flux\flux_l.wav,,,zmb_ann_vox_laugh_r,voice,100,100,,350,2250,,curve3,,,,8,reject,1,reject,0,0,,100,100,0.25,1,3d,,,,,800,,,,,,,,0,,,,left_player,8000,,,,,,,,,,,,,,,,,voice
+zmb_ann_vox_laugh_r,vox\zmb\annc\laugh\flux\flux_r.wav,,,,voice,100,100,,350,2250,,curve3,,,,8,reject,1,reject,0,0,,100,100,0.25,1,3d,,,,,1000,,,,,,,,0,,,,right_player,8000,,,,,,,,,,,,,,,,,voice
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Purchasing,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_cha_ching,evt\zombie_global\purchase\accept,,,,event,97,97,,50,350,600,curve3,curve2,,,,,,,0,0,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_no_cha_ching,evt\zombie_global\purchase\deny,,,,event,97,97,,50,350,600,curve3,curve2,,,,,,,0,0,,25,50,0.25,1,3d,,,,,,,,,,50,150,92,0.4,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_weap_wall,evt\zombie_global\weap_wall\buy,,,,event,97,97,,250,2500,4000,,curve2,,,3,oldest,,,0,0,,40,60,0.25,1,3d,,,,,,,,all,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Powerups,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Spawn,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_spawn_powerup,evt\zombie_global\powerup\spawn,,,,event,97,97,,500,4000,4500,curve4,curve2,,,3,reject,,,0,0,,100,100,0.25,1,3d,,,,,,100,,,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_spawn_powerup_loop,evt\zombie_global\powerup\loop,,,,event,97,97,,50,800,1200,curve4,curve2,,,4,reject,,,0,0,,100,100,0.25,1,3d,,looping,,,550,100,,,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Pickup,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_powerup_grabbed,evt\zombie_global\powerup\grab,,,,event,97,97,,500,4000,4500,curve4,curve2,,,3,reject,,,0,0,,100,100,0.25,1,2d,,,,,,100,,all,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_powerup_grabbed_3p,evt\zombie_global\powerup\grab,,,,event,97,97,,50,1000,4500,curve4,curve2,,,3,reject,,,0,0,,100,100,0.25,1,3d,,,,,,100,,all,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Powers,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_insta_kill,evt\zombie_global\powerup\instakill,,,,event,87,87,,500,4000,4500,curve4,curve2,,,4,reject,,,0,0,,100,100,0.25,1,2d,,,,,,100,,all,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_insta_kill_loop,evt\zombie_global\powerup\instakill\loop,,,,event,87,87,,50,800,1200,curve4,curve2,,,4,reject,,,0,0,,100,100,0.25,1,2d,,looping,,,,100,,all,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_full_ammo,evt\zombie_global\powerup\max_ammo,,,,event,87,87,,50,800,1200,curve4,curve2,,,4,reject,,,0,0,,100,100,0.25,1,2d,,,,,,100,,,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+evt_nuked,evt\zombie_global\nuke\nuke.wav,,,,event,97,97,,500,4000,6500,curve4,curve2,,,3,reject,,,0,0,,100,100,0.25,1,3d,,,,,,100,,,,,,,0.25,,,,center_player,2000,,,,,,,,,,,,,,,,,event
+evt_nuke_flash,evt\zombie_global\nuke\nuke_flash.wav,,,evt_dew_80hz,event,97,97,,500,4000,4500,curve4,curve2,,,1,reject,,,0,0,,100,100,0.25,1,2d,,,,,,100,,all,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+evt_dew_80hz,amb\lfe\dew\evt_dew_80.wav,,,,event,97,97,,500,4000,4500,curve4,curve2,,,1,reject,,,0,0,,100,100,0.25,1,2d,,,,,,100,,all,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+evt_carpenter,evt\zombie_global\powerup\carpenter\loop,,,,event,87,87,,50,800,1200,curve4,curve2,,,4,reject,,,0,0,,100,100,0.25,1,2d,,looping,,,,100,,all,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+evt_carpenter_end,evt\zombie_global\powerup\carpenter\end,,,,event,87,87,,50,800,1200,curve4,curve2,,,4,reject,,,0,0,,100,100,0.25,1,2d,,,,,,100,,all,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_double_point_loop,evt\zombie_global\powerup\dbl_points\loop,,,,event,87,87,,50,800,1200,curve4,curve2,,,4,reject,,,0,0,,100,100,0.25,1,2d,,looping,,,,100,,all,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_points_loop_off,evt\zombie_global\powerup\dbl_points\off,,,,event,87,87,,50,800,1200,curve4,curve2,,,4,reject,,,0,0,,100,100,0.25,1,2d,,,,,,100,,all,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,ambience
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Deathcard,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_death_card,evt\zombie_global\death_card,,,,event,95,95,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,,,,,0,zmb_event,music,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+evt_death_card_loop,evt\zombie_global\powerup\loop,,,evt_death_card_voice_loop,event,92,92,,100,1000,1600,curve4,curve2,,,4,reject,,,0,0,,100,100,0.25,1,3d,,looping,,,,100,,,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+evt_death_card_voice_loop,evt\zombie_global\death_card_3p\death_card_3p_loop.wav,,,,event,96,96,,50,1500,1600,log0,curve2,,,4,reject,,,0,0,,100,100,0.25,1,3d,,looping,,,,100,,,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# MISC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+evt_challenge_complete,evt\zombie_global\challenge\complete,,,,event,97,97,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,,,,,,0,,music,,,,,,,,,,,,,,,,,,,,,,,,,,,voice
+evt_laststand_loop,evt\zombie_global\laststand\laststand_loop.wav,,,,event,97,97,,,,,,,,,,,,,0,0,,100,100,0.25,1,2d,streamed,looping,,,,0,zmb_laststand,front_halfback,,,,,0.25,,,,,,,,,,,,,,,,,,,,,,reference
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Meteor,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_meteor_loop,evt\zombie_global\meteor\meteor_loop.wav,evt_3d,,,,88,88,,100,1000,1500,log2,log1,,,,,,,,,,,,,,,,looping,,,,96,,,,,,,0.3,,,,,,,,,,,,,,,,,,,,,,
+zmb_meteor_activate,evt\zombie_global\meteor\meteor_affirm.wav,evt_3d,,,,98,98,,100,500,700,log2,log1,,,,,,,,,,,,,,,,,,,,98,,,,,,,0.45,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Traps,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Electric,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_elec_start,evt\zombie_global\traps\elec\start,,,,event,96,96,,100,1000,1000,,curve2,,,6,priority,,,-281,315,,15,25,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_elec_loop,evt\zombie_global\traps\elec\loop,,,,event,96,96,,250,1000,1000,curve3,curve2,,,4,priority,1,priority,-182,84,,50,95,0.25,1,3d,,looping,,,,,,,,100,250,98,0.25,,yes,,,,,,,,,,,,,,,,,,,,event
+zmb_elec_arc,amb\industrial\power\arcs\short,,,,ambience,93,93,,100,800,1000,,curve2,,,6,priority,,,-281,315,,10,15,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_elec_jib_zombie,amb\industrial\power\arcs\short,,,,event,96,96,,500,1500,1750,,curve2,,,8,priority,,,-281,315,,10,15,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_elec_current_loop,amb\industrial\power\current,,,,event,96,96,,50,1250,1500,curve2,curve1,,,,,,,-281,34,,35,50,0.25,1,3d,,looping,,,,,,,,100,250,98,0.35,,,,,,,,,,,,,,,,,,,,,,event
+zmb_exp_jib_zombie,fly\gibs\zombie\elec,,,zmb_sizzle,event,96,96,,500,1500,1750,,curve2,,,8,priority,,,-281,315,,10,15,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_sizzle,fly\body_burn\sizzle,,,,event,96,96,,250,1000,1750,,curve2,,,3,priority,,,-281,315,,10,15,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_zombie_arc,amb\industrial\power\arcs\big,,,zmb_sizzle,ambience,96,96,,500,800,1000,,curve2,,,6,priority,,,-281,315,,10,15,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_ignite,fly\body_burn\ignite,,,zmb_onfire,event,96,96,,500,1250,1750,,curve2,,,3,priority,,,-281,315,,10,15,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Fire,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_firetrap_start,wpn\flame\npc\start,,,,event,93,93,,100,1000,1000,,curve2,,,6,priority,,,-281,315,,15,25,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_firetrap_loop,wpn\flame\npc\loop,,,,event,93,93,,100,1000,1000,,curve2,,,6,priority,,,-281,315,,15,25,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_firetrap_end,wpn\flame\npc\stop,,,,event,93,93,,100,1000,1000,,curve2,,,6,priority,,,-281,315,,15,25,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,event
+zmb_onfire,wpn\flame\npc\body_burn,,,zmb_sizzle,event,98,98,,250,1000,1750,,curve2,,,3,priority,,,-281,315,,10,15,0.25,1,3d,,,,,,,,,,100,250,98,0.25,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Battery,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_battery_pickup,evt\zombie_global\power_cell\pickup\pickup_00.wav,evt_3d,,,,98,98,,100,600,1000,log2,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_battery_insert,evt\zombie_global\power_cell\insert\insert_00.wav,evt_3d,,,,98,98,,100,900,1500,log2,log1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Switch,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_switch_flip,evt\zombie_global\switch\flip,,,,ambience,96,96,,250,2500,4000,,curve2,,,1,oldest,,,0,0,,100,100,0.25,1,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_sparks_l_b,evt\zombie_global\switch\flip\flux\flux_l.wav,,,,ambience,96,96,,250,2500,4000,,curve2,,,1,oldest,,,0,0,,100,100,0.25,1,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_sparks_r_b,evt\zombie_global\switch\flip\flux\flux_r.wav,,,,ambience,96,96,,250,2500,4000,,curve2,,,1,oldest,,,0,0,,100,100,0.25,1,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_sparks_l,evt\zombie_global\switch\power\flux\flux_l.wav,,,,ambience,96,96,,350,2600,4500,,curve2,,,1,oldest,,,0,0,,100,100,0.25,1,3d,,,,,2000,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_sparks_r,evt\zombie_global\switch\power\flux\flux_r.wav,,,,ambience,96,96,,350,2600,4500,,curve2,,,1,oldest,,,0,0,,100,100,0.25,1,3d,,,,,1850,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_sparks_l_end,evt\zombie_global\switch\power\flux_end\flux_l.wav,,,,ambience,96,96,,350,2600,4500,,curve1,,,1,oldest,,,0,0,,100,100,0.25,1,3d,,,,,,,,,,,,,0,,,,left_player,7000,,,,,,,,,,,,,,,,,ambience
+amb_sparks_r_end,evt\zombie_global\switch\power\flux_end\flux_r.wav,,,,ambience,96,96,,350,2600,4500,,curve1,,,1,oldest,,,0,0,,100,100,0.25,1,3d,,,,,,,,,,,,,0,,,,right_player,7000,,,,,,,,,,,,,,,,,ambience
+amb_sparks,amb\industrial\power\arcs\small,,,,ambience,90,93,,500,5000,10000,curve3,curve2,,,,,,,-182,84,,50,95,0.25,1,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+amb_sparks_loop,amb\industrial\power\arcs\loop,,,,ambience,95,95,,80,750,4000,,curve2,,,1,oldest,,,0,0,,100,100,0.25,1,3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ambience
+zmb_turn_on,evt\zombie_global\switch\turn_on,,,,event,93,93,,250,3500,4000,,curve2,,,1,oldest,,,0,0,,100,100,0.25,1,3d,streamed,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_circuit,evt\zombie_global\switch\circuit,,,evt_generator_surge,event,96,96,,250,5500,5500,,curve2,,,,,,,-386,165,,100,100,0.25,1,3d,,,,,,,,,,,,,0.2,,,,,,,,,,,,,,,,,,,,,,event
+evt_generator_surge,evt\zombie_global\power_on\surge,,,,event,96,96,,250,5500,5500,,curve2,,,2,reject,2,reject,0,0,,100,100,0.25,1,3d,,,,,,,,,,,,,0.1,,,,,,,,,,,,,,,,,,,,,,event
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Monkeybomb,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# SFX,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkeybomb_cym,wpn\monkey\monk_cymb_m.wav,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_song,wpn\monkey\monkey_song_00.wav,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_song,wpn\monkey\monkey_song_01.wav,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_song,wpn\monkey\monkey_song_02.wav,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_wood,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_rock,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_dirt,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_default,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_bark,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_brick,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_carpet,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_cloth,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_concrete,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_foliage,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_glass,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_grass,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_gravel,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_ice,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_metal,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_mud,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_paper,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_plaster,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_sand,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_snow,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_water,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_asphalt,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_ceramic,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_plastic,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_rubber,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_cushion,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_fruit,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_land_paintedmetal,wpn\grenade\satchel_charge\satchel_plant.wav,evt_3d,,zmb_vox_monkey_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_throw,wpn\grenade\foley\throw\gren_throw.wav,evt_3d,,zmb_vox_monkey_throw,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Anim,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_anim_cymb,wpn\monkey\monk_cymb_st.wav,evt_2d,,,,97,97,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_monkey_anim_key,wpn\monkey\monkey_ratchet.wav,evt_2d,,,,97,97,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Bowie Knife,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Buy Flourish,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_bowie_flourish_start,wpn\bowie\bowie_start.wav,evt_2d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_bowie_flourish_turn,wpn\bowie\bowie_turn.wav,evt_2d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_bowie_flourish_toss,wpn\bowie\bowie_toss.wav,evt_2d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_bowie_flourish_catch,wpn\bowie\bowie_catch.wav,evt_2d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Use,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_bowie_swing,wpn\bowie\bowie_swing,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_bowie_stab,wpn\bowie\bowie_stab,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_bowie_pull,wpn\melee\knife\knife_pull,evt_3d,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# Autoturret,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+zmb_turret_startup,wpn\turret\activate\activate.wav,,,,event,97,97,,250,1000,1000,curve2,curve2,,,,,,,0,0,,100,100,0.25,1,3d,,,,,,100,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event
+zmb_turret_down,wpn\turret\activate\deactivate.wav,,,,event,97,97,,250,1000,1000,curve2,curve2,,,,,,,0,0,,100,100,0.25,1,3d,,,,,,100,,,,,,,,,,,,,,,,,,,,,,,,,,,,,event

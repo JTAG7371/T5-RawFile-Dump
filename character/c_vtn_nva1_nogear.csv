@@ -1,0 +1,16 @@
+rawfile,character/c_vtn_nva1_nogear.gsc
+xmodel,c_vtn_nva1_body
+xmodel,c_vtn_nva1_head
+xmodel,c_vtn_nva1_body_g_upclean
+xmodel,c_vtn_nva1_body_g_rarmoff
+xmodel,c_vtn_nva1_body_g_larmoff
+xmodel,c_vtn_nva1_body_g_torso
+xmodel,c_vtn_nva2_body_g_lowclean
+xmodel,c_vtn_nva2_body_g_rlegoff
+xmodel,c_vtn_nva2_body_g_llegoff
+xmodel,c_vtn_nva2_body_g_legsoff
+xmodel,c_vtn_g_rarmspawn
+xmodel,c_vtn_g_larmspawn
+xmodel,c_vtn_g_rlegspawn
+xmodel,c_vtn_g_llegspawn
+rawfile,character/clientscripts/c_vtn_nva1_nogear.csc

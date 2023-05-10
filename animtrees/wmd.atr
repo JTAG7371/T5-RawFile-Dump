@@ -1,0 +1,159 @@
+freefall_player
+{
+	int_freefall_loop
+	int_base_jump_freefall_loop
+	int_base_jump_freefall_turnleft
+	int_base_jump_freefall_turnright
+	
+	int_base_jump_chuteopen_loop
+	int_base_jump_chuteopen_turnleft
+	int_base_jump_chuteopen_turnright
+	int_base_jump_cord_pull
+	
+	int_base_jump_freefall_intro
+	int_base_jump_land
+	
+	v_base_jump_chute_loop
+	v_base_jump_chute_open 	
+}
+
+	
+ch_wmd_b01_rappelopen_player
+ch_wmd_b01_knifethrow_door
+ch_wmd_b01_grdsopengarage_door_leadin
+ch_wmd_b01_grdsopengarage_door_loop
+
+ch_wmd_b01_icescraping_gascan_leadin
+ch_wmd_b01_icescraping_gascan_loop
+ch_wmd_b01_icescraping_icescraper_loop
+
+ch_wmd_b01_grdshoveling_shovel01
+ch_wmd_b01_grdshoveling_shovel02
+
+ch_wmd_b02_grdsplaycards_loop_chair02
+ch_wmd_b02_grdsplaycards_alert_chair02
+
+ch_wmd_b01_rappelbreach_deskreact_react_chair
+ch_wmd_b01_rappelbreach_deskreact_loop_chair
+ch_wmd_b01_woodchoppers_axe
+ch_wmd_b01_woodchoppers_wood01
+ch_wmd_b01_woodchoppers_wood02
+ch_wmd_b01_barnesthrowspack_pack
+ch_wmd_b01_barnesthrowspack_player
+
+
+ch_wmd_b01_freefall_chutepull_chute
+ch_wmd_b01_freefall_chutefloat_chute
+ch_wmd_b01_freefall_land_chute01
+ch_wmd_b01_freefall_land_chute02
+
+//AMBUSH IN THE SNOW
+ch_wmd_b01_ambush_idle_player
+ch_wmd_b01_ambush_player
+ch_wmd_b01_hideinsnow_idle_player
+ch_wmd_b01_hideinsnow_rise_player
+ch_wmd_b01_hideinsnow_reach_player
+ch_wmd_b01_hideinsnow_reachIdle_player
+
+//Player Rappel
+ch_wmd_b01_rappel_a_player
+ch_wmd_b01_rappel_b_player
+ch_wmd_b01_rappel_c_player
+ch_wmd_b01_rappel_d_player
+ch_wmd_b01_rappel_e_player
+ch_wmd_b01_rappel_f_player
+ch_wmd_b01_rappel_g_player
+ch_wmd_b01_rappel_wait_player
+ch_wmd_b01_player_rappel_test
+
+ch_wmd_b01_rappel_playerBreach
+ch_wmd_b01_rappel_playerBreach_idle
+ch_wmd_b01_playerRappelBreach_idle_player
+ch_wmd_b01_playerRappelBreach_hookup_player
+ch_wmd_b01_playerRappelBreach_player
+
+//new player rappel ;)
+ch_wmd_b01_player_control_rappel_idle
+ch_wmd_b01_player_control_rappel_loop
+ch_wmd_b01_player_control_rappel_start
+ch_wmd_b01_player_control_rappel_stop
+ch_wmd_b01_player_control_rappel_land
+ch_wmd_b01_rappel_playerBreach_hookup
+
+int_rappel_idle
+int_rappel_compress
+int_rappel_compress_loop
+int_rappel_kickoff
+int_rappel_loop
+int_rappel_brake
+int_rappel_brake_loop
+int_rappel_brake_fail
+int_rappel_brake_succeed
+int_rappel_hookup
+int_rappel_2_fall
+int_rappel_fall_loop
+int_rappel_fall_hit_a
+
+ch_wmd_b01_rappel_A_kristina_rope
+ai_rappel_wmd_weaver_rope_idle_a
+ai_rappel_wmd_weaver_rope_bounce_a
+ai_rappel_wmd_weaver_rope_idle_b
+ai_rappel_wmd_weaver_rope_bounce_b
+ai_rappel_wmd_weaver_rope_idle_c
+ai_rappel_wmd_weaver_rope_bounce_c
+ai_rappel_wmd_weaver_rope_idle_d
+ai_rappel_wmd_weaver_rope_bounce_d
+ai_rappel_wmd_weaver_rope_idle_e
+ai_rappel_wmd_weaver_rope_bounce_e
+ai_rappel_wmd_weaver_rope_idle_f
+ai_rappel_wmd_weaver_rope_bounce_f
+ai_rappel_wmd_weaver_rope_idle_g
+ai_rappel_wmd_weaver_rope_bounce_g
+ai_rappel_wmd_weaver_rope_idle_h
+ai_rappel_wmd_weaver_rope_bounce_h
+
+p_rappel_2_fall_rope
+p_rappel_brake_loop_rope
+p_rappel_brake_rope
+p_rappel_brake_succeed_rope
+p_rappel_compress_loop_rope
+p_rappel_compress_rope
+p_rappel_hookup_rope
+p_rappel_idle_rope
+p_rappel_kickoff_rope
+p_rappel_loop_rope
+
+//sabotage
+p_wmd_b01_sabotage_wires
+ch_wmd_b01_sabotage_player
+
+//smoke break
+p_wmd_b01_cigbreak_barrel
+
+//power station door
+ch_wmd_b01_squadregroup02_door
+
+// wheelbarrow
+p_wmd_b01_woodchoppers_barrow
+p_wmd_b01_woodchoppers_death_barrow
+
+// rope for squad regroup
+ch_wmd_b01_squadregroup02_guy01_rope
+ch_wmd_b01_squadregroup02_guy03_rope
+
+// rope for weaver breach
+p_wmd_b01_playerRappelBreach_hookup_wRope
+p_wmd_b01_playerRappelBreach_idle02_wRope
+p_wmd_b01_playerRappelBreach_wRope
+
+// ledge fall
+ch_wmd_b01_catwalk_collapse_death_player
+
+// base street truck
+fxanim_wmd_truck_flip_anim
+
+// avalanche surfing truck
+fxanim_wmd_avalanche_truck_anim
+
+//truck mount
+ch_wmd_b05_player_mount_gaz

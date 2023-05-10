@@ -1,0 +1,1363 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#include "ui_mp/menustyle.inc"
+
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/newframe.inc"
+#include "ui/framestyle.inc"
+#include "ui/frame.inc"
+
+#include "ui_mp/fileshare.inc"
+
+#undef CHOICE_GROUP
+#define CHOICE_GROUP "demo_ingame"
+
+#define	BOTTOM_RECT_X 0
+#define	BOTTOM_RECT_Y 0
+
+#undef CHOICE_X_START
+#define CHOICE_X_START			20
+
+#undef CHOICE_Y_START
+#define CHOICE_Y_START			170
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X			200
+
+#undef CHOICE_HORIZONTAL_ALIGN
+#define CHOICE_HORIZONTAL_ALIGN HORIZONTAL_ALIGN_LEFT
+
+#undef CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN VERTICAL_ALIGN_TOP
+
+#undef CHOICE_TEXTALIGN
+#define CHOICE_TEXTALIGN ITEM_ALIGN_MIDDLE_LEFT
+
+#undef CHOICE_TEXTSTYLE
+#define CHOICE_TEXTSTYLE		ITEM_TEXTSTYLE_NORMAL
+
+{
+	menuDef
+	{
+		name					demo_ingame
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		fullScreen				0
+		focusColor				COLOR_FOCUSED
+		soundloop				""
+		blurWorld				4.8
+		onOpen
+		{
+			focusFirst;
+			execondvarintvalue demo_pause 0 "demo_pause ( dvarInt( demo_cmdNum ) )";
+			
+			setdvar fileshare_rating_screenshot 0;
+			setdvar fileshare_rating_film 0;
+			setdvar fileshare_rating_clip 0;
+			setdvar fileshare_rating_gametype 0;
+			if( isDemoClipPlaying() )
+			{
+				setdvar fileshare_rating_clip 1;
+			}
+			else
+			{
+				setdvar fileshare_rating_film 1;
+			}
+		}
+		onESC 
+		{
+			close self;
+		}
+		
+		execkeyint BUTTON_START
+		{
+			close self;
+		}
+
+		#include "ui_mp/ingamebg.inc"
+
+		// ----------------- BEGIN Scroller --------------------------		
+		#include "ui/scroller.inc"
+		// ----------------- END Scroller --------------------------	
+
+		// ------------------ buttons ---------------------
+
+#ifdef CONSOLE
+		// Back button
+		PREPROC_TEXT_DRAW_VIS( 0 0 0 0 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM, 0 0, "@PLATFORM_BACK", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1, 1 )
+#else
+		// Back button
+		NEW_FRAME_BACK_BUTTON_ACTION_PC_VIS( close self;, 1 )
+#endif
+
+#ifdef CONSOLE
+#define OPTIONS_ACTION \
+	open ingameoptions; close self;
+#else
+#define OPTIONS_ACTION \
+	close self; open options_new_pc; execnow "set ui_allow_graphic_change 0";
+#endif
+
+		#undef BUTTON_BG_X_START
+		#define BUTTON_BG_X_START 10
+
+		#undef BUTTON_BG_Y_START
+		#define BUTTON_BG_Y_START 25
+
+		// Demo Title Name
+		PREPROC_TEXT_DRAW_VIS( BUTTON_BG_X_START BUTTON_BG_Y_START 200 30 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP, BUTTON_BG_X_START BUTTON_BG_Y_START, GetDemoTitleName(), (TEXTSIZE_LARGE * 1.2), 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, 1 )
+		// Date
+		PREPROC_TEXT_DRAW_VIS( BUTTON_BG_X_START (BUTTON_BG_Y_START+20) 200 30 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP, BUTTON_BG_X_START BUTTON_BG_Y_START, locstring( "MENU_DATE" ) + ": " + GetDemoTimeInfo(), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, 1 1 1 0.5, 1 )
+		// Duration
+		PREPROC_TEXT_DRAW_VIS( BUTTON_BG_X_START (BUTTON_BG_Y_START+40) 200 30 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP, BUTTON_BG_X_START BUTTON_BG_Y_START, locstring( "MENU_DEMO_DURATION_TITLE" ) + ": " + GetDemoDuration(), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, 1 1 1 0.5, 1 )
+		// Author
+		PREPROC_TEXT_DRAW_VIS( BUTTON_BG_X_START (BUTTON_BG_Y_START+60) 200 30 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP, BUTTON_BG_X_START BUTTON_BG_Y_START, locstring( "MENU_DEMO_AUTHOR_TITLE" ) + ": " + GetDemoAuthor(), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, 1 1 1 0.5, when( GetDemoAuthor() != "" ) )
+
+		#define RATING_ALLOWED ( dvarString( fsSelectedFileID ) != "0" )
+		#define ALREADY_RATED ( GetUserFileRating( dvarString( fsSelectedFileID ) ) != 0 )
+		
+#ifdef PC
+		#define IS_PC 1
+#else
+		#define IS_PC 0
+#endif
+
+		#define SHOW_ENABLED_CLIP_RECORD_OPTIONS ( !isDemoClipRecording() && ( getDemoSegmentCount() != 0 ) && !isRepositioningCameraMarker() )
+		#define SHOW_DISABLED_CLIP_RECORD_OPTIONS ( isDemoClipRecording() || ( getDemoSegmentCount() == 0 ) || isRepositioningCameraMarker() )
+		#define IS_LOBBY_HOST		( gameHost() && inLobby() )
+		#define IS_NOT_LOBBY_HOST	( !gameHost() || !inLobby() )
+		#define LEAVE_DEMO										\
+				if ( isClipModified() == 0 )					\
+				{												\
+					open popup_leavedemo_clipnotmodified;		\
+				}												\
+				else											\
+				{												\
+					open popup_leavedemo_clipmodified;			\
+				}
+
+		#define RATE_FILM \
+				if ( !ALREADY_RATED ) \
+				{ \
+					open fileshare_submitrating; \
+				} \
+				else \
+				{ \
+					open fileshare_ratingsubmitted; \
+				}
+						
+		NEW_FRAME_BUTTON( 1, CHOICE_RECT(1), locString( "@MENU_UPLOAD_CLIP", getDemoSegmentCount() ), open clip_save_screen;, ;, ;, ( SHOW_ENABLED_CLIP_RECORD_OPTIONS && !isDemoClipPlaying() ), ;, ; )
+		NEW_FRAME_DBUTTON( 1, CHOICE_RECT(1), locString( "@MENU_UPLOAD_CLIP", getDemoSegmentCount() ), ;, ;, ;, ( SHOW_DISABLED_CLIP_RECORD_OPTIONS && !isDemoClipPlaying() ), ;, ; )
+
+		NEW_FRAME_BUTTON( 2, CHOICE_RECT(2), "@MENU_DEMO_MANAGE_SEGMENTS", execNow set ui_selected_segment -1; execNow set ui_segment_position -1; open demo_manage_segments; close self;, ;, ;, ( SHOW_ENABLED_CLIP_RECORD_OPTIONS && !isDemoClipPlaying() ), ;, ; )
+		NEW_FRAME_DBUTTON( 2, CHOICE_RECT(2), "@MENU_DEMO_MANAGE_SEGMENTS", ;, ;, ;, ( SHOW_DISABLED_CLIP_RECORD_OPTIONS && !isDemoClipPlaying() ), ;, ; )
+
+		NEW_FRAME_BUTTON( 3, CHOICE_RECT(3), "@MENU_OPTIONS", OPTIONS_ACTION, ;, ;, 1, ;, ; )
+	
+#ifdef PC
+		NEW_FRAME_BUTTON( 4, CHOICE_RECT(4), "@MENU_JUMP_TO_START", exec "demo_jumptostart ( dvarInt( demo_cmdNum ) )"; close self;, ;, ;, ( !isDemoClipRecording() && !isRepositioningCameraMarker() ), ;, ; )
+		NEW_FRAME_DBUTTON( 4, CHOICE_RECT(4), "@MENU_JUMP_TO_START", ;, ;, ;, ( isDemoClipRecording() || isRepositioningCameraMarker() ), ;, ; )
+		
+		// Rate
+		NEW_FRAME_BUTTON( 5, CHOICE_RECT(5), "@MENU_FILESHARE_RATE_FILM_ACTION", RATE_FILM, ;, ;, ( !isDemoClipPlaying() ) && RATING_ALLOWED && !ALREADY_RATED, ;, ; )
+		NEW_FRAME_BUTTON( 5, CHOICE_RECT(5), "@MENU_FILESHARE_RATE_CLIP_ACTION", RATE_FILM, ;, ;, ( isDemoClipPlaying() ) && RATING_ALLOWED && !ALREADY_RATED, ;, ; )
+		
+		// View Rating
+		NEW_FRAME_BUTTON( 5, CHOICE_RECT(5), "@PLATFORM_DEMO_SEERATING", RATE_FILM, ;, ;, RATING_ALLOWED && ALREADY_RATED, ;, ; )
+		
+		// End (rating not allowed)
+		NEW_FRAME_BUTTON( 5, CHOICE_RECT(5), "@MENU_END_FILM", LEAVE_DEMO, ;, ;, ( !isDemoClipPlaying() ) && !RATING_ALLOWED, ;, ; )
+		NEW_FRAME_BUTTON( 5, CHOICE_RECT(5), "@MENU_END_CLIP", LEAVE_DEMO, ;, ;, ( isDemoClipPlaying() ) && !RATING_ALLOWED, ;, ; )
+
+		// End (rating allowed)
+		NEW_FRAME_BUTTON( 6, CHOICE_RECT(6), "@MENU_END_FILM", LEAVE_DEMO, ;, ;, ( !isDemoClipPlaying() ) && RATING_ALLOWED, ;, ; )
+		NEW_FRAME_BUTTON( 6, CHOICE_RECT(6), "@MENU_END_CLIP", LEAVE_DEMO, ;, ;, ( isDemoClipPlaying() ) && RATING_ALLOWED, ;, ; )
+#else // #ifndef PC
+		NEW_FRAME_BUTTON( 4, CHOICE_RECT(4), "@MENU_JUMP_TO_START", exec "demo_jumptostart ( dvarInt( demo_cmdNum ) )"; close self;, ;, ;, ( !isDemoClipRecording() && !isRepositioningCameraMarker() && IS_LOBBY_HOST ), ;, ; )
+		NEW_FRAME_DBUTTON( 4, CHOICE_RECT(4), "@MENU_JUMP_TO_START", ;, ;, ;, ( isDemoClipRecording() || isRepositioningCameraMarker() || IS_NOT_LOBBY_HOST ), ;, ; )
+
+		NEW_FRAME_BUTTON( 5, CHOICE_RECT(5), "@MENU_END_FILM", LEAVE_DEMO, ;, ;, ( !isDemoClipPlaying() ), ;, ; )
+		NEW_FRAME_BUTTON( 5, CHOICE_RECT(5), "@MENU_END_CLIP", LEAVE_DEMO, ;, ;, ( isDemoClipPlaying() ), ;, ; )
+#endif // #ifndef PC
+	}
+
+#define MANAGE_SEGMENTS_BUTTON_NAME				"segment_" 
+#define MANAGE_SEGMENTS_SHIFT_LEFT_BUTTON_NAME	"segment_shift_left_"
+#define MANAGE_SEGMENTS_SHIFT_RIGHT_BUTTON_NAME "segment_shift_left_"
+#define MANAGE_SEGMENTS_PLACE_BUTTON_NAME		"segment_shift_left_"
+#define MANAGE_SEGMENTS_PREVIEW_BUTTON_NAME		"segment_shift_left_"
+#define MANAGE_SEGMENTS_DELETE_BUTTON_NAME		"segment_shift_left_"
+#define MANAGE_SEGMENTS_BUTTON_BG_NAME "button_bg_"
+#define MANAGE_SEGMENTS_LIST_WIDTH 530
+#define MANAGE_SEGMENTS_LIST_HEIGHT 37.5
+#define MANAGE_SEGMENTS_BUTTON_X_START (-MANAGE_SEGMENTS_LIST_WIDTH/2)
+#define MANAGE_SEGMENTS_BUTTON_Y_START (-MANAGE_SEGMENTS_LIST_HEIGHT/2)
+#define MANAGE_SEGMENTS_BUTTON_WIDTH 45
+#define MANAGE_SEGMENTS_BUTTON_HEIGHT 37.5
+#define MANAGE_SEGMENTS_BUTTON_SPACING 8
+#define MANAGE_SEGMENTS_TRANSITION_ARROW_WIDTH 8
+#define MANAGE_SEGMENTS_TRANSITION_ARROW_HEIGHT 15
+#define MANAGE_SEGMENTS_BUTTON_SELECTED_SIZE_INCREASE 8
+
+#define MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) (MANAGE_SEGMENTS_BUTTON_X_START+((MANAGE_SEGMENTS_BUTTON_WIDTH+MANAGE_SEGMENTS_BUTTON_SPACING)*(segmentPositionIndex-1))) MANAGE_SEGMENTS_BUTTON_Y_START MANAGE_SEGMENTS_BUTTON_WIDTH MANAGE_SEGMENTS_BUTTON_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+#define MANAGE_SEGMENTS_SELECTED_BUTTON_RECT( segmentPositionIndex ) (MANAGE_SEGMENTS_BUTTON_X_START+((MANAGE_SEGMENTS_BUTTON_WIDTH+MANAGE_SEGMENTS_BUTTON_SPACING)*(segmentPositionIndex-1))-(MANAGE_SEGMENTS_BUTTON_SELECTED_SIZE_INCREASE/2)) (MANAGE_SEGMENTS_BUTTON_Y_START-(MANAGE_SEGMENTS_BUTTON_SELECTED_SIZE_INCREASE/2)) (MANAGE_SEGMENTS_BUTTON_WIDTH+MANAGE_SEGMENTS_BUTTON_SELECTED_SIZE_INCREASE) (MANAGE_SEGMENTS_BUTTON_HEIGHT+MANAGE_SEGMENTS_BUTTON_SELECTED_SIZE_INCREASE) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+#define MANAGE_SEGMENTS_TRANSITION_BUTTON_RECT( segmentPositionIndex ) (MANAGE_SEGMENTS_BUTTON_X_START+( (MANAGE_SEGMENTS_BUTTON_WIDTH*segmentPositionIndex)+(MANAGE_SEGMENTS_BUTTON_SPACING*(segmentPositionIndex-1)) )) MANAGE_SEGMENTS_BUTTON_Y_START (MANAGE_SEGMENTS_BUTTON_SPACING) MANAGE_SEGMENTS_BUTTON_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+#define MANAGE_SEGMENTS_TRANSITION_BUTTON_ARROW_RECT( segmentPositionIndex ) (MANAGE_SEGMENTS_BUTTON_X_START+( (MANAGE_SEGMENTS_BUTTON_WIDTH*segmentPositionIndex)+(MANAGE_SEGMENTS_BUTTON_SPACING*(segmentPositionIndex-1)) )) (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT/2)-(MANAGE_SEGMENTS_TRANSITION_ARROW_HEIGHT/2)) MANAGE_SEGMENTS_TRANSITION_ARROW_WIDTH MANAGE_SEGMENTS_TRANSITION_ARROW_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+
+#define MANAGE_SEGMENTS_BUTTON_BG( itemIndex, segmentPositionIndex, visArg ) \
+		/* Background - Unhighlighted */ \
+		itemDef \
+		{ \
+			style		WINDOW_STYLE_SHADER \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			forecolor	1 1 1 1 \
+			background	"white" \
+			visible		when( visArg && (localVarInt( ui_highlight ) != itemIndex || !MenuHasFocus()) ) \
+			decoration \
+		} \
+		/* Background - Highlighted */ \
+		itemDef \
+		{ \
+			style		WINDOW_STYLE_SHADER \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			forecolor	0.23 0.72 0.47 0.8 \
+			background	"white" \
+			visible		when( visArg && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus()) ) \
+			decoration \
+		}
+
+#define MANAGE_SEGMENTS_SELECTED_BUTTON_BG( itemIndex, segmentPositionIndex, visArg ) \
+		/* Background - Unhighlighted */ \
+		itemDef \
+		{ \
+			style		WINDOW_STYLE_SHADER \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			forecolor	1 1 1 1 \
+			background	"white" \
+			visible		when( visArg && (dvarInt( ui_segment_position ) != segmentPositionIndex) ) \
+			decoration \
+		} \
+		/* Background - Highlighted */ \
+		itemDef \
+		{ \
+			style		WINDOW_STYLE_SHADER \
+			rect		MANAGE_SEGMENTS_SELECTED_BUTTON_RECT( segmentPositionIndex ) \
+			forecolor	0.23 0.72 0.47 0.8 \
+			background	"white" \
+			visible		when( visArg && (dvarInt( ui_segment_position ) == segmentPositionIndex) ) \
+			decoration \
+		}
+
+#define MANAGE_SEGMENTS_BUTTON_BG_TEXT( itemIndex, segmentPositionIndex, textArg, unhighlightedColor, highlightedColor, visArg ) \
+		/* Text - Unhighlighted */ \
+		itemDef \
+		{ \
+			type		ITEM_TYPE_TEXT \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			exp			text( textArg ); \
+			textfont	CHOICE_TEXTFONT \
+			textscale	TEXTSIZE_TITLE \
+			textstyle	CHOICE_TEXTSTYLE \
+			textAlign	ITEM_ALIGN_MIDDLE_CENTER \
+			forecolor	unhighlightedColor \
+			visible		when( visArg && (localVarInt( ui_highlight ) != itemIndex || !MenuHasFocus()) ) \
+			decoration	\
+		} \
+		/* Text - Highlighted */ \
+		itemDef \
+		{ \
+			type		ITEM_TYPE_TEXT \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			exp			text( textArg ); \
+			textfont	CHOICE_TEXTFONT \
+			textscale	TEXTSIZE_TITLE \
+			textstyle	CHOICE_TEXTSTYLE \
+			textAlign	ITEM_ALIGN_MIDDLE_CENTER \
+			forecolor	highlightedColor \
+			visible		when( visArg && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus()) ) \
+			decoration	\
+		} 
+
+#define MANAGE_SEGMENTS_SELECTED_BUTTON_BG_TEXT( itemIndex, segmentPositionIndex, textArg, unhighlightedColor, highlightedColor, visArg ) \
+		/* Text - Highlighted */ \
+		itemDef \
+		{ \
+			type		ITEM_TYPE_TEXT \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			exp			text( textArg ); \
+			textfont	CHOICE_TEXTFONT \
+			textscale	TEXTSIZE_TITLE \
+			textstyle	CHOICE_TEXTSTYLE \
+			textAlign	ITEM_ALIGN_MIDDLE_CENTER \
+			forecolor	highlightedColor \
+			visible		when( visArg ) \
+			decoration	\
+		} 
+
+#define MANAGE_SEGMENTS_BUTTON_EMPTY( itemIndex, segmentPositionIndex, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs ) \
+		MANAGE_SEGMENTS_BUTTON_BG_TEXT( itemIndex, segmentPositionIndex, segmentPositionIndex, 0.3 0.3 0.3 1, 0.8 0.8 0.8 1, visArg ) \
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)) 400 60 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@MENU_SEGMENT_NUMBER", segmentPositionIndex ) + locString( "@MENU_EMPTY" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( visArg && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus() && dvarInt( ui_selected_segment ) == -1) ) ) \
+		/* Button - Unhighlighted */ \
+		itemDef \
+		{ \
+			type		ITEM_TYPE_BUTTON \
+			name		MANAGE_SEGMENTS_BUTTON_NAME#segmentPositionIndex \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			border		WINDOW_BORDER_FULL \
+			bordersize	0.8 \
+			bordercolor	0.3 0.3 0.3 1 \
+			visible		when( visArg && (localVarInt( ui_highlight ) != itemIndex || !MenuHasFocus()) ) \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+			extraArgs \
+		} \
+		/* Button - Highlighted */ \
+		itemDef \
+		{ \
+			type		ITEM_TYPE_BUTTON \
+			name		MANAGE_SEGMENTS_BUTTON_NAME#segmentPositionIndex \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			border		WINDOW_BORDER_FULL \
+			bordersize	0.8 \
+			bordercolor	0.8 0.8 0.8 1 \
+			visible		when( visArg && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus()) ) \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+			extraArgs \
+		}
+
+#define MANAGE_SEGMENTS_BUTTON_POPULATED( itemIndex, segmentPositionIndex, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs ) \
+		/* Default Button Background */ \
+		MANAGE_SEGMENTS_BUTTON_BG( itemIndex, segmentPositionIndex, visArg && !hasfocus( segment_keycatcher ) ) \
+		/* Selected Button Background */ \
+		MANAGE_SEGMENTS_SELECTED_BUTTON_BG( itemIndex, segmentPositionIndex, visArg && hasfocus( segment_keycatcher ) ) \
+		/* Default Button Background Text*/ \
+		MANAGE_SEGMENTS_BUTTON_BG_TEXT( itemIndex, segmentPositionIndex, segmentPositionIndex, 0 0 0 0.7, 1 1 1 1, visArg && !hasfocus( segment_keycatcher ) ) \
+		/* Selected Button Background */ \
+		MANAGE_SEGMENTS_SELECTED_BUTTON_BG_TEXT( itemIndex, segmentPositionIndex, (dvarInt( ui_selected_segment )+1), 0 0 0 0.7, 1 1 1 1, visArg && (dvarInt( ui_segment_position ) == segmentPositionIndex) && hasfocus( segment_keycatcher ) ) \
+		/* Information - Unselected Stage */ \
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)) 300 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@MENU_SEGMENT_NUMBER", segmentPositionIndex ) + getDemoSegmentInformation( (segmentPositionIndex-1), name ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( visArg && !hasfocus( segment_keycatcher ) && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus()) ) ) \
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)+15) 300 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, getDemoSegmentInformation( (segmentPositionIndex-1), durationLocString ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( visArg && !hasfocus( segment_keycatcher ) && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus()) ) ) \
+		itemDef \
+		{ \
+			type		ITEM_TYPE_BUTTON \
+			name		MANAGE_SEGMENTS_BUTTON_NAME#segmentPositionIndex \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			forecolor	1 1 1 1 \
+			visible		when( visArg ); \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+			extraArgs \
+		}
+
+#define MANAGE_SEGMENTS_BUTTON_POPULATED_PC( itemIndex, segmentPositionIndex, actionArg, visArg ) \
+		/* Default Button Background */ \
+		MANAGE_SEGMENTS_BUTTON_BG( itemIndex, segmentPositionIndex, visArg && dvarInt( ui_selected_segment ) == -1 ) \
+		/* Selected Button Background */ \
+		MANAGE_SEGMENTS_SELECTED_BUTTON_BG( itemIndex, segmentPositionIndex, visArg && dvarInt( ui_selected_segment ) != -1 ) \
+		/* Default Button Background Text*/ \
+		MANAGE_SEGMENTS_BUTTON_BG_TEXT( itemIndex, segmentPositionIndex, segmentPositionIndex, 0 0 0 0.7, 1 1 1 1, visArg && dvarInt( ui_selected_segment ) == -1 ) \
+		/* Selected Button Background */ \
+		MANAGE_SEGMENTS_SELECTED_BUTTON_BG_TEXT( itemIndex, segmentPositionIndex, (dvarInt( ui_selected_segment )+1), 0 0 0 0.7, 1 1 1 1, visArg && (dvarInt( ui_segment_position ) == segmentPositionIndex) && dvarInt( ui_selected_segment ) != -1 ) \
+		/* Information - Unselected Stage */ \
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)) 300 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@MENU_SEGMENT_NUMBER", segmentPositionIndex ) + getDemoSegmentInformation( (segmentPositionIndex-1), name ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( visArg && dvarInt( ui_selected_segment ) == -1 && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus()) ) ) \
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)+15) 300 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, getDemoSegmentInformation( (segmentPositionIndex-1), durationLocString ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( visArg && dvarInt( ui_selected_segment ) == -1 && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus()) ) ) \
+		itemDef \
+		{ \
+			type		ITEM_TYPE_BUTTON \
+			name		MANAGE_SEGMENTS_BUTTON_NAME#segmentPositionIndex \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			forecolor	1 1 1 1 \
+			visible		when( visArg ); \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, ;, ; ) \
+		}
+
+#define MANAGE_SEGMENTS_TRANSITION_BUTTON_BG( itemIndex, segmentPositionIndex, visArg ) \
+		/* Background - Unhighlighted */ \
+		itemDef \
+		{ \
+			style		WINDOW_STYLE_SHADER \
+			rect		MANAGE_SEGMENTS_TRANSITION_BUTTON_RECT( segmentPositionIndex ) \
+			forecolor	0.3 0.3 0.3 1 \
+			background	"white" \
+			visible		when( visArg && (localVarInt( ui_highlight ) != itemIndex || !MenuHasFocus()) ) \
+			decoration \
+		} \
+		/* Arrow - Unhighlighted */ \
+		itemDef \
+		{ \
+			style		WINDOW_STYLE_SHADER \
+			rect		MANAGE_SEGMENTS_TRANSITION_BUTTON_ARROW_RECT( segmentPositionIndex ) \
+			forecolor	0.5 0.5 0.5 1 \
+			background	"ui_arrow_right" \
+			visible		when( visArg && (localVarInt( ui_highlight ) != itemIndex || !MenuHasFocus()) ) \
+			decoration \
+		} \
+		/* Background - Highlighted */ \
+		itemDef \
+		{ \
+			style		WINDOW_STYLE_SHADER \
+			rect		MANAGE_SEGMENTS_TRANSITION_BUTTON_RECT( segmentPositionIndex ) \
+			forecolor	0.23 0.72 0.47 0.8 \
+			background	"white" \
+			visible		when( visArg && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus()) ) \
+			decoration \
+		} \
+		/* Arrow - Highlighted */ \
+		itemDef \
+		{ \
+			style		WINDOW_STYLE_SHADER \
+			rect		MANAGE_SEGMENTS_TRANSITION_BUTTON_ARROW_RECT( segmentPositionIndex ) \
+			forecolor	1 1 1 1 \
+			background	"ui_arrow_right" \
+			visible		when( visArg && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus()) ) \
+			decoration \
+		}
+
+#define MANAGE_SEGMENTS_TRANSITION_BUTTON( itemIndex, segmentPositionIndex, actionArg, onFocusArg, leaveFocusArg, visArg, extraArgs ) \
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_BG( itemIndex, segmentPositionIndex, visArg ) \
+		itemDef \
+		{ \
+			type		ITEM_TYPE_BUTTON \
+			rect		MANAGE_SEGMENTS_TRANSITION_BUTTON_RECT( segmentPositionIndex ) \
+			forecolor	1 1 1 1 \
+			visible		when( visArg ); \
+			CHOICE_SCRIPTS_ALL( itemIndex, actionArg, onFocusArg, leaveFocusArg ) \
+			extraArgs \
+		}
+
+#define POPULATED_BUTTON_ACTION( segmentPositionIndex )\
+		execNow set ui_selected_segment (segmentPositionIndex-1); \
+		execNow set ui_segment_position segmentPositionIndex; \
+		execNow showitem segment_keycatcher; \
+		execNow focusitem segment_keycatcher; \
+
+#define POPULATED_BUTTON_ACTION_PC( segmentPositionIndex ) \
+		execNow set ui_selected_segment (segmentPositionIndex-1); \
+		execNow set ui_segment_position segmentPositionIndex; \
+		
+#define MANAGE_SEGMENTS_BUTTON_LAYER( itemIndex, segmentPositionIndex, actionArg, onFocusArg, leaveFocusArg, extraArgs ) \
+		MANAGE_SEGMENTS_BUTTON_POPULATED( itemIndex, segmentPositionIndex, POPULATED_BUTTON_ACTION( segmentPositionIndex ), onFocusArg, leaveFocusArg, ( segmentPositionIndex <= getDemoSegmentCount() ), extraArgs ) \
+		MANAGE_SEGMENTS_BUTTON_EMPTY( itemIndex, segmentPositionIndex, actionArg, onFocusArg, leaveFocusArg, ( segmentPositionIndex > getDemoSegmentCount() ), extraArgs )
+
+#define MANAGE_SEGMENTS_BUTTON_LAYER_PC( itemIndex, segmentPositionIndex ) \
+		MANAGE_SEGMENTS_BUTTON_POPULATED_PC( itemIndex, segmentPositionIndex, POPULATED_BUTTON_ACTION_PC( segmentPositionIndex ), ( segmentPositionIndex <= getDemoSegmentCount() ) ) \
+		MANAGE_SEGMENTS_BUTTON_EMPTY( itemIndex, segmentPositionIndex, ;, ;, ;, ( segmentPositionIndex > getDemoSegmentCount() ), ; ) \
+		MANAGE_SEGMENTS_FLYOUT_BUTTONS( itemIndex, segmentPositionIndex )
+		
+#define TRANSITION_BUTTON_ACTION_PC( segmentPositionindex ) \
+		execNow demo_switchtransition (segmentPositionindex-1) 0;
+
+#define TRANSITION_EXTRA_ARGS( segmentPositionIndex ) \
+		execKeyInt APAD_UP { execNow demo_switchtransition (segmentPositionIndex-1) 0; } \
+		execKeyInt DPAD_UP { execNow demo_switchtransition (segmentPositionIndex-1) 0; } \
+		execKeyInt APAD_DOWN { execNow demo_switchtransition (segmentPositionIndex-1) 1; } \
+		execKeyInt DPAD_DOWN { execNow demo_switchtransition (segmentPositionIndex-1) 1; }
+
+#define MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER( itemIndex, segmentPositionIndex, actionArg, onFocusArg, leaveFocusArg ) \
+		MANAGE_SEGMENTS_TRANSITION_BUTTON( itemIndex, segmentPositionIndex, actionArg, onFocusArg, leaveFocusArg, ( segmentPositionIndex < getDemoSegmentCount() && !hasfocus( segment_keycatcher ) ), TRANSITION_EXTRA_ARGS( segmentPositionIndex ) ) \
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)) 400 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@MENU_TRANSITION" ) + getDemoSegmentInformation( (segmentPositionIndex-1), transition ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( visArg && !hasfocus( segment_keycatcher ) && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus()) ) ) \
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)+20) 400 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@PLATFORM_DEMO_CHANGE_TRANSITION" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( visArg && !hasfocus( segment_keycatcher ) && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus()) ) )
+
+#define MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER_PC( itemIndex, segmentPositionIndex ) \
+		MANAGE_SEGMENTS_TRANSITION_BUTTON( itemIndex, segmentPositionIndex, TRANSITION_BUTTON_ACTION_PC( segmentPositionIndex ), ;, ;, ( segmentPositionIndex < getDemoSegmentCount() && dvarInt( ui_selected_segment ) == -1 ), ; ) \
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)) 400 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@MENU_TRANSITION" ) + getDemoSegmentInformation( (segmentPositionIndex-1), transition ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( dvarInt( ui_selected_segment ) == -1 && (localVarInt( ui_highlight ) == itemIndex && MenuHasFocus() ) ) )
+
+#define MANAGE_SEGMENTS_FLYOUT_RETURN_PC( actionArg ) \
+		itemDef \
+		{ \
+			name "ExitFlyoutButton" \
+			type ITEM_TYPE_BUTTON_NO_TEXT \
+			rect 0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN \
+			visible when( dvarInt( ui_selected_segment ) != -1 ) \
+			action { actionArg } \
+		}
+
+#define MANAGE_SEGMENTS_FLYOUT_BUTTON_OFFSET	10
+#define MANAGE_SEGMENTS_FLYOUT_BUTTON_WIDTH		100
+#define MANAGE_SEGMENTS_FLYOUT_BUTTON_HEIGHT	16
+#define MANAGE_SEGMENTS_FLYOUT_BUTTON_SPACING	2
+
+#define MANAGE_SEGMENTS_FLYOUT_SHIFT_LEFT_ACTION \
+	execNow demo_movesegment (dvarInt( demo_cmdNum )) (dvarInt( ui_segment_position )-1) 0; \
+	if ( dvarInt( ui_segment_position ) > 1 ) \
+	{ \
+		execNow set ui_segment_position (dvarInt( ui_segment_position )-1); \
+	}
+	
+#define MANAGE_SEGMENTS_FLYOUT_SHIFT_RIGHT_ACTION \
+	execNow demo_movesegment (dvarInt( demo_cmdNum )) (dvarInt( ui_segment_position )-1) 1; \
+	if ( dvarInt( ui_segment_position ) < getDemoSegmentCount() ) \
+	{ \
+		execNow set ui_segment_position (dvarInt( ui_segment_position )+1); \
+	}
+
+#define MANAGE_SEGMENTS_FLYOUT_PLACE_ACTION \
+	execNow focusitem (MANAGE_SEGMENTS_BUTTON_NAME+(dvarInt( ui_segment_position ))); \
+	execNow set ui_selected_segment -1; \
+	execNow set ui_segment_position -1;
+
+#define MANAGE_SEGMENTS_FLYOUT_PREVIEW_ACTION \
+	execNow demo_previewsegment (dvarInt( demo_cmdNum )) (dvarInt( ui_segment_position )-1); \
+	close self;
+
+#define MANAGE_SEGMENTS_FLYOUT_DELETE_ACTION \
+	open delete_segment_confirmation;
+
+#define MANAGE_SEGMENTS_FLYOUT_BUTTON( itemIndex, segmentPositionIndex, verticalIndex, textArg, actionArg, visArg, extraArgs ) \
+		itemDef \
+		{ \
+			type		ITEM_TYPE_BUTTON \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			exp			rect Y( MANAGE_SEGMENTS_BUTTON_Y_START + MANAGE_SEGMENTS_BUTTON_HEIGHT + MANAGE_SEGMENTS_FLYOUT_BUTTON_OFFSET + ( (verticalIndex-1) * (MANAGE_SEGMENTS_FLYOUT_BUTTON_HEIGHT+MANAGE_SEGMENTS_FLYOUT_BUTTON_SPACING) ) ) \
+			exp			rect W( MANAGE_SEGMENTS_FLYOUT_BUTTON_WIDTH ) \
+			exp			rect H( MANAGE_SEGMENTS_FLYOUT_BUTTON_HEIGHT ) \
+			style		WINDOW_STYLE_FILLED \
+			exp			text( textArg ) \
+			textfont	CHOICE_TEXTFONT \
+			textscale	TEXTSIZE_SMALL \
+			textalign	ITEM_ALIGN_MIDDLE_LEFT \
+			textAlignX	2 \
+			forecolor	1 1 1 1 \
+			backcolor	1 1 1 0 \
+			border			1   \
+			bordersize		1 \
+			bordercolor		CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA \
+			visible		when( visArg && (dvarInt( ui_segment_position ) == segmentPositionIndex) && (dvarInt( ui_selected_segment ) != -1) ) \
+			action		{ play CHOICE_FOCUS_SOUND; actionArg } \
+			mouseEnter		{ play CHOICE_FOCUS_SOUND; setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_SELECTED_RGBA; } \
+			mouseexit		{ setcolor bordercolor CHOICE_BUTTON_BORDER_COLOR_UNSELECTED_RGBA; } \
+		}
+
+#define MANAGE_SEGMENTS_FLYOUT_BUTTON_DISABLED( itemIndex, segmentPositionIndex, verticalIndex, textArg, visArg, extraArgs ) \
+		itemDef \
+		{ \
+			type		ITEM_TYPE_BUTTON \
+			rect		MANAGE_SEGMENTS_BUTTON_RECT( segmentPositionIndex ) \
+			exp			rect Y( MANAGE_SEGMENTS_BUTTON_Y_START + MANAGE_SEGMENTS_BUTTON_HEIGHT + MANAGE_SEGMENTS_FLYOUT_BUTTON_OFFSET + ( (verticalIndex-1) * (MANAGE_SEGMENTS_FLYOUT_BUTTON_HEIGHT+MANAGE_SEGMENTS_FLYOUT_BUTTON_SPACING) ) ) \
+			exp			rect W( MANAGE_SEGMENTS_FLYOUT_BUTTON_WIDTH ) \
+			exp			rect H( MANAGE_SEGMENTS_FLYOUT_BUTTON_HEIGHT ) \
+			exp			text( textArg ) \
+			textfont	CHOICE_TEXTFONT \
+			textscale	TEXTSIZE_SMALL \
+			textalign	ITEM_ALIGN_MIDDLE_LEFT \
+			textAlignX	2 \
+			forecolor	CHOICE_TEXTCOLOR_DISABLED \
+			visible		when( visArg && (dvarInt( ui_segment_position ) == segmentPositionIndex) && (dvarInt( ui_selected_segment ) != -1) ) \
+			decoration \
+		}
+
+#define MANAGE_SEGMENTS_FLYOUT_BUTTONS( itemIndex, segmentPositionIndex ) \
+		/*--Buttons for Multiple Elements--*/ \
+		/*Shift Left Button*/ \
+		MANAGE_SEGMENTS_FLYOUT_BUTTON( itemIndex, segmentPositionIndex, 1, "@PLATFORM_DEMO_SHIFT_SEGMENT_LEFT", \
+				MANAGE_SEGMENTS_FLYOUT_SHIFT_LEFT_ACTION, \
+				( getDemoSegmentCount() > 1 && dvarInt( ui_segment_position ) > 1 ), \
+				name MANAGE_SEGMENTS_SHIFT_LEFT_BUTTON_NAME#segmentPositionIndex ) \
+		/*Disabled Shift Left Button*/ \
+		MANAGE_SEGMENTS_FLYOUT_BUTTON_DISABLED( itemIndex, segmentPositionIndex, 1, "@PLATFORM_DEMO_SHIFT_SEGMENT_LEFT", \
+				( getDemoSegmentCount() > 1 && dvarInt( ui_segment_position ) == 1 ), \
+				name MANAGE_SEGMENTS_SHIFT_LEFT_BUTTON_NAME#segmentPositionIndex ) \
+		/*Shift Right Button*/ \
+		MANAGE_SEGMENTS_FLYOUT_BUTTON( itemIndex, segmentPositionIndex, 2, "@PLATFORM_DEMO_SHIFT_SEGMENT_RIGHT", \
+				MANAGE_SEGMENTS_FLYOUT_SHIFT_RIGHT_ACTION, \
+				( getDemoSegmentCount() > 1 && dvarInt( ui_segment_position ) < getDemoSegmentCount() ), \
+				name MANAGE_SEGMENTS_SHIFT_RIGHT_BUTTON_NAME#segmentPositionIndex ) \
+		/*Disabled Shift Right Button*/ \
+		MANAGE_SEGMENTS_FLYOUT_BUTTON_DISABLED( itemIndex, segmentPositionIndex, 2, "@PLATFORM_DEMO_SHIFT_SEGMENT_RIGHT", \
+				( getDemoSegmentCount() > 1 && dvarInt( ui_segment_position ) == getDemoSegmentCount() ), \
+				name MANAGE_SEGMENTS_SHIFT_RIGHT_BUTTON_NAME#segmentPositionIndex ) \
+		/*Place Button*/ \
+		MANAGE_SEGMENTS_FLYOUT_BUTTON( itemIndex, segmentPositionIndex, 3, "@PLATFORM_DEMO_PLACE_SEGMENT", \
+				MANAGE_SEGMENTS_FLYOUT_PLACE_ACTION, \
+				( getDemoSegmentCount() > 1 ), \
+				name MANAGE_SEGMENTS_PLACE_BUTTON_NAME#segmentPositionIndex ) \
+		/*Preview Button*/ \
+		MANAGE_SEGMENTS_FLYOUT_BUTTON( itemIndex, segmentPositionIndex, 4, "@PLATFORM_DEMO_PREVIEW_SEGMENT", \
+				MANAGE_SEGMENTS_FLYOUT_PREVIEW_ACTION, \
+				( getDemoSegmentCount() > 1 ), \
+				name MANAGE_SEGMENTS_PREVIEW_BUTTON_NAME#segmentPositionIndex ) \
+		/*Delete Button*/ \
+		MANAGE_SEGMENTS_FLYOUT_BUTTON( itemIndex, segmentPositionIndex, 5, "@PLATFORM_DEMO_DELETE_SEGMENT", \
+				MANAGE_SEGMENTS_FLYOUT_DELETE_ACTION, \
+				( getDemoSegmentCount() > 1 ), \
+				name MANAGE_SEGMENTS_DELETE_BUTTON_NAME#segmentPositionIndex ) \
+		/*--Buttons for Single Element--*/ \
+		/*Preview Button*/ \
+		MANAGE_SEGMENTS_FLYOUT_BUTTON( itemIndex, segmentPositionIndex, 1, "@PLATFORM_DEMO_PREVIEW_SEGMENT", \
+				MANAGE_SEGMENTS_FLYOUT_PREVIEW_ACTION, \
+				( getDemoSegmentCount() == 1 ), \
+				name MANAGE_SEGMENTS_PREVIEW_BUTTON_NAME#segmentPositionIndex ) \
+		/*Delete Button*/ \
+		MANAGE_SEGMENTS_FLYOUT_BUTTON( itemIndex, segmentPositionIndex, 2, "@PLATFORM_DEMO_DELETE_SEGMENT", \
+				MANAGE_SEGMENTS_FLYOUT_DELETE_ACTION, \
+				( getDemoSegmentCount() == 1 ), \
+				name MANAGE_SEGMENTS_DELETE_BUTTON_NAME#segmentPositionIndex )
+
+#define MANAGE_SEGMENTS_TIMELINE( visArg ) \
+		/* Line */ \
+		itemDef \
+		{ \
+			style		WINDOW_STYLE_SHADER \
+			rect		MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START-8) 25 2 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			exp			rect W( (MANAGE_SEGMENTS_BUTTON_WIDTH*getDemoSegmentCount()) + (MANAGE_SEGMENTS_BUTTON_SPACING*(getDemoSegmentCount()-1)) ) \
+			forecolor	0.9 0.5 0.1 0.8 \
+			background	"white" \
+			visible		when( visArg ) \
+			decoration \
+		} \
+		/* Left Arrow */ \
+		itemDef \
+		{ \
+			style		WINDOW_STYLE_SHADER \
+			rect		(MANAGE_SEGMENTS_BUTTON_X_START-2) (MANAGE_SEGMENTS_BUTTON_Y_START-12) 9 9 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			forecolor	1 1 1 0.8 \
+			background	"ui_arrow_left" \
+			rotation	225 \
+			visible		when( visArg ) \
+			decoration \
+		} \
+		/* Right Arrow */ \
+		itemDef \
+		{ \
+			style		WINDOW_STYLE_SHADER \
+			rect		25 (MANAGE_SEGMENTS_BUTTON_Y_START-12) 9 9 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+			exp			rect X( MANAGE_SEGMENTS_BUTTON_X_START + (MANAGE_SEGMENTS_BUTTON_WIDTH*getDemoSegmentCount()) + (MANAGE_SEGMENTS_BUTTON_SPACING*(getDemoSegmentCount()-1)) - 6 ) \
+			forecolor	1 1 1 0.8 \
+			background	"ui_arrow_right" \
+			rotation	135 \
+			visible		when( visArg ) \
+			decoration \
+		}
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X			170
+
+#undef CHOICE_GROUP
+#define CHOICE_GROUP "demo_manage_segments"
+
+#ifdef PC
+#define ON_ESC \
+	if( dvarInt( ui_selected_segment ) != -1 ) \
+	{ \
+		/* Exit the selected segment */ \
+		execNow focusitem (MANAGE_SEGMENTS_BUTTON_NAME+(dvarInt( ui_segment_position ))); \
+		execNow set ui_selected_segment -1; \
+		execNow set ui_segment_position -1; \
+	} \
+	else \
+	{ \
+		/* Return to the main pause menu */ \
+		execNow set ui_selected_segment -1; \
+		execNow set ui_segment_position -1; \
+		close self; \
+		open demo_ingame; \
+	}
+#else
+#define ON_ESC \
+	if ( !hasFocus( segment_keycatcher ) ) \
+	{ \
+		execNow set ui_selected_segment -1; \
+		execNow set ui_segment_position -1; \
+		close self; \
+		open demo_ingame; \
+	}
+#endif
+
+	menuDef
+	{
+		name					demo_manage_segments
+		fullScreen				0
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focusColor				COLOR_FOCUSED
+		soundloop				""
+		blurWorld				4.8
+		onOpen
+		{
+			if ( dvarInt( ui_selected_segment ) < 0 )
+			{
+				focusFirst;
+			}
+			else
+			{
+				execNow focusitem (MANAGE_SEGMENTS_BUTTON_NAME+(dvarInt( ui_segment_position ))); 
+				execNow set ui_selected_segment -1;
+				execNow set ui_segment_position -1;
+				execNow hideitem segment_keycatcher; 
+			}
+		}
+		onFocus
+		{
+			if ( dvarInt( ui_selected_segment ) >= getDemoSegmentCount() )
+			{
+				execNow focusitem (MANAGE_SEGMENTS_BUTTON_NAME+(dvarInt( ui_segment_position ))); 
+				execNow set ui_selected_segment -1;
+				execNow set ui_segment_position -1;
+				execNow hideitem segment_keycatcher; 
+			}
+		}
+		onESC 
+		{
+			ON_ESC
+		}
+		execkeyint BUTTON_X
+		{
+#ifdef PC
+			if ( dvarInt( ui_selected_segment ) == -1 && getDemoSegmentCount() > 0 )
+#else // #ifdef PC
+			if ( getDemoSegmentCount() > 0 )
+#endif // #else #ifdef PC
+			{
+				if ( !hasFocus( segment_keycatcher ) )
+				{
+					exec "demo_previewclip";
+					close self;
+				}
+				else
+				{
+					execNow demo_previewsegment (dvarInt( demo_cmdNum )) (dvarInt( ui_segment_position )-1);
+					close self;
+				}
+			}
+		}
+		execkeyint BUTTON_Y
+		{
+#ifdef PC
+			if ( dvarInt( ui_selected_segment ) == -1 && getDemoSegmentCount() > 0 )
+#else // #ifdef PC
+			if ( getDemoSegmentCount() > 0 )
+#endif // #else #ifdef PC
+			{
+				if ( !hasFocus( segment_keycatcher ) && getDemoSegmentCount() > 0 )
+				{
+					open delete_all_segments_confirmation;
+				}
+				else
+				{
+					open delete_segment_confirmation;
+				}
+			}
+		}
+
+		// background overlay
+		itemDef	{
+			style			WINDOW_STYLE_FILLED
+			rect			0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+			backcolor		0 0 0 0.75
+			visible			1
+			decoration
+		}
+
+		// ------------------ buttons ---------------------
+#ifdef CONSOLE		
+		// Back button
+		PREPROC_TEXT_DRAW_VIS( 0 0 0 0 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM, 0 0, "@PLATFORM_BACK", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1, when( !hasfocus( segment_keycatcher ) ) )
+
+		// Select Segment button
+		PREPROC_TEXT_DRAW_VIS( 190 0 0 0 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM, 0 0, "@PLATFORM_DEMO_SELECT_SEGMENT", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1, when( !hasfocus( segment_keycatcher ) && getDemoSegmentCount() > 0 ) )
+
+		// Preview Clip button
+		PREPROC_TEXT_DRAW_VIS( 290 0 0 0 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM, 0 0, "@PLATFORM_DEMO_PREVIEW_CLIP", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1, when( !hasfocus( segment_keycatcher ) && getDemoSegmentCount() > 0 ) )
+
+		// Clear All button
+		PREPROC_TEXT_DRAW_VIS( 390 0 0 0 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM, 0 0, "@PLATFORM_CLEAR_ALL_SEGMENTS", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1, when( !hasfocus( segment_keycatcher ) && getDemoSegmentCount() > 0 ) )
+#else
+		#define DEMO_BUTTON_SPACING		20
+		#define PREVIEW_BUTTON_OFFSET	( getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + DEMO_BUTTON_SPACING )
+		#define CLEAR_ALL_BUTTON_OFFSET ( PREVIEW_BUTTON_OFFSET + getTextWidth( locString( "@PLATFORM_DEMO_PREVIEW_CLIP" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + DEMO_BUTTON_SPACING )
+		
+		// Preview Clip button
+		SCREEN_BUTTON_PC_LEFT_OFFSET( PREVIEW_BUTTON_OFFSET, "@PLATFORM_DEMO_PREVIEW_CLIP", 
+			execkeyhandler BUTTON_X, 
+			when( dvarInt( ui_selected_segment ) == -1 && getDemoSegmentCount() > 0 ) )
+		
+		// Clear All button
+		SCREEN_BUTTON_PC_LEFT_OFFSET( CLEAR_ALL_BUTTON_OFFSET, "@PLATFORM_CLEAR_ALL_SEGMENTS", 
+			execkeyhandler BUTTON_Y, 
+			when( dvarInt( ui_selected_segment ) == -1 && getDemoSegmentCount() > 0 ) )
+
+		// Back button
+		NEW_FRAME_BACK_BUTTON_ACTION_PC_VIS( ON_ESC, 1 )
+#endif
+		// Manage Segments Title 
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START-(MANAGE_SEGMENTS_BUTTON_HEIGHT*2.5)-20) 400 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, "@MENU_DEMO_MANAGE_SEGMENTS", TEXTSIZE_TITLE, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, 1 )
+
+		// Demo Title Name
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START-(MANAGE_SEGMENTS_BUTTON_HEIGHT*2.5)) 400 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, GetDemoTitleName(), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, 0.5 0.5 0.5 1, 1 )
+
+		// Total Clip Duration
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START-(MANAGE_SEGMENTS_BUTTON_HEIGHT/2)) 400 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, getDemoSegmentInformation( (segmentPositionIndex-1), totalClipDurationLocString ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( getDemoSegmentCount() > 0 ) )
+
+		// Timeline
+		MANAGE_SEGMENTS_TIMELINE( (getDemoSegmentCount() > 0) )
+
+#ifdef PC
+		MANAGE_SEGMENTS_FLYOUT_RETURN_PC( ON_ESC )
+
+		MANAGE_SEGMENTS_BUTTON_LAYER_PC( 1, 1 )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER_PC( 2, 1 )
+		MANAGE_SEGMENTS_BUTTON_LAYER_PC( 3, 2 )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER_PC( 4, 2 )
+		MANAGE_SEGMENTS_BUTTON_LAYER_PC( 5, 3 )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER_PC( 6, 3 )
+		MANAGE_SEGMENTS_BUTTON_LAYER_PC( 7, 4 )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER_PC( 8, 4 )
+		MANAGE_SEGMENTS_BUTTON_LAYER_PC( 9, 5 )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER_PC( 10, 5 )
+		MANAGE_SEGMENTS_BUTTON_LAYER_PC( 11, 6 )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER_PC( 12, 6 )
+		MANAGE_SEGMENTS_BUTTON_LAYER_PC( 13, 7 )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER_PC( 14, 7 )
+		MANAGE_SEGMENTS_BUTTON_LAYER_PC( 15, 8 )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER_PC( 16, 8 )
+		MANAGE_SEGMENTS_BUTTON_LAYER_PC( 17, 9 )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER_PC( 18, 9 )
+		MANAGE_SEGMENTS_BUTTON_LAYER_PC( 19, 10 )
+#else // #ifdef PC
+		MANAGE_SEGMENTS_BUTTON_LAYER( 1, 1, ;, ;, ;, execKeyInt APAD_UP{} execKeyInt DPAD_UP{} )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER( 2, 1, execNow demo_switchtransition 0 0;, ;, ; )
+		MANAGE_SEGMENTS_BUTTON_LAYER( 3, 2, ;, ;, ;, ; )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER( 4, 2, execNow demo_switchtransition 1 0;, ;, ; )
+		MANAGE_SEGMENTS_BUTTON_LAYER( 5, 3, ;, ;, ;, ; )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER( 6, 3, execNow demo_switchtransition 2 0;, ;, ; )
+		MANAGE_SEGMENTS_BUTTON_LAYER( 7, 4, ;, ;, ;, ; )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER( 8, 4, execNow demo_switchtransition 3 0;, ;, ; )
+		MANAGE_SEGMENTS_BUTTON_LAYER( 9, 5, ;, ;, ;, ; )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER( 10, 5, execNow demo_switchtransition 4 0;, ;, ; )
+		MANAGE_SEGMENTS_BUTTON_LAYER( 11, 6, ;, ;, ;, ; )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER( 12, 6, execNow demo_switchtransition 5 0;, ;, ; )
+		MANAGE_SEGMENTS_BUTTON_LAYER( 13, 7, ;, ;, ;, ; )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER( 14, 7, execNow demo_switchtransition 6 0;, ;, ; )
+		MANAGE_SEGMENTS_BUTTON_LAYER( 15, 8, ;, ;, ;, ; )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER( 16, 8, execNow demo_switchtransition 7 0;, ;, ; )
+		MANAGE_SEGMENTS_BUTTON_LAYER( 17, 9, ;, ;, ;, ; )
+		MANAGE_SEGMENTS_TRANSITION_BUTTON_LAYER( 18, 9, execNow demo_switchtransition 8 0;, ;, ; )
+		MANAGE_SEGMENTS_BUTTON_LAYER( 19, 10, ;, ;, ;, execKeyInt APAD_DOWN{} execKeyInt DPAD_DOWN{} )
+
+		// Information When A segment in selected
+
+		// When theres more than 1 segment.
+		// Display Move Segment
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)) 300 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@PLATFORM_DEMO_MOVE_SEGMENT" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( hasfocus( segment_keycatcher ) && ( getDemoSegmentCount() > 1 ) ) )
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)+20) 300 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@PLATFORM_DEMO_PLACE_SEGMENT" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( hasfocus( segment_keycatcher ) && ( getDemoSegmentCount() > 1 ) ) )
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)+40) 300 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@PLATFORM_DEMO_PREVIEW_SEGMENT" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( hasfocus( segment_keycatcher ) && ( getDemoSegmentCount() > 1 ) ) )
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)+60) 300 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@PLATFORM_DEMO_DELETE_SEGMENT" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( hasfocus( segment_keycatcher ) && ( getDemoSegmentCount() > 1 ) ) )
+		// When there is only 1 segment.
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)) 300 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@PLATFORM_DEMO_PLACE_SEGMENT" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( hasfocus( segment_keycatcher ) && ( getDemoSegmentCount() == 1 ) ) )
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)+20) 300 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@PLATFORM_DEMO_PREVIEW_SEGMENT" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( hasfocus( segment_keycatcher ) && ( getDemoSegmentCount() == 1 ) ) )
+		PREPROC_TEXT_DRAW_VIS( MANAGE_SEGMENTS_BUTTON_X_START (MANAGE_SEGMENTS_BUTTON_Y_START+(MANAGE_SEGMENTS_BUTTON_HEIGHT*2)+40) 300 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@PLATFORM_DEMO_DELETE_SEGMENT" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, CHOICE_TEXTCOLOR, when( hasfocus( segment_keycatcher ) && ( getDemoSegmentCount() == 1 ) ) )
+
+		// Keycatcher
+		itemDef
+		{
+			name  		segment_keycatcher
+			type        ITEM_TYPE_BUTTON_NO_TEXT
+			execKeyInt	BUTTON_A 
+			{ 
+				execNow focusitem (MANAGE_SEGMENTS_BUTTON_NAME+(dvarInt( ui_segment_position ))); 
+				execNow set ui_selected_segment -1;
+				execNow set ui_segment_position -1;
+				execNow hideitem segment_keycatcher; 
+			}
+			execKeyInt	APAD_LEFT
+			{
+				execNow demo_movesegment (dvarInt( demo_cmdNum )) (dvarInt( ui_segment_position )-1) 0;
+				if ( dvarInt( ui_segment_position ) > 1 )
+				{
+					execNow set ui_segment_position (dvarInt( ui_segment_position )-1);
+				}
+			}
+			execKeyInt	DPAD_LEFT
+			{
+				execNow demo_movesegment (dvarInt( demo_cmdNum )) (dvarInt( ui_segment_position )-1) 0;
+				if ( dvarInt( ui_segment_position ) > 1 )
+				{
+					execNow set ui_segment_position (dvarInt( ui_segment_position )-1);
+				}
+			}
+			execKeyInt	APAD_RIGHT
+			{
+				execNow demo_movesegment (dvarInt( demo_cmdNum )) (dvarInt( ui_segment_position )-1) 1;
+				if ( dvarInt( ui_segment_position ) < getDemoSegmentCount() )
+				{
+					execNow set ui_segment_position (dvarInt( ui_segment_position )+1);
+				}
+			}
+			execKeyInt	DPAD_RIGHT
+			{
+				execNow demo_movesegment (dvarInt( demo_cmdNum )) (dvarInt( ui_segment_position )-1) 1;
+				if ( dvarInt( ui_segment_position ) < getDemoSegmentCount() )
+				{
+					execNow set ui_segment_position (dvarInt( ui_segment_position )+1);
+				}
+			}
+			visible         0
+		}
+#endif // #else #ifdef PC
+	}
+
+#undef CHOICE_X_START
+#define CHOICE_X_START			20
+
+#undef CHOICE_Y_START
+#define CHOICE_Y_START			100
+
+#undef CHOICE_HORIZONTAL_ALIGN
+#define CHOICE_HORIZONTAL_ALIGN HORIZONTAL_ALIGN_LEFT
+
+#undef CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN VERTICAL_ALIGN_TOP
+
+#undef CHOICE_TEXTALIGN
+#define CHOICE_TEXTALIGN ITEM_ALIGN_MIDDLE_LEFT
+
+#undef CHOICE_SIDEITEM_SPACING
+#define CHOICE_SIDEITEM_SPACING	-280
+
+#undef	CHOICE_SIZE_X
+#define CHOICE_SIZE_X				375
+
+#undef CHOICE_DVAR_OFFSET_X
+#define CHOICE_DVAR_OFFSET_X		(CHOICE_SIZE_X-160)
+
+#undef	A_BUTTON_OFFSET_X
+#define A_BUTTON_OFFSET_X				100000
+
+	menuDef
+	{
+		name					demo_button_layout
+		fullScreen				0
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focusColor				COLOR_FOCUSED
+		soundloop				""
+		blurWorld				4.8
+
+		#include "ui_mp/ingamebg.inc"
+
+		#define THEATER_BUTTON_LAYOUT_CLEAR_ALL_FOCUS \
+			hide "demo_controls_buttons_set1"; \
+			hide "demo_controls_buttons_set2"; \
+			hide "demo_controls_buttons_set3"; 
+
+		#define THEATER_BUTTON_LAYOUT_ACTION \
+			THEATER_BUTTON_LAYOUT_CLEAR_ALL_FOCUS \
+			if ( dvarInt( "demo_controllerconfig" ) == 0 ) \
+			{ \
+				show "demo_controls_buttons_set1"; \
+			} \
+			elseif ( dvarInt( "demo_controllerconfig" ) == 1 ) \
+			{ \
+				show "demo_controls_buttons_set2"; \
+			} \
+			elseif ( dvarInt( "demo_controllerconfig" ) == 2 ) \
+			{ \
+				show "demo_controls_buttons_set3"; \
+			} 
+
+		onOpen
+		{
+			focusFirst;
+			THEATER_BUTTON_LAYOUT_ACTION
+		}
+		onESC 
+		{
+			execNow "updategamerprofile";
+			close self;
+			open ingameoptions;
+		}
+
+		execkeyint BUTTON_START
+		{
+			execNow "updategamerprofile";
+			close self;
+			open ingameoptions;
+		}
+
+#define CHOICE_BUTTON_NAME		"demo_button_layout_"
+#define MENUDEF_NAME			demo_button_layout
+
+#undef BUTTON_X_START
+#undef BUTTON_Y_START
+
+		// TODO: For PC
+#ifdef XENON
+		#include "ui_mp/demo_controls_buttons_set.inc"
+#endif // #ifdef XENON
+#ifdef PS3
+		#include "ui_mp/demo_controls_buttons_set.inc"
+#endif // #ifdef PS3
+
+		FRAME_TITLE_LEFT_DEFAULT( "@MENU_OPTIONS_THEATER_BUTTON_LAYOUT_TITLE", 1 )
+
+		FRAME_CHOICE_DVARSTRINGLIST_FOCUS_VIS(	1, "@MENU_THEATER_BUTTON_LAYOUT_CAPS", demo_controllerConfig, 
+												{ "@MENU_DEMO_CONTROLS_DEFAULT" 0 "@MENU_DEMO_CONTROLS_DIGITAL" 1 "@MENU_DEMO_CONTROLS_BADBOT" 2 }, 
+												THEATER_BUTTON_LAYOUT_ACTION, 
+												CLEARUIHINT, 
+												CLEARUIHINT, 
+												1 )
+
+#undef	A_BUTTON_OFFSET_X
+#define A_BUTTON_OFFSET_X			3
+	}																																		
+
+#undef CHOICE_TEXTALIGN
+#define CHOICE_TEXTALIGN			ITEM_ALIGN_MIDDLE_LEFT
+
+#undef CHOICE_HORIZONTAL_ALIGN
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_CENTER
+
+#undef CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_CENTER
+
+#undef CHOICE_X_START
+#define CHOICE_X_START				((-POPUP_BG_WIDTH/2)+15)
+
+#undef CHOICE_Y_START
+#define CHOICE_Y_START				((-POPUP_BG_HEIGHT/2)+30)
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X				(POPUP_BG_WIDTH-30)
+
+// Demo Tag Spinner Button
+#define DEMO_TAG_X_OFFSET		20
+#define DEMO_TAG_BUTTON_WIDTH	(CHOICE_SIZE_X-60)
+#define DEMO_TAG_ARROW_SPACING	8
+
+#define DEMO_BUTTON_TAGS( itemIndex, itemText, visArg )																																										\
+		/* left arrow */																																																	\
+		PREPROC_SHADER_DRAW_VIS_EX(	(CHOICE_X( itemIndex )+DEMO_TAG_X_OFFSET-DEMO_TAG_ARROW_SPACING) CHOICE_Y( itemIndex ) CHOICE_SIZE_Y CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN,						\
+									"ui_arrow_left", 0 0 0 1,																																								\
+									when( localVarInt( ui_highlight ) == itemIndex && visArg  );, ; )																														\
+		/* right arrow */																																																	\
+		PREPROC_SHADER_DRAW_VIS_EX(	(CHOICE_X( itemIndex )+DEMO_TAG_X_OFFSET+DEMO_TAG_BUTTON_WIDTH+DEMO_TAG_ARROW_SPACING) CHOICE_Y( itemIndex ) CHOICE_SIZE_Y CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN,	\
+									"ui_arrow_right", 0 0 0 1,																																								\
+									when( localVarInt( ui_highlight ) == itemIndex && visArg  );, ; )																														\
+		/* Header */																																																		\
+		/* White Text */																																																	\
+		PREPROC_TEXT_DRAW_VIS( (CHOICE_X( itemIndex )+DEMO_TAG_X_OFFSET+2*DEMO_TAG_ARROW_SPACING-5) CHOICE_Y( itemIndex ) DEMO_TAG_BUTTON_WIDTH CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN,				\
+								0 0, itemText, CHOICE_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE, 1 1 1 1,																															\
+								when( localVarInt( ui_highlight ) != itemIndex ); )																																			\
+		/* Black Text */																																																	\
+		PREPROC_TEXT_DRAW_VIS( (CHOICE_X( itemIndex )+DEMO_TAG_X_OFFSET+2*DEMO_TAG_ARROW_SPACING-5) CHOICE_Y( itemIndex ) DEMO_TAG_BUTTON_WIDTH CHOICE_SIZE_Y CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN,				\
+								0 0, itemText, CHOICE_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE, 0 0 0 1,																															\
+								when( localVarInt( ui_highlight ) == itemIndex ); )		
+
+#undef CHOICE_GROUP
+#define CHOICE_GROUP "clip_save_screen"
+
+#define EXTRA_ARGS_USER_TAGS									\
+	execKeyInt APAD_LEFT	{ execnow fileShareUserTagLeft; }	\
+	execKeyInt APAD_RIGHT	{ execnow fileShareUserTagRight; }	\
+	execKeyInt DPAD_LEFT	{ execnow fileShareUserTagLeft; }	\
+	execKeyInt DPAD_RIGHT	{ execnow fileShareUserTagRight; }
+
+menuDef
+{
+	name					clip_save_screen
+	fullScreen				0
+	rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+	focusColor				COLOR_FOCUSED
+	soundloop				""
+	blurworld				2.0
+	onEsc { close self; }
+	execkeyint BUTTON_START { }
+	FILESHARE_INGAME_SAVESCREEN( "@MENU_SAVE_INFORMATION" )
+
+	NEW_FRAME_BUTTON_TEXT( 1, CHOICE_RECT(1), locString( "@MPUI_TITLE" )+" :", TEXTSIZE_SMALL, CHOICE_TEXTALIGN, 1, ; )
+	NEW_FRAME_BUTTON( 2, CHOICE_RECT(2), getDemoSaveScreenName( clip ), execNow demo_keyboard clipNameIngame;, ;, ;, 1, ;, ; )
+	NEW_FRAME_BUTTON_TEXT( 3, CHOICE_RECT(3), locString( "@MPUI_DESCRIPTION" )+" :", TEXTSIZE_SMALL, CHOICE_TEXTALIGN, 1, ; )
+	NEW_FRAME_BUTTON( 4, CHOICE_RECT(4), getDemoSaveScreenDescription( clip ), execNow demo_keyboard clipDescIngame;, ;, ;, 1, ;, ; )
+	NEW_FRAME_BUTTON_TEXT( 5, CHOICE_RECT(5), locString( "@MENU_FILESHARE_USERTAG" )+" :", TEXTSIZE_SMALL, CHOICE_TEXTALIGN, 1, ; )
+	
+#ifdef PC
+	NEW_FRAME_BUTTON_NOICON( 6, CHOICE_RECT(6), "", execNow fileshareUserTagRight;, ;, ;, 1, EXTRA_ARGS_USER_TAGS, ; )  
+#else
+	NEW_FRAME_BUTTON_NOICON( 6, CHOICE_RECT(6), "", ;, ;, ;, 1, EXTRA_ARGS_USER_TAGS, ; )  
+#endif // PC	
+	
+	DEMO_BUTTON_TAGS( 6, getUserTagFromIndex( dvarInt( fsSelectedFileTagIndex ) ), 1 )
+
+	NEW_FRAME_BUTTON( 8, CHOICE_RECT(8), "@MENU_CONTINUE", open fileshare_slotselection_clip; close self;, ;, ;, 1, ;, ; )
+	
+#ifdef PC
+	NEW_FRAME_BACK_BUTTON_ACTION( POPUP_BG_WIDTH, POPUP_BG_HEIGHT, close self; )
+#else // #ifdef PC
+	GAMEPAD_BUTTON( (-POPUP_BG_WIDTH/2) ((POPUP_BG_HEIGHT/2)+15) 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, "@PLATFORM_BACK", BUTTON_B{ close self; }, when ( 1 ) )
+#endif // #else // #ifdef PC	
+}
+
+#undef CHOICE_GROUP
+#define CHOICE_GROUP "screenshot_save_screen"
+
+menuDef
+{
+	name					screenshot_save_screen
+	fullScreen				0
+	rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+	focusColor				COLOR_FOCUSED
+	soundloop				""
+	blurworld				2.0
+	onEsc { close self; open demo_save_screenshot; }
+	execkeyint BUTTON_START { }
+	FILESHARE_INGAME_SAVESCREEN( "@MENU_SAVE_INFORMATION" )
+
+	NEW_FRAME_BUTTON_TEXT( 1, CHOICE_RECT(1), locString( "@MPUI_TITLE" )+" :", TEXTSIZE_SMALL, CHOICE_TEXTALIGN, 1, ; )
+	NEW_FRAME_BUTTON( 2, CHOICE_RECT(2), getDemoSaveScreenName( screenshot ), execNow demo_keyboard screenshotNameIngame;, ;, ;, 1, ;, ; )
+	NEW_FRAME_BUTTON_TEXT( 3, CHOICE_RECT(3), locString( "@MPUI_DESCRIPTION" )+" :", TEXTSIZE_SMALL, CHOICE_TEXTALIGN, 1, ; )
+	NEW_FRAME_BUTTON( 4, CHOICE_RECT(4), getDemoSaveScreenDescription( screenshot ), execNow demo_keyboard screenshotDescIngame;, ;, ;, 1, ;, ; )
+	NEW_FRAME_BUTTON_TEXT( 5, CHOICE_RECT(5), locString( "@MENU_FILESHARE_USERTAG" )+" :", TEXTSIZE_SMALL, CHOICE_TEXTALIGN, 1, ; )
+	
+#ifdef PC
+	NEW_FRAME_BUTTON_NOICON( 6, CHOICE_RECT(6), "", execNow fileshareUserTagRight;, ;, ;, 1, EXTRA_ARGS_USER_TAGS, ; )  
+#else
+	NEW_FRAME_BUTTON_NOICON( 6, CHOICE_RECT(6), "", ;, ;, ;, 1, EXTRA_ARGS_USER_TAGS, ; )  
+#endif // PC	
+
+	DEMO_BUTTON_TAGS( 6, getUserTagFromIndex( dvarInt( fsSelectedFileTagIndex ) ), 1 )
+
+	NEW_FRAME_BUTTON( 8, CHOICE_RECT(8), "@MENU_CONTINUE", open fileshare_slotselection_scr; close self;, ;, ;, 1, ;, ; )
+
+#ifdef PC
+	NEW_FRAME_BACK_BUTTON_ACTION( POPUP_BG_WIDTH, POPUP_BG_HEIGHT, close self; open demo_save_screenshot; )
+#else // #ifdef PC
+	GAMEPAD_BUTTON( (-POPUP_BG_WIDTH/2) ((POPUP_BG_HEIGHT/2)+15) 0 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, "@PLATFORM_BACK", BUTTON_B{ close self; open demo_save_screenshot; }, when ( 1 ) )
+#endif // #else // #ifdef PC
+}
+
+// =========================================================================================
+// POPUP MENUS
+//
+//	Popup menus should be separate from regular menus because they use a different 
+//	style.inc file which redefines basic settings like CHOICE_X_START, CHOICE_Y_START, etc.
+//
+// =========================================================================================
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"	
+
+// Demo Tag Spinner Button
+#undef DEMO_TAG_X_OFFSET
+#define DEMO_TAG_X_OFFSET		150
+#undef DEMO_TAG_BUTTON_WIDTH
+#define DEMO_TAG_BUTTON_WIDTH	60
+#undef DEMO_TAG_ARROW_SPACING
+#define DEMO_TAG_ARROW_SPACING	8
+
+#undef	POPUP_BUTTON_COUNT
+#ifdef CONSOLE
+#define POPUP_BUTTON_COUNT		4
+#else
+#define POPUP_BUTTON_COUNT		6
+#endif // CONSOLE
+menuDef
+{
+#ifdef CONSOLE
+	SYSTEM_POPUP_SETUP_VIS( demo_save_clip, ;, ;, 1 )
+#else
+	SYSTEM_POPUP_SETUP_VIS( demo_save_clip, ;, ;, MenuHasFocus() )
+#endif // CONSOLE
+
+	blurworld		2.0
+	onEsc {} 
+	execkeyint BUTTON_START { }
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_KEEP_SEGMENT", 1 )
+	
+	#define ACTION_SAVE_AND_CONTINUE \
+		execNow demo_keyboard segmentName;
+
+	#define ACTION_SAVE_WITH_TAG								\
+		exec "demo_savesegment ( dvarInt( demo_cmdNum ) ) 0 1";	\
+		close self;
+
+	#define ACTION_PREVIEW										\
+		exec "demo_previewsegment ( dvarInt( demo_cmdNum ) )";	\
+		close self;
+
+	#define ACTION_DISCARD										\
+		exec "demo_savesegment ( dvarInt( demo_cmdNum ) ) 1";	\
+		close self;
+
+#ifdef CONSOLE
+	#define EXTRA_ARGS_SAVE_WITH_TAG										\
+		execKeyInt APAD_LEFT	{ execNow demo_switchdefaultsegmenttag 0; }	\
+		execKeyInt APAD_RIGHT	{ execNow demo_switchdefaultsegmenttag 1; }	\
+		execKeyInt DPAD_LEFT	{ execNow demo_switchdefaultsegmenttag 0; }	\
+		execKeyInt DPAD_RIGHT	{ execNow demo_switchdefaultsegmenttag 1; }
+		
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_NAME_SEGMENT", ACTION_SAVE_AND_CONTINUE, 1, ; ) 
+	FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( 2, "@MENU_NAME_SEGMENT_AS", ACTION_SAVE_WITH_TAG, ;, ;, 1, EXTRA_ARGS_SAVE_WITH_TAG )
+	DEMO_BUTTON_TAGS( 2, dvarString( demo_defaultSegmentTag ), 1 )
+	FRAME_CHOICE_BUTTON_VIS_EX( 3, "@MENU_PREVIEW_SEGMENT", ACTION_PREVIEW, 1, ; ) 
+	FRAME_CHOICE_BUTTON_VIS_EX( 4, "@MENU_DISCARD_SEGMENT", ACTION_DISCARD, 1, ; ) 
+#else
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_NAME_SEGMENT", ACTION_SAVE_AND_CONTINUE, 1, ; ) 
+	FRAME_CHOICE_BUTTON_FOCUS_VIS_EX( 2, "@MENU_NAME_SEGMENT_AS", execNow demo_switchdefaultsegmenttag 1;, ;, ;, 1, ; )
+	DEMO_BUTTON_TAGS( 2, dvarString( demo_defaultSegmentTag ), 1 )
+	FRAME_CHOICE_BUTTON_VIS_EX( 4, "@MENU_PREVIEW_SEGMENT", ACTION_PREVIEW, 1, ; ) 
+	FRAME_CHOICE_BUTTON_VIS_EX( 5, "@PLATFORM_SAVE_SEGMENT", ACTION_SAVE_WITH_TAG, 1, ; ) 
+	FRAME_CHOICE_BUTTON_VIS_EX( 6, "@MENU_DISCARD_SEGMENT", ACTION_DISCARD, 1, ; ) 
+#endif // CONSOLE
+}
+
+
+#undef	POPUP_BUTTON_COUNT
+#define POPUP_BUTTON_COUNT		2
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( delete_segment_confirmation, setFocus delete_segment_confirmation_2;, ;, 1 )
+	execkeyint BUTTON_START { }
+	onEsc { close self; } 
+
+	SYSTEM_POPUP_DOUBLE_LINE_TITLE_VIS( locString( "@MENU_SEGMENT_NUMBER", (dvarInt( ui_selected_segment )+1) ), getDemoSegmentInformation( dvarInt( ui_selected_segment ), name ), 1 )
+	SYSTEM_POPUP_SUBTITLE2_VIS( "@MENU_DELETE_SEGMENT_CONFIRMATION", 1 )
+
+	#define ACTION_DELETE_SEGMENT																	\
+			execNow demo_deletesegment (dvarInt( demo_cmdNum )) (dvarInt( ui_selected_segment ));	\
+			close self;
+
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	ACTION_DELETE_SEGMENT,	1, ;									) 
+	FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,				1, name delete_segment_confirmation_2	) 
+}
+
+
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( delete_all_segments_confirmation, setFocus delete_all_segments_confirmation_2, ;, 1 )
+	execkeyint BUTTON_START { }
+	onEsc { close self; } 
+
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_DELETE_ALL_SEGMENTS_CONFIRMATION", 1 )
+
+	#define ACTION_DELETE_ALL_SEGMENTS	\
+			execNow "demo_deleteclip";	\
+			close self;
+
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	ACTION_DELETE_ALL_SEGMENTS,	1, ;										) 
+	FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	close self,					1, name delete_all_segments_confirmation_2	) 
+}
+
+
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( demo_save_screenshot, ;, ;, 1 )
+	execkeyint BUTTON_START { }
+
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_SAVE_SCREENSHOT", 1 )
+
+	#define ACTION_SAVE_SCREENSHOT			\
+			open screenshot_save_screen;	\
+			close self;
+
+	#define ACTION_DISCARD_SCREENSHOT		\
+			exec "demo_savescreenshot 1";	\
+			close self;
+
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_SAVE",	ACTION_SAVE_SCREENSHOT,		1, ; ) 
+	FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_DISCARD",	ACTION_DISCARD_SCREENSHOT,	1, ; ) 
+}
+
+#undef	POPUP_BUTTON_COUNT
+#define POPUP_BUTTON_COUNT		2
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( remove_all_markers_confirmation, setFocus remove_all_markers_confirmation_2, ;, 1 )
+	execkeyint BUTTON_START { }
+	onEsc { close self; } 
+
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_WARNING_CAPS", 1 )
+
+	SYSTEM_POPUP_SUBTITLE_VIS( "@MENU_DEMO_DOLLYCAM_MARKER_REMOVE_ALL_CONFIRMATION", 1 )
+
+	#define ACTION_REMOVE_ALL_MARKERS	\
+			execNow "demo_removedollycammarker ( dvarInt( demo_cmdNum ) ) -1";	\
+			close self;
+
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_YES",	ACTION_REMOVE_ALL_MARKERS,	1, ; ) 
+	FRAME_CHOICE_BUTTON_VIS_EX( 2, "@MENU_NO",	open demo_dollycam_marker_options; close self,	1, name remove_all_markers_confirmation_2 ) 
+}
+
+#undef	POPUP_BUTTON_COUNT
+#define POPUP_BUTTON_COUNT		1
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( demo_error, ;, ;, 1 )
+	execkeyint BUTTON_START { }
+	onEsc { close self; }
+
+	SYSTEM_POPUP_TITLE_VIS( dvarString( "demo_errorTitle" ), 1 )
+	SYSTEM_POPUP_SUBTITLE_VIS( dvarString( "demo_errorMessage" ), 1 )
+
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self;, 1, ; ) 
+}
+
+#undef	POPUP_BUTTON_COUNT
+#define POPUP_BUTTON_COUNT		6
+
+#undef CHOICE_BUTTON_NAME
+#define CHOICE_BUTTON_NAME		"demo_dollycam_marker_options_"
+
+#undef MENUDEF_NAME
+#define MENUDEF_NAME			demo_dollycam_marker_options
+
+#undef ON_ESC
+#define ON_ESC exec "demo_updatedollycammarkerparameters ( dvarInt( demo_cmdNum ) ) (GetHighlightedCameraMarker())"
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( MENUDEF_NAME, focusFirst;, ON_ESC;, 1 )
+	execkeyint BUTTON_START { }
+	execKeyInt BUTTON_LSHLDR
+	{
+		execNow "demo_updatedollycammarkerparameters ( dvarInt( demo_cmdNum ) ) (GetHighlightedCameraMarker())";
+		execNow "demo_switchdollycammarker ( dvarInt( demo_cmdNum ) ) (GetHighlightedCameraMarker()) 0";
+	}
+	execKeyInt BUTTON_RSHLDR
+	{
+		execNow "demo_updatedollycammarkerparameters ( dvarInt( demo_cmdNum ) ) (GetHighlightedCameraMarker())";
+		execNow "demo_switchdollycammarker ( dvarInt( demo_cmdNum ) ) (GetHighlightedCameraMarker()) 1";
+	}
+
+#ifdef CONSOLE
+	PREPROC_TEXT_DRAW_ADV_ALL( CHOICE_X_START, (POPUP_SIDE_PAD-5), 20, 20, HORIZONTAL_ALIGN_CENTER, CHOICE_VERTICAL_ALIGN, locString( "@PLATFORM_FOLLOWPREVPLAYER" ), 0.3, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1, UI_FONT_SMALL, ITEM_TEXTSTYLE_NORMAL,	1, ; )
+	PREPROC_TEXT_DRAW_VIS_EX( CHOICE_X_START POPUP_SIDE_PAD (SYSTEM_POPUP_WIDTH-30) SYSTEM_POPUP_TITLE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, toUpper( locString( "@MENU_DEMO_DOLLYCAM_MARKER_NUMBER", (GetHighlightedCameraMarker() + 1) )), TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_CENTER, 1 1 1 1, 1, autowrapped )
+	PREPROC_TEXT_DRAW_ADV_ALL( (CHOICE_X_START+SYSTEM_POPUP_WIDTH-50), (POPUP_SIDE_PAD-5), 20, 20, HORIZONTAL_ALIGN_CENTER, CHOICE_VERTICAL_ALIGN, locString( "@PLATFORM_FOLLOWNEXTPLAYER" ), 0.3, 0, 0, ITEM_ALIGN_MIDDLE_RIGHT, 1 1 1 1, UI_FONT_SMALL, ITEM_TEXTSTYLE_NORMAL,	1, ; )
+#else
+	SIMPLE_CHOICE_BUTTON_ARROWS_CENTERED_PRELOC( "demo_dollycam_marker_options_title", ( SYSTEM_POPUP_WIDTH / 2 ), (POPUP_SIDE_PAD-5), 180, toUpper( locString( "@MENU_DEMO_DOLLYCAM_MARKER_NUMBER", (GetHighlightedCameraMarker() + 1) )),
+		1, execkeyhandler BUTTON_RSHLDR, execkeyhandler BUTTON_LSHLDR )
+#endif
+	#define ACTION_REMOVE_MARKER		\
+			exec "demo_removedollycammarker ( dvarInt( demo_cmdNum ) ) (GetHighlightedCameraMarker())";	\
+			close self;
+
+	#define ACTION_REPOSITION_MARKER		\
+			exec "demo_repositiondollycammarker ( dvarInt( demo_cmdNum ) ) (GetHighlightedCameraMarker())";	\
+			close self;
+
+	#undef A_BUTTON_OFFSET_X
+	#define A_BUTTON_OFFSET_X		100000
+
+	FRAME_CHOICE_DVARFLOATLIST_FOCUS_VIS(	1, "@MENU_DEMO_DOLLYCAM_SPEED_SETTING_MODE", demo_dollycamMarkerTimeScaleMode,
+											{ "@MENU_DEMO_DOLLYCAM_SPEED_SETTING_MANUAL" 0 "@MENU_DEMO_DOLLYCAM_SPEED_SETTING_LINEAR" 1 "@MENU_DEMO_DOLLYCAM_SPEED_SETTING_FIXED" 2 }, 
+											;, 
+											;,
+											;,
+											1 )
+
+	#undef DVARSLIDER_TEXTALIGN_X
+	#define DVARSLIDER_TEXTALIGN_X	70
+
+	FRAME_DVARSLIDER_VIS( 2, FormatFloat( dvarFloat( demo_dollycamMarkerTimeScaleValue ), 1 ), demo_dollycamMarkerTimeScaleValue,  1.0, 0.1, 4.0, ;, ( dvarInt( demo_dollycamMarkerTimeScaleMode ) > 0 ) )
+
+	#undef DVARSLIDER_TEXTALIGN_X
+	#define DVARSLIDER_TEXTALIGN_X	100
+
+	#undef A_BUTTON_OFFSET_X
+	#define A_BUTTON_OFFSET_X		0
+
+	#undef MEDIUM_GRAY
+
+	FRAME_CHOICE_BUTTON_VIS_EX( 3, "@MENU_DEMO_DOLLYCAM_MARKER_REPOSITION",	ACTION_REPOSITION_MARKER;, 1, ; ) 
+	FRAME_CHOICE_BUTTON_VIS_EX( 4, "@MENU_DEMO_DOLLYCAM_MARKER_REMOVE",	ACTION_REMOVE_MARKER;, 1, ; ) 
+
+	FRAME_CHOICE_BUTTON_VIS_EX( 6, "@MENU_DEMO_DOLLYCAM_MARKER_REMOVE_ALL",	open remove_all_markers_confirmation; close self;,	1, ; ) 
+#ifdef PC
+	SYSTEM_POPUP_BACK_BUTTON_EX( ON_ESC; close self )
+#else
+	PREPROC_TEXT_DRAW( 0 (SYSTEM_POPUP_HEIGHT+16) 0 0, 0 0, "@PLATFORM_DONE", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1 )
+#endif
+}

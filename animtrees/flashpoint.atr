@@ -1,0 +1,50 @@
+
+//OLD TO BE REMOVED
+//ch_khe_E1C_c130crash_carryhudson_idle
+//ch_khe_E1C_c130crash_carryhudson_walk
+int_hide_body_pickup
+int_hide_body_idle
+int_hide_body_walk
+int_hide_body_drop
+
+
+//Intro A: Woods takes cover. Note: Snake animation is not included in this check-in
+ch_flash_ev01_intro_a_player	
+
+//Intro B: Woods kills the soldier
+//ch_flash_ev01_intro_b_player	
+
+//Binoculars
+int_flash_ev01_getbinoculars
+
+//Vault over pipe
+ch_flash_ev02_vault_over_pipe_player
+
+//Karambit sequence: Includes the dragging body animation
+// ch_flash_ev03_karambit_firemanscarry_drop_player
+// ch_flash_ev03_karambit_firemanscarry_into_player
+// ch_flash_ev03_karambit_firemanscarry_loop_player
+
+//In disguise
+ch_flash_ev03_tie_boots_player
+
+//Make it quick
+ch_flash_ev06_take_crossbow_player
+
+//Zipline
+int_flash_ev06_clip_zipline
+int_flash_ev06_onehand_zipline
+int_flash_ev06_twohands_zipline
+int_flash_ev06_crashwindow_zipline
+
+//Gas start room + vomit
+ch_flash_ev10_gastrap_player
+ch_flash_ev10_weavervomit_player
+
+//dioramas
+ch_flash_diorama01_cameraman
+ch_flash_diorama02_cameraman
+ch_flash_diorama03_cameraman
+ch_flash_diorama04_cameraman
+ch_flash_diorama05_cameraman
+ch_flash_diorama06_cameraman

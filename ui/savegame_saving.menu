@@ -1,0 +1,68 @@
+#include "ui/menudef.h"
+
+{
+	// Pause menu
+	menuDef
+	{
+		name			"savegamesaving"
+		fullScreen		0				
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		visible			when( dvarstring( mapname ) !="wmd" )
+		popup
+
+		onOpen
+		{
+			saveDelay; // close menu on save finish, but stay visible for at least ui_saveMessageMinTime seconds
+		}
+		
+
+#define SAVING_TEXT_PAD		10
+
+#define TEXT_WIDTH			( getTextWidth( locString( "@CGAME_NOW_SAVING" ), UI_FONT_NORMAL, TEXTSIZE_SMALL ) + SAVING_TEXT_PAD )
+#define TEXT_X_START		(-TEXT_WIDTH)
+
+#define SPINNER_WIDTH		16
+#define SPINNER_X_START		( -(TEXT_WIDTH+SPINNER_WIDTH) )
+
+		// "now saving" text
+// OAA: frame no longer for PS3 only...per production to solve the issue of white text on a white background
+//#ifdef PS3
+		itemDef
+		{
+			rect			0 -16 100 16 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			exp				rect X( SPINNER_X_START - (SAVING_TEXT_PAD/2) )
+			exp				rect W( TEXT_WIDTH + SPINNER_WIDTH + SAVING_TEXT_PAD )
+			style			WINDOW_STYLE_SHADER_FRAMED
+			frame			5 0.5 FRAME_SIDE_ALL
+			forecolor		0.1 0.1 0.1 0.6
+			background		"menu_mp_lobby_frame_circle"
+			visible			when ( dvarbool( sv_saveDeviceAvailable ) );
+			decoration
+		}
+//#endif
+		itemDef
+		{
+			name			"savingMsg"
+			type			ITEM_TYPE_TEXT
+			rect			0 -16 48 16 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			exp				rect X( TEXT_X_START )
+			exp				rect W( TEXT_WIDTH )
+			text			"@CGAME_NOW_SAVING"
+			forecolor		COLOR_TITLE
+			textscale		TEXTSIZE_SMALL
+			textalign		ITEM_ALIGN_MIDDLE_RIGHT
+			visible			when ( dvarbool( sv_saveDeviceAvailable ) );
+			decoration
+		}
+		itemDef
+		{
+			rect			0 -16 SPINNER_WIDTH 16 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			exp				rect X( SPINNER_X_START )
+			forecolor		1 1 1 1
+			style			WINDOW_STYLE_SPINNER
+			visible			when ( dvarbool( sv_saveDeviceAvailable ) );
+			decoration
+		}
+	}
+}

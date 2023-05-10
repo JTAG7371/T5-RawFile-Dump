@@ -1,0 +1,674 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/stats_info.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+#include "ui/frame.inc"
+
+#define CHOICE_TAB_TEXTSIZE				TEXTSIZE_DEFAULT
+#undef	HIGHLIGHT_COLOR
+#define HIGHLIGHT_COLOR					0.3 0.35 0.55 0.25
+
+#define LIST_X_START	 				(FRAME_CHOICE_X_START-3)
+#define LIST_Y_START	 				(FRAME_CHOICE_Y_START-4)
+#define LIST_HEIGHT						( COMMAND_SUPPORT_BOTTOM_Y - LIST_Y_START + 10 )
+#define LIST_WIDTH						245
+#define	LIST_ELEM_HEIGHT				17
+
+#define COMMAND_SUPPORT_BOTTOM_Y		( LIST_Y_START + FRAME_DEFAULT_HEIGHT - NEW_FRAME_BG_Y_OFFSET( FRAME_DEFAULT_HEIGHT ) - 88 + 35 )
+#define COMMAND_SUPPORT_DESC_X			( -5 )
+
+#undef  CHOICE_X_START
+#define CHOICE_X_START					FRAME_CHOICE_X_START
+#undef  CHOICE_Y_START
+#define CHOICE_Y_START					( LIST_Y_START )
+#undef	CHOICE_SIZE_Y
+#define CHOICE_SIZE_Y					LIST_ELEM_HEIGHT
+#undef	CHOICE_Y_COUNT
+#define CHOICE_Y_COUNT					12
+		
+		
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/overlaybg.inc"
+#include "ui_mp/popup_player_info.inc"
+#include "ui_mp/cac_loadout.inc"
+#include "ui_mp/item_listbox.inc"
+
+#undef	DEFAULT_SLIDE_IN_SPEED
+#define DEFAULT_SLIDE_IN_SPEED		180
+
+#undef	DEFAULT_SLIDE_OUT_SPEED
+#define DEFAULT_SLIDE_OUT_SPEED		180
+
+#undef	CHOICE_HORIZONTAL_ALIGN 
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_CENTER 
+
+#undef  CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_CENTER
+
+#define KILLSTREAKS_LOCKED			IS_ITEM_LOCKED( FEATURE_KILLSTREAKS )
+#define CONTRACTS_LOCKED			IS_ITEM_LOCKED( FEATURE_CONTRACTS )
+
+#define LIST_DROPDOWN_BUTTON_Y( itemIndex )		( LIST_Y_START + ( dvarInt("ui_dropdownButtonOffset") * LIST_ELEM_HEIGHT ) + ( itemIndex * LIST_ELEM_HEIGHT ) )
+
+#define CHANGE_MENU_ACTION( currMenu, prevMenu, nextMenu )	\
+		execKeyInt DPAD_LEFT								\
+		{													\
+			closeImmediate currMenu;						\
+			openImmediate prevMenu;							\
+		}													\
+		execKeyInt DPAD_RIGHT								\
+		{													\
+			closeImmediate currMenu;						\
+			openImmediate nextMenu;							\
+		}													\
+		execKeyInt APAD_LEFT								\
+		{													\
+			closeImmediate currMenu;						\
+			openImmediate prevMenu;							\
+		}													\
+		execKeyInt APAD_RIGHT								\
+		{													\
+			closeImmediate currMenu;						\
+			openImmediate nextMenu;							\
+		}
+		
+#undef CONTRACTS_SECTION_LABEL_COLOR
+#ifdef PC
+#define CONTRACTS_SECTION_LABEL_COLOR		0 0 0 1
+#else //#ifdef PC
+#define CONTRACTS_SECTION_LABEL_COLOR		NEW_FRAME_GREY_RGB 1
+#endif //#ifdef PC
+	
+#undef ON_ESC
+#define ON_ESC							\
+	deactivateBlur;						\
+	play uin_navigation_menu_lg_close;	\
+	execnow "uploadstats";				\
+	close self;							\
+
+{	
+	menuDef
+	{
+		name					menu_xboxlive_killstreaks
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		control					MENU_CONTROL_OPENER
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		
+		onOpen	
+		{
+			activateBlur;
+			execnow set ui_inside_popup killstreaks;
+			execnow set ui_show_preview 1;
+			execnow set selected_group killstreak;
+			execnow buildItemListForGroupName (dvarString( selected_group ));
+			execnow set ui_slot_count 3;
+			play uin_navigation_menu_lg_open;
+			execnow focusitem killstreaks;
+			setLocalVarBool ui_hideBack 1;
+		}
+		onFocus {  }
+		onClose	
+		{
+			deactivateBlur; 
+			execnow set ui_show_preview 0;
+			execnow set ui_primary_highlighted 0;
+			execnow set ui_attachment_highlighted 0;
+			setLocalVarBool ui_hideBack 0;
+		}
+		onESC	
+		{
+			ON_ESC
+		}
+		
+		itemDef
+		{
+			name	dummyButton
+			type	ITEM_TYPE_BUTTON_NO_TEXT
+			rect	0 0 0 0
+			visible	1
+		}
+		
+		
+		FRAME_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MENU_KILLSTREAKS_CAPS", 1 )
+		
+		PLAYER_INFO_VIS( FRAME_DEFAULT_WIDTH, FRAME_DEFAULT_HEIGHT, 1 )
+		
+		#define ITEM_IMAGE_HEIGHT				( FRAME_DEFAULT_HEIGHT - FRAME_HEADER_HEIGHT )
+		#define ITEM_IMAGE_WIDTH				(327)
+		#define ITEM_TITLE_HEIGHT				30
+		#define ITEM_TITLE_WIDTH				( (FRAME_DEFAULT_WIDTH/2) - FRAME_DEFAULT_TITLE_X_OFFSET )
+		#define ITEM_INFO_TEXT_HEIGHT			15
+
+		#define ITEM_INFO_Y_1					(LIST_Y_START-4)
+		#define	ITEM_INFO_Y_2					(LIST_Y_START+ITEM_TITLE_HEIGHT-10)
+		#define ITEM_INFO_Y_3					(LIST_Y_START + LIST_HEIGHT - (ITEM_INFO_TEXT_HEIGHT*5) )
+		#define ITEM_INFO_Y_4					(ITEM_INFO_Y_3 + (ITEM_INFO_TEXT_HEIGHT*3))
+
+																																																
+		/* BG Image */																																																			
+		PREPROC_SHADER_DRAW_VIS_EX( (FRAME_DEFAULT_WIDTH/2-ITEM_IMAGE_WIDTH) (  ( -FRAME_DEFAULT_HEIGHT / 2 ) + NEW_FRAME_HEADER_HEIGHT ) ITEM_IMAGE_WIDTH ITEM_IMAGE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	
+									GetItemRef( GetCurrentItemIndex() )+"_lobby", 1 1 1 0.9,																																
+									when( !KILLSTREAKS_LOCKED );,																																											
+									; )																																														
+		/* Name */																																																			
+		PREPROC_TEXT_DRAW_ALL(	(COMMAND_SUPPORT_DESC_X) ITEM_INFO_Y_1 ITEM_TITLE_WIDTH ITEM_TITLE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,																
+								toUpper( locString( "@" + GetCurrentItemName() ) ),																																			
+								TEXTSIZE_TITLE, 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,																								
+								when( !KILLSTREAKS_LOCKED && !USE_SMALLER_FONT );, ; )																																												
+		PREPROC_TEXT_DRAW_ALL(	(COMMAND_SUPPORT_DESC_X) ITEM_INFO_Y_1 ITEM_TITLE_WIDTH ITEM_TITLE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,																
+								toUpper( locString( "@" + GetCurrentItemName() ) ),																																			
+								(TEXTSIZE_TITLE * FOREIGN_LANGUAGE_MULTIPLIER), 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,																								
+								when( !KILLSTREAKS_LOCKED && USE_SMALLER_FONT );, ; )																																										
+		/* Active */																																																		
+		PREPROC_TEXT_DRAW_ALL(	(COMMAND_SUPPORT_DESC_X) (ITEM_INFO_Y_2) ITEM_TITLE_WIDTH ITEM_TITLE_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,																
+								"@MPUI_ACTIVE_CAPS",																																										
+								TEXTSIZE_SUBTITLE, 0, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_GREEN_RGB 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,																			
+								when( IsCurrentSortedItemEquipped() && !KILLSTREAKS_LOCKED );, ; )																																			
+		/* Requires Header */																																																
+		PREPROC_TEXT_DRAW_VIS(	(COMMAND_SUPPORT_DESC_X) (ITEM_INFO_Y_3) ITEM_TITLE_WIDTH ITEM_INFO_TEXT_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,																
+								"@MPUI_REQUIRES_CAPS",																																										
+								TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, 0 0 0 0.8,																																	
+								when( !KILLSTREAKS_LOCKED ); )																																												
+		/* Requires */																																																		
+		PREPROC_TEXT_DRAW_VIS(	(COMMAND_SUPPORT_DESC_X) (ITEM_INFO_Y_3+ITEM_INFO_TEXT_HEIGHT) ITEM_TITLE_WIDTH ITEM_INFO_TEXT_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,															
+								"@" + GetItemCount( GetCurrentItemIndex() ) + " " + locstring("MPUI_KILLS_PRE"),																											
+								TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1,																																		
+								when( !KILLSTREAKS_LOCKED ); )																																												
+		/* Description Header */																																															
+		PREPROC_TEXT_DRAW_VIS(	(COMMAND_SUPPORT_DESC_X) (ITEM_INFO_Y_4) ITEM_TITLE_WIDTH ITEM_INFO_TEXT_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,																
+								"@MPUI_DESCRIPTION_CAPS",																																									
+								TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, 0 0 0 0.8,																																		
+								when( !KILLSTREAKS_LOCKED ); )																																												
+		/* Description */																																																	
+		PREPROC_TEXT_DRAW_VIS_EX(	(COMMAND_SUPPORT_DESC_X) (ITEM_INFO_Y_4+ITEM_INFO_TEXT_HEIGHT) ITEM_TITLE_WIDTH (ITEM_INFO_TEXT_HEIGHT*2) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,	
+									"@" + GetItemDesc( GetCurrentItemIndex() ),																																				
+									TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1,																																		
+									when( !KILLSTREAKS_LOCKED );, autowrapped )
+
+		#define KILLSTREAK_SELECTED_ACTION											\
+				if ( isCurrentItemPurchased() )										\
+				{																	\
+					play CHOICE_FOCUS_SOUND;										\
+					execnow equipGlobalItemInSlotSorted 3 killstreak 1;				\
+				}																	\
+				elseif ( !isItemlocked( getCurrentItemIndex() ) &&					\
+						( getCurrentItemCost() <= GetStatByName( "CODPOINTS" ) ) )	\
+				{																	\
+					open "PurchaseKillstreakConfirmation";							\
+				}
+
+
+		// Lists
+		SORTED_ITEM_LISTBOX_EX( killstreaks, FEEDER_SORTEDGLOBALITEMS, KILLSTREAK_SELECTED_ACTION, when( !KILLSTREAKS_LOCKED ), ; )
+		
+		// dummy for when killstreaks are locked
+		itemDef 
+		{ 
+			type			ITEM_TYPE_BUTTON 
+			rect			(LIST_X_START+110) -10 0 0 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM 
+			text			"" 
+			textfont		UI_FONT_NORMAL 
+			textscale		TEXTSIZE_SMALL
+			textalign		ITEM_ALIGN_BOTTOM_LEFT 
+			visible			when( KILLSTREAKS_LOCKED )  
+			decoration 
+			//CHANGE_MENU_ACTION( menu_xboxlive_killstreaks, menu_xboxlive_contracts, menu_xboxlive_contracts )
+		}
+
+		// Lock message
+		PREPROC_TEXT_DRAW_VIS( (-FRAME_DEFAULT_WIDTH/2+10) (FRAME_DEFAULT_HEIGHT/2-7) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, GET_UNLOCK_LEVEL_STRING( FEATURE_KILLSTREAKS ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, CHOICE_TEXTCOLOR, when( KILLSTREAKS_LOCKED ) )
+#ifndef PC	
+		FRAME_BACK_BUTTON_DEFAULT
+
+		
+		itemDef 
+		{ 
+			type			ITEM_TYPE_BUTTON 
+			rect			-200 ( FRAME_DEFAULT_HEIGHT / 2 ) 100 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER 
+			text			"@PLATFORM_CLEAR_KILLSTREAKS" 
+			textfont		CHOICE_TEXTFONT 
+			textscale		TEXTSIZE_DEFAULT
+			textalign		ITEM_ALIGN_MIDDLE_LEFT 
+			execKeyInt		BUTTON_Y { play CHOICE_FOCUS_SOUND; CAC_SETUP_ACTION_CLEAR_SLOTS }
+			visible			when( !KILLSTREAKS_LOCKED && ( GetNumSortedItemsEquipped() > 0 ) )  
+			decoration 
+		}
+#else // #ifndef PC
+		#undef CHOICE_TEXTSIZE
+		#define CHOICE_TEXTSIZE			TEXTSIZE_DEFAULT
+		
+		#undef CHOICE_TEXTFONT
+		#define CHOICE_TEXTFONT			UI_FONT_NORMAL
+		
+		#define BUTTON_SPACING		20
+		#define CLEAR_BUTTON_OFFSET ( getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+
+		NEW_FRAME_BUTTON_PC_LEFT_OFFSET( FRAME_DEFAULT_WIDTH, FRAME_DEFAULT_HEIGHT, CLEAR_BUTTON_OFFSET, "@PLATFORM_CLEAR_KILLSTREAKS", play CHOICE_FOCUS_SOUND; CAC_SETUP_ACTION_CLEAR_SLOTS;, when( !KILLSTREAKS_LOCKED && ( GetNumSortedItemsEquipped() > 0 ) ) )
+		
+		// back button
+		FRAME_BACK_BUTTON_DEFAULT_ACTION( ON_ESC )
+#endif	// #ifndef PC
+
+		
+		#include "ui/safearea.menu"
+	}
+	
+	#undef 	CHOICE_TEXTSTYLE
+	#define CHOICE_TEXTSTYLE					ITEM_TEXTSTYLE_NORMAL
+	
+	#define CAN_PURCHASE_CONTRACT				( !IsContractLocked( GetCurrentContractIndex() ) && !GetRemainingContractCooldownTime( GetCurrentContractIndex() ) )
+	#define IS_CONTRACT_ACTIVE					( IsContractActive( GetCurrentContractIndex() ) )
+	
+	#define BUTTONS_X							FRAME_CHOICE_X_START
+	#define CONTRACT1_BUTTON_Y					(FRAME_CHOICE_Y_START-3)
+	#define CONTRACT_BUTTON_HEADER_HEIGHT		19
+	#define CONTRACT_BUTTONS_WIDTH				245
+	#define CONTRACTS_BUTTON_HEADER_COLOR		0.69 0.69 0.69 0.75 // TODO: MAP THIS COLOR TO THE ONE PRAVIN IS ADDING
+	#define CONTRACT_BUTTON_SPACING				(CONTRACT_BUTTON_HEADER_HEIGHT+NEW_FRAME_BUTTON_HEIGHT+20)
+	#define CONTRACT_BUTTONS_FADE_TIME			90
+	#define CONTRACT_LIST_ANIM_TIME				90
+	#define CONTRACT_LIST_HEIGHT_1				250
+	#define CONTRACT_LIST_HEIGHT_2				190
+	#define CONTRACT_LIST_HEIGHT_3				140
+	#define INTERIM_ANIM_TIME					30
+	#undef 	NEW_FRAME_BUTTON_NAME
+	#define NEW_FRAME_BUTTON_NAME				"contract_slot_button_"
+	
+	#define CONTRACTS_RIGHT_X					0
+	#define CONTRACT_HEADER_HEIGHT				15
+	#define CONTRACT_DESC_Y						(CONTRACT1_BUTTON_Y+CONTRACT_BUTTON_HEADER_HEIGHT+110)
+	#define CONTRACT_REWARD_Y					(CONTRACT_DESC_Y+50)
+	#define CONTRACT_EXPIRATION_Y				(CONTRACT_REWARD_Y+50)
+	#define CONTRACT_PROGRESS_Y					(CONTRACT_EXPIRATION_Y+40)
+	
+#ifdef PC
+	#undef SETUP_ONFOCUS_CONTRACTS
+	#define SETUP_ONFOCUS_CONTRACTS( index )					\
+		setLocalVarInt ui_contracts_button_highlighted	index;
+		
+	#undef SETUP_HL_CONTRACTS
+	#define SETUP_HL_CONTRACTS( index ) \
+		( localVarInt( ui_contracts_button_highlighted ) == index )
+#endif //#ifdef PC
+
+#define CONTRACT_SLOT_MOVE_PC_SETFOCUSPREVIOUS( prevNumber )	setfocus NEW_FRAME_BUTTON_NAME#prevNumber
+#define CONTRACT_SLOT_MOVE_PC_SETFOCUSNEXT( nextNumber )		setfocus NEW_FRAME_BUTTON_NAME#nextNumber	
+
+#ifdef PC
+	#define CONTRACT_SLOT_MOVE_PC( numberArg, prevNumber, nextNumber )	\
+		execKeyInt K_UPARROW									\
+		{														\
+			CONTRACT_SLOT_MOVE_PC_SETFOCUSPREVIOUS( prevNumber )\
+		}														\
+		execKeyInt K_DOWNARROW									\
+		{														\
+			CONTRACT_SLOT_MOVE_PC_SETFOCUSNEXT( nextNumber )	\
+		}
+#else //#ifdef PC
+	#define CONTRACT_SLOT_MOVE_PC( numberArg, prevNumber, nextNumber )
+#endif //#ifdef PC
+		
+	#define CONTRACT_SLOT_MOVE( numberArg, prevNumber, nextNumber )	\
+			execKeyInt APAD_UP										\
+			{														\
+				setfocus NEW_FRAME_BUTTON_NAME#prevNumber			\
+			}														\
+			execKeyInt DPAD_UP										\
+			{														\
+				setfocus NEW_FRAME_BUTTON_NAME#prevNumber			\
+			}														\
+			execKeyInt APAD_DOWN									\
+			{														\
+				setfocus NEW_FRAME_BUTTON_NAME#nextNumber			\
+			}														\
+			execKeyInt DPAD_DOWN									\
+			{														\
+				setfocus NEW_FRAME_BUTTON_NAME#nextNumber			\
+			}														\
+			CONTRACT_SLOT_MOVE_PC( numberArg, prevNumber, nextNumber )
+				
+	#define CONTRACT_BUTTON_ACTION( slotNumber )		\
+			if (localVarInt( ui_openDropDown ) != slotNumber) \
+			{ \
+				setLocalVarInt ui_openDropDown slotNumber;	\
+				execnow setContractFilter slotNumber;		\
+				execnow ui_animate menu_xboxlive_contracts anim_controller OpenDropDownList 0; \
+			} \
+			else \
+			{ \
+				execnow ui_animate menu_xboxlive_contracts anim_controller CloseDropDownList 0; \
+			}
+
+#ifdef PC
+	#define CONTRACT_BUTTON_PLATFORM( slotNumber, navArg )																																																								\
+			NEW_FRAME_BUTTON_CUSTOM_HIGHLIGHT(	slotNumber, BUTTONS_X (CONTRACT1_BUTTON_Y+CONTRACT_BUTTON_SPACING*(slotNumber-1)+CONTRACT_BUTTON_HEADER_HEIGHT) CONTRACT_BUTTONS_WIDTH NEW_FRAME_BUTTON_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	\
+								GetContractName( GetIndexForActiveContract( slotNumber-1 ) ),																																					\
+								CONTRACT_BUTTON_ACTION( slotNumber ),																																											\
+								execnow set ui_activeContract (slotNumber-1); execnow setcurrentcontract ( GetIndexForActiveContract( slotNumber-1 ) ); SETUP_ONFOCUS_CONTRACTS( slotNumber );,																						\
+								;,																																																				\
+								(localVarInt( ui_openDropDown ) == 0 || localVarInt( ui_openDropDown ) == slotNumber), SETUP_HL_CONTRACTS( slotNumber ), navArg, ; )
+#else //#ifdef PC
+	#define CONTRACT_BUTTON_PLATFORM( slotNumber, navArg )																																																								\
+			NEW_FRAME_BUTTON(	slotNumber, BUTTONS_X (CONTRACT1_BUTTON_Y+CONTRACT_BUTTON_SPACING*(slotNumber-1)+CONTRACT_BUTTON_HEADER_HEIGHT) CONTRACT_BUTTONS_WIDTH NEW_FRAME_BUTTON_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	\
+								GetContractName( GetIndexForActiveContract( slotNumber-1 ) ),																																					\
+								CONTRACT_BUTTON_ACTION( slotNumber ),																																											\
+								execnow set ui_activeContract (slotNumber-1); execnow setcurrentcontract ( GetIndexForActiveContract( slotNumber-1 ) );,																						\
+								;,																																																				\
+								(localVarInt( ui_openDropDown ) == 0 || localVarInt( ui_openDropDown ) == slotNumber), navArg, ; )
+#endif //#ifdef PC	
+
+	#define CONTRACT_BUTTON( slotNumber, navArg )																																																\
+			PREPROC_TEXT_DRAW_VIS_EX(	BUTTONS_X (CONTRACT1_BUTTON_Y+CONTRACT_BUTTON_SPACING*(slotNumber-1)) CONTRACT_BUTTONS_WIDTH CONTRACT_BUTTON_HEADER_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0,							\
+										"@MPUI_CONTRACT_CATEGORY"+slotNumber+"_CAPS",																																							\
+										TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_LEFT, CONTRACTS_BUTTON_HEADER_COLOR,																																\
+										1,																																									\
+										name NEW_FRAME_BUTTON_NAME#slotNumber; NEW_FRAME_TRANSPARENT_STATE( 1 1 1 ) )																															\
+			CONTRACT_BUTTON_PLATFORM( slotNumber, navArg )
+
+#ifdef CONSOLE
+	#define CONTRACT_LIST_RECT_W (CONTRACT_BUTTONS_WIDTH)
+	#define CONTRACT_LIST_SCROLL noscrollbars
+#else // #ifdef CONSOLE
+	#define CONTRACT_LIST_RECT_W (CONTRACT_BUTTONS_WIDTH+16)
+	#define CONTRACT_LIST_SCROLL
+#endif // #ifdef CONSOLE
+
+#ifdef CONSOLE
+	#define LOCK_BUTTON_X (CONTRACT_BUTTONS_WIDTH)
+#else // #ifdef CONSOLE
+	#define LOCK_BUTTON_X (CONTRACT_BUTTONS_WIDTH-LOCK_SIZE)
+#endif // #else #ifdef CONSOLE
+	
+	#define CONTRACT_LISTBOX( numberArg, heightArg ) \
+			itemDef\
+			{ \
+				name						"available_contracts_"#numberArg \
+				type						ITEM_TYPE_LISTBOX \
+				feeder						FEEDER_CONTRACTS \
+				rect						BUTTONS_X (CONTRACT1_BUTTON_Y+CONTRACT_BUTTON_SPACING*(numberArg-1)+CONTRACT_BUTTON_HEADER_HEIGHT+NEW_FRAME_BUTTON_HEIGHT) CONTRACT_LIST_RECT_W 0 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+				origin						0 0 \
+				elementwidth				30 \
+				elementheight				17 \
+				elementtype					LISTBOX_TEXT \
+				textstyle					ITEM_TEXTSTYLE_NORMAL \
+				textfont					UI_FONT_NORMAL \
+				textscale					TEXTSIZE_DEFAULT \
+				textalignx					12 \
+				forecolor					1 1 1 1 \
+				focusColor					1 1 1 1 \
+				disableColor				1 1 1 1 \
+				usePaging \
+				CONTRACT_LIST_SCROLL \
+				noBlinkingHighlight \
+				modal \
+				/*					x							y					w							h						len		horzAlign			vertAlign*/ \
+				userarea	5		-1							0					(CONTRACT_BUTTONS_WIDTH+1)	17						32		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE \		/* Background */
+									10							0					CONTRACT_BUTTONS_WIDTH		17						32		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE \ 	/* Name */
+									(CONTRACT_BUTTONS_WIDTH-70)	1					50							17						24		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE \		/* Cost */
+									LOCK_BUTTON_X				(17/2-LOCK_SIZE/2)	LOCK_SIZE					LOCK_SIZE				24		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE \		/* Lock */
+									1							0					16  						17						16		ITEM_ALIGN_LEFT		ITEM_ALIGN_MIDDLE \ 	/* A Button */
+				visible		when( localVarInt( ui_openDropDown ) == numberArg ) \
+				onFocus \
+				{ \
+					setLocalVarInt ui_inside_contracts_list 1; \
+				} \
+				leaveFocus \
+				{ \
+					setLocalVarInt ui_inside_contracts_list 0; \
+				} \
+				onListboxSelectionChange \
+				{ \
+					play CHOICE_FOCUS_SOUND; \
+				} \
+				doubleclick \
+				{ \
+					if ( !IsContractInProgress( GetCurrentContractIndex() ) && ( GetContractCost( GetCurrentContractIndex() ) <= GetStatByName( "CODPOINTS" ) ) && ( GetRemainingContractCooldownTime( GetCurrentContractIndex() ) == 0 ) && !IsContractLocked( GetCurrentContractIndex() ) && ( GetTimesContractPurchasable( GetCurrentContractIndex() ) == 0 || GetTimesContractPurchasable( GetCurrentContractIndex() ) - GetTimesContractPurchased( GetCurrentContractIndex() ) > 0 ) ) \
+					{ \
+						open "PurchaseContractConfirmation"; \
+					} \
+				} \
+				execKeyInt BUTTON_B \
+				{ \
+					execnow ui_animate menu_xboxlive_contracts anim_controller CloseDropDownList 0; \
+				} \
+				state \
+				{ \
+					name	Open \
+					rect	BUTTONS_X (CONTRACT1_BUTTON_Y+CONTRACT_BUTTON_SPACING*(numberArg-1)+CONTRACT_BUTTON_HEADER_HEIGHT+NEW_FRAME_BUTTON_HEIGHT) CONTRACT_LIST_RECT_W heightArg HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER \
+				} \
+			}
+		
+	#undef ON_ESC
+	#define ON_ESC																			\
+		if( localVarInt( ui_openDropDown ) > 0 )											\
+		{																					\
+			execnow ui_animate menu_xboxlive_contracts anim_controller CloseDropDownList 0;	\
+		}																					\
+		else																				\
+		{																					\
+			deactivateBlur;																	\
+			execnow "uploadstats";															\
+			play uin_navigation_menu_lg_close;												\
+			close self;																		\
+		}
+		
+	menuDef
+	{
+		name					menu_xboxlive_contracts
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		control					MENU_CONTROL_OPENER
+		priority				MENU_PRI_ONTOP
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		
+		onOpen
+		{
+			activateBlur;
+			setLocalVarInt ui_openDropDown 0;
+			execnow setcontractfilter 0;
+			execnow ui_animate menu_xboxlive_contracts * Default 0;
+			execnow focusitem NEW_FRAME_BUTTON_NAME"1";
+			setLocalVarBool ui_hideBack 1;
+			play uin_navigation_menu_lg_open;
+#ifdef PC
+			if ( localVarInt( ui_contracts_button_highlighted ) < 1 )
+			{
+				SETUP_ONFOCUS_CONTRACTS( 1 )
+			}
+#endif //#ifdef PC
+		}
+		onClose
+		{
+			deactivateBlur;
+			setLocalVarInt ui_openDropDown 0;
+			setLocalVarBool ui_hideBack 0;
+		}
+		onFocus
+		{
+			setLocalVarInt ui_highlight -1;
+		}
+		onESC 	
+		{
+			ON_ESC
+		}
+		
+		FRAME_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MENU_CONTRACTS_CAPS", 1 )
+#ifndef PC
+		FRAME_BACK_BUTTON_DEFAULT
+#endif // #ifndef PC
+		
+		PLAYER_INFO_VIS( FRAME_DEFAULT_WIDTH, FRAME_DEFAULT_HEIGHT, 1 )
+		
+		#define CONTRACTS_BG_SIZE		( (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X) + 30 )
+		
+		PREPROC_SHADER_DRAW( (0-CONTRACTS_BG_SIZE/2) (0-CONTRACTS_BG_SIZE/2+10) CONTRACTS_BG_SIZE CONTRACTS_BG_SIZE HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, "menu_mp_lobby_aar_award_ccontract", 1 1 1 0.05 )
+		
+		CONTRACT_BUTTON( 1, CONTRACT_SLOT_MOVE( 1, 3, 2 ) )
+		CONTRACT_LISTBOX( 1, CONTRACT_LIST_HEIGHT_1 )
+		CONTRACT_BUTTON( 2, CONTRACT_SLOT_MOVE( 2, 1, 3 ) )
+		CONTRACT_LISTBOX( 2, CONTRACT_LIST_HEIGHT_2 )
+		CONTRACT_BUTTON( 3, CONTRACT_SLOT_MOVE( 3, 2, 1 ) )
+		CONTRACT_LISTBOX( 3, CONTRACT_LIST_HEIGHT_3 )
+		
+		// CONTRACT CYCLE INFO
+		PREPROC_TEXT_DRAW_VIS( (BUTTONS_X+10) (FRAME_DEFAULT_HEIGHT/2-22) 200 17 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, locString( "@MPUI_NEW_CONTRACTS_PREFIX" )+" "+secondsAsTime( getTimeUntilNewContracts() ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_MIDDLE_LEFT, 1 1 1 1, when( getTimeUntilNewContracts() >= 0 ); )
+		// RIGHT ARROW
+		PREPROC_SHADER_DRAW_VIS_EX( (BUTTONS_X) ( (FRAME_DEFAULT_HEIGHT/2-19) ) 11 11 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN,			
+									"ui_arrow_right", 1 1 1 1, when( getTimeUntilNewContracts() >= 0 ), ; )		
+		// CONTRACT CATEGORY INFO
+		/* Name */
+		PREPROC_TEXT_DRAW_ALL( (CONTRACTS_RIGHT_X) (CONTRACT1_BUTTON_Y+CONTRACT_BUTTON_HEADER_HEIGHT-6) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X) 60 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,		0 0, "@MPUI_CONTRACT_CATEGORY"+int(dvarInt(ui_activeContract)+1)+"_CAPS", TEXTSIZE_SUBTITLE,	0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL, when( GetCurrentContractIndex() < 0 );, autowrapped )
+		/* Description */
+		PREPROC_TEXT_DRAW_VIS_EX( (CONTRACTS_RIGHT_X) (CONTRACT_DESC_Y+CONTRACT_HEADER_HEIGHT) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-30) 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, "@MPUI_CONTRACT_CATEGORY_DESC"+int(dvarInt(ui_activeContract)+1), TEXTSIZE_SMALL,		0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, when( GetCurrentContractIndex() < 0 );, autowrapped )
+		
+		// CONTRACT INFO
+		/* Name */
+		PREPROC_TEXT_DRAW_ALL( (CONTRACTS_RIGHT_X) (CONTRACT1_BUTTON_Y+CONTRACT_BUTTON_HEADER_HEIGHT-6) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-15) 60 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,		0 0, toUpper( GetContractName( GetCurrentContractIndex() ) ), TEXTSIZE_SUBTITLE,	0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL, when( GetCurrentContractIndex() >= 0 );, autowrapped )
+		/* Status Text */
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT1_BUTTON_Y+CONTRACT_BUTTON_HEADER_HEIGHT+54) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0 , locString( "@MPUI_CONTRACT_WILL_UNLOCK", GetContractUnlockLevel( GetCurrentContractIndex() ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_ORANGE_RGB 1, when( GetCurrentContractIndex() >= 0 && IsContractLocked( GetCurrentContractIndex() ) ); )
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT1_BUTTON_Y+CONTRACT_BUTTON_HEADER_HEIGHT+54) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0 , locString( "@MPUI_CONTRACT_COOLDOWN_PREFIX" )+" "+secondsAsTime( GetRemainingContractCooldownTime( GetCurrentContractIndex() ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_ORANGE_RGB 1, when( GetCurrentContractIndex() >= 0 && !IsContractLocked( GetCurrentContractIndex() ) && ( GetRemainingContractCooldownTime( GetCurrentContractIndex() ) > 0 ) && !IsContractInProgress( GetCurrentContractIndex() ) ); )
+		/* Description Header */
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_DESC_Y) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0 , "@MPUI_DESCRIPTION_CAPS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, CONTRACTS_SECTION_LABEL_COLOR, 1 )
+		/* Description */
+		PREPROC_TEXT_DRAW_VIS_EX( (CONTRACTS_RIGHT_X) (CONTRACT_DESC_Y+CONTRACT_HEADER_HEIGHT) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-10) 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, GetContractDesc( GetCurrentContractIndex() ), TEXTSIZE_SMALL,		0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, when( GetCurrentContractIndex() >= 0 && CAN_PURCHASE_CONTRACT );, autowrapped )
+		PREPROC_TEXT_DRAW_VIS_EX( (CONTRACTS_RIGHT_X) (CONTRACT_DESC_Y+CONTRACT_HEADER_HEIGHT) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-10) 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, GetContractDesc( GetCurrentContractIndex() ), TEXTSIZE_SMALL,		0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 0.4, when( GetCurrentContractIndex() >= 0 && !CAN_PURCHASE_CONTRACT );, autowrapped )
+		/* Reward Header */
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_REWARD_Y) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0 , "@MPUI_REWARD_CAPS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, CONTRACTS_SECTION_LABEL_COLOR, when( GetCurrentContractIndex() >= 0 ); )
+		/* Reward */
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_REWARD_Y+CONTRACT_HEADER_HEIGHT) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, GetContractRewardText( GetCurrentContractIndex(), 1 ), TEXTSIZE_LARGE,		0, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_GREEN_RGB 1, when( ( GetCurrentContractIndex() >= 0 ) && CAN_PURCHASE_CONTRACT ); )
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_REWARD_Y+CONTRACT_HEADER_HEIGHT) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, GetContractRewardText( GetCurrentContractIndex(), 0 ), TEXTSIZE_LARGE,		0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 0.4, when( ( GetCurrentContractIndex() >= 0 ) && !CAN_PURCHASE_CONTRACT ); )
+		/* Expiration Header */
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_EXPIRATION_Y) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0 , "@MPUI_EXPIRATION_CAPS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, CONTRACTS_SECTION_LABEL_COLOR, when( GetCurrentContractIndex() >= 0 && ( ( !IS_CONTRACT_ACTIVE || localVarInt( ui_inside_contracts_list ) ) || IsContractInProgress( GetCurrentContractIndex() ) ) ); )
+		/* Expiration */
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_EXPIRATION_Y+CONTRACT_HEADER_HEIGHT) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-10) 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, secondsAsTime( GetContractExpirationData( GetCurrentContractIndex() ) ) + locString( "@MPUI_EXPIRATION_PLAYTIME_SUFFIX" ), TEXTSIZE_SMALL,		0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, when( GetCurrentContractIndex() >= 0 && ( !IS_CONTRACT_ACTIVE || localVarInt( ui_inside_contracts_list ) ) && CAN_PURCHASE_CONTRACT ); )
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_EXPIRATION_Y+CONTRACT_HEADER_HEIGHT) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-10) 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, secondsAsTime( GetContractExpirationData( GetCurrentContractIndex() ) ) + locString( "@MPUI_EXPIRATION_PLAYTIME_SUFFIX" ), TEXTSIZE_SMALL,		0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 0.4, when( GetCurrentContractIndex() >= 0 && ( !IS_CONTRACT_ACTIVE || localVarInt( ui_inside_contracts_list ) ) && !CAN_PURCHASE_CONTRACT ); )
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_EXPIRATION_Y+CONTRACT_HEADER_HEIGHT) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-10) 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, secondsAsTime( GetContractCombatTimeLeft( GetCurrentContractIndex() ) ) + locString( "@MPUI_EXPIRATION_PLAYTIME_SUFFIX" ), TEXTSIZE_SMALL,		0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, when( GetCurrentContractIndex() >= 0 && IsContractInProgress( GetCurrentContractIndex() ) ); )
+		/* Progress Header */
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_PROGRESS_Y) 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0 , "@MPUI_PROGRESS_CAPS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_LEFT, CONTRACTS_SECTION_LABEL_COLOR, when( GetCurrentContractIndex() >= 0 && !localVarInt( ui_inside_contracts_list ) && ( IsContractInProgress( GetCurrentContractIndex() ) || IsContractComplete( GetCurrentContractIndex() ) || IsContractExpired( GetCurrentContractIndex() ) ) ); )
+		/* Progress */
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_PROGRESS_Y+CONTRACT_HEADER_HEIGHT) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-10) 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, "@MPUI_CONTRACT_NOT_COMPLETE", TEXTSIZE_SMALL,		0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, when( GetCurrentContractIndex() >= 0 && IsContractInProgress( GetCurrentContractIndex() ) && ( GetContractRequiredCount( GetCurrentContractIndex() ) == 1 ) && !localVarInt( ui_inside_contracts_list ) ); )
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_PROGRESS_Y+CONTRACT_HEADER_HEIGHT) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-10) 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, locString( "@MPUI_CONTRACT_PROGRESS_SHORT", GetContractProgress( GetCurrentContractIndex() ), GetContractRequiredCount( GetCurrentContractIndex() ), int( GetContractProgress( GetCurrentContractIndex() ) * 100 / GetContractRequiredCount( GetCurrentContractIndex() ) ) ), TEXTSIZE_SMALL,		0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, when( GetCurrentContractIndex() >= 0 && IsContractInProgress( GetCurrentContractIndex() ) && ( GetContractRequiredCount( GetCurrentContractIndex() ) > 1 ) && !localVarInt( ui_inside_contracts_list ) ); )
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_PROGRESS_Y+CONTRACT_HEADER_HEIGHT) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-10) 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, "@MPUI_COMPLETE_CAPS", TEXTSIZE_LARGE,		0, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_GREEN_RGB 1, when( GetCurrentContractIndex() >= 0 && IsContractComplete( GetCurrentContractIndex() ) && !localVarInt( ui_inside_contracts_list ) ); )
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_PROGRESS_Y+CONTRACT_HEADER_HEIGHT) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-10) 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, "@MPUI_CONTRACT_EXPIRED_CAPS", TEXTSIZE_LARGE,		0, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_RED_RGB 1, when( GetCurrentContractIndex() >= 0 && IsContractExpired( GetCurrentContractIndex() ) && !localVarInt( ui_inside_contracts_list ) ); )
+		PREPROC_TEXT_DRAW_VIS( (CONTRACTS_RIGHT_X) (CONTRACT_PROGRESS_Y+CONTRACT_HEADER_HEIGHT+20) (FRAME_DEFAULT_WIDTH/2-CONTRACTS_RIGHT_X-10) 30 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER,	0 0, locString( "@MPUI_CONTRACT_PROGRESS_SHORT", GetContractProgress( GetCurrentContractIndex() ), GetContractRequiredCount( GetCurrentContractIndex() ), int( GetContractProgress( GetCurrentContractIndex() ) * 100 / GetContractRequiredCount( GetCurrentContractIndex() ) ) ), TEXTSIZE_SMALL,		0, 0, ITEM_ALIGN_TOP_LEFT, NEW_FRAME_RED_RGB 1, when( GetCurrentContractIndex() >= 0 && IsContractExpired( GetCurrentContractIndex() ) && ( GetContractRequiredCount( GetCurrentContractIndex() ) > 1 ) && !localVarInt( ui_inside_contracts_list ) ); )
+		
+		// This is a dummy itemDef to disable controls.
+		// Used when animating.
+		itemDef
+		{
+			name	dummyButton
+			type	ITEM_TYPE_BUTTON_NO_TEXT
+			rect	0 0 0 0
+			visible	1
+			
+			onFocus { setLocalVarInt ui_highlight -1; }
+			execKeyInt APAD_UP {}
+			execKeyInt DPAD_UP {}
+			execKeyInt APAD_DOWN {}
+			execKeyInt DPAD_DOWN {}
+			execKeyInt APAD_LEFT {}
+			execKeyInt DPAD_LEFT {}
+			execKeyInt APAD_RIGHT {}
+			execKeyInt DPAD_RIGHT {}
+		}
+
+		itemDef
+		{
+			name	anim_controller
+			style	WINDOW_STYLE_SHADER
+			rect	0 0 0 0
+			visible 1
+			decoration
+			
+			state
+			{
+				name	OpenDropDownList
+				onEnter
+				{
+					setFocus dummyButton;
+					if ( dvarInt( ui_activeContract ) == 0 )
+					{
+						execnow ui_animate menu_xboxlive_contracts NEW_FRAME_BUTTON_NAME"2" Transparent CONTRACT_BUTTONS_FADE_TIME;
+						execnow ui_animate menu_xboxlive_contracts NEW_FRAME_BUTTON_NAME"3" Transparent CONTRACT_BUTTONS_FADE_TIME;
+					}
+					elseif ( dvarInt( ui_activeContract ) == 1 )
+					{
+						execnow ui_animate menu_xboxlive_contracts NEW_FRAME_BUTTON_NAME"3" Transparent CONTRACT_BUTTONS_FADE_TIME;
+					}
+					execnow ui_animate menu_xboxlive_contracts anim_controller OpenDropDownList2 (CONTRACT_BUTTONS_FADE_TIME+INTERIM_ANIM_TIME);
+				}
+			}
+			state
+			{
+				name	OpenDropDownList2
+				onEnter
+				{
+					execnow ui_animate menu_xboxlive_contracts ("available_contracts_"+int(dvarInt( ui_activeContract )+1)) Open CONTRACT_LIST_ANIM_TIME;
+					execnow ui_animate menu_xboxlive_contracts anim_controller OpenDropDownList3 (CONTRACT_LIST_ANIM_TIME+INTERIM_ANIM_TIME);
+				}
+			}
+			state
+			{
+				name	OpenDropDownList3
+				onEnter
+				{
+					execnow focusitem ("available_contracts_"+int(dvarInt( ui_activeContract )+1));
+				}
+			}
+			
+			state
+			{
+				name	CloseDropDownList
+				onEnter
+				{
+					setFocus dummyButton;
+					execnow ui_animate menu_xboxlive_contracts ("available_contracts_"+int(dvarInt( ui_activeContract )+1)) Default CONTRACT_LIST_ANIM_TIME;
+					execnow ui_animate menu_xboxlive_contracts anim_controller CloseDropDownList2 (CONTRACT_LIST_ANIM_TIME+INTERIM_ANIM_TIME);
+				}
+			}
+			state
+			{
+				name	CloseDropDownList2
+				onEnter
+				{
+					execnow ui_animate menu_xboxlive_contracts NEW_FRAME_BUTTON_NAME"2" Default CONTRACT_BUTTONS_FADE_TIME;
+					execnow ui_animate menu_xboxlive_contracts NEW_FRAME_BUTTON_NAME"3" Default CONTRACT_BUTTONS_FADE_TIME;
+					execnow ui_animate menu_xboxlive_contracts anim_controller CloseDropDownList3 (CONTRACT_BUTTONS_FADE_TIME+INTERIM_ANIM_TIME);
+				}
+			}
+			state
+			{
+				name	CloseDropDownList3
+				onEnter
+				{
+					execnow focusitem (NEW_FRAME_BUTTON_NAME+int(dvarInt( ui_activeContract )+1));
+					setLocalVarInt ui_openDropDown 0;
+				}
+			}
+		}
+	
+#ifdef PC		
+		// back button
+		FRAME_BACK_BUTTON_DEFAULT_ACTION( ON_ESC )
+#endif // #ifdef PC
+	
+	}
+	
+}	
+	

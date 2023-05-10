@@ -1,0 +1,37 @@
+///////////////////////////////////
+// REBIRTH SPECIFIC ANIMS
+///////////////////////////////////
+
+// Crate Anims
+p_rebirth_b01_dock_crate_outer_door_anim
+p_rebirth_b01_dock_crate_outer_door_openloop
+p_rebirth_b01_dock_crate_inner_door_anim
+p_rebirth_b01_dock_crate_inner_door_openloop
+
+// KS23 Anim
+o_contextual_melee_ladderpull_ks23
+
+// Hatch Anims
+p_rebirth_b01_slide_down_hatch_closed
+p_rebirth_b01_open_hatch
+p_rebirth_b01_open_hatch_loop
+p_rebirth_b01_drop_down_hatch_fullyopen
+p_rebirth_b01_hatch_idle
+
+//Fuse Anims
+p_rebirth_b02_confront_steiner_fuse
+p_rebirth_b05_officebreakin_break_window_endidle_fuse
+p_rebirth_b05_officebreakin_break_window_fuse
+p_rebirth_b05_officebreakin_break_window_startidle_fuse
+p_rebirth_b05_officebreakin_idle_at_fuse_fuse
+p_rebirth_b05_officebreakin_intro_fuse
+
+// door Anims
+p_rebirth_b02_confront_steiner_door_anim
+p_rebirth_b02_lead_to_steiner_door_anim
+
+// chair anim
+p_rebirth_b02_confront_steiner_chair
+
+//gas attack heli crash
+v_rebirth_b03_helicopter_crash

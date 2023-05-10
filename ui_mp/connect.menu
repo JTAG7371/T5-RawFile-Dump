@@ -1,0 +1,456 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+
+#define ORIGIN_DIY_TITLE_PC			42 270
+#define ORIGIN_DIY_FRAME_PC			35 270
+#define ORIGIN_DIY_PC				37 290
+
+#define ORIGIN_DIY_TITLE_HIDEF		-302 300
+#define ORIGIN_DIY_FRAME_HIDEF		-295 300
+#define ORIGIN_DIY_HIDEF			-297 320
+
+#define WIDESCREEN_OFFSET			107 0
+
+// Displayed when client is initially connecting to the server.
+{
+	menuDef 
+	{
+		name			"connect"
+		fullScreen		MENU_FALSE
+		focusColor		COLOR_FOCUSED
+#ifdef CONSOLE
+		visible			MENU_FALSE		
+#else		
+		visible			1
+#endif
+
+		onOpen
+		{
+			execnow setlocalvarbool ls_showspinner 0;
+			execnow ui_animate connect * Default 0 1;
+#ifdef CONSOLE
+			execnow ui_animate connect mapimage fade 1000 1;
+#endif
+		}
+
+		style			WINDOW_STYLE_FILLED
+		rect			0 0 640 480
+		
+		itemDef
+		{
+			name            "mapimage"
+			style			WINDOW_STYLE_LOADSCREEN
+			rect			FULLSCREEN_WIDE
+			visible			1
+			decoration
+#ifdef CONSOLE
+			forecolor       0 0 0 1
+
+			state
+			{
+				name "fade"
+				forecolor 1 1 1 1
+				onEnter
+				{
+					execnow ui_animate connect * meet 500 1;
+				}	
+			}
+#else
+			forecolor 1 1 1 1			
+#endif
+		}
+		
+#define GRADIENT_HEIGHT 200
+#define GRADIENT_INTENSITY 0.6
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 0 640 GRADIENT_HEIGHT HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+			background		"gradient_top"
+			forecolor       1 1 1 GRADIENT_INTENSITY
+			visible			1
+			decoration
+		}
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			0 (480-GRADIENT_HEIGHT) 640 GRADIENT_HEIGHT HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+			background		"gradient_bottom"
+			forecolor       1 1 1 GRADIENT_INTENSITY
+			visible			1
+			decoration
+		}
+
+		itemDef
+		{
+			name            "mapname"
+			rect			740 0 100 1 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			type			ITEM_TYPE_BUTTON
+			textfont		UI_FONT_EXTRABIG
+			textstyle       ITEM_TEXTSTYLE_NORMAL
+			dvar			"ls_mapname"
+			textalign 		ITEM_ALIGN_TOP_CENTER
+			textscale		TEXTSIZE_TITLE
+			forecolor		1 1 1 0
+			backcolor		0 0 0 0
+			textalignx 		0
+			textaligny 		0   
+			visible			1
+			decoration
+
+			state
+			{
+				name "meet"
+				
+				onEnter
+				{
+					execnow ui_animate connect mapname slidein 350 1;
+					execnow ui_animate connect gametype slidein 350 1;
+				}
+			}
+			state
+			{
+				name "slidein"
+				rect 320 0 100 1 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+				forecolor 1 1 1 0.5
+
+				onEnter
+				{
+					execnow ui_animate connect gametype slidein 0 1;
+					execnow ui_animate connect mapname end 20000 1;
+					execnow ui_animate connect gametype end 20000 1;
+				}
+			}
+
+			state
+			{
+				name "end"
+				rect 100 0 100 1 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+				forecolor 1 1 1 0.5
+				onEnter
+				{
+					execnow setlocalvarbool ls_showspinner 1;
+				}
+			}
+
+		}
+
+		itemDef
+		{
+			name            "gametype"
+			rect			-100 26 100 40 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+			type			ITEM_TYPE_BUTTON
+			textstyle       ITEM_TEXTSTYLE_NORMAL
+			textfont		UI_FONT_BIG
+			dvar			"ls_gametype"
+			textalign 		ITEM_ALIGN_TOP_CENTER
+			textscale		TEXTSIZE_SUBTITLE
+			forecolor		1 1 1 0
+			backcolor		0 0 0 0
+			textalignx 		0
+			textaligny 		0   
+			visible			1
+			decoration
+
+			state
+			{
+				name "slidein"
+				rect 220 26 100 40 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+				forecolor 1 1 1 1
+			}
+
+			state
+			{
+				name "end"
+				rect 440 26 100 40 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_TOP
+				forecolor 1 1 1 1
+			}
+		}
+
+#define LOADBAR_X -275
+#define LOADBAR_W 550
+#define LOADBAR_Y -30
+#define LOADBAR_HEIGHT 1.5
+		itemDef 
+		{ 
+			style			WINDOW_STYLE_SHADER 
+			rect			LOADBAR_X 116 LOADBAR_W LOADBAR_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			forecolor		0.1 0.1 0.1 .5
+			background		"white"
+			visible			1 
+			decoration 
+			state
+			{
+				name "meet"
+				rect LOADBAR_X LOADBAR_Y LOADBAR_W LOADBAR_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			}
+		}
+		itemDef 
+		{
+			name			"loadbar"
+			style			WINDOW_STYLE_LOADBAR
+			rect			LOADBAR_X 116 LOADBAR_W LOADBAR_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			background		"white"
+			forecolor		0.9 0.9 0.9 1
+			visible			1
+			decoration
+			state
+			{
+				name "meet"
+				rect LOADBAR_X LOADBAR_Y LOADBAR_W LOADBAR_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			}
+		}
+		itemDef 
+		{
+			style			WINDOW_STYLE_SPINNER
+			rect			( LOADBAR_X + LOADBAR_W ) ( LOADBAR_Y - 16 ) 32 32 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			background		"white"
+			forecolor		0.9 0.9 0.9 1
+			visible			when( localvarbool( ls_showspinner ) )
+			decoration
+		}
+		itemDef
+		{
+			rect			LOADBAR_X 96 LOADBAR_W 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_BUTTON
+			dvar			"ls_status"
+			textalign 		ITEM_ALIGN_BOTTOM_RIGHT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_SMALL
+			forecolor		1 1 1 0.5
+			backcolor		0 0 0 0
+			textalignx 		0
+			textaligny 		0   
+			visible			1
+			decoration
+			state
+			{
+				name "meet"
+				rect LOADBAR_X (LOADBAR_Y-20) LOADBAR_W 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			}
+		}
+		itemDef
+		{
+			rect			LOADBAR_X 140 LOADBAR_W 60 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_BUTTON
+			dvar			"didyouknow"
+			textalign 		ITEM_ALIGN_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_SMALL
+			forecolor		1 1 1 1
+			backcolor		0 0 0 0
+			textalignx 		0
+			textaligny 		0   
+			visible			1
+			decoration
+			autowrapped
+			state
+			{
+				name "meet"
+				rect LOADBAR_X (LOADBAR_Y+LOADBAR_HEIGHT+15) LOADBAR_W 60 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			}
+		}
+#define GAMESTATS_X LOADBAR_X
+#define GAMESTATS_Y (LOADBAR_Y-47)
+		// DEMO TITLE
+		itemDef
+		{
+			rect			GAMESTATS_X 96 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textalign 		ITEM_ALIGN_BOTTOM_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_SMALL
+			exp 			text( locString( "@MPUI_TITLE_CAPS" )+":" );
+			forecolor		1 1 1 0.5
+			visible			when( isDemoPlaying() )
+			decoration
+			state
+			{
+				name "meet"
+				rect GAMESTATS_X GAMESTATS_Y 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			}
+		}
+		itemDef
+		{
+			rect			(GAMESTATS_X+60) 96 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textalign 		ITEM_ALIGN_BOTTOM_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_SMALL
+			exp				text( dvarString( "ls_demotitle" ) );
+			forecolor		1 1 1 1
+			visible			when( isDemoPlaying() )
+			decoration
+			state
+			{
+				name "meet"
+				rect (GAMESTATS_X+60) GAMESTATS_Y 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			}
+		}
+
+#undef GAMESTATS_Y
+#define GAMESTATS_Y (LOADBAR_Y-27)
+		// DEMO DURATION
+		itemDef
+		{
+			rect			GAMESTATS_X 96 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textalign 		ITEM_ALIGN_BOTTOM_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_SMALL
+			exp 			text( locString( "@MPUI_DURATION_CAPS" )+":" );
+			forecolor		1 1 1 0.5
+			visible			when( isDemoPlaying() )
+			decoration
+			state
+			{
+				name "meet"
+				rect GAMESTATS_X GAMESTATS_Y 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			}
+		}
+		itemDef
+		{
+			rect			(GAMESTATS_X+60) 96 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textalign 		ITEM_ALIGN_BOTTOM_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_SMALL
+			exp				text( secondsAsTime( dvarInt( "ls_demoduration" ) ) );
+			forecolor		1 1 1 1
+			visible			when( isDemoPlaying() )
+			decoration
+			state
+			{
+				name "meet"
+				rect (GAMESTATS_X+60) GAMESTATS_Y 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			}
+		}
+
+		// DEMO AUTHOR
+		itemDef
+		{
+			rect			(GAMESTATS_X+140) 96 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textalign 		ITEM_ALIGN_BOTTOM_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_SMALL
+			exp 			text( locString( "@MPUI_AUTHOR_CAPS" )+":" );
+			forecolor		1 1 1 0.5
+			visible			when( isDemoPlaying() && ( dvarString( "ls_demoauthor" ) != "" ) )
+			decoration
+			state
+			{
+				name "meet"
+				rect (GAMESTATS_X+140) GAMESTATS_Y 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			}
+		}
+		itemDef
+		{
+			rect			(GAMESTATS_X+140+55) 96 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textalign 		ITEM_ALIGN_BOTTOM_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_SMALL
+			exp				text( dvarString( "ls_demoauthor" ) );
+			forecolor		1 1 1 1
+			visible			when( isDemoPlaying() )
+			decoration
+			state
+			{
+				name "meet"
+				rect (GAMESTATS_X+140+55) GAMESTATS_Y 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			}
+		}
+
+#undef GAMESTATS_X
+#define GAMESTATS_X (LOADBAR_X+60)
+
+		// wager match loading screen items
+#define CONNECT_WAGER_BG_STATE \
+	state \
+	{ \
+		name	"meet" \
+		rect 	-280 160 220 80 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP \
+	}
+	
+	#define PAYOUT_SPACING 80
+	#define FIRST_PAYOUT_X GAMESTATS_X
+	#define PAYOUT_Y GAMESTATS_Y
+	
+#ifdef PC
+	#define PAYOUT_TEXT_VISIBLE when( !isDemoPlaying() && dvarInt( "xblive_wagermatch" ) == 1 )
+#else //#ifdef PC
+	#define PAYOUT_TEXT_VISIBLE when( dvarInt( "xblive_wagermatch" ) == 1 )
+#endif //#ifdef PC
+	
+	#define PAYOUT_TEXT( payoutNumber, payoutMultiplier ) \
+		itemDef \
+		{ \
+			rect			(FIRST_PAYOUT_X+PAYOUT_SPACING*(payoutNumber-1)) 96 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM \
+			type			ITEM_TYPE_TEXT \
+			textalign 		ITEM_ALIGN_BOTTOM_LEFT \
+			textscale		TEXTSIZE_SMALL \
+			textfont		UI_FONT_SMALL \
+			exp text		( toOrdinal( payoutNumber ) ) \
+			forecolor		1 1 1 1 \
+			backcolor		0 0 0 0 \
+			textalignx 		0 \
+			textaligny 		0   \ 
+			visible			PAYOUT_TEXT_VISIBLE \
+			decoration \
+			state \
+			{ \
+				name "meet" \
+				rect (FIRST_PAYOUT_X+PAYOUT_SPACING*(payoutNumber-1)) PAYOUT_Y 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM \
+			} \
+		} \
+		itemDef \
+		{ \
+			rect			(FIRST_PAYOUT_X+PAYOUT_SPACING*(payoutNumber-1)+20) 96 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM \
+			type			ITEM_TYPE_TEXT \
+			textalign 		ITEM_ALIGN_BOTTOM_LEFT \
+			textscale		TEXTSIZE_DEFAULT \
+			textfont		UI_FONT_NORMAL \
+			exp				text( locString( "@MENU_POINTS", int( dvarInt( "scr_wagerbet" ) * dvarInt( "party_minplayers" ) * payoutMultiplier ) ) ); \
+			forecolor		0.24 0.72 0.47 1 \
+			backcolor		0 0 0 0 \
+			textalignx 		0 \
+			textaligny 		0 \
+			visible			PAYOUT_TEXT_VISIBLE \
+			decoration \
+			state \
+			{ \
+				name "meet" \
+				rect (FIRST_PAYOUT_X+PAYOUT_SPACING*(payoutNumber-1)+20) PAYOUT_Y 600 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM \
+			} \
+		}
+	
+		// PAYOUTS
+		itemDef
+		{
+			rect			LOADBAR_X 96 LOADBAR_W 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			type			ITEM_TYPE_TEXT
+			textalign 		ITEM_ALIGN_BOTTOM_LEFT
+			textscale		TEXTSIZE_SMALL
+			textfont		UI_FONT_SMALL
+			exp 			text( locString( "@MP_PAYOUTS_CAPS" )+":" );
+			forecolor		1 1 1 0.5
+			backcolor		0 0 0 0
+			textalignx 		0
+			textaligny 		0   
+			visible			PAYOUT_TEXT_VISIBLE
+			decoration
+			state
+			{
+				name "meet"
+				rect LOADBAR_X PAYOUT_Y LOADBAR_W 18 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			}
+		}
+		PAYOUT_TEXT( 1, 0.5 )
+		PAYOUT_TEXT( 2, 0.3 )
+		PAYOUT_TEXT( 3, 0.2 )		
+
+		#include "ui/safearea.menu"
+	}
+}
+

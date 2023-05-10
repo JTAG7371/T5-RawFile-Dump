@@ -1,0 +1,81 @@
+a0,b1,c2,d3,e4,f5,g6,h7,i8,j9,k10,l11,m12,n13,o14
+# Custom Class Data,,,,,,,,,,,,,,
+# index,# stat num,# group,# name,# reference,# stat and reference numbers,#count,# image,# name,# description,#presell reference number,#collectors reference number,#both reference number,#presell reference,#collectors reference
+
+Primary Weapons,1,5,,,,,,,,,,,,
+1,3020,Primary Weapon,@WEAPON_M4,m4,20,,weapon_m4,WEAPON_M4,attachment_popup_assault,acog,reflex,silencer,gl,
+2,3023,Primary Weapon,@WEAPON_M14,m14,23,,weapon_m14,WEAPON_M14,attachment_popup_assault,acog,silencer,,,
+3,3010,Primary Weapon,@WEAPON_SKORPION,skorpion,10,,weapon_skorpion,WEAPON_SKORPION,attachment_popup_SMG,reflex,,,,
+4,3061,Primary Weapon,@WEAPON_DRAGUNOV,dragunov,61,,weapon_dragunov,WEAPON_DRAGUNOV,attachment_popup_rifle,acog,,,,
+5,3080,Primary Weapon,@WEAPON_SAW,saw,80,,weapon_saw,WEAPON_SAW,attachment_popup_LMG1,grip,reflex,,,
+
+
+
+
+Side Arms,15,5,,,,,,,,,,,,
+15,3000,Secondary Weapon,@WEAPON_COLT45,colt45,0,,weapon_colt,WEAPON_COLT45,attachment_popup_pistol,,,,,
+16,3001,Secondary Weapon,@WEAPON_USP45,usp,1,,weapon_usp45,WEAPON_USP45,attachment_popup_pistol
+17,3002,Secondary Weapon,@WEAPON_BERETTA_M9,beretta,2,,weapon_baretta,WEAPON_BERETTA_M9,attachment_popup_pistol
+18,3003,Secondary Weapon,@WEAPON_DESERTEAGLE,deserteagle,3,,weapon_deserteagle,WEAPON_DESERT_EAGLE,attachment_popup_pistol
+19,3004,Secondary Weapon,@WEAPON_357MAGNUM,357magnum,4,,weapon_357magnum,WEAPON_357MAGNUM,attachment_popup_pistol
+
+
+
+
+
+
+Primary Grenade,25,3,,,,,,,
+25,3100,Grenade,@WEAPON_FRAGGRENADE,frag_grenade,100,,weapon_fraggrenade,WEAPON_FRAGGRENADE,
+26,3101,Grenade,@WEAPON_MOLOTOV,molotov,101,,weapon_molotov,WEAPON_MOLOTOV,
+27,3104,Grenade,@WEAPON_STICKY_GRENADE,sticky_grenade,104,,weapon_sticky_grenade,WEAPON_STICKY_GRENADE,
+
+
+
+Secondary Grenade,30,5,,,,,,
+30,3102,Grenade,@WEAPON_M8_WHITE_SMOKE,m8_white_smoke,102,,weapon_m8_white_smoke,WEAPON_M8_WHITE_SMOKE
+31,3103,Grenade,@WEAPON_TABUN_GRENADE,tabun_gas,103,,weapon_tabun_gas,WEAPON_TABUN_GAS
+32,3105,Grenade,@WEAPON_SIGNAL_FLARE,signal_flare,105,,weapon_signal_flare,WEAPON_SIGNAL_FLARE
+33,3106,Grenade,@WEAPON_FLASHBANG,flash_grenade,106,,weapon_flashbang,WEAPON_FLASHBANG
+34,3107,Grenade,@WEAPON_STUN_GRENADE,concussion_grenade,107,,weapon_concgrenade,WEAPON_STUN_GRENADE
+
+
+Perk Slot 1,40,2,,,,,,
+40,182,Perk,@PERKS_SPECIAL_GRENADES_X_3,specialty_specialgrenade,182,,specialty_specialgrenade,PERKS_3_SPECIAL_GRENADES_NO
+41,186,Perk,@PERKS_BAZOOKA_X_2,bazooka_mp,186,,specialty_weapon_bazooka,PERKS_ROCKET_LAUNCHER_WITH
+42,,,,,,,,
+43,,,,,,,,
+44,,,,,,,,
+45,,,,,,,,
+46,,,,,,,,
+47,,,,,,,,
+48,,,,,,,,
+49,,,,,,,,
+50,,,,,,,,
+
+
+
+Perk Slot 2,60,2,,,,,,
+60,159,Perk,@PERKS_JUGGERNAUT,specialty_armorvest,159,,specialty_armorvest,PERKS_INCREASED_HEALTH
+61,155,Perk,@PERKS_STOPPING_POWER,specialty_bulletdamage,155,,specialty_bulletdamage,PERKS_INCREASED_BULLET_DAMAGE
+62,,,,,,,,
+63,,,,,,,,
+64,,,,,,,,
+65,,,,,,,,
+66,,,,,,,,
+67,,,,,,,,
+68,,,,,,,,
+69,,,,,,,,
+70,,,,,,,,
+
+Perk Slot 3,80,2,,,,,,
+80,168,Perk,@PERKS_DEEP_IMPACT,specialty_bulletpenetration,168,,specialty_bulletpenetration,PERKS_DEEPER_BULLET_PENETRATION
+81,169,Perk,@PERKS_STEADY_AIM,specialty_bulletaccuracy,169,,specialty_bulletaccuracy,PERKS_INCREASED_HIPFIRE_ACCURACY
+82,,,,,,,,
+83,,,,,,,,
+84,,,,,,,,
+85,,,,,,,,
+86,,,,,,,,
+87,,,,,,,,
+88,,,,,,,,
+89,,,,,,,,
+90

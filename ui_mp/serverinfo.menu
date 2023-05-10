@@ -1,0 +1,182 @@
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/framestyle.inc"
+#include "ui_mp/newframe.inc"
+
+#define CHOICE_GROUP			"serverinfo"
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui/choices_setup_popmenu.menu"
+
+#undef	CHOICE_HORIZONTAL_ALIGN 
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_CENTER 
+
+#undef  CHOICE_VERTICAL_ALIGN
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_CENTER
+
+#define SIDE_MARGIN		20
+
+#undef 	ORIGIN_TITLE
+#define ORIGIN_TITLE		10 0
+
+#undef CHOICE_SIZE_X
+#define CHOICE_SIZE_X	(INFO_BOX_WIDTH+(SIDE_MARGIN*2))
+
+#undef CHOICE_POPUP_TITLE_HEIGHT
+#define CHOICE_POPUP_TITLE_HEIGHT	(INFO_BOX_HEIGHT+SIDE_MARGIN+24)
+
+#undef SMALL_CENTER_POPUP_HEIGHT
+#undef SMALL_CENTER_POPUP_WIDTH
+#undef INFO_BOX_HEIGHT
+#undef INFO_BOX_WIDTH
+#undef INFO_BOX_SIZE
+#define INFO_BOX_HEIGHT 180
+#define INFO_BOX_WIDTH	330
+#define INFO_BOX_SIZE 	INFO_BOX_WIDTH INFO_BOX_HEIGHT
+#define INFO_BOX_X_OFFSET 10
+#define INFO_BOX_Y_OFFSET 10
+#define SMALL_CENTER_POPUP_HEIGHT INFO_BOX_HEIGHT
+#define SMALL_CENTER_POPUP_WIDTH INFO_BOX_WIDTH
+
+#define SHOW_INFO_VIS \
+	when(dvarBool("ui_browserShowInfo"))
+
+{
+	menuDef
+	{
+		SMALL_CENTER_POPUP_SETUP( newframeserverinfo, 1, setdvar ui_serverinfomessage ""; setdvar ui_serverinfohostname ""; uiScript ServerStatus;, ;)
+		PREPROC_TEXT_DRAW_VIS( (INFO_BOX_X_OFFSET-10) INFO_BOX_Y_OFFSET 1 1 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, ORIGIN_TITLE, dvarstring(ui_serverinfomessagehostname), TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1, SHOW_INFO_VIS )
+			
+		#define BUTTON_SPACING	20
+		#define BACK_OFFSET		( NEW_FRAME_DEFAULT_TITLE_X_OFFSET )
+		#define SCORE_OFFSET	( BACK_OFFSET + getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+		#define REFRESH_OFFSET	( SCORE_OFFSET + getTextWidth( locString( "@MENU_SCOREBOARD" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+		
+			SIMPLE_CHOICE_BUTTON_SOUND( 0 (SMALL_CENTER_POPUP_HEIGHT+4) 70 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+				exp rect X( BACK_OFFSET ), 
+				"@PLATFORM_BACK", ITEM_ALIGN_MIDDLE_CENTER, close self; )
+
+			SIMPLE_CHOICE_BUTTON_SOUND( 0 (SMALL_CENTER_POPUP_HEIGHT+4) 70 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+				exp rect X( SCORE_OFFSET ), 
+				"@MENU_SCOREBOARD", ITEM_ALIGN_MIDDLE_CENTER, setdvar ui_serverinfomessage ""; open newframescoreinfo; )
+
+			SIMPLE_CHOICE_BUTTON_SOUND( 0 (SMALL_CENTER_POPUP_HEIGHT+4) 70 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+				exp rect X( REFRESH_OFFSET ), 
+				"@MENU_REFRESH", ITEM_ALIGN_MIDDLE_CENTER, uiScript ServerStatus; )
+				
+		#include "ui_mp/game_info.inc"
+		#define MAPIMAGE				SELECTION_IMAGE_FINAL( dvarString( ui_mapname ) )
+		#define MAPNAME					locString( tableLookup( "mp/mapstable.csv", 0, dvarString( ui_mapname ), 3 ) )
+		#define GAMETYPENAME			locString( tableLookup( "mp/gametypesTable.csv", 0, dvarString( ui_gametype ), 1 ) )
+		
+		#define VOTE_BG_SIZE			20
+		
+		#define SELECTION_IMAGE_FINAL( materialArg )	\
+		( "menu_" + materialArg + "_map_select_final" )
+
+		#define MAP_SELECTION_INFO( xPos, yPos, widthArg, heightArg, mapName, gametypeName, visArg )															\
+				PREPROC_TEXT_DRAW_ALL(	(xPos+widthArg-96-8) (yPos+heightArg-VOTE_BG_SIZE+1-18) 96 24 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM,			\
+										0 0, toUpper( mapName ), TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_TOP_RIGHT, 1 1 1 1, UI_FONT_EXTRABIG, ITEM_TEXTSTYLE_NORMAL,	\
+										visArg, ; )																												\
+				PREPROC_TEXT_DRAW_VIS_EX(	(xPos-8) (yPos+heightArg-VOTE_BG_SIZE+1) widthArg 20 CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM,					\
+										0 0, gametypeName, TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_TOP_RIGHT, 1 1 1 1,													\
+										visArg, autowrapped )
+
+		#define MAP_X_START				(140)
+		#define MAP_Y_START				(-204)
+		#define MAP_WIDTH				183
+		#define MAP_ASPECT_RATIO		(203/275)
+		#define MAP_HEIGHT				(MAP_WIDTH*MAP_ASPECT_RATIO)
+					
+		PREPROC_SHADER_DRAW_VIS_EX(	MAP_X_START MAP_Y_START MAP_WIDTH MAP_HEIGHT CHOICE_HORIZONTAL_ALIGN VERTICAL_ALIGN_BOTTOM, MAPIMAGE, 1 1 1 1, SHOW_INFO_VIS, ; )
+		MAP_SELECTION_INFO( MAP_X_START, MAP_Y_START, MAP_WIDTH, MAP_HEIGHT, MAPNAME, GAMETYPENAME, SHOW_INFO_VIS )
+
+		itemDef {
+			name			serverinfo
+			rect			(INFO_BOX_X_OFFSET) (INFO_BOX_Y_OFFSET+20) (INFO_BOX_WIDTH/2-INFO_BOX_X_OFFSET) (INFO_BOX_HEIGHT/4*3) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+			type			ITEM_TYPE_LISTBOX
+			style			WINDOW_STYLE_FILLED
+			elementwidth	120
+			elementheight	16
+			textfont		UI_FONT_NORMAL
+			textscale		.25
+			forecolor 		1 1 1 0.9
+			focusColor		1 1 1 0.9
+			disableColor 	1 1 1 0.9
+			backcolor		0 0 0 0
+			border			0
+			elementtype		LISTBOX_TEXT
+			feeder			FEEDER_SERVERSTATUS
+			notselectable
+			focuscolor		COLOR_FOCUSED
+			noscrollbars
+			visible			SHOW_INFO_VIS
+			columns			2	0 	50 	20
+								100 40 	40
+	 	}
+	}
+	
+#undef SMALL_CENTER_POPUP_HEIGHT
+#undef SMALL_CENTER_POPUP_WIDTH
+#undef INFO_BOX_HEIGHT
+#undef INFO_BOX_WIDTH
+#undef INFO_BOX_SIZE
+#define INFO_BOX_HEIGHT 200
+#define INFO_BOX_WIDTH	380
+#define INFO_BOX_SIZE 	INFO_BOX_WIDTH INFO_BOX_HEIGHT
+#define INFO_BOX_X_OFFSET 10
+#define INFO_BOX_Y_OFFSET 10
+#define SMALL_CENTER_POPUP_HEIGHT INFO_BOX_HEIGHT
+#define SMALL_CENTER_POPUP_WIDTH INFO_BOX_WIDTH
+
+	menuDef
+	{
+			SMALL_CENTER_POPUP_SETUP( newframescoreinfo, 1, uiScript ServerStatusScoreBoard;, ;)
+			PREPROC_TEXT_DRAW( (INFO_BOX_X_OFFSET-10) INFO_BOX_Y_OFFSET 1 1 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, ORIGIN_TITLE, "SCOREBOARD", TEXTSIZE_DEFAULT, 0, 0, ITEM_ALIGN_TOP_LEFT, 1 1 1 1 )
+			
+		#undef	BUTTON_SPACING
+		#undef	BACK_OFFSET
+		#undef	REFRESH_OFFSET
+		#define BUTTON_SPACING	20
+		#define BACK_OFFSET		( NEW_FRAME_DEFAULT_TITLE_X_OFFSET )
+		#define REFRESH_OFFSET	( BACK_OFFSET + getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+		
+			SIMPLE_CHOICE_BUTTON_SOUND( 0 (SMALL_CENTER_POPUP_HEIGHT+4) 70 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+				exp rect X( BACK_OFFSET ), 
+				"@PLATFORM_BACK", ITEM_ALIGN_MIDDLE_CENTER, close self; open newframeserverinfo; )
+
+			SIMPLE_CHOICE_BUTTON_SOUND( 0 (SMALL_CENTER_POPUP_HEIGHT+4) 70 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+				exp rect X( REFRESH_OFFSET ), 
+				"@MENU_REFRESH", ITEM_ALIGN_MIDDLE_CENTER, uiScript ServerStatusScoreBoard; )
+
+		itemDef {
+			name			serverinfoscoreboard
+			rect			(INFO_BOX_X_OFFSET) (INFO_BOX_Y_OFFSET+30) (INFO_BOX_WIDTH-INFO_BOX_X_OFFSET*2) (INFO_BOX_HEIGHT/4*3) CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+			type			ITEM_TYPE_LISTBOX
+			style			WINDOW_STYLE_FILLED
+			elementwidth	120
+			elementheight	16
+			textfont		UI_FONT_NORMAL
+			textscale		.25
+			forecolor 		1 1 1 0.9
+			focusColor		1 1 1 0.9
+			disableColor 	1 1 1 0.9
+			backcolor		0 0 0 0
+			border			0
+			elementtype		LISTBOX_TEXT
+			feeder			FEEDER_SERVERSTATUSSCOREBOARD
+			notselectable
+			focuscolor		COLOR_FOCUSED
+			visible			1
+			columns			7	
+								2 	40 	10 //rank
+								42 120	24 //name
+								162	40 	10 //score
+								202 40 	10 //kills
+								242 40 	10 //assists
+								282 40 	10 //deaths
+								322 30 	10 //ping
+	 	}
+	}
+}

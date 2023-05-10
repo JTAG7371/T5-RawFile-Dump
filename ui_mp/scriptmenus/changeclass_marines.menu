@@ -1,0 +1,12 @@
+{
+	menuDef
+	{
+		name			"changeclass_marines"
+		onOpen
+		{	
+			open "changeclass";	
+
+			close self;
+		}
+	}
+}

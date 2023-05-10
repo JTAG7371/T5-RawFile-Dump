@@ -1,0 +1,101 @@
+// multiplayer menus
+
+{
+	loadMenu { "ui_mp/main.menu" }
+	loadMenu { "ui_mp/blur.menu" }	
+
+	loadMenu { "ui_mp/cac_main.menu" }
+	loadMenu { "ui_mp/cac_custom.menu" }
+	loadMenu { "ui_mp/cac_popups.menu" }
+	loadMenu { "ui_mp/cac_weapon.menu" }
+	
+	loadMenu { "ui_mp/blackmarket.menu" }
+
+	loadMenu { "ui_mp/challenges.menu" }
+	
+	loadMenu { "ui_mp/game_mode.menu" }
+	loadMenu { "ui_mp/combat_record.menu" } 
+	loadMenu { "ui_mp/after_action_report.menu" } 
+	loadMenu { "ui_mp/xboxlive_command_support.menu" }
+	loadMenu { "ui_mp/xboxlive_barracks.menu" }
+	
+
+	loadMenu { "ui_mp/settings_quick_ctf.menu" }
+	loadMenu { "ui_mp/settings_quick_dem.menu" }
+	loadMenu { "ui_mp/settings_quick_dm.menu" }
+	loadMenu { "ui_mp/settings_quick_dom.menu" }
+	loadMenu { "ui_mp/settings_quick_koth.menu" }
+	loadMenu { "ui_mp/settings_quick_sab.menu" }
+	loadMenu { "ui_mp/settings_quick_sd.menu" }
+	loadMenu { "ui_mp/settings_quick_tdm.menu" }
+	
+	loadMenu { "ui_mp/custom_game_create.menu" }
+	loadMenu { "ui_mp/custom_specialty_editor.menu" }
+	loadMenu { "ui_mp/custom_settings_general.menu" }
+	loadMenu { "ui_mp/custom_classes.menu" }
+	loadMenu { "ui_mp/custom_class_create.menu" }
+	loadMenu { "ui_mp/custom_killstreaks.menu" }
+	loadMenu { "ui_mp/custom_settings_ctf.menu" }
+	loadMenu { "ui_mp/custom_settings_dem.menu" }
+	loadMenu { "ui_mp/custom_settings_dm.menu" }
+	loadMenu { "ui_mp/custom_settings_dom.menu" }
+	loadMenu { "ui_mp/custom_settings_koth.menu" }
+	loadMenu { "ui_mp/custom_settings_sab.menu" }
+	loadMenu { "ui_mp/custom_settings_sd.menu" }
+	loadMenu { "ui_mp/custom_settings_tdm.menu" }
+	
+	loadMenu { "ui_mp/leaderboard_tdm.menu" }
+	loadMenu { "ui_mp/leaderboard_dm.menu" }
+	loadMenu { "ui_mp/leaderboard_ctf.menu" }
+	loadMenu { "ui_mp/leaderboard_dom.menu" }
+	loadMenu { "ui_mp/leaderboard_sab.menu" }
+	loadMenu { "ui_mp/leaderboard_sd.menu" }
+	loadMenu { "ui_mp/leaderboard_koth.menu" }
+	loadMenu { "ui_mp/leaderboard_dem.menu" }
+	loadMenu { "ui_mp/popup_gettinglb.menu" }
+
+	loadMenu { "ui_mp/game_summary.menu" }
+	loadMenu { "ui_mp/emblem_editor.menu" }
+	loadMenu { "ui_mp/fileshare_community.menu" }
+	
+	loadMenu { "ui_mp/gametype_variants.menu" }
+	
+	loadMenu { "ui_mp/playercard_challenges.menu" }
+	loadMenu { "ui_mp/playercard_challenges_weapon.menu" }
+	
+	loadMenu { "ui_mp/playercards_lb.menu" }
+	loadMenu { "ui_mp/playercards_clantag.menu" }
+	loadMenu { "ui_mp/playercard_challenges_perks.menu" }	
+	loadMenu { "ui_mp/playercard_challenges_killstreaks.menu" }	
+	
+// pc options
+	loadMenu { "ui/vid_restart_pc.menu" }
+	loadMenu { "ui/snd_restart.menu" }
+	loadMenu { "ui/options_new_pc.menu" }
+	loadMenu { "ui_mp/options_voice.menu" }
+	loadMenu { "ui_mp/options_multi.menu" }
+	loadMenu { "ui_mp/controls_multi.menu" }
+	loadMenu { "ui/options_look_pc.menu" }
+	loadMenu { "ui/options_move_pc.menu" }
+	loadMenu { "ui/options_shoot_pc.menu" }
+	loadMenu { "ui/options_misc_pc.menu" }
+	loadMenu { "ui/options_gamepad_pc.menu" }
+	loadMenu { "ui/options_graphics_pc.menu" }
+	loadMenu { "ui/options_game_pc.menu" }
+	loadMenu { "ui/options_sound_pc.menu" }
+	loadMenu { "ui/options_coop_pc.menu" }
+	loadMenu { "ui/options_control_defaults.menu" }
+	loadMenu { "ui/options_graphics_defaults.menu" }	
+
+//pc menus
+	loadMenu { "ui_mp/pc_privatematch.menu" }	
+	loadMenu { "ui_mp/pc_basictraining.menu" }
+	loadMenu { "ui_mp/pc_serversettings.menu" }	
+	loadMenu { "ui_mp/serverbrowser.menu" }
+	loadMenu { "ui_mp/password.menu" }
+	loadMenu { "ui_mp/serverinfo.menu" }
+	loadMenu { "ui_mp/createfavorite.menu" }
+	loadMenu { "ui_mp/filter.menu" }
+	loadMenu { "ui_mp/auto_update.menu" }
+	loadMenu { "ui/quit.menu" }
+}

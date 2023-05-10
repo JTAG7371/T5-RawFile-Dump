@@ -1,0 +1,8 @@
+name,loadspec,smoothing,earlyTime,lateTime,earlyGain,lateGain,returnGain,earlyLpf,lateLpf,inputLpf,dampLpf,wallReflect,dryGain,earlySize,lateSize,diffusion
+firingrange_outside,mpl_firingrange,0.5,0.425,0.48,0.3315235,0.1151112,2.743236,0.5949999,0,0.635,0.6000001,0.2099999,0,5,11.7575,0.16
+firingrange_trailer,mpl_firingrange,0.5,0.59,0.225,0.8108426,0.8691428,0.519017,0.32,0.2,0.32,0.57,0.34,0,6.589999,5.3975,0.805
+firingrange_med_room,mpl_firingrange,0.525,0.435,0.38,0.6766358,0.8325876,1.265589,0.57,0.28,0.455,0.3199999,0.2600001,0,4.949499,3.8365,0.84
+firingrange_cave,mpl_firingrange,0.5,0.2,0.36,1.095698,0.5788479,0.944294,0.385,0.6950001,0.485,0.69,0.71,0,3.728,5.2385,0.5
+firingrange_partial_room,mpl_firingrange,0.5,0.545,0.3400001,0.1154578,0.9728792,1.7707,0,0.295,0.075,0.57,0.52,0,5.824002,5.108496,0.255
+firingrange_small_room,mpl_firingrange,0.39,0.62,0.63,0.755305,0.8158321,1,0.13,0.075,0.455,0.3599999,0.6750001,0,5.664999,3.8365,0.16
+firingrange_stone_room,mpl_firingrange,0.5,0.565,0.705,0.805,0.66,1,0.385,0.72,0.48,0.43,0.82,0,3.1715,3.1715,0.5

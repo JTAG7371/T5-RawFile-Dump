@@ -1,0 +1,661 @@
+// CONSOLE SP - Main
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/menustyle.inc"
+
+#ifdef PS3
+// DDO - Do this onclose instead of the next menu's onopen because
+// it makes the animated spinner actually animate.
+#define ACTION_LOCKOUT_CLOSE			\
+	play CHOICE_FOCUS_SOUND;			\
+	execNow "disableallbutprimaryclients"; \
+	execnow "Updatedvarsfromprofile"; \
+	execnow "select_save_device"; \
+	close main_lockout;					\
+	setdvar ui_skipMainLockout "0";		\
+	open main_text;
+#else
+#define ACTION_LOCKOUT_CLOSE			\
+	play CHOICE_FOCUS_SOUND;			\
+	close main_lockout;					\
+	setdvar ui_skipMainLockout "0";		\
+	open main_text;
+#endif
+
+#define STARTSCREEN_ACTIONS				\
+	play CHOICE_FOCUS_SOUND;			\
+	setdvar ui_skipMainLockout "1"; 
+
+#define LOCAL_NETWORK_RESET				\
+		exec "set onlinegame 0; set systemlink 0";
+
+#define SP_ACTION \
+		STARTSCREEN_ACTIONS; \
+		setdvar zombiemode 0; \
+		setdvar blackopsmode 0; \
+		setdvar spmode 1; \
+		resetdvar ui_gametype; \
+		setDvar menu_parent_3d_tv_name "main_text"; \
+		close main_text; \
+		open main_sp; 
+//		exec precachefastfile common; 
+
+#ifdef PC
+#define MP_ACTION							\
+		STARTSCREEN_ACTIONS;											\
+		setDvar menu_parent_3d_tv_name "main_text"						\
+		execnow set next_menu_name quit_to_mp_popmenu;						\
+		open blackout_3d_tv;
+#else
+#define MP_ACTION							\
+		STARTSCREEN_ACTIONS;				\
+		setdvar ui_changed_exe 1;			\
+		uiScript sendMenuNotify "startmp 0"
+//				exec "wait;wait;wait"; 
+//				uiScript startMultiplayer
+#endif
+
+#define COOP_ACTION								\
+		STARTSCREEN_ACTIONS;					\
+		setdvar blackopsmode 0;					\
+		setdvar spmode 0;						\
+		setdvar zombiemode 1;					\
+		close main_text;						\
+		open main_online;						
+//		exec precachefastfile common_zombie; 
+
+#ifdef XENON
+	#define SIGN_IN_CMD			execNow "xsigninlivenoguests";
+#endif //#ifdef XENON
+#ifdef PS3
+	#define SIGN_IN_CMD			execNow "xsigninlive";
+#endif //#ifdef PS3
+#ifdef PC
+	#define SIGN_IN_CMD			execNow "xsigninlive";
+#endif
+
+#define COOP_SIGNIN										\
+		if( IsSignedInToLive() ==  0 )					\
+		{												\
+			SIGN_IN_CMD									\
+			open error_netconnect_popmenu;				\
+		}												\
+		elseif( isDemonwareFetchingDone() == 1 ) 		\
+		{												\
+			COOP_ACTION									\ 
+		} 												\
+		else											\
+		{												\
+			open popup_connectingtodwhandler;			\
+		}
+
+#ifdef CONSOLE
+#define OPTION_SIGNED_OUT_POPUP_MENU    popup_options_noprofile
+#define OPTION_SIGNED_IN_POPUP_MENU     options
+#endif
+
+#ifdef PC
+#define OPTION_SIGNED_OUT_POPUP_MENU    options_new_pc
+#define OPTION_SIGNED_IN_POPUP_MENU     options_new_pc
+#endif
+
+#define OPTIONS_ACTION													\
+		STARTSCREEN_ACTIONS;											\
+		setDvar menu_parent_3d_tv_name "main_text";						\
+		if( !IsProfileSignedIn() )										\
+		{																\
+			execnow set next_menu_name OPTION_SIGNED_OUT_POPUP_MENU;	\
+		}																\
+		else															\
+		{																\
+			execnow set next_menu_name OPTION_SIGNED_IN_POPUP_MENU;		\
+		}																\
+		open blackout_3d_tv;
+
+#ifdef PC
+#define QUIT_ACTION														\
+		STARTSCREEN_ACTIONS;											\
+		setDvar menu_parent_3d_tv_name "main_text"						\
+		execnow set next_menu_name quit_popmenu;						\
+		open blackout_3d_tv;
+#endif
+
+#define MAIN_BUTTON_RECT( xOffset )				\
+		0 (BUTTON_Y_START+(xOffset*BUTTON_HEIGHT)) 640 BUTTON_HEIGHT HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
+
+#define BUTTON_NAME		"main_button"
+
+#undef	CHOICE_SIZE_Y 
+#define CHOICE_SIZE_Y					100
+#undef	CHOICE_TEXTALIGN
+#define CHOICE_TEXTALIGN				ITEM_ALIGN_MIDDLE_CENTER
+#undef	CHOICE_TEXT_OFFSET_X
+#define	CHOICE_TEXT_OFFSET_X			0
+#undef  CHOICE_TEXTSIZE
+#define CHOICE_TEXTSIZE					1.75
+
+#include "ui/choices_setup_common.menu"
+#include "ui/blurredbg.inc"
+
+#undef FOOTNOTE_RECT
+#define FOOTNOTE_RECT( x, y )			x y 640 22 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+
+{
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+	assetGlobalDef
+	{
+		fadeClamp		1.0						// sets the fadeup alpha
+		fadeCycle		1						// how often fade happens in milliseconds
+		fadeAmount		0.1						// amount to adjust alpha per cycle
+	}
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+	menuDef 
+	{
+		name			main
+		fullscreen		0
+		rect			0 0 640 480				// Size and position of the menu
+
+		onOpen
+		{
+			uiScript sendMenuNotify "resetstate 0"
+			uiScript openMenuOnDvar "ui_skipMainLockout" 0 "main_lockout"
+			uiScript openMenuOnDvar "ui_skipMainLockout" 1 "main_text"
+		}
+//		#include "ui/scroller.inc"
+	}
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+//the remap instruction must come first, so that the remapped client num will get updated before any other instructions get executed
+#define MAIN_LOCKOUT_ACTION							\
+	execNow "remapcontrollertoprimaryandactivate"	\
+	play CHOICE_FOCUS_SOUND;						\
+													\
+	execNow "disableallbutprimaryclients";			\
+	execnow "Updatedvarsfromprofile";				\
+	execnow "select_save_device";					\
+													\
+	close main_lockout;								\
+	setdvar ui_skipMainLockout "0";					\
+	setdvar r_remotescreen_renderlastframe 0;		\
+													\
+	open main_text;
+
+	menuDef 
+	{
+		name			main_lockout
+		fullScreen		0				
+		rect			0 0 640 480	HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN			// Size and position of the menu
+		focusColor		1 1 1 0.85				// Menu focus color for text and items
+		style			WINDOW_STYLE_FILLED
+		foreColor		1 1 1 1
+		backColor		1 1 1 1
+		background		"menu_background_press_start"
+		allowSignIn
+#ifdef PS3
+		control			MENU_CONTROL_PRIMARY
+#endif //PS3
+
+		onOpen
+		{
+			setfocus sp;
+		}
+		onESC
+		{
+			ingameclose main;
+		}
+
+#ifdef PC
+		execKeyInt -1
+		{
+			MAIN_LOCKOUT_ACTION
+		}
+#endif // #ifdef PC
+
+#ifdef PS3
+		execKeyInt BUTTON_START
+		{
+			ACTION_LOCKOUT_CLOSE;
+		}
+#endif //#ifdef PS3
+
+		itemDef
+		{
+			rect			-192 -40 384 96 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			origin			0 0
+			forecolor		1 1 1 0.7
+			style			WINDOW_STYLE_SHADER
+			background		"logo_cod2"
+			decoration
+			visible			1
+		}
+
+		itemDef
+		{
+			type			ITEM_TYPE_TEXT
+			text			"@MENU_LEGAL_LINE"
+			rect			-320 -22 640 22 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_BOTTOM
+			forecolor		1 1 1 0.85
+			textalign		ITEM_ALIGN_MIDDLE_CENTER
+			textfont		CHOICE_TEXTFONT
+			textscale		TEXTSIZE_SMALL
+			visible			1
+			decoration
+		}
+
+		#undef FOG_SCROLL_TIME
+		#define FOG_SCROLL_TIME 40000
+
+		itemDef
+		{
+			style			WINDOW_STYLE_SHADER
+			rect			-107 0 1708 480
+			exp				rect X((-107) - ((float(milliseconds() % FOG_SCROLL_TIME) / FOG_SCROLL_TIME) * (854)))
+			background		"animbg_fogscrollthin"
+			forecolor		.37 .15 .07 1
+			visible			1
+			decoration
+		}
+
+		itemDef
+		{
+			name			sp
+			type			ITEM_TYPE_BUTTON
+			text			"@PLATFORM_PRESS_START_BUTTON"
+			rect			-60 100 120 20 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER
+			forecolor		1 1 1 0.85
+			textalign		ITEM_ALIGN_MIDDLE_CENTER
+			textfont		CHOICE_TEXTFONT
+#ifdef PS3
+			visible when ( !dvarbool( ui_readingSaveDevice ) ) //&& dvarbool (ui_signedInToProfile) )
+#else
+			visible			1
+#endif
+			action 
+			{
+				MAIN_LOCKOUT_ACTION
+            }
+		}
+	}
+
+	menuDef 
+	{
+		name			main_text
+		fullScreen		0				
+		rect			0 0 640 480				// Size and position of the menu
+		focusColor		1 1 1 0.85				// Menu focus color for text and items
+		ui3dWindowId	0
+		style			WINDOW_STYLE_FILLED
+		foreColor		1 1 1 1
+		backColor		1 1 1 1
+		background		"menu_background_press_start_sm"
+		control			MENU_CONTROL_USED
+		
+		onOpen			
+		{ 
+			if (dvarbool (ui_skipMainLockout))
+			{
+				execNow "disableallbutprimaryclients";
+				execnow "Updatedvarsfromprofile";
+				
+				if( dvarBool( sv_saveDeviceAvailable ) )
+				{
+					execnow "update_sv_savegameavailable";
+				}
+			}
+
+			setdvar ui_version_show "0";
+			setdvar ui_skipMainLockout "1";
+
+			if( IsProfileSignedIn() && dvarbool( sv_saveDeviceAvailable ) && dvarint(#"com_first_time")==1)					
+			{
+				open main_setup;
+			}
+			else
+			{
+				uiScript sendMenuNotify "allow_vo 1";
+				setdvar r_remotescreen_renderlastframe 1;
+#ifdef PS3
+				//moved the "ui_show_autosave_warning" after the "first_time_mature_content_disable_warning" menu
+				//uiScript openmenuondvar ui_show_autosave_warning 1 "popmenu_autosave_warning_lockout"
+				
+#endif //PS3
+			}
+			setdvar ui_allow_controlschange "1";
+			
+#ifdef PC
+			if( localvarint( ui_highlight ) == 0 )
+			{
+				setFocus BUTTON_NAME"1";
+			}
+#endif // #ifdef PC
+		}
+		onFocus			
+		{
+			uiScript sendMenuNotify "allowescape 1";
+		}
+		leaveFocus
+		{
+			uiScript sendMenuNotify "allowescape 0";
+		}
+		onClose		{}
+		onEsc
+		{
+#ifdef CONSOLE
+			close main_text;
+			open main_lockout;
+#endif // #ifdef CONSOLE
+		}
+		
+		#define BUTTON_Y_START	-40
+
+#ifdef CONSOLE
+		#define BUTTON_HEIGHT	95
+#endif
+		
+#ifdef PC
+		#define BUTTON_HEIGHT	80
+#endif
+
+
+#define LOC_SMALL_TV_TEXTFONT			UI_FONT_BIG
+#define LOC_SMALL_TV_TEXTSCALE			1.5//1.75
+#define IS_LOC_SMALL_TV_FONT			( dvarint( loc_language ) == 9 ) //polish
+
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 1, MAIN_BUTTON_RECT( 1 ), 0.4 0.4 0.4 0.6, 1 )  
+		CHOICE_BUTTON_TV_VIS_EX(	1, MAIN_BUTTON_RECT( 1 ), BUTTON_NAME,
+									"@MENU_SINGLEPLAYER_CAPS", CHOICE_TEXTCOLOR,
+									SP_ACTION, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	1, MAIN_BUTTON_RECT( 1 ), BUTTON_NAME,
+									"@MENU_SINGLEPLAYER_CAPS", CHOICE_TEXTCOLOR,
+									SP_ACTION, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 2, MAIN_BUTTON_RECT( 2 ), 0.4 0.4 0.4 0.6, 1 )  
+		CHOICE_BUTTON_TV_VIS_EX(	2, MAIN_BUTTON_RECT( 2 ), BUTTON_NAME,
+									"@MENU_MULTIPLAYER_CAPS", CHOICE_TEXTCOLOR,
+									MP_ACTION, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	2, MAIN_BUTTON_RECT( 2 ), BUTTON_NAME,
+									"@MENU_MULTIPLAYER_CAPS", CHOICE_TEXTCOLOR,
+									MP_ACTION, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 3, MAIN_BUTTON_RECT( 3 ), 0.4 0.4 0.4 0.6, 1 )  
+		CHOICE_BUTTON_TV_VIS_EX(	3, MAIN_BUTTON_RECT( 3 ), BUTTON_NAME,
+									"@MENU_ZOMBIE_CAPS", CHOICE_TEXTCOLOR,
+									COOP_ACTION, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	3, MAIN_BUTTON_RECT( 3 ), BUTTON_NAME,
+									"@MENU_ZOMBIE_CAPS", CHOICE_TEXTCOLOR,
+									COOP_ACTION, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 4, MAIN_BUTTON_RECT( 4 ), 0.4 0.4 0.4 0.6, 1 )  
+		CHOICE_BUTTON_TV_VIS_EX(	4, MAIN_BUTTON_RECT( 4 ), BUTTON_NAME,
+									"@MENU_SETTINGS_CAPS", CHOICE_TEXTCOLOR,
+									OPTIONS_ACTION, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	4, MAIN_BUTTON_RECT( 4 ), BUTTON_NAME,
+									"@MENU_SETTINGS_CAPS", CHOICE_TEXTCOLOR,
+									OPTIONS_ACTION, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+#ifdef PC
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT ( 5, MAIN_BUTTON_RECT( 5 ), 0.4 0.4 0.4 0.6, 1 )
+		CHOICE_BUTTON_TV_VIS_EX(	5, MAIN_BUTTON_RECT( 5 ), BUTTON_NAME,
+									"@MENU_QUIT_CAPS", CHOICE_TEXTCOLOR,
+									QUIT_ACTION, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	5, MAIN_BUTTON_RECT( 5 ), BUTTON_NAME,
+									"@MENU_QUIT_CAPS", CHOICE_TEXTCOLOR,
+									QUIT_ACTION, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+#endif
+	}
+	
+	
+	menuDef
+	{
+		name			main_setup
+		fullScreen		0
+		style			WINDOW_STYLE_EMPTY
+		rect			0 0 640 480
+		ui3dWindowId	0
+
+		onOpen
+		{
+			setDvar com_first_time "0";
+			close main_text;
+			close self;	
+			open first_time_blackout_3d_tv;
+			open first_time_instructions;
+		}
+	}
+	
+	
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+	menuDef
+	{
+		name			blackout_3d_tv
+		fullscreen		0
+		ui3dWindowId	0
+		forecolor		1 1 1 1
+		backcolor		0 0 0 1
+		style			WINDOW_STYLE_FILLED
+		rect			0 0 640 480
+
+		onOpen
+		{
+			if( !menuisopen( dvarString( next_menu_name ) ) )
+			{
+				open dvarString( next_menu_name )
+			}
+		}
+		onClose
+		{			
+		}
+		onEsc			
+		{ 
+			close self; 
+			if( !menuisopen( dvarString( menu_parent_3d_tv_name ) ) )
+			{
+				open dvarString( menu_parent_3d_tv_name )
+			}
+		}
+
+		itemDef
+		{
+			type			ITEM_TYPE_OWNERDRAW
+			ownerdraw		UI_NOISE
+			rect			0 0 640 480
+			forecolor		1 1 1 1
+			visible			1
+			background		"menu_tv_noise"
+			decoration
+		}
+	}
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+	menuDef
+	{
+		name			main_sp
+		fullScreen		0
+		ui3dWindowId	0
+		background		"menu_background_press_start_sm"
+		backColor		1 1 1 1
+		style			WINDOW_STYLE_FILLED
+		rect			0 0 640 480
+		focusColor		COLOR_FOCUSED
+		control			MENU_CONTROL_USED
+			
+		onOpen
+		{			
+			setdvar ui_version_show "0";
+			exec set cg_gameMessageWidth 455;
+
+			focusfirst;
+
+			uiScript openmenuondvar ui_sp_unlock 1 "popmenu_sp_unlock";	
+			setdvar ui_zombiemode 0;
+
+#ifdef PS3
+			setdvar sv_saveDeviceAvailable "1";
+#endif // PS3
+
+		}
+		onFocus	{ }
+		onEsc
+		{
+			setdvar spmode 0;
+			close main_sp;
+			open main_text;
+		}
+
+#define RESUME_GAME_ACTION																	\
+		setDvar menu_parent_3d_tv_name "main_sp";											\
+		if( dvarbool( sv_saveGameAvailable ) )												\
+		{																					\
+			setdvar next_menu_name "resume_popmenu";										\
+		}																					\
+		elseif( !dvarbool( sv_saveGameAvailable ) && dvarbool( sv_saveGameNotReadable ) )	\
+		{																					\
+			setdvar next_menu_name "save_corrupted";										\
+		}																					\
+		LOCAL_NETWORK_RESET;																\
+		open blackout_3d_tv;
+
+#ifdef PC
+	#define NEW_GAME_NEXT_MENU	"popmenu_difficulty"
+#else
+	#define NEW_GAME_NEXT_MENU	"noprofilewarning_newgame"
+#endif
+
+#define	NEW_GAME_ACTION																		\
+		setDvar newgame_difficulty 1;														\
+		setDvar menu_parent_3d_tv_name "main_sp";											\
+		if( IsGuest() ==  1 )																\
+		{																					\
+			execNow "remapcontrollertoprimaryandactivate";									\	
+		}																					\
+		if( IsProfileSignedIn() && !dvarbool( sv_saveDeviceAvailable ) )					\
+		{																					\
+			setdvar next_menu_name "popmenu_savedevice_unavailable_warning";				\
+		}																					\
+		elseif( !IsProfileSignedIn() )														\
+		{																					\
+			setdvar next_menu_name "popmenu_content_warning";								\
+			setdvar ui_newgame_nextmenu NEW_GAME_NEXT_MENU;									\
+		}																					\
+		elseif( IsProfileSignedIn() && dvarbool( sv_saveDeviceAvailable ) && ( dvarbool( sv_saveGameAvailable ) || dvarbool( sv_saveGameNotReadable ) ) )	\
+		{																					\
+			setdvar next_menu_name "popmenu_overwrite_warning";								\
+		}																					\
+		elseif( IsProfileSignedIn() && dvarbool( sv_saveDeviceAvailable ) && !dvarbool( sv_saveGameAvailable ) && !dvarbool( sv_saveGameNotReadable ) )	\
+		{																					\
+			setdvar next_menu_name "popmenu_difficulty";									\
+		}																					\
+		open blackout_3d_tv;																\
+		LOCAL_NETWORK_RESET
+
+#ifdef PC
+	#define MISSION_SELECT_NEXT_MENU	"levels"
+#else
+	#define MISSION_SELECT_NEXT_MENU	"noprofilewarning_levelselect"
+#endif
+
+#define MISSION_SELECT_ACTION																\
+		setDvar menu_parent_3d_tv_name "main_sp";											\
+		if( !IsProfileSignedIn() )															\
+		{																					\
+			setdvar next_menu_name "popmenu_content_warning";								\
+			setdvar ui_newgame_nextmenu MISSION_SELECT_NEXT_MENU;							\
+		}																					\
+		elseif( IsProfileSignedIn() && !dvarbool( sv_saveDeviceAvailable ) )				\
+		{																					\
+			setdvar next_menu_name "popmenu_savedevice_unavailable_warning_mission";		\
+		}																					\
+		else																				\
+		{																					\
+			setdvar next_menu_name "levels";												\
+		}																					\
+		LOCAL_NETWORK_RESET;																\
+		open blackout_3d_tv;
+
+#define COLLECTIBLES_ACTION																	\
+		execnow "set next_menu_name menu_collectibles";										\
+		setDvar menu_parent_3d_tv_name "main_sp";											\
+		open blackout_3d_tv;
+
+
+#define RESUME_GAME_OPTION_VIS			( ( dvarbool( sv_saveGameAvailable ) || dvarbool( sv_saveGameNotReadable ) ) && IsProfileSignedIn() )
+
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 1, MAIN_BUTTON_RECT( 1 ), 1 1 1 0.24, ( ( dvarbool( sv_saveGameAvailable ) || dvarbool( sv_saveGameNotReadable ) ) && IsProfileSignedIn() ) )
+		CHOICE_BUTTON_TV_VIS_EX(	1, MAIN_BUTTON_RECT( 1 ), BUTTON_NAME,
+									"@MENU_RESUMEGAME_CAPS", CHOICE_TEXTCOLOR,
+									RESUME_GAME_ACTION, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT && RESUME_GAME_OPTION_VIS ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	1, MAIN_BUTTON_RECT( 1 ), BUTTON_NAME,
+									"@MENU_RESUMEGAME_CAPS", CHOICE_TEXTCOLOR,
+									RESUME_GAME_ACTION, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT && RESUME_GAME_OPTION_VIS ), ; )
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 2, MAIN_BUTTON_RECT( 2 ), 1 1 1 0.24, 1 )
+		CHOICE_BUTTON_TV_VIS_EX(	2, MAIN_BUTTON_RECT( 2 ), BUTTON_NAME,
+									"@MENU_NEWGAME_CAPS", CHOICE_TEXTCOLOR,
+									NEW_GAME_ACTION, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	2, MAIN_BUTTON_RECT( 2 ), BUTTON_NAME,
+									"@MENU_NEWGAME_CAPS", CHOICE_TEXTCOLOR,
+									NEW_GAME_ACTION, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 3, MAIN_BUTTON_RECT( 3 ), 1 1 1 0.24, 1 )
+		CHOICE_BUTTON_TV_VIS_EX(	3, MAIN_BUTTON_RECT( 3 ), BUTTON_NAME,
+									"@MENU_MISSION_SELECT_CAPS", CHOICE_TEXTCOLOR,
+									MISSION_SELECT_ACTION, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	3, MAIN_BUTTON_RECT( 3 ), BUTTON_NAME,
+									"@MENU_MISSION_SELECT_CAPS", CHOICE_TEXTCOLOR,
+									MISSION_SELECT_ACTION, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+		CHOICE_HIGHLIGHT_SOLID_RECT_NO_HINT( 4, MAIN_BUTTON_RECT( 4 ), 1 1 1 0.24, 1 )
+		CHOICE_BUTTON_TV_VIS_EX(	4, MAIN_BUTTON_RECT( 4 ), BUTTON_NAME,
+									"@MENU_INTEL_CAPS", CHOICE_TEXTCOLOR,
+									COLLECTIBLES_ACTION, 
+									CHOICE_TEXTFONT, CHOICE_TEXTSIZE,
+									when( !IS_LOC_SMALL_TV_FONT ), ; )
+		CHOICE_BUTTON_TV_VIS_EX(	4, MAIN_BUTTON_RECT( 4 ), BUTTON_NAME,
+									"@MENU_INTEL_CAPS", CHOICE_TEXTCOLOR,
+									COLLECTIBLES_ACTION, 
+									LOC_SMALL_TV_TEXTFONT, LOC_SMALL_TV_TEXTSCALE,
+									when( IS_LOC_SMALL_TV_FONT ), ; )
+
+		#include "ui/safearea.menu"
+	}
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,909 @@
+#include "ui_mp/newframe.inc"
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui/framestyle.inc"
+#include "ui/frame.inc"
+
+#define FRIENDS_MENU_HEIGHT			FRAME_DEFAULT_HEIGHT
+#define FRIENDS_MENU_WIDTH			( FRIENDS_MENU_HEIGHT * FRAME_ASPECT_RATIO )
+
+#undef	HIGHLIGHT_COLOR
+#define HIGHLIGHT_COLOR				0.3 0.35 0.55 0.25
+
+#define LIST_X_START				(-FRIENDS_MENU_WIDTH/2+15)
+#define LIST_Y_START				(-FRIENDS_MENU_HEIGHT/2+75)
+#define LIST_HEIGHT					(FRIENDS_MENU_HEIGHT-95)
+#define LIST_WIDTH					(FRIENDS_MENU_WIDTH-20)
+#define	LIST_ELEM_HEIGHT			32
+
+#define TAB_X_START					LIST_X_START
+
+#undef	CHOICE_TEXTFONT
+#define CHOICE_TEXTFONT				UI_FONT_NORMAL
+
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+#include "ui_mp/popup_player_info.inc"
+
+#undef	CHOICE_VERTICAL_ALIGN 
+#define CHOICE_VERTICAL_ALIGN		VERTICAL_ALIGN_CENTER
+#undef	CHOICE_HORIZONTAL_ALIGN 
+#define CHOICE_HORIZONTAL_ALIGN		HORIZONTAL_ALIGN_CENTER
+
+
+#define CHOICE_TAB_TEXTSIZE		TEXTSIZE_SMALL
+#define TAB_1_TEXT				(locString( "@MENU_FRIENDS_CAPS" ))
+#define TAB_2_TEXT				(locString( "@MENU_TAB_PLAYERS_CAPS" ))
+#define TAB_3_TEXT				(locString( "@MENU_TAB_GAME_INVITES_CAPS",  hasinvites() ))
+
+#define TAB_BG_PAD				5
+#define TAB_1_WIDTH				( getTextWidth( TAB_1_TEXT, CHOICE_TEXTFONT, CHOICE_TAB_TEXTSIZE ) + (TAB_BG_PAD*2) )
+#define TAB_2_WIDTH				( getTextWidth( TAB_2_TEXT, CHOICE_TEXTFONT, CHOICE_TAB_TEXTSIZE ) + (TAB_BG_PAD*2) )
+#define TAB_3_WIDTH				( getTextWidth( TAB_3_TEXT, CHOICE_TEXTFONT, CHOICE_TAB_TEXTSIZE ) + (TAB_BG_PAD*2) )
+#define TAB_HEIGHT				19//23
+
+#define FRIENDS_LIST_TAB_1_X	15
+#define FRIENDS_LIST_TAB_2_X	( FRIENDS_LIST_TAB_1_X + TAB_1_WIDTH )
+#define FRIENDS_LIST_TAB_3_X	( FRIENDS_LIST_TAB_2_X + TAB_2_WIDTH )
+
+#define FRIENDS_LIST_TAB_Y		( ( -FRIENDS_MENU_HEIGHT / 2 ) + FRAME_HEADER_HEIGHT - TAB_HEIGHT -5)
+
+#ifdef CONSOLE
+#define PREPROC_TEXT_DRAW_ADV_VIS_FRIENDS( px, py, pw, ph, pHorizAlign, pVertAlign, ptext, psize, palignx, paligny, palign, pcolor, pvis, extraArgs, pageNumber, targetMenuNumber ) \ 
+	PREPROC_TEXT_DRAW_ADV_VIS_EX( px, py, pw, ph, pHorizAlign, pVertAlign, ptext, psize, palignx, paligny, palign, pcolor, pvis, extraArgs )
+#else
+
+		           
+#define PREPROC_TEXT_DRAW_ADV_VIS_FRIENDS( px, py, pw, ph, pHorizAlign, pVertAlign, ptext, psize, palignx, paligny, palign, pcolor, pvis, extraArgs, pageNumber, targetMenuNumber ) \
+		PREPROC_TEXT_DRAW_ADV_ALL_FRIENDS( px, py, pw, ph, pHorizAlign, pVertAlign, ptext, psize, palignx, paligny, palign, pcolor, CHOICE_TEXTFONT, CHOICE_TEXTSTYLE, pvis, extraArgs, pageNumber, targetMenuNumber ) 
+
+#define PREPROC_TEXT_DRAW_ADV_ALL_FRIENDS( px, py, pw, ph, pHorizAlign, pVertAlign, ptext, psize, palignx, paligny, palign, pcolor, pfont, pstyle, pvis, extraArgs, pageNumber, targetMenuNumber ) \ 
+		itemDef																						\
+		{																							\
+			type			ITEM_TYPE_BUTTON														\
+			rect			0 0 0 0 pHorizAlign pVertAlign											\
+			exp				rect X( px )															\
+			exp				rect Y( py )															\
+			exp				rect W( pw )															\
+			exp				rect H( ph )															\
+			textalign		palign																	\
+			textalignx		palignx																	\
+			textaligny		paligny																	\
+			textstyle		pstyle																	\
+			textfont		pfont																	\
+			textscale		psize																	\
+			forecolor		pcolor																	\
+			exp				text( ptext );															\
+			visible			pvis																	\
+			action																					\
+			{																						\
+				if( pageNumber == 1 )																\
+				{																					\
+					setDvar ui_keep_friends_bg_up "1";			\
+					closeImmediate menu_friends;				\
+					setDvar ui_friendsListOpen "0";				\
+					setDvar ui_playerListOpen "0";				\
+					setDvar ui_xboxLivePartyListOpen "0";		\
+				}																					\
+				elseif( pageNumber == 2 )															\
+				{																					\
+					setDvar ui_keep_friends_bg_up "1";			\
+					closeImmediate menu_players;				\
+					setDvar ui_friendsListOpen "0";				\
+					setDvar ui_playerListOpen "0";				\
+					setDvar ui_xboxLivePartyListOpen "0";		\
+				}																					\
+				elseif( pageNumber == 3 )															\
+				{																					\
+					setDvar ui_keep_friends_bg_up "1";			\
+					closeImmediate menu_invites;				\
+					setDvar ui_friendsListOpen "0";				\
+					setDvar ui_playerListOpen "0";				\
+					setDvar ui_xboxLivePartyListOpen "0";		\
+				}																					\
+				if( targetMenuNumber == 1 )															\
+				{																					\
+					openImmediate menu_friends;														\
+				}																					\
+				elseif( targetMenuNumber == 2 )														\
+				{																					\
+					openImmediate menu_players;														\
+				}																					\
+				elseif( targetMenuNumber == 3 )														\
+				{																					\
+					openImmediate menu_invites;														\
+				}																					\
+			}																						\
+			extraArgs																				\
+		}
+#endif
+
+#define FRIENDS_TAB_HEADERS																					\
+		/* highlighted header */																			\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_1_X ),					\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_1_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_1_TEXT, CHOICE_TAB_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,	\
+										NEW_FRAME_ORANGE_RGB 1, 1, ; )										\
+		/* non highlighted header */																		\
+		PREPROC_TEXT_DRAW_ADV_VIS_FRIENDS(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_2_X ),				\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_2_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_2_TEXT, CHOICE_TAB_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,	\
+										NEW_FRAME_GRAY_TEXT_COLOR, 1, TAB_MOUSEOVER_HIGHLIGHT;, 1, 2 )								\
+		/* non highlighted header */																		\
+		PREPROC_TEXT_DRAW_ADV_VIS_FRIENDS(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_3_X ),				\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_3_WIDTH,														\
+										TAB_HEIGHT,					\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_3_TEXT, CHOICE_TAB_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,	\
+										NEW_FRAME_GRAY_TEXT_COLOR, 1, TAB_MOUSEOVER_HIGHLIGHT;, 1, 3 )										
+
+#define PLAYERS_TAB_HEADERS																					\
+		/* highlighted header */																			\
+		PREPROC_TEXT_DRAW_ADV_VIS_FRIENDS(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_1_X ),				\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_1_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_1_TEXT, CHOICE_TAB_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,	\
+										NEW_FRAME_GRAY_TEXT_COLOR, 1, TAB_MOUSEOVER_HIGHLIGHT;, 2, 1 )								\
+		/* highlighted header */																			\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_2_X ),					\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_2_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_2_TEXT, CHOICE_TAB_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,	\
+										NEW_FRAME_ORANGE_RGB 1, 1, ; )										\		
+		/* non highlighted header */																		\
+		PREPROC_TEXT_DRAW_ADV_VIS_FRIENDS(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_3_X ),				\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_3_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_3_TEXT, CHOICE_TAB_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,	\
+										NEW_FRAME_GRAY_TEXT_COLOR, 1, TAB_MOUSEOVER_HIGHLIGHT;, 2, 3 )										
+
+#define INVITES_TAB_HEADERS																					\
+		/* highlighted header */																			\
+		PREPROC_TEXT_DRAW_ADV_VIS_FRIENDS(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_1_X ),				\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_1_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_1_TEXT, CHOICE_TAB_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,	\
+										NEW_FRAME_GRAY_TEXT_COLOR, 1, TAB_MOUSEOVER_HIGHLIGHT;, 3, 1 )								\
+		/* highlighted header */																			\
+		PREPROC_TEXT_DRAW_ADV_VIS_FRIENDS(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_2_X ),				\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_2_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_2_TEXT, CHOICE_TAB_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,	\
+										NEW_FRAME_GRAY_TEXT_COLOR, 1, TAB_MOUSEOVER_HIGHLIGHT;, 3, 2)								\				
+		/* non highlighted header */																		\
+		PREPROC_TEXT_DRAW_ADV_VIS_EX(	( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_3_X ),					\
+										FRIENDS_LIST_TAB_Y,													\
+										TAB_3_WIDTH,														\
+										TAB_HEIGHT,															\
+										HORIZONTAL_ALIGN_CENTER, VERTICAL_ALIGN_CENTER,						\
+										TAB_3_TEXT, CHOICE_TAB_TEXTSIZE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER,	\
+										NEW_FRAME_ORANGE_RGB 1, 1, ; )										
+
+#define FRIENDS_LIST_TAB_1_BG																				\
+		itemDef																								\
+		{																									\
+			style           WINDOW_STYLE_SHADER_FRAMED														\
+			frame           16 0.2 FRAME_OPEN_BOTTOM														\
+			rect            0 FRIENDS_LIST_TAB_Y 0 TAB_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER	\
+			exp				rect X( ( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_1_X ) )					\
+			exp				rect W(	TAB_1_WIDTH )															\
+			background      "menu_mp_tab_frame_inner"														\
+			forecolor       0.65 0.14 0.15 1																\
+			visible         1																				\
+			decoration																						\
+		}
+
+#define FRIENDS_LIST_TAB_2_BG																				\
+		itemDef																								\
+		{																									\
+			style           WINDOW_STYLE_SHADER_FRAMED														\
+			frame           16 0.2 FRAME_OPEN_BOTTOM														\
+			rect            0 FRIENDS_LIST_TAB_Y 0 TAB_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER	\
+			exp				rect X( ( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_2_X ) )					\
+			exp				rect W(	TAB_2_WIDTH )															\
+			background      "menu_mp_tab_frame_inner"														\
+			forecolor       0.65 0.14 0.15 1																\
+			visible         1																				\
+			decoration																						\
+		}	
+
+#define FRIENDS_LIST_TAB_3_BG																				\
+		itemDef																								\
+		{																									\
+			style           WINDOW_STYLE_SHADER_FRAMED														\
+			frame           16 0.2 FRAME_OPEN_BOTTOM														\
+			rect            0 FRIENDS_LIST_TAB_Y 0 TAB_HEIGHT HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER	\
+			exp				rect X( ( -FRIENDS_MENU_WIDTH / 2 + FRIENDS_LIST_TAB_3_X ) )					\
+			exp				rect W(	TAB_3_WIDTH )															\
+			background      "menu_mp_tab_frame_inner"														\
+			forecolor       0.65 0.14 0.15 1																\
+			visible         1																				\
+			decoration																						\
+		}	
+
+#define CLOSE_CURR_MENU_AND_RESET_DVARS( currMenu )	\
+		closeImmediate currMenu;					\
+		setDvar ui_friendsListOpen "0";				\
+		setDvar ui_playerListOpen "0";
+
+#define CHANGE_MENU_ACTION( currMenu, prevMenu )		\
+		execKeyInt DPAD_LEFT							\
+		{												\
+			CLOSE_CURR_MENU_AND_RESET_DVARS( currMenu )	\
+			openImmediate prevMenu;						\
+		}												\
+		execKeyInt DPAD_RIGHT							\
+		{												\
+			CLOSE_CURR_MENU_AND_RESET_DVARS( currMenu )	\
+			openImmediate prevMenu;						\
+		}												\
+		execKeyInt APAD_LEFT							\
+		{												\
+			CLOSE_CURR_MENU_AND_RESET_DVARS( currMenu )	\
+			openImmediate prevMenu;						\
+		}												\
+		execKeyInt APAD_RIGHT							\
+		{												\
+			CLOSE_CURR_MENU_AND_RESET_DVARS( currMenu )	\
+			openImmediate prevMenu;						\
+		}
+		
+		#undef PC_TAB_SWITCH_ACTIONS_PREV
+		#define PC_TAB_SWITCH_ACTIONS_PREV					\
+			setDvar ui_friendsListOpen "0";				\
+			setDvar ui_playerListOpen "0";
+		
+		#undef PC_TAB_SWITCH_ACTIONS_NEXT
+		#define PC_TAB_SWITCH_ACTIONS_NEXT					\
+			setDvar ui_friendsListOpen "0";				\
+			setDvar ui_playerListOpen "0";
+
+#define ON_ESC																				\
+	setDvar ui_friendsListOpen "0";															\
+	execnow changemenucloseslidedirection menu_friends MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;	\
+	execnow changemenuopenslidedirection menu_friends MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;	\
+	play uin_navigation_menu_lg_close;														\
+	setdvar invite_visible "1";																\
+	setdvar menu_xboxlive_buttons_visible 1;											\
+	close self;
+
+{
+	menuDef
+	{
+		name					menu_friends
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		control					MENU_CONTROL_OPENER
+
+		onOpen
+		{
+			setDvar ui_friendsListOpen "1";
+			setdvar invite_visible "0"; 
+			exec "updateInfoForInGameList";
+			play uin_navigation_menu_lg_open;
+#ifdef PC
+			setdvar show_xboxlive_buttons 0;
+			setdvar menu_xboxlive_buttons_visible 0;
+#endif // #ifdef PC
+			execnow set selectedPlayerXuid ( getfeederdata( "friends_list", "xuid" ) );
+			execnow set selectedFriendName ( getfeederdata( "friends_list", "name" ) );
+
+			execnow if( menuisopen( menu_xboxlive ) )				ui_animate menu_xboxlive				frame_bg on 100;
+			execnow if( menuisopen( menu_xboxlive_privatelobby ) )	ui_animate menu_xboxlive_privatelobby	frame_bg on 100;
+			execnow if( menuisopen( menu_xboxlive_lobby ) )			ui_animate menu_xboxlive_lobby			frame_bg on 100;
+			execnow if( menuisopen( menu_systemlink_lobby ) )		ui_animate menu_systemlink_lobby		frame_bg on 100;
+		}
+		onFocus					{ }
+		onClose
+		{
+			execnow if( menuisopen( menu_xboxlive ) )				ui_animate menu_xboxlive				frame_bg default 20;
+			execnow if( menuisopen( menu_xboxlive_privatelobby ) )	ui_animate menu_xboxlive_privatelobby	frame_bg default 20;
+			execnow if( menuisopen( menu_xboxlive_lobby ) )			ui_animate menu_xboxlive_lobby			frame_bg default 20;
+			execnow if( menuisopen( menu_systemlink_lobby ) )		ui_animate menu_systemlink_lobby		frame_bg default 20;
+			setDvar ui_friendsListOpen "0";
+		}
+		onESC
+		{
+			ON_ESC
+		}
+		execKeyInt K_UPARROW
+		{
+			execNow movefeeder -1 friends_list;
+		}
+		execKeyInt K_DOWNARROW
+		{
+			execNow movefeeder 1 friends_list;
+		}
+		execKeyInt 13
+		{
+			play CHOICE_FOCUS_SOUND;
+			execnow set selectedPlayerXuid ( getfeederdata( "friends_list", "xuid" ) );
+			execnow set selectedFriendName ( getfeederdata( "friends_list", "name" ) );
+			if( dvarBool(ui_friendCountNotZero) )
+			{
+				execnow changemenucloseslidedirection menu_friends MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT; 
+				execnow changemenuopenslidedirection menu_friends MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;
+				execnow hidemenu menu_friends;
+				execnow changemenuopenslidedirection menu_playercard MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT;
+				execnow openmenu menu_playercard;
+			}
+		}
+		PC_TAB_SWITCH_ACTIONS( menu_friends, menu_invites, menu_players )
+		
+		FRAME_ZOMBIE_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MENU_FRIENDS_CAPS", 1 )
+		
+		//PLAYER_INFO_VIS( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, 1 )
+		FRIENDS_LIST_TAB_1_BG
+		FRIENDS_LIST_TAB_2_BG
+		FRIENDS_LIST_TAB_3_BG
+		FRIENDS_TAB_HEADERS
+		
+		// Lists
+		itemDef
+		{
+			name						friends_list
+			type						ITEM_TYPE_LISTBOX
+			feeder						FEEDER_ONLINEFRIENDS
+			rect						LIST_X_START LIST_Y_START LIST_WIDTH LIST_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+			origin						0 0
+			elementwidth				30
+			elementheight				55
+			elementtype					LISTBOX_TEXT	
+			textstyle					ITEM_TEXTSTYLE_SHADOWED
+			textfont					UI_FONT_NORMAL
+			textscale					TEXTSIZE_SMALL
+			forecolor					CHOICE_TEXTCOLOR
+			focusColor					CHOICE_TEXTCOLOR
+			disableColor				CHOICE_TEXTCOLOR
+			selectBorder				0.8 0.95 1 0
+			noBlinkingHighlight
+			usePaging
+			
+			//				x					y					w						h						len			horzAlign		 vertAlign			
+			userarea 9		2					0					(FRIENDS_MENU_WIDTH-45) (PLAYER_INFO_HEIGHT+6)	24			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_BG */
+							4					2					PLAYER_INFO_WIDTH		(PLAYER_INFO_HEIGHT+2)	24			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_EMBLEM_BG */
+							(EMBLEM_X_OFFSET+4)	(EMBLEM_Y_OFFSET+4)	EMBLEM_SIZE				EMBLEM_SIZE				0			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_EMBLEM */
+							(RANK_X_OFFSET)		(RANK_Y_OFFSET+2)	20						17						4			ITEM_ALIGN_RIGHT ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_RANK */
+							(RANK_X_OFFSET+23)	(RANK_Y_OFFSET+1)	17						19						0			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_RANK_ICON */
+							(NAME_X_OFFSET+4)	(NAME_Y_OFFSET+2)	200						17						24			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_NAME */ 
+							POINT_X_OFFSET		(RANK_Y_OFFSET+2)	70						17						24			ITEM_ALIGN_RIGHT ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_CODPOINTS */ 
+							200					0					200						20						50			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_STATUS */
+							70					2					(FRIENDS_MENU_WIDTH-330) 25						50			ITEM_ALIGN_RIGHT ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_AUTO_JOIN_TEXT */
+						
+			visible			1
+			onfocus 
+			{
+				exec "updateListboxPos menu_friends";
+			}			
+			onListboxSelectionChange	
+			{
+				play CHOICE_FOCUS_SOUND; 
+				execnow set selectedPlayerXuid ( getfeederdata( "friends_list", "xuid" ) );
+				execnow set selectedFriendName ( getfeederdata( "friends_list", "name" ) );
+			}
+			doubleclick
+			{
+				play CHOICE_FOCUS_SOUND;
+				execnow set selectedPlayerXuid ( getfeederdata( "friends_list", "xuid" ) );
+				execnow set selectedFriendName ( getfeederdata( "friends_list", "name" ) );
+				if( dvarBool(ui_friendCountNotZero) )
+				{
+					execnow changemenucloseslidedirection menu_friends MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT; 
+					execnow changemenuopenslidedirection menu_friends MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;
+					execnow hidemenu menu_friends;
+					execnow changemenuopenslidedirection menu_playercard MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT;
+					execnow openmenu menu_playercard;
+				}
+			}
+			execKeyInt BUTTON_BACK
+			{
+				play CHOICE_FOCUS_SOUND;
+#ifdef XENON
+				execNow if ( !dvarBool( xblive_autojoin ) && IsPlayerInvitable( getfeederdata( "xuid" ) ) && ( ( inLobby() || inPrivateParty() ) && !dvarBool( systemlink ) ) ) xsendinvitetoxuid( getfeederdata( "xuid" ) );
+#else
+				execNow sendInvite (getfeederdata( "xuid" )) 0;
+#endif
+			}
+			execKeyInt BUTTON_X
+			{
+			
+				play CHOICE_FOCUS_SOUND;
+#ifdef XENON
+				if ( IsPlayerJoinable( getfeederdata( "xuid" ) ) == FRIEND_JOINABLE ) 
+				{
+					execNow xjoinfriendsessionforxuid ( getfeederdata( "xuid" ) );
+					close menu_friends;
+				}	
+#else
+				execNow JoinsessionInProgress (getfeederdata( "xuid" ));
+#endif
+			}
+#ifdef PS3	
+			execKeyInt BUTTON_Y
+			{
+				exec "gameInvitesReceived";
+			}
+#endif
+			CHANGE_MENU_ACTION( menu_friends, menu_players )
+		}
+
+#ifdef PC
+		FRAME_BACK_BUTTON_ACTION( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, ON_ESC )
+#else //#ifdef PC
+		FRAME_DONE_BUTTON( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT )
+#endif //#ifdef PC			
+
+#define VIEW_PLAYER_CARD_ACTION \				
+				play CHOICE_FOCUS_SOUND; \
+				if( dvarBool(ui_friendCountNotZero) ) \
+				{ \
+					execnow set selectedPlayerXuid ( getfeederdata( "friends_list", "xuid" ) ); \
+					execnow set selectedFriendName ( getfeederdata( "friends_list", "name" ) ); \
+					execnow changemenucloseslidedirection menu_friends MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT; \
+					execnow changemenuopenslidedirection menu_friends MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT; \
+					execnow hidemenu menu_friends; \
+					execnow changemenuopenslidedirection menu_playercard MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT; \
+					execnow openmenu menu_playercard; \
+				}
+
+#ifdef CONSOLE
+		FRAME_BUTTON_ACTION_OFFSET_VIS( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, "@PLATFORM_VIEW_PLAYER_CARD", 
+										VIEW_PLAYER_CARD_ACTION, 
+										80, 
+										when( dvarBool( ui_friendCountNotZero ) ); );
+										
+		FRAME_BUTTON_ACTION_OFFSET_VIS( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, "@PLATFORM_JOIN_SQUAD", 
+										exec JoinsessionInProgress ( dvarString( selectedPlayerXuid ) );, 
+										200, 
+										when( PLAYER_JOIN_STATE == FRIEND_JOINABLE ); );
+										
+		FRAME_BUTTON_ACTION_OFFSET_VIS( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, "@MENU_INVITE_TO_GAME_CAPS", 
+										execNow sendInvite (getfeederdata( "xuid" )) 1;, 
+										264, 
+										when( !dvarBool( xblive_autojoin ) && IsPlayerInvitable( getfeederdata( "friends_list", "xuid" ) ) && ( ( inLobby() || inPrivateParty() ) && !dvarBool( systemlink ) ) ); );
+#else // #ifdef CONSOLE
+		#define BUTTON_SPACING				20
+		#define PLAYER_CARD_BUTTON_OFFSET	( getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+		#define INVITE_BUTTON_OFFSET		( PLAYER_CARD_BUTTON_OFFSET + getTextWidth( locString( "@PLATFORM_VIEW_PLAYER_CARD" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+		#define JOIN_SQUAD_BUTTON_OFFSET	( INVITE_BUTTON_OFFSET + getTextWidth( locString( "@PLATFORM_INVITE_TO_GAME" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+
+		FRAME_BUTTON_PC_LEFT_OFFSET( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, PLAYER_CARD_BUTTON_OFFSET, "@PLATFORM_VIEW_PLAYER_CARD", 
+			VIEW_PLAYER_CARD_ACTION, 
+			when( dvarBool( ui_friendCountNotZero ) ); )
+		
+		FRAME_BUTTON_PC_LEFT_OFFSET( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, INVITE_BUTTON_OFFSET, "@PLATFORM_INVITE_TO_GAME", 
+			execNow sendInvite (getfeederdata( "xuid" )) 1;, 
+			when( !dvarBool( xblive_autojoin ) && IsPlayerInvitable( getfeederdata( "friends_list", "xuid" ) ) && ( ( inLobby() || inPrivateParty() ) && !dvarBool( systemlink ) ) ); )
+	
+		FRAME_BUTTON_PC_LEFT_OFFSET( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, JOIN_SQUAD_BUTTON_OFFSET, "@PLATFORM_JOIN_SQUAD", 
+			exec JoinsessionInProgress ( dvarString( selectedPlayerXuid ) );, 
+			when( PLAYER_JOIN_STATE == FRIEND_JOINABLE ); )
+#endif // #else // #ifdef CONSOLE
+											
+		#include "ui/safearea.menu"
+	}
+	
+#undef ON_ESC
+#define ON_ESC																				\
+	setDvar ui_playerListOpen "0";														\
+	execnow changemenucloseslidedirection menu_players MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;	\
+	execnow changemenuopenslidedirection menu_players MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;	\
+	play uin_navigation_menu_lg_close;														\
+	setdvar invite_visible "1";																\
+	setdvar menu_xboxlive_buttons_visible 1;											\
+	close self;
+
+	menuDef
+	{
+		name					menu_players
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		control					MENU_CONTROL_OPENER
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		onOpen 
+		{	
+			setDvar ui_playerListOpen "1"; 
+			setdvar invite_visible "0"; 
+			exec "updateInfoForInGameList";
+			play uin_navigation_menu_lg_open;
+#ifdef PC
+			setdvar show_xboxlive_buttons 0;
+			setdvar menu_xboxlive_buttons_visible 0;
+#endif // #ifdef PC
+			execnow set selectedPlayerXuid ( getfeederdata( "players_list", "xuid" ) );
+			execnow set selectedFriendName ( getfeederdata( "players_list", "name" ) );
+
+			execnow if( menuisopen( menu_xboxlive ) )				ui_animate menu_xboxlive				frame_bg on 100;
+			execnow if( menuisopen( menu_xboxlive_privatelobby ) )	ui_animate menu_xboxlive_privatelobby	frame_bg on 100;
+			execnow if( menuisopen( menu_xboxlive_lobby ) )			ui_animate menu_xboxlive_lobby			frame_bg on 100;
+			execnow if( menuisopen( menu_systemlink_lobby ) )		ui_animate menu_systemlink_lobby		frame_bg on 100;
+		 }
+		onFocus { }
+		onClose	
+		{ 
+			execnow if( menuisopen( menu_xboxlive ) )				ui_animate menu_xboxlive				frame_bg default 20;
+			execnow if( menuisopen( menu_xboxlive_privatelobby ) )	ui_animate menu_xboxlive_privatelobby	frame_bg default 20;
+			execnow if( menuisopen( menu_xboxlive_lobby ) )			ui_animate menu_xboxlive_lobby			frame_bg default 20;
+			execnow if( menuisopen( menu_systemlink_lobby ) )		ui_animate menu_systemlink_lobby		frame_bg default 20;
+			setDvar ui_friendsListOpen "0";
+		}
+		onESC
+		{
+			ON_ESC
+		}
+		execKeyInt K_UPARROW
+		{
+			execNow movefeeder -1 players_list;
+		}
+		execKeyInt K_DOWNARROW
+		{
+			execNow movefeeder 1 players_list;
+		}
+		execKeyInt 13
+		{
+				play CHOICE_FOCUS_SOUND;
+				execnow set selectedPlayerXuid ( getfeederdata( "players_list", "xuid" ) );
+				execnow set selectedFriendName ( getfeederdata( "players_list", "name" ) );
+				if( dvarBool(ui_recentPlayerCountNotZero) )
+				{
+					execnow changemenucloseslidedirection menu_players MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT; 
+					execnow changemenuopenslidedirection menu_players MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;
+					execnow hidemenu menu_players;
+					execnow changemenuopenslidedirection menu_playercard MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT;
+					execnow openmenu menu_playercard;
+				}		
+		}
+		PC_TAB_SWITCH_ACTIONS( menu_players, menu_friends, menu_invites )
+		
+		FRAME_ZOMBIE_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MENU_TAB_PLAYERS_CAPS", 1 )
+		
+		//PLAYER_INFO_VIS( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, 1 )
+		FRIENDS_LIST_TAB_1_BG
+		FRIENDS_LIST_TAB_2_BG
+		FRIENDS_LIST_TAB_3_BG
+		PLAYERS_TAB_HEADERS
+
+		// Lists
+		itemDef 
+		{
+			name						players_list
+			type						ITEM_TYPE_LISTBOX
+			feeder						FEEDER_RECENT_PLAYERS
+			rect						LIST_X_START LIST_Y_START LIST_WIDTH LIST_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+			origin						0 0
+			elementwidth				30
+			elementheight				55
+			elementtype					LISTBOX_TEXT	
+			textstyle					ITEM_TEXTSTYLE_SHADOWED
+			textfont					UI_FONT_NORMAL
+			textscale					TEXTSIZE_SMALL
+			forecolor					CHOICE_TEXTCOLOR
+			focusColor					CHOICE_TEXTCOLOR
+			disableColor				CHOICE_TEXTCOLOR
+			selectBorder				0.8 0.95 1 0
+			noBlinkingHighlight
+			usePaging
+			//				x					y					w						h						len			horzAlign		 vertAlign			
+			userarea 9		2					0					(FRIENDS_MENU_WIDTH-45) (PLAYER_INFO_HEIGHT+6)	24			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_BG */
+							4					2					PLAYER_INFO_WIDTH		(PLAYER_INFO_HEIGHT+2)	24			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_EMBLEM_BG */
+							(EMBLEM_X_OFFSET+4)	(EMBLEM_Y_OFFSET+4)	EMBLEM_SIZE				EMBLEM_SIZE				0			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_EMBLEM */
+							(RANK_X_OFFSET)		(RANK_Y_OFFSET+2)	20						17						4			ITEM_ALIGN_RIGHT ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_RANK */
+							(RANK_X_OFFSET+23)	(RANK_Y_OFFSET+1)	17						19						0			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_RANK_ICON */
+							(NAME_X_OFFSET+4)	(NAME_Y_OFFSET+2)	200						17						24			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_NAME */ 
+							POINT_X_OFFSET		(RANK_Y_OFFSET+2)	70						17						24			ITEM_ALIGN_RIGHT ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_CODPOINTS */ 
+							200					0					200						20						50			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_STATUS */
+							70					2					(FRIENDS_MENU_WIDTH-330) 25						50			ITEM_ALIGN_RIGHT ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_AUTO_JOIN_TEXT */
+						
+			visible			1
+			onfocus 
+			{
+				exec "updateListboxPos menu_players";
+			}						
+			onListboxSelectionChange	
+			{
+				play CHOICE_FOCUS_SOUND; 
+				execnow set selectedPlayerXuid ( getfeederdata( "players_list", "xuid" ) );
+				execnow set selectedFriendName ( getfeederdata( "players_list", "name" ) );
+			}
+			doubleclick
+			{
+				play CHOICE_FOCUS_SOUND;
+				execnow set selectedPlayerXuid ( getfeederdata( "players_list", "xuid" ) );
+				execnow set selectedFriendName ( getfeederdata( "players_list", "name" ) );
+				if( dvarBool(ui_recentPlayerCountNotZero) )
+				{
+					execnow changemenucloseslidedirection menu_players MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT; 
+					execnow changemenuopenslidedirection menu_players MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT;
+					execnow hidemenu menu_players;
+					execnow changemenuopenslidedirection menu_playercard MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT;
+					execnow openmenu menu_playercard;
+				}
+			}
+			execKeyInt BUTTON_BACK
+			{
+				play CHOICE_FOCUS_SOUND;
+				execNow sendInvite (getfeederdata( "players_list", "xuid" )) 1;
+			}
+			CHANGE_MENU_ACTION( menu_players,menu_friends )
+		}
+
+		// Button prompts
+#ifdef PC
+		FRAME_BACK_BUTTON_ACTION( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, ON_ESC )
+#else //#ifdef PC
+		FRAME_DONE_BUTTON( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT )
+#endif //#ifdef PC			
+
+
+// @TODO: reenable if there is ever support for inviting and joining recent players
+//		PREPROC_TEXT_DRAW_VIS(	-20 (FRIENDS_MENU_HEIGHT/2) 50 17 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_CENTER, 0 0, 
+//								"@PLATFORM_INVITE_TO_GAME", 
+//								TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_BOTTOM_LEFT, 1 1 1 1, 
+//								when( !dvarBool( xblive_autojoin ) && IsPlayerInvitable( getfeederdata( "players_list","xuid" ) ) && ( ( inLobby() || inPrivateParty() ) && !dvarBool( systemlink ) ) ); )
+	
+#undef VIEW_PLAYER_CARD_ACTION
+#define VIEW_PLAYER_CARD_ACTION \				
+				play CHOICE_FOCUS_SOUND; \
+				if( dvarBool(ui_recentPlayerCountNotZero) ) \
+				{ \
+					execnow set selectedPlayerXuid ( getfeederdata( "players_list", "xuid" ) ); \
+					execnow set selectedFriendName ( getfeederdata( "players_list", "name" ) ); \
+					execnow changemenucloseslidedirection menu_players MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT; \
+					execnow changemenuopenslidedirection menu_players MENU_SLIDE_DIRECTION_LEFT_TO_RIGHT; \
+					execnow hidemenu menu_players; \
+					execnow changemenuopenslidedirection menu_playercard MENU_SLIDE_DIRECTION_RIGHT_TO_LEFT; \
+					execnow openmenu menu_playercard; \
+				}
+
+#ifdef CONSOLE	
+		FRAME_BUTTON_ACTION_OFFSET_VIS( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, "@PLATFORM_VIEW_PLAYER_CARD", 
+										VIEW_PLAYER_CARD_ACTION, 
+										80, 
+										when( dvarBool( ui_friendCountNotZero ) ); );
+#else // #ifdef CONSOLE
+		#undef	BUTTON_SPACING
+		#define BUTTON_SPACING				20
+		#undef	PLAYER_CARD_BUTTON_OFFSET
+		#define PLAYER_CARD_BUTTON_OFFSET	( getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+
+		FRAME_BUTTON_PC_LEFT_OFFSET( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, PLAYER_CARD_BUTTON_OFFSET, "@PLATFORM_VIEW_PLAYER_CARD", 
+			VIEW_PLAYER_CARD_ACTION, 
+			when( dvarBool( ui_friendCountNotZero ) ); )
+#endif // #else // #ifdef CONSOLE
+
+		#include "ui/safearea.menu"
+	}
+}	
+
+	menuDef
+	{
+		name					menu_invites
+		rect					0 0 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
+		focuscolor				COLOR_FOCUSED
+		style					WINDOW_STYLE_FILLED
+		priority				MENU_PRI_ONTOP
+		control					MENU_CONTROL_OPENER
+		soundloop 				MENU_MUSIC
+		openSlideSpeed			DEFAULT_SLIDE_IN_SPEED
+		closeSlideSpeed			DEFAULT_SLIDE_OUT_SPEED
+		openSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		closeSlideDirection		MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM
+		onOpen 
+		{	
+			setdvar invite_visible "0"; 
+			exec "updateInfoForInGameList";
+			play uin_navigation_menu_lg_open;
+#ifdef PC
+			setdvar show_xboxlive_buttons 0;
+			setdvar menu_xboxlive_buttons_visible 0;
+#endif // #ifdef PC
+
+			execnow if( menuisopen( menu_xboxlive ) )				ui_animate menu_xboxlive				frame_bg on 100;
+			execnow if( menuisopen( menu_xboxlive_privatelobby ) )	ui_animate menu_xboxlive_privatelobby	frame_bg on 100;
+			execnow if( menuisopen( menu_xboxlive_lobby ) )			ui_animate menu_xboxlive_lobby			frame_bg on 100;
+			execnow if( menuisopen( menu_systemlink_lobby ) )		ui_animate menu_systemlink_lobby		frame_bg on 100;
+		 }
+		onFocus { }
+		onClose	
+		{ 
+			execnow if( menuisopen( menu_xboxlive ) )				ui_animate menu_xboxlive				frame_bg default 20;
+			execnow if( menuisopen( menu_xboxlive_privatelobby ) )	ui_animate menu_xboxlive_privatelobby	frame_bg default 20;
+			execnow if( menuisopen( menu_xboxlive_lobby ) )			ui_animate menu_xboxlive_lobby			frame_bg default 20;
+			execnow if( menuisopen( menu_systemlink_lobby ) )		ui_animate menu_systemlink_lobby		frame_bg default 20;
+			setDvar ui_friendsListOpen "0";
+		}
+		onESC
+		{
+			execnow changemenucloseslidedirection menu_players MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;
+			execnow changemenuopenslidedirection menu_players MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;
+			play uin_navigation_menu_lg_close;
+			exec set menu_xboxlive_buttons_visible 1;
+			close self;
+			setdvar invite_visible "1";
+		}
+		execKeyInt K_UPARROW
+		{
+			execNow movefeeder -1 invites_list;
+		}
+		execKeyInt K_DOWNARROW
+		{
+			execNow movefeeder 1 invites_list;
+		}
+		execKeyInt 13
+		{
+			play CHOICE_FOCUS_SOUND;
+			if (GetGameInvitesCount() >= 1)
+			{
+				uiScript acceptInvite;
+			}
+		}
+		PC_TAB_SWITCH_ACTIONS( menu_invites, menu_players, menu_friends )
+		
+		FRAME_ZOMBIE_DEFAULT
+		FRAME_TITLE_DEFAULT( "@MENU_GAME_INVITES_CAPS", 1 )
+		
+		//PLAYER_INFO_VIS( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, 1 )
+		FRIENDS_LIST_TAB_1_BG
+		FRIENDS_LIST_TAB_2_BG
+		FRIENDS_LIST_TAB_3_BG
+		INVITES_TAB_HEADERS
+
+		PREPROC_TEXT_DRAW_VIS(	(-FRIENDS_MENU_WIDTH / 2) 0 FRIENDS_MENU_WIDTH 15 CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN, 0 0,  
+			"@PATCH_NO_INVITES", TEXTSIZE_LARGE, 0, 0, ITEM_ALIGN_MIDDLE_CENTER, CHOICE_TEXTCOLOR, when( !hasinvites() ) ) 
+
+		// Lists
+		itemDef 
+		{
+			name						invites_list
+			type						ITEM_TYPE_LISTBOX
+			feeder						FEEDER_INVITES
+			rect						LIST_X_START LIST_Y_START LIST_WIDTH LIST_HEIGHT CHOICE_HORIZONTAL_ALIGN CHOICE_VERTICAL_ALIGN
+			origin						0 0
+			elementwidth				30
+			elementheight				55
+			elementtype					LISTBOX_TEXT	
+			textstyle					ITEM_TEXTSTYLE_SHADOWED
+			textfont					UI_FONT_NORMAL
+			textscale					TEXTSIZE_SMALL
+			forecolor					CHOICE_TEXTCOLOR
+			focusColor					CHOICE_TEXTCOLOR
+			disableColor				CHOICE_TEXTCOLOR
+			selectBorder				0.8 0.95 1 0
+			noBlinkingHighlight
+			usePaging
+			//				x					y					w						h						len			horzAlign		 vertAlign			
+			userarea 9		2					0					(FRIENDS_MENU_WIDTH-45) (PLAYER_INFO_HEIGHT+6)	24			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_BG */
+							4					2					PLAYER_INFO_WIDTH		(PLAYER_INFO_HEIGHT+2)	24			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_EMBLEM_BG */
+							(EMBLEM_X_OFFSET+4)	(EMBLEM_Y_OFFSET+4)	EMBLEM_SIZE				EMBLEM_SIZE				0			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_EMBLEM */
+							(RANK_X_OFFSET)		(RANK_Y_OFFSET+2)	20						17						4			ITEM_ALIGN_RIGHT ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_RANK */
+							(RANK_X_OFFSET+23)	(RANK_Y_OFFSET+1)	17						19						0			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_RANK_ICON */
+							(NAME_X_OFFSET+4)	(NAME_Y_OFFSET+2)	200						17						24			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_NAME */ 
+							POINT_X_OFFSET		(RANK_Y_OFFSET+2)	70						17						24			ITEM_ALIGN_RIGHT ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_CODPOINTS */ 
+							200					0					200						20						50			ITEM_ALIGN_LEFT	 ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_STATUS */
+							70					2					(FRIENDS_MENU_WIDTH-330) 25						50			ITEM_ALIGN_RIGHT ITEM_ALIGN_TOP		/* FRIENDS_LIST_COLUMN_AUTO_JOIN_TEXT */
+						
+			visible			1
+			onfocus 
+			{
+				exec "updateListboxPos menu_invites";
+			}						
+			onListboxSelectionChange	
+			{
+				play CHOICE_FOCUS_SOUND; 
+			}
+			doubleclick
+			{
+				play CHOICE_FOCUS_SOUND;
+				if (GetGameInvitesCount() >= 1)
+				{
+					uiScript acceptInvite;
+				}
+			}
+			execKeyInt BUTTON_BACK
+			{
+				play CHOICE_FOCUS_SOUND;
+			}
+		}
+
+		// Button prompts
+
+#undef ON_ESC
+#define ON_ESC																				\
+	setDvar ui_friendsListOpen "0";															\
+	execnow changemenucloseslidedirection menu_players MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;	\
+	execnow changemenuopenslidedirection menu_players MENU_SLIDE_DIRECTION_TOP_TO_BOTTOM;	\
+	play uin_navigation_menu_lg_close;														\
+	setdvar invite_visible "1";																\
+	setdvar menu_xboxlive_buttons_visible 1;											\
+	close self;
+
+		FRAME_BACK_BUTTON_ACTION( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, ON_ESC )
+
+#ifdef CONSOLE
+		FRAME_BUTTON_ACTION_OFFSET_VIS( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, "@MENU_ACCEPT_INVITE", 
+										uiScript acceptInvite;, 
+										80, 
+										when( GetGameInvitesCount() >= 1 ); );
+#else // #ifdef CONSOLE
+		#undef	BUTTON_SPACING
+		#define BUTTON_SPACING			20
+		#define ACCEPT_BUTTON_OFFSET	( getTextWidth( locString( "@PLATFORM_BACK" ), CHOICE_TEXTFONT, TEXTSIZE_DEFAULT ) + 8 + BUTTON_SPACING )
+
+		FRAME_BUTTON_PC_LEFT_OFFSET( FRIENDS_MENU_WIDTH, FRIENDS_MENU_HEIGHT, ACCEPT_BUTTON_OFFSET, "@MENU_ACCEPT_INVITE", 
+			uiScript acceptInvite;, 
+			when( GetGameInvitesCount() >= 1 ); )
+#endif // #else // #ifdef CONSOLE
+
+		#include "ui/safearea.menu"
+	}
+}	
+
+//for session join dialogs
+#include "ui_mp/popupstyle.inc"
+#include "ui/choices_setup_popmenu.menu"
+	
+#undef	POPUP_BUTTON_COUNT
+#define	POPUP_BUTTON_COUNT		1
+// Join session dialog
+menuDef
+{	
+	SYSTEM_POPUP_SETUP_VIS( "menu_joinsession", ;, ;, 1 )
+	execKeyInt BUTTON_BACK {}
+	execKeyInt BUTTON_B {}	
+
+	SYSTEM_POPUP_TITLE_VIS( "@MENU_JOIN_SESSION_IN_PROGRESS", 1 )
+
+	SYSTEM_POPUP_SPINNER( 1 )
+}
+
+// Join session error dialog
+menuDef
+{
+	SYSTEM_POPUP_SETUP_VIS( "menu_joinsessionerror", close menu_joinsession;, ;, 1 )
+	onClose	
+	{
+		CENTER_POPUP_ON_CLOSE
+		close menu_joinsession;
+		setdvar joinSession_errorTitle "";		
+		setdvar joinSession_errorMessage "";
+		setdvar joinSession_errorMessageDebug "";
+	}
+
+	SYSTEM_POPUP_TITLE_VIS( dvarString("joinSession_errorTitle"), 1 )
+	SYSTEM_POPUP_SUBTITLE_VIS( locString( dvarString("joinSession_errorMessage") ) + dvarString("joinSession_errorMessageDebug"), 1 ) //for debug purposes
+	
+	FRAME_CHOICE_BUTTON_VIS_EX( 1, "@MENU_OK", close self;, 1, ; )
+}	
+	

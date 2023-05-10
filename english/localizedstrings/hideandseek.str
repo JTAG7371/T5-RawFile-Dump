@@ -1,0 +1,124 @@
+// Note to translators:
+// If a sentence is the same in your language then please change it to "#same"
+//
+// eg:
+// LANG_ENGLISH  "HALT"
+// LANG_GERMAN   "#same"
+//
+// (This is so we can tell which strings have been signed-off as ok to be the same words for QA
+//  and because we do not store duplicate strings, which will then get exported again next time
+//  as being untranslated.)
+//
+VERSION             "1"
+CONFIG              "C:\projects\cod\t5\bin\StringEd.cfg"
+FILENOTES           ""
+
+REFERENCE           TITLE
+LANG_ENGLISH        "Hide and Seek"
+
+REFERENCE           TITLE_CAPS
+LANG_ENGLISH        "HIDE AND SEEK"
+
+REFERENCE           TITLE_SHORT_CAPS
+LANG_ENGLISH        "HNS"
+
+REFERENCE           HIDERS_SHORT
+LANG_ENGLISH        "Hiders"
+
+REFERENCE           SEEKERS_SHORT
+LANG_ENGLISH        "Seekers"
+
+REFERENCE           SEEKERS_WIN_MATCH
+LANG_ENGLISH        "Seekers win the match!"
+
+REFERENCE           HIDERS_WIN_MATCH
+LANG_ENGLISH        "Hiders win the match!"
+
+REFERENCE           SEEKERS_WIN_ROUND
+LANG_ENGLISH        "All hiders have been found!"
+
+REFERENCE           HIDERS_WIN_ROUND
+LANG_ENGLISH        "Seekers did not find all the hiders!"
+
+REFERENCE           SEEKERS_MISSION_ACCOMPLISHED
+LANG_ENGLISH        "Seekers mission accomplished"
+
+REFERENCE           HIDERS_MISSION_ACCOMPLISHED
+LANG_ENGLISH        "Hiders mission accomplished"
+
+REFERENCE           SEEKERS_FORFEITED
+LANG_ENGLISH        "Seekers forfeited"
+
+REFERENCE           HIDERS_FORFEITED
+LANG_ENGLISH        "Hiders forfeited"
+
+REFERENCE           SEEKERS_NAME
+LANG_ENGLISH        "SEEKERS"
+
+REFERENCE           HIDERS_NAME
+LANG_ENGLISH        "HIDERS"
+
+REFERENCE           OBJECTIVE_HIDERS
+LANG_ENGLISH        "Gain points by hiding from seekers."
+
+REFERENCE           OBJECTIVE_HIDERS_SCORE
+LANG_ENGLISH        "Gain points by hiding from seekers.  First team to &&1 wins."
+
+REFERENCE           OBJECTIVE_HIDERS_HINT
+LANG_ENGLISH        "HIDE FROM SEEKERS."
+
+REFERENCE           OBJECTIVE_SEEKERS
+LANG_ENGLISH        "Gain points by finding hiders."
+
+REFERENCE           OBJECTIVE_SEEKERS_SCORE
+LANG_ENGLISH        "Gain points by finding hiders.  First team to &&1 wins."
+
+REFERENCE           OBJECTIVE_SEEKERS_HINT
+LANG_ENGLISH        "FIND AND ELIMINATE HIDERS."
+
+REFERENCE           HIDE_GRACEPERIOD_HIDERS
+LANG_ENGLISH        "Hiding Grace Period Remaining..."
+
+REFERENCE           HIDE_GRACEPERIOD_SEEKERS
+LANG_ENGLISH        "Waiting For Hiding Grace Period..."
+
+REFERENCE           GAMETYPE_DESC
+LANG_ENGLISH        "Hide from seekers or find hiders."
+
+REFERENCE           TUT1_A
+LANG_ENGLISH        "Hiders can take form of any model that exists in the current map."
+
+REFERENCE           TUT1_B
+LANG_ENGLISH        "They can also change model during the match."
+
+REFERENCE           TUT2_A
+LANG_ENGLISH        "They can blend in well with the environment..."
+
+REFERENCE           TUT2_B
+LANG_ENGLISH        "... and move around at anytime."
+
+REFERENCE           TUT3_A
+LANG_ENGLISH        "Your objective is to find and kill the hiders."
+
+REFERENCE           TUT3_B
+LANG_ENGLISH        "When you have found / killed them, a magic cloud will let you know."
+
+REFERENCE           TUT4_A
+LANG_ENGLISH        "Your weapon has infinite ammo, but make every shot count..."
+
+REFERENCE           TUT4_B
+LANG_ENGLISH        "... Each shot takes inflicts a little damage on yourself, eventually death."
+
+REFERENCE           HIDER_CONTROL_A_1
+LANG_ENGLISH        "^3[{+smoke}]"
+
+REFERENCE           HIDER_CONTROL_A_2
+LANG_ENGLISH        "^3[{+toggleads_throw}]"
+
+REFERENCE           HIDER_CONTROL_B
+LANG_ENGLISH        " Cycle Model\nRotate Model"
+
+REFERENCE           HIDER_CONTROL_C
+LANG_ENGLISH        "^3[{+frag}]\n^3[{+attack}]"
+
+ENDMARKER

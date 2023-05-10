@@ -1,0 +1,25 @@
+# Useless files you can't dig through with a text editor, etc...
+*.efx	 	//fx
+*.tech 		//techsets
+*.techset	//^
+*.hlsl		//shaders
+*.iwi		//images
+*.mtl		//materials
+*.d3dbsp	//maps
+
+# Directories
+.destructiblepiece/
+.exposure/
+.fx/
+.lights/
+.material_properties/
+.materials/
+.pimp/
+.destructibledef/
+.images/
+.physconstraints/
+.physic/
+.shadercache_mods/
+.sound/
+.xanim/
+.xmodel/
